@@ -1,0 +1,7 @@
+{
+  "paths": {
+    "com.pentaho.profiling.services.webview.app": "/profileWebView/js/app",
+    "com.pentaho.profiling.services.webview.controllers": "/profileWebView/js/controllers"
+    "com.pentaho.profiling.services.webview.services": "/profileWebView/js/services"
+  }
+}
