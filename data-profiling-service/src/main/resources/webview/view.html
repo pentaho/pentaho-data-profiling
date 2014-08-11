@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="/requirejs-manager/js/require-init.js"></script>
+    <script type="text/javascript">
+        require(["com.pentaho.profiling.services.webview.app"], function(webviewApp) {
+          webviewApp.init();
+        });
+    </script>
+</head>
+<body>
+<div id="profileView" class="view-container">
+    <div ng-view class="view-frame"></div>
+</div>
+</body>
+</html>
