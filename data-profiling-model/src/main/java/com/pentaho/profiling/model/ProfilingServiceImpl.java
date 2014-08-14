@@ -40,8 +40,26 @@ import java.util.Map;
  * Created by bryan on 7/31/14.
  */
 public class ProfilingServiceImpl implements ProfilingService {
-  private static final Map<String, Profile> profileMap = new HashMap<String, Profile>();
+  private static Map<String, Profile> profileMap = new HashMap<String, Profile>();
   private List<ProfileFactory> factories;
+
+  /**
+   * FOR UNIT TESTS ONLY
+   *
+   * @return
+   */
+  protected static Map<String, Profile> getProfileMap() {
+    return profileMap;
+  }
+
+  /**
+   * FOR UNIT TESTS ONLY
+   *
+   * @param profileMap
+   */
+  protected static void setProfileMap( Map<String, Profile> profileMap ) {
+    ProfilingServiceImpl.profileMap = profileMap;
+  }
 
   public List<ProfileFactory> getFactories() {
     return factories;
