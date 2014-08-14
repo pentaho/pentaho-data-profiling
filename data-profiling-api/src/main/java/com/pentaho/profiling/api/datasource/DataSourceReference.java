@@ -33,7 +33,7 @@ public class DataSourceReference {
   private String dataSourceProvider;
 
   public DataSourceReference() {
-
+    this( null, null );
   }
 
   public DataSourceReference( String id, String dataSourceProvider ) {

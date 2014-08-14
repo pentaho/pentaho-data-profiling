@@ -26,9 +26,6 @@ package com.pentaho.profiling.api;
  * Created by bryan on 8/1/14.
  */
 public class ProfileCreationException extends Exception {
-  public ProfileCreationException() {
-  }
-
   public ProfileCreationException( String message ) {
     super( message );
   }
@@ -39,10 +36,5 @@ public class ProfileCreationException extends Exception {
 
   public ProfileCreationException( Throwable cause ) {
     super( cause );
-  }
-
-  public ProfileCreationException( String message, Throwable cause, boolean enableSuppression,
-                                   boolean writableStackTrace ) {
-    super( message, cause, enableSuppression, writableStackTrace );
   }
 }
