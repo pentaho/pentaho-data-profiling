@@ -22,9 +22,11 @@
 
 package com.pentaho.profiling.api.action;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by bryan on 8/11/14.
@@ -49,5 +51,17 @@ public class DefaultProfileActionTest {
     };
     defaultProfileAction.then();
     defaultProfileAction.setThen( null );
+  }
+
+  @Test
+  public void testSetThen() throws ThenAlreadyRequestedException {
+    ProfileAction then = mock( ProfileAction.class );
+    DefaultProfileAction defaultProfileAction = new DefaultProfileAction() {
+      @Override public ProfileActionResult execute() {
+        return null;
+      }
+    };
+    defaultProfileAction.setThen( then );
+    Assert.assertEquals( then, defaultProfileAction.then() );
   }
 }
