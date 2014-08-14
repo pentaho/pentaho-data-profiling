@@ -20,38 +20,21 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.model;
+package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.action.ProfileAction;
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
-import com.pentaho.profiling.api.action.ProfileActionResult;
+import org.junit.Test;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 8/14/14.
  */
-public class ProfileActionExecutorImpl implements ProfileActionExecutor {
-  private ExecutorService executorService = Executors.newCachedThreadPool();
-
-  protected void setExecutorService( ExecutorService executorService ) {
-    this.executorService = executorService;
-  }
-
-  @Override
-  public void submit( final ProfileAction action, final ProfileStatus status ) {
-    executorService.submit( new Runnable() {
-      @Override
-      public void run() {
-        ProfileActionResult result = action.execute();
-        result.apply( status );
-        ProfileAction then = action.then();
-        if ( then != null ) {
-          submit( then, status );
-        }
-      }
-    } );
+public class ProfilingFieldTest {
+  @Test
+  public void testSetName() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+    assertEquals( name, profilingField.getName() );
   }
 }
