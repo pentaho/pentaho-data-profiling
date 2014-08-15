@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -64,6 +65,18 @@ public class ProfileDataSourceIncludeWebserviceImplTest {
     ProfileDataSourceInclude profileDataSourceInclude = mock( ProfileDataSourceInclude.class );
     when( service.getInclude( dataSourceReference ) ).thenReturn( profileDataSourceInclude );
     assertEquals( profileDataSourceInclude, profileDataSourceIncludeWebservice.getInclude( dataSourceReference ) );
+  }
+
+  @Test
+  public void testGetIncludeNull() {
+    List<ProfileDataSourceIncludeService> list = new ArrayList<ProfileDataSourceIncludeService>();
+    ProfileDataSourceIncludeService service = mock( ProfileDataSourceIncludeService.class );
+    list.add( service );
+    ProfileDataSourceIncludeWebserviceImpl profileDataSourceIncludeWebservice =
+      new ProfileDataSourceIncludeWebserviceImpl();
+    profileDataSourceIncludeWebservice.setIncludeServices( list );
+    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
+    assertNull( profileDataSourceIncludeWebservice.getInclude( dataSourceReference ) );
   }
 
   @Test
