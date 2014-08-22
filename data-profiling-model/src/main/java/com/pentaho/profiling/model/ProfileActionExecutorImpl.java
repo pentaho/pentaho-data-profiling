@@ -35,9 +35,14 @@ import java.util.concurrent.Executors;
  */
 public class ProfileActionExecutorImpl implements ProfileActionExecutor {
   private ExecutorService executorService = Executors.newCachedThreadPool();
+  private ProfileNotificationProvider profileNotificationProvider;
 
   protected void setExecutorService( ExecutorService executorService ) {
     this.executorService = executorService;
+  }
+
+  public void setProfileNotificationProvider( ProfileNotificationProvider profileNotificationProvider ) {
+    this.profileNotificationProvider = profileNotificationProvider;
   }
 
   @Override
@@ -47,6 +52,7 @@ public class ProfileActionExecutorImpl implements ProfileActionExecutor {
       public void run() {
         ProfileActionResult result = action.execute();
         result.apply( status );
+        profileNotificationProvider.notify( status.getId() );
         ProfileAction then = action.then();
         if ( then != null ) {
           submit( then, status );

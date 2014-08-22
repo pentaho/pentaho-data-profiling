@@ -43,6 +43,7 @@ public class ProfileActionExecutorImplTest {
   private ProfileStatus profileStatus;
   private ProfileAction profileAction;
   private ProfileActionResult profileActionResult;
+  private ProfileNotificationProvider profileNotificationProvider;
 
   @Before
   public void setup() {
@@ -56,12 +57,14 @@ public class ProfileActionExecutorImplTest {
     profileStatus = mock( ProfileStatus.class );
     profileAction = mock( ProfileAction.class );
     profileActionResult = mock( ProfileActionResult.class );
+    profileNotificationProvider = mock( ProfileNotificationProvider.class );
     when( profileAction.execute() ).thenReturn( profileActionResult );
   }
 
   @Test
   public void testExecuteNoThen() {
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
     profileActionExecutor.submit( profileAction, profileStatus );
     verify( profileActionResult ).apply( profileStatus );
@@ -74,6 +77,7 @@ public class ProfileActionExecutorImplTest {
     ProfileActionResult thenResult = mock( ProfileActionResult.class );
     when( then.execute() ).thenReturn( thenResult );
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
     profileActionExecutor.submit( profileAction, profileStatus );
     verify( profileActionResult ).apply( profileStatus );

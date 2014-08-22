@@ -51,14 +51,17 @@ public class ProfilingServiceImplTest {
   private ProfileFactory profileFactory;
   private ProfilingServiceImpl profilingService;
   private Profile profile;
+  private ProfileNotificationProvider profileNotificationProvider;
 
   @Before
   public void setup() {
     cachedProfileMap = ProfilingServiceImpl.getProfileMap();
     ProfilingServiceImpl.setProfileMap( new HashMap<String, Profile>() );
     profileFactory = mock( ProfileFactory.class );
+    profileNotificationProvider = mock( ProfileNotificationProvider.class );
     profilingService = new ProfilingServiceImpl();
     profilingService.setFactories( Arrays.asList( profileFactory ) );
+    profilingService.setProfileNotificationProvider( profileNotificationProvider );
     profile = mock( Profile.class );
   }
 
