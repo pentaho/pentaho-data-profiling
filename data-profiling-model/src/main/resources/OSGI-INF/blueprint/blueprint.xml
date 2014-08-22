@@ -3,14 +3,22 @@
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   <bean id="profilingServiceImpl" class="com.pentaho.profiling.model.ProfilingServiceImpl">
     <property name="factories" ref="factoryRef"/>
+    <property name="profileNotificationProvider" ref="profilingNotificationProvider"/>
   </bean>
 
   <bean id="profilingActionExecutorImpl" class="com.pentaho.profiling.model.ProfileActionExecutorImpl"
+        scope="singleton">
+    <property name="profileNotificationProvider" ref="profilingNotificationProvider"/>
+  </bean>
+
+  <bean id="profilingNotificationProvider" class="com.pentaho.profiling.model.ProfileNotificationProvider"
         scope="singleton"/>
 
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
            interface="com.pentaho.profiling.api.ProfilingService"/>
   <service id="profilingActionExecutorImplService" ref="profilingActionExecutorImpl"
            interface="com.pentaho.profiling.api.action.ProfileActionExecutor"/>
+  <service id="profilingNotificationProviderService" ref="profilingNotificationProvider"
+           interface="com.pentaho.profiling.notification.api.NotificationProvider"/>
   <reference-list id="factoryRef" interface="com.pentaho.profiling.api.ProfileFactory" availability="optional"/>
 </blueprint>

@@ -42,6 +42,7 @@ import java.util.Map;
 public class ProfilingServiceImpl implements ProfilingService {
   private static Map<String, Profile> profileMap = new HashMap<String, Profile>();
   private List<ProfileFactory> factories;
+  private ProfileNotificationProvider profileNotificationProvider;
 
   /**
    * FOR UNIT TESTS ONLY
@@ -61,6 +62,10 @@ public class ProfilingServiceImpl implements ProfilingService {
     ProfilingServiceImpl.profileMap = profileMap;
   }
 
+  public void setProfileNotificationProvider( ProfileNotificationProvider profileNotificationProvider ) {
+    this.profileNotificationProvider = profileNotificationProvider;
+  }
+
   public List<ProfileFactory> getFactories() {
     return factories;
   }
@@ -78,6 +83,7 @@ public class ProfilingServiceImpl implements ProfilingService {
         synchronized( profileMap ) {
           profileMap.put( profile.getId(), profile );
         }
+        profileNotificationProvider.notify( profile.getId() );
         return profile.getProfileUpdate();
       }
     }
@@ -96,6 +102,7 @@ public class ProfilingServiceImpl implements ProfilingService {
     synchronized( profileMap ) {
       profileMap.get( profileId ).setRequestedMeasures( measures );
     }
+    profileNotificationProvider.notify( profileId );
   }
 
   @Override
