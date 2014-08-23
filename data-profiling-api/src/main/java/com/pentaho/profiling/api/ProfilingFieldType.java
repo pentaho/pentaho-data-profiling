@@ -22,51 +22,70 @@
 
 package com.pentaho.profiling.api;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-
 /**
- * Created by bryan on 7/31/14.
+ * Encapsulates type information for a profiling field
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<? extends ProfilingField> fields;
-  Long totalEntities;
+public class ProfilingFieldType {
 
-  public String getId() {
-    return id;
+  /** The type */
+  protected String typeName = "unknown";
+
+  /** The count for this type */
+  protected long count;
+
+  /**
+   * Constructor
+   */
+  public ProfilingFieldType() {
   }
 
-  public void setId(String id) {
-    this.id = id;
+  /**
+   * Constructor
+   * 
+   * @param typeName
+   *          the name of the type to create
+   */
+  public ProfilingFieldType( String typeName ) {
+    this.typeName = typeName;
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
+  /**
+   * Set the name of the type
+   * 
+   * @param typeName
+   *          the name of the type
+   */
+  public void setTypeName( String typeName ) {
+    this.typeName = typeName;
   }
 
-  public void setDataSourceReference(DataSourceReference dataSourceReference) {
-    this.dataSourceReference = dataSourceReference;
+  /**
+   * Get the name of the type
+   * 
+   * @return the name of the type
+   */
+  public String getTypeName() {
+    return this.typeName;
   }
 
-  public List<? extends ProfilingField> getFields() {
-    return fields;
+  /**
+   * Set the count (num occurrences) of this type
+   * 
+   * @param count
+   *          the number of occurrences
+   */
+  public void setCount( long count ) {
+    this.count = count;
   }
 
-  public void setFields(List<? extends ProfilingField> fields) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities(Long totalEntities) {
-    this.totalEntities = totalEntities;
+  /**
+   * Get the count (num occurrences) of this type
+   * 
+   * @return the number of occurrences
+   */
+  public long getCount() {
+    return this.count;
   }
 }

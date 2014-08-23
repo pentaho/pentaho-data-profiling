@@ -22,9 +22,13 @@
 
 package com.pentaho.profiling.api;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Iterator;
+
+import org.junit.Test;
 
 /**
  * Created by bryan on 8/14/14.
@@ -36,5 +40,119 @@ public class ProfilingFieldTest {
     ProfilingField profilingField = new ProfilingField();
     profilingField.setName( name );
     assertEquals( name, profilingField.getName() );
+  }
+
+  @Test
+  public void testID() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+    assertEquals( name.hashCode(), profilingField.getID() );
+  }
+
+  @Test
+  public void testAddType() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+
+    assertFalse( profilingField.iterator().hasNext() );
+    ProfilingFieldType type = new ProfilingFieldType( "numeric" );
+    type.setCount( 1 );
+    profilingField.addOrUpdateType( type );
+    assertTrue( profilingField.iterator().hasNext() );
+    Iterator<ProfilingFieldType> i = profilingField.iterator();
+
+    ProfilingFieldType retrieved = i.next();
+    assertTrue( retrieved != null );
+    assertEquals( type.getTypeName(), retrieved.getTypeName() );
+    assertEquals( type.getCount(), retrieved.getCount() );
+  }
+
+  @Test
+  public void testUpdateType() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+
+    ProfilingFieldType type = new ProfilingFieldType( "numeric" );
+    type.setCount( 1 );
+    profilingField.addOrUpdateType( type );
+    profilingField.addOrUpdateType( type );
+    assertTrue( profilingField.iterator().hasNext() );
+    Iterator<ProfilingFieldType> i = profilingField.iterator();
+
+    ProfilingFieldType retrieved = i.next();
+    assertTrue( retrieved != null );
+    assertEquals( type.getTypeName(), retrieved.getTypeName() );
+    assertEquals( type.getCount() + type.getCount(), retrieved.getCount() );
+  }
+
+  @Test
+  public void testAddUpdateTwoTypes() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+
+    ProfilingFieldType type = new ProfilingFieldType( "numeric" );
+    type.setCount( 1 );
+    profilingField.addOrUpdateType( type );
+
+    ProfilingFieldType type2 = new ProfilingFieldType( "string" );
+    type2.setCount( 10 );
+    profilingField.addOrUpdateType( type2 );
+
+    assertTrue( profilingField.iterator().hasNext() );
+    Iterator<ProfilingFieldType> i = profilingField.iterator();
+    i.next();
+    assertTrue( profilingField.iterator().hasNext() );
+
+    ProfilingFieldType retrieved = i.next();
+    assertTrue( retrieved != null );
+    assertEquals( type2.getTypeName(), retrieved.getTypeName() );
+    assertEquals( type2.getCount(), retrieved.getCount() );
+  }
+
+  @Test
+  public void testGetNamedType() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+
+    ProfilingFieldType type = new ProfilingFieldType( "numeric" );
+    type.setCount( 1 );
+    profilingField.addOrUpdateType( type );
+
+    ProfilingFieldType type2 = new ProfilingFieldType( "string" );
+    type2.setCount( 10 );
+    profilingField.addOrUpdateType( type2 );
+
+    assertTrue( profilingField.getNamedType( "numeric" ) != null );
+    assertTrue( profilingField.getNamedType( "string" ) != null );
+    assertTrue( profilingField.getNamedType( "goofy" ) == null );
+
+    assertEquals( 10L, profilingField.getNamedType( "string" ).getCount() );
+  }
+
+  @Test
+  public void testRemoveNamedType() {
+    String name = "NAME_VALUE";
+    ProfilingField profilingField = new ProfilingField();
+    profilingField.setName( name );
+
+    ProfilingFieldType type = new ProfilingFieldType( "numeric" );
+    type.setCount( 1 );
+    profilingField.addOrUpdateType( type );
+
+    ProfilingFieldType type2 = new ProfilingFieldType( "string" );
+    type2.setCount( 10 );
+    profilingField.addOrUpdateType( type2 );
+
+    assertTrue( profilingField.getNamedType( "numeric" ) != null );
+    assertTrue( profilingField.getNamedType( "string" ) != null );
+
+    profilingField.removeNamedType( "numeric" );
+    assertTrue( profilingField.getNamedType( "string" ) != null );
+    assertTrue( profilingField.getNamedType( "numeric" ) == null );
   }
 }
