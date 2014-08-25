@@ -112,7 +112,7 @@ define(["angular", "angular-resource"], function(angular, angularResource){
       var unregister = function(registrationId) {
         delete registrations[registrationId];
         buildResponseMap();
-        if (Object.keys(registrations).length == 1) {
+        if (Object.keys(registrations).length == 0) {
           shouldStop = true;
         }
       }
