@@ -20,53 +20,25 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import java.util.Map;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface to something that can compute a derived statistic given the values from a set of producers
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public interface ValueCalculator extends ValueProducer {
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId( String id ) {
-    this.id = id;
-  }
-
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
-
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
-
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
-  }
+  /**
+   * Compute the derived statistic given the map of base stats
+   * 
+   * @param producerMap
+   *          the base stat producers required
+   * @throws CalculationException
+   *           if the calculation cannot be performed
+   */
+  public void process( Map<String, ValueProducer> producerMap ) throws CalculationException;
 }

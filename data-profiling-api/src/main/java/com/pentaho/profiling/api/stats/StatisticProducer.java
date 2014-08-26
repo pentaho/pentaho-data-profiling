@@ -20,53 +20,19 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+package com.pentaho.profiling.api.stats;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface to something that can produce a Statistic
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public interface StatisticProducer {
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId( String id ) {
-    this.id = id;
-  }
-
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
-
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
-
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
-  }
+  /**
+   * Get the statistic
+   * 
+   * @return the statistic
+   */
+  Statistic getStatistic();
 }

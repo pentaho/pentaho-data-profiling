@@ -20,53 +20,48 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+package com.pentaho.profiling.api.stats;
 
 /**
- * Created by bryan on 7/31/14.
+ * Exception for calculation problems
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public class CalculationException extends Exception {
 
-  public String getId() {
-    return id;
+  /**
+   * For serialization
+   */
+  private static final long serialVersionUID = -6722982094457521689L;
+
+  /**
+   * Constructor
+   */
+  public CalculationException() {
+    super();
   }
 
-  public void setId( String id ) {
-    this.id = id;
+  /**
+   * Constructor
+   * 
+   * @param message
+   *          the message
+   */
+  public CalculationException( String message ) {
+    super( message );
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
-
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
-
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+  /**
+   * Constructor
+   * 
+   * @param message
+   *          the message
+   * @param cause
+   *          the cause
+   */
+  public CalculationException( String message, Throwable cause ) {
+    this( message );
+    initCause( cause );
+    fillInStackTrace();
   }
 }

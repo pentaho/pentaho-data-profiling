@@ -20,53 +20,38 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.calculators;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.stats.Statistic;
 
 /**
- * Created by bryan on 7/31/14.
+ * Calculator for standard deviation
+ * 
+ * @author Mark Hall bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public class StandardDeviationCalculator extends VarianceCalculator {
 
-  public String getId() {
-    return id;
+  protected double stdDev = Double.NaN;
+
+  public static final String ID = Statistic.Metric.STDDEV.toString();
+
+  public StandardDeviationCalculator() {
+    setName( ID );
   }
 
-  public void setId( String id ) {
-    this.id = id;
+  @Override
+  public Object getValue() {
+    stdDev = variance;
+    if ( !Double.isNaN( variance ) ) {
+      stdDev = Math.sqrt( variance );
+    }
+
+    return stdDev;
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
-
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
-
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+  @Override
+  public Statistic getStatistic() {
+    return new Statistic( getName(), stdDev );
   }
 }

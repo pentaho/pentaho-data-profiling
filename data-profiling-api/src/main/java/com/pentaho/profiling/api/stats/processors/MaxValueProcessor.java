@@ -20,53 +20,54 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.processors;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.stats.AbstractValueProducer;
+import com.pentaho.profiling.api.stats.Aggregatable;
+import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.stats.StatisticProducer;
+import com.pentaho.profiling.api.stats.ValueProcessor;
 
 /**
- * Created by bryan on 7/31/14.
+ * Maintains the maximum numeric value seen for a field
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public class MaxValueProcessor extends AbstractValueProducer implements ValueProcessor,
+    Aggregatable<MaxValueProcessor>, StatisticProducer {
 
-  public String getId() {
-    return id;
+  public static final String ID = Statistic.Metric.MAX.toString();
+
+  /** The max value seen */
+  protected double max = Double.MIN_VALUE;
+
+  public MaxValueProcessor() {
+    super( ID );
   }
 
-  public void setId( String id ) {
-    this.id = id;
+  @Override
+  public Object getValue() {
+    return max;
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
+  @Override
+  public void process( Object input ) throws Exception {
+    if ( input != null ) {
+      max = Math.max( ( (Number) input ).doubleValue(), this.max );
+    }
   }
 
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
+  @Override
+  public MaxValueProcessor aggregate( MaxValueProcessor toAggregate ) throws Exception {
+
+    process( toAggregate.getValue() );
+
+    return this;
   }
 
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+  @Override
+  public Statistic getStatistic() {
+    return new Statistic( getName(), max );
   }
 }

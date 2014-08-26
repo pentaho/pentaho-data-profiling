@@ -20,53 +20,22 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.junit.Test;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+public class StatisticTest {
 
-/**
- * Created by bryan on 7/31/14.
- */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+  @Test
+  public void testTypical() {
+    Statistic stat = new Statistic();
+    assertTrue( stat.getValue() == null );
+    assertEquals( "unset", stat.getName() );
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId( String id ) {
-    this.id = id;
-  }
-
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
-
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
-
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+    stat = new Statistic( Statistic.Metric.MAX.toString(), new Double( 100 ) );
+    assertEquals( new Double( 100 ), stat.getValue() );
   }
 }

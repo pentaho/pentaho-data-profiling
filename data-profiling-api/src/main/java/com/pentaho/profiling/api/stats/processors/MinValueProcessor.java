@@ -20,53 +20,53 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.processors;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.stats.AbstractValueProducer;
+import com.pentaho.profiling.api.stats.Aggregatable;
+import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.stats.StatisticProducer;
+import com.pentaho.profiling.api.stats.ValueProcessor;
 
 /**
- * Created by bryan on 7/31/14.
+ * Maintains the minimum numeric value seen for a field
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * 
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public class MinValueProcessor extends AbstractValueProducer implements ValueProcessor,
+    Aggregatable<MinValueProcessor>, StatisticProducer {
 
-  public String getId() {
-    return id;
+  public static final String ID = Statistic.Metric.MIN.toString();
+
+  /** The min value seen */
+  protected double min = Double.MAX_VALUE;
+
+  public MinValueProcessor() {
+    super( ID );
   }
 
-  public void setId( String id ) {
-    this.id = id;
+  @Override
+  public Object getValue() {
+    return this.min;
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
+  @Override
+  public void process( Object input ) throws Exception {
+    if ( input != null ) {
+      min = Math.min( ( (Number) input ).doubleValue(), min );
+    }
   }
 
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
+  @Override
+  public MinValueProcessor aggregate( MinValueProcessor toAggregate ) throws Exception {
+    process( toAggregate.getValue() );
+
+    return this;
   }
 
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+  @Override
+  public Statistic getStatistic() {
+    return new Statistic( getName(), min );
   }
 }

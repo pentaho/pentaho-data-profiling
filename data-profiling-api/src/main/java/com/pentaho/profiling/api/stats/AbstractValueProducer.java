@@ -20,53 +20,53 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Created by bryan on 7/31/14.
+ * Base class for ValueProducers
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-@XmlRootElement
-public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
+public abstract class AbstractValueProducer implements ValueProducer {
 
-  public String getId() {
-    return id;
+  /** The name of this producer */
+  protected String name;
+
+  /**
+   * Constructor
+   * 
+   * @param name
+   *          the name of the value produced
+   */
+  public AbstractValueProducer( String name ) {
+    setName( name );
   }
 
-  public void setId( String id ) {
-    this.id = id;
+  @Override
+  public String getName() {
+    return this.name;
   }
 
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
+  /**
+   * Set the name of the value produced
+   * 
+   * @param name
+   */
+  public void setName( String name ) {
+    this.name = name;
   }
 
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
+  @Override
+  public void setParameters( Map<String, Object> parameters ) {
+    // noop impl
   }
 
-  public List<ProfilingField> getFields() {
-    return fields;
-  }
-
-  public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
-  }
-
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
+  @Override
+  public Map<String, Object> getParameters() {
+    return new LinkedHashMap<String, Object>();
   }
 }
