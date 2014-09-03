@@ -61,12 +61,13 @@ public class NotificationServiceTest {
     when( notificationRequestEntry.getValue() ).thenReturn( 10L );
     doAnswer( new Answer<Void>() {
       @Override public Void answer( InvocationOnMock invocation ) throws Throwable {
-        ((NotificationHandler)invocation.getArguments()[1]).notify( new NotificationEvent( notificationType, id, 11L ) );
+        ( (NotificationHandler) invocation.getArguments()[ 1 ] )
+          .notify( new NotificationEvent( notificationType, id, 11L ) );
         return null;
       }
     } ).when( notificationProvider ).addInterestedId( eq( id ), any( NotificationHandler.class ) );
 
-    service.setNotificationProviders( Arrays.asList( notificationProvider ) );
+    service.addNotificationProvider( notificationProvider );
     service.getNotificationsHelper( notificationRequestWrapper, result );
     assertEquals( 1, result.size() );
     assertEquals( 1, result.get( 0 ).getChangedItems().size() );
@@ -93,12 +94,13 @@ public class NotificationServiceTest {
     when( notificationRequestEntry.getValue() ).thenReturn( 10L );
     doAnswer( new Answer<Void>() {
       @Override public Void answer( InvocationOnMock invocation ) throws Throwable {
-        ((NotificationHandler)invocation.getArguments()[1]).notify( new NotificationEvent( notificationType, id, 9L ) );
+        ( (NotificationHandler) invocation.getArguments()[ 1 ] )
+          .notify( new NotificationEvent( notificationType, id, 9L ) );
         return null;
       }
     } ).when( notificationProvider ).addInterestedId( eq( id ), any( NotificationHandler.class ) );
 
-    service.setNotificationProviders( Arrays.asList( notificationProvider ) );
+    service.addNotificationProvider( notificationProvider );
     service.getNotificationsHelper( notificationRequestWrapper, result );
     assertEquals( 0, result.size() );
   }
@@ -119,7 +121,7 @@ public class NotificationServiceTest {
     when( notificationProvider.notificationType() ).thenReturn( "DUNNO" );
     when( notificationRequestEntry.getKey() ).thenReturn( id );
     when( notificationRequestEntry.getValue() ).thenReturn( 10L );
-    service.setNotificationProviders( Arrays.asList( notificationProvider ) );
+    service.addNotificationProvider( notificationProvider );
     service.getNotificationsHelper( notificationRequestWrapper, result );
   }
 
@@ -134,8 +136,8 @@ public class NotificationServiceTest {
 
     when( notificationProvider.notificationType() ).thenReturn( notificationType );
 
-    service.setNotificationProviders( Arrays.asList( notificationProvider ) );
-    service.setNotificationProviders( new ArrayList<NotificationProvider>(  ) );
+    service.addNotificationProvider( notificationProvider );
+    service.removeNotificationProvider( notificationProvider );
     verify( notificationProvider, times( 1 ) ).unregisterHandler( any( NotificationHandler.class ) );
   }
 }

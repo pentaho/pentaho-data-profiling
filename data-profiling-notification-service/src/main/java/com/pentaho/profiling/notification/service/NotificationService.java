@@ -48,24 +48,18 @@ public class NotificationService {
   private volatile Map<String, NotificationHandlerImpl> notificationHandlerMap =
     new HashMap<String, NotificationHandlerImpl>();
 
-  private volatile Map<String, NotificationProvider> notificationProviderMap =
-    new HashMap<String, NotificationProvider>();
+  public void addNotificationProvider( NotificationProvider notificationProvider ) {
+    NotificationHandlerImpl notificationHandler = notificationHandlerMap.get( notificationProvider.notificationType() );
+    if ( notificationHandler != null ) {
+      throw new IllegalStateException( "Can't handle multiple notification providers of same type" );
+    }
+    notificationHandler = new NotificationHandlerImpl( notificationProvider );
+    notificationHandlerMap.put( notificationProvider.notificationType(), notificationHandler );
+    notificationProvider.registerHandler( notificationHandler );
+  }
 
-  public void setNotificationProviders( List<NotificationProvider> notificationProviders ) {
-    Map<String, NotificationProvider> notificationProviderMap = new HashMap<String, NotificationProvider>();
-    Map<String, NotificationHandlerImpl> notificationHandlerMap = new HashMap<String, NotificationHandlerImpl>();
-    for ( Map.Entry<String, NotificationHandlerImpl> notificationHandlerEntry : this.notificationHandlerMap.entrySet() ) {
-      this.notificationProviderMap.get( notificationHandlerEntry.getKey() )
-        .unregisterHandler( notificationHandlerEntry.getValue() );
-    }
-    for ( NotificationProvider notificationProvider : notificationProviders ) {
-      notificationProviderMap.put( notificationProvider.notificationType(), notificationProvider );
-      NotificationHandlerImpl notificationHandler = new NotificationHandlerImpl( notificationProvider );
-      notificationHandlerMap.put( notificationProvider.notificationType(), notificationHandler );
-      notificationProvider.registerHandler( notificationHandler );
-    }
-    this.notificationHandlerMap = notificationHandlerMap;
-    this.notificationProviderMap = notificationProviderMap;
+  public void removeNotificationProvider( NotificationProvider notificationProvider ) {
+    notificationProvider.unregisterHandler( notificationHandlerMap.remove( notificationProvider.notificationType() ) );
   }
 
   protected void getNotificationsHelper( NotificationRequestWrapper notificationRequestWrapper,

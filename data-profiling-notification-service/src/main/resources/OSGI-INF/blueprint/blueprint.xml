@@ -24,9 +24,7 @@
         </jaxrs:serviceBeans>
     </jaxrs:server>
 
-    <bean id="notificationServiceImpl" class="com.pentaho.profiling.notification.service.NotificationService">
-        <property name="notificationProviders" ref="notificationProviderList"/>
-    </bean>
+    <bean id="notificationServiceImpl" class="com.pentaho.profiling.notification.service.NotificationService" />
 
     <bean id="resourceMapping"
           class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
@@ -35,5 +33,7 @@
     </bean>
 
     <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping" />
-    <reference-list id="notificationProviderList" interface="com.pentaho.profiling.notification.api.NotificationProvider" availability="optional"/>
+    <reference-list id="notificationProviderList" interface="com.pentaho.profiling.notification.api.NotificationProvider" availability="optional">
+      <reference-listener ref="notificationServiceImpl" bind-method="addNotificationProvider" unbind-method="removeNotificationProvider"/>
+    </reference-list>
 </blueprint>
