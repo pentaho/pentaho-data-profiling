@@ -1,6 +1,6 @@
 'use-strict';
 
-define(["angular", "angular-resource"], function(angular, angularResource){
+define(["common-ui/angular", "common-ui/angular-resource"], function(angular, angularResource){
   var pollerModule = angular.module('NotificationServiceModule', ['ngResource']);
   return pollerModule.factory('NotificationService', ['$http',
     function($http) {

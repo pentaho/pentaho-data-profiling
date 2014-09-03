@@ -1,6 +1,6 @@
 'use-strict';
 
-define(["angular", "com.pentaho.profiling.services.webview.services", "com.pentaho.profiling.notification.service"], function(angular, services, notification){
+define(["common-ui/angular", "com.pentaho.profiling.services.webview.services", "com.pentaho.profiling.notification.service"], function(angular, services, notification){
   var appControllers = angular.module('appControllers', ['NotificationServiceModule']);
   appControllers.controller('AppController', ['$scope', '$routeParams', 'Profile', 'DataSourceService', 'NotificationService',
     function($scope, $routeParams, Profile, DataSourceService, NotificationService) {
