@@ -1,14 +1,14 @@
 require.config({
  "paths": {
-   "angular": "/webjars/angular",
-   "angular-route": "/webjars/angular-route",
-   "angular-resource": "/webjars/angular-resource",
+   "common-ui/angular": "/webjars/angular",
+   "common-ui/angular-route": "/webjars/angular-route",
+   "common-ui/angular-resource": "/webjars/angular-resource",
    "angular-mocks": "/webjars/angular-mocks"
  },
  "shim" : {
-   "angular" : { "exports": "angular" },
-   "angular-route" : { "deps": ["angular"] },
-   "angular-resource" : { "deps": ["angular"] },
-   "angular-mocks" : { "deps": ["angular"] }
+   "common-ui/angular" : { "exports": "angular" },
+   "common-ui/angular-route" : { "deps": ["common-ui/angular"] },
+   "common-ui/angular-resource" : { "deps": ["common-ui/angular"] },
+   "angular-mocks" : { "deps": ["common-ui/angular"] }
  }
 });

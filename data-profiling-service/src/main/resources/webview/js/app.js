@@ -1,6 +1,6 @@
 'use-strict';
 
-define(["angular", "angular-route", "com.pentaho.profiling.services.webview.controllers", "com.pentaho.profiling.services.webview.services"],
+define(["common-ui/angular", "common-ui/angular-route", "com.pentaho.profiling.services.webview.controllers", "com.pentaho.profiling.services.webview.services"],
        function(angular, angularRoute, controllers, services){
   var provide = null;
   var controllerProvider = null;
