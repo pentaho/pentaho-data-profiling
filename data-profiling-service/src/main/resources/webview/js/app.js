@@ -1,38 +1,89 @@
 'use-strict';
 
-define(["common-ui/angular", "common-ui/angular-route", "com.pentaho.profiling.services.webview.controllers", "com.pentaho.profiling.services.webview.services"],
-       function(angular, angularRoute, controllers, services){
-  var provide = null;
-  var controllerProvider = null;
-  var profileApp = angular.module('profileApp', [
-    'ngRoute',
-    'appServices',
-    'appControllers'
-  ]);
-  profileApp.config(['$routeProvider', '$provide', '$controllerProvider',
-    function($routeProvider, $provide, $controllerProvider) {
+define([
+    "require",
+    "common-ui/angular",
+    "common-ui/properties-parser",
+    "common-ui/angular-route",
+    "common-ui/angular-translate",
+    "common-ui/angular-translate-loader-partial",
+    "com.pentaho.profiling.services.webview/controllers",
+    "com.pentaho.profiling.services.webview/services"
+  ], function(require, angular, propertiesParser) {
+
+  var provide = null,
+      controllerProvider = null,
+      profileApp = angular.module('profileApp', [
+        'ngRoute',
+        'appServices',
+        'appControllers',
+        'pascalprecht.translate'
+      ]);
+
+  profileApp.config([
+    '$routeProvider',
+    '$provide',
+    '$controllerProvider',
+    '$translateProvider',
+    '$translatePartialLoaderProvider',
+    function($routeProvider, $provide, $controllerProvider, $translateProvider, $translatePartialLoaderProvider) {
       provide = $provide;
       controllerProvider = $controllerProvider;
-      $routeProvider.when('/:profileId', {
-        templateUrl: 'partials/default-view.html',
-        controller: 'AppController'
-      }).
-      otherwise({
-        redirectTo: '/'
-      });
-    }]);
-    return {
-      getProvide: function() {
-        return provide;
-      },
-      getControllerProvider: function() {
-        return controllerProvider;
-      },
-      app: profileApp,
-      init: function() {
-        angular.element(document).ready(function(){
-          angular.bootstrap(document.getElementById('profileView'), ['profileApp']);
+
+      $routeProvider
+        .when('/:profileId', {
+          templateUrl: 'partials/default-view.html',
+          controller:  'AppController'
+        })
+        .otherwise({
+          redirectTo: '/'
         });
-      }
-    };
+
+
+      // The local requirejs require function allows de-referencing urls
+      // relative to this AMD module's parent location.
+      // Includes ending "/".
+      var pathToNls = require.toUrl("./nls/");
+      $translatePartialLoaderProvider.addPart(pathToNls);
+
+      $translateProvider
+        .useFileFormatAdapter('$translatePropertiesFormatAdapter')
+        .useLoader('$translatePartialLoader', {
+          urlTemplate: '{part}messages-{lang}.properties'
+        })
+        // TODO: SESSION_LOCALE - webcontext.js had this global variable
+        .preferredLanguage('en')
+        .fallbackLanguage('en');
+
+      // TODO: must still improve composite locales support (ex: en_US)
+      // to be able to connect directly to the browser's locale.
+      // The following $translate methods support this,
+      //  and would be used instead of preferredLanguage(),
+      //  but require us to list every possible mapping...?!
+      //.registerAvailableLanguageKeys(['en'], {
+      //  'en_US': 'en',
+      //  'en_UK': 'en'
+      //})
+      //.determinePreferredLanguage()
+    }]);
+
+  profileApp.value('$translatePropertiesFormatAdapter', propertiesParser);
+
+  return {
+    getProvide: function() {
+      return provide;
+    },
+
+    getControllerProvider: function() {
+      return controllerProvider;
+    },
+
+    app: profileApp,
+
+    init: function() {
+      angular.element(document).ready(function() {
+        angular.bootstrap(document.getElementById('profileView'), ['profileApp']);
+      });
+    }
+  };
 });

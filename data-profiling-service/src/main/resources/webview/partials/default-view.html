@@ -1,8 +1,20 @@
 <div>
-    <div ng-include="dataSourceUrl"></div>
-    <div>Fields:
-    <div ng-repeat="field in profileStatus.fields">
-        <div>{{field.name}}</div>
-    </div>
+    <div class="profile-dataSource-info-container" ng-include="dataSourceUrl"></div>
+
+    <div class="profile-fields-container">
+        <table class="profile-fields-list">
+            <thead>
+                <tr>
+                    <th><a href="" ng-click="onOrderByField('name')" translate="profiling.fields.header.name"></a></th>
+                    <th><a href="" ng-click="onOrderByField('countDistinct')" translate="profiling.fields.header.distinctCount"></a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="field in profileStatus.fields | orderBy:orderByField:isOrderReversed">
+                    <td>{{field.name}}</td>
+                    <td>{{field.countDistinct}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
