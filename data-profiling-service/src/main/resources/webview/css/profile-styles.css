@@ -1,4 +1,90 @@
 
-.profile-dataSource-info-container, .profile-fields-container {
-    border: 1px solid gray;
+#profileView {
+    padding: 40px;
 }
+
+.profile-dataSource-info-container {
+    border: 1px solid gray;
+    margin: 0 auto 20px auto;
+}
+
+/* Table style - from mantleCrystal.css  */
+.pentaho-table .cellTableHeader {
+    padding: 8px 10px 10px 10px;
+    text-align: left;
+    color: white;
+    overflow: hidden;
+    font-size: 16px;
+    border-spacing: 2px;
+    font-weight: normal;
+}
+
+.pentaho-table .cellTableCell {
+    padding: 10px 10px;
+    overflow: hidden;
+    text-align: left;
+}
+
+/* TODO: Must find a way to not need this
+.pentaho-table .cellTableCell:hover {
+    border: 2px solid #ffffff;
+}
+*/
+
+.pentaho-table .cellTableEvenRow:hover, .pentaho-table .cellTableOddRow:hover {
+    background: #dce7ed;
+    -moz-transition: all 600ms;
+    -webkit-transition: all 600ms;
+}
+
+.pentaho-table .cellTableHoveredRowCell {
+    border: 2px solid #dce7ed;
+    -moz-transition: all 600ms;
+    -webkit-transition: all 600ms;
+}
+
+.pentaho-table .cellTableEvenRow {
+    background: #ffffff;
+}
+
+.pentaho-table .cellTableOddRow {
+    background: #f0f0f0;
+}
+
+.pentaho-table .cellTableOddRowCell {
+    border: 2px solid #f0f0f0;
+}
+
+.pentaho-table .cellTableSortableHeader {
+    cursor: pointer;
+    cursor: hand;
+}
+
+.pentaho-table .cellTableSortableHeader:hover {
+    color: #dfdfdf;
+}
+
+.pentaho-table .cellTableHeaderContent {
+    position:relative;
+    padding-right:18px;
+    zoom:1;
+}
+
+.pentaho-table .cellTableHeaderContent .cellTableHeaderOrderIndicator {
+    position: absolute;
+    top: 50.0%;
+    line-height: 0.0px;
+    margin-top: -6px;
+    right: 0.0px;
+    width:12px;
+    height:12px;
+}
+
+.pentaho-table .cellTableSortedHeaderAscending .cellTableHeaderOrderIndicator {
+    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGOng////M/9jglX4NChh0aBEyJZyJMUdxDhLEIjfQbEgsX5JA9k0MCEJALp4URYdEOy6AAAAAElFTkSuQmCC) no-repeat 0px 0px;
+}
+
+.pentaho-table .cellTableSortedHeaderDescending .cellTableHeaderOrderIndicator {
+    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGBrg////aUBcTqxiQSB+B8WCxGgo/48AHYQUK/3HBEr4NMzEomEVwzADAByiURYlCo8mAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+}
+
