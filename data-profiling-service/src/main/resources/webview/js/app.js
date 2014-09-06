@@ -43,13 +43,11 @@ define([
       // The local requirejs require function allows de-referencing urls
       // relative to this AMD module's parent location.
       // Includes ending "/".
-      var pathToNls = require.toUrl("./nls/");
-      $translatePartialLoaderProvider.addPart(pathToNls);
+      $translatePartialLoaderProvider.addPart("data-profiling/com.pentaho.profiling.services.messages");
 
       $translateProvider
-        .useFileFormatAdapter('$translatePropertiesFormatAdapter')
         .useLoader('$translatePartialLoader', {
-          urlTemplate: '{part}messages-{lang}.properties'
+          urlTemplate: '/cxf/i18n/{part}/{lang}'
         })
         // TODO: SESSION_LOCALE - webcontext.js had this global variable
         .preferredLanguage('en')
@@ -67,7 +65,7 @@ define([
       //.determinePreferredLanguage()
     }]);
 
-  profileApp.value('$translatePropertiesFormatAdapter', propertiesParser);
+  //profileApp.value('$translatePropertiesFormatAdapter', propertiesParser);
 
   return {
     getProvide: function() {
