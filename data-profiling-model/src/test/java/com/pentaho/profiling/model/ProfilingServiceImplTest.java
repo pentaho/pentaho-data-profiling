@@ -58,7 +58,7 @@ public class ProfilingServiceImplTest {
     cachedProfileMap = ProfilingServiceImpl.getProfileMap();
     ProfilingServiceImpl.setProfileMap( new HashMap<String, Profile>() );
     profileFactory = mock( ProfileFactory.class );
-    profileNotificationProvider = mock( ProfileNotificationProvider.class );
+    profileNotificationProvider = mock( ProfileNotificationProviderImpl.class );
     profilingService = new ProfilingServiceImpl();
     profilingService.setFactories( Arrays.asList( profileFactory ) );
     profilingService.setProfileNotificationProvider( profileNotificationProvider );

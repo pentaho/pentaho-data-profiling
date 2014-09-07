@@ -6,7 +6,10 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
   appServices.factory('Profile', ['$resource',
     function($resource) {
       return $resource('/cxf/profile/:profileId', {}, {
-        query: {method: 'GET', params: {profileId:'profileId'}}
+        query:         {method: 'GET', params: {profileId:'profileId'}},
+        stop:          {method: 'PUT', url: '/cxf/profile/stop' },
+        start:         {method: 'PUT', url: '/cxf/profile/start' },
+        getOperations: {method: 'GET', params: {profileId:'profileId'}, url: '/cxf/profile/operations/:profileId' }
       });
   }]);
 

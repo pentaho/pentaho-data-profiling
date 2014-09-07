@@ -1,47 +1,37 @@
 <div>
-    <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
-
-    <div class="profile-message"
-         ng-class="isProcessing ? 'profile-state-processing' : ''"
-         ng-show="isProcessing || message">
-        <div class="profile-message-img-cell" ng-show="isProcessing">
-            <div class="profile-message-img"></div>
-        </div>
-        <div class="profile-message-text" ng-show="message" ng-bind-html="message"></div>
-    </div>
+    <div class="profile-dataSource-info-container" ng-include="dataSourceUrl"></div>
 
     <div class="profile-fields-container">
-        <div class="pentaho-fieldgroup-major profiling-fields-title" translate="profiling.fields.title"></div>
-        <table class="pentaho-table profile-fields-list" cellspacing="0"
-               ng-show="!isLoadingFields && profileStatus.fields.length">
+        <div class="pentaho-fieldgroup-major" ng-if="currentOperation">{{currentOperation}}
+          <button ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
+        </div>
+        <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
+        <table class="pentaho-table profile-fields-list" cellspacing="0">
             <thead>
                 <tr>
                     <th class="cellTableHeader cellTableSortableHeader"
-                        ng-class="orderByField != 'name' ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                        ng-click="onOrderByField('name')">
+                        ng-class="orderByField != fieldHeader.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+                        ng-click="onOrderByField(fieldHeader)"
+                        ng-repeat="fieldHeader in fieldHeaders">
                         <div class="cellTableHeaderContent">
-                            <div translate="profiling.fields.header.name"></div>
-                            <div class="cellTableHeaderOrderIndicator"></div>
-                        </div>
-                    </th>
-                    <th class="cellTableHeader cellTableSortableHeader"
-                        ng-class="orderByField != 'countDistinct' ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                        ng-click="onOrderByField('countDistinct')">
-                        <div class="cellTableHeaderContent">
-                            <div class="cellTableHeaderText" translate="profiling.fields.header.countDistinct"></div>
+                            <div translate="{{fieldHeader.nameKey}}"></div>
                             <div class="cellTableHeaderOrderIndicator"></div>
                         </div>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="cellTableRow"
-                    ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
-                    ng-repeat="field in profileStatus.fields | orderBy:orderByField:isOrderReversed">
-                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell">{{field.name}}</td>
-                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell">{{field.countDistinct}}</td>
+                <tr ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
+                    ng-repeat="fieldRow in fieldRows | orderBy:orderByPredicate:isOrderReversed">
+                    <td ng-class-odd="'cellTableOddRowCell'"
+                        ng-class-even="'cellTableEvenRowCell'"
+                        class="cellTableCell cellTableFirstColumn"
+                        ng-repeat="fieldHeader in fieldHeaders">{{fieldRow[fieldHeader.stringifiedPath]}}</td>
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div ng-if="operations">
+      <button ng-click="startOperation(operation.id)" translate="{{operation.nameKey}}" ng-repeat="operation in operations"></button>
     </div>
 </div>

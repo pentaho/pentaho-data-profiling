@@ -41,9 +41,9 @@ import static org.mockito.Mockito.*;
 public class ProfileNotificationProviderTest {
   @Test
   public void testGetNotificationType() {
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     Assert
-      .assertEquals( ProfileNotificationProvider.NOTIFICATION_TYPE, profileNotificationProvider.notificationType() );
+      .assertEquals( ProfileNotificationProviderImpl.NOTIFICATION_TYPE, profileNotificationProvider.notificationType() );
   }
 
   @Test
@@ -51,7 +51,7 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );
     profileNotificationProvider.registerHandler( handler );
@@ -65,7 +65,7 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );
     profileNotificationProvider.registerHandler( handler );
@@ -82,7 +82,7 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     profileNotificationProvider.registerHandler( handler );
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );
@@ -96,7 +96,7 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     profileNotificationProvider.registerHandler( handler );
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST2" );
@@ -109,7 +109,7 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProvider();
+    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
     profileNotificationProvider.registerHandler( handler );
     profileNotificationProvider.unregisterHandler( handler );
     long timestamp = System.currentTimeMillis();

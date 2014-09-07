@@ -26,6 +26,8 @@ package com.pentaho.profiling.api.action;
  * Created by bryan on 8/1/14.
  */
 public interface ProfileAction {
+  public void stop();
+
   public ProfileActionResult execute();
 
   public ProfileAction then();

@@ -51,8 +51,10 @@ public class ProfileActionExecutorImpl implements ProfileActionExecutor {
       @Override
       public void run() {
         ProfileActionResult result = action.execute();
-        result.apply( status );
-        profileNotificationProvider.notify( status.getId() );
+        if ( result != null ) {
+          result.apply( status );
+          profileNotificationProvider.notify( status.getId() );
+        }
         ProfileAction then = action.then();
         if ( then != null ) {
           submit( then, status );

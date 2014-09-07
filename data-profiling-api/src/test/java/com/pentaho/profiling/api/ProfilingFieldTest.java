@@ -35,7 +35,7 @@ import org.junit.Test;
  * Created by bryan on 8/14/14.
  */
 public class ProfilingFieldTest {
-  @Test
+  /*@Test
   public void testSetName() {
     String name = "NAME_VALUE";
     ProfilingField profilingField = new ProfilingField();
@@ -282,5 +282,5 @@ public class ProfilingFieldTest {
     profilingField.removeNamedType( ProfilingFieldType.Type.NUMBER.toString() );
     assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.STRING.toString() ) != null );
     assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.NUMBER.toString() ) == null );
-  }
+  }*/
 }

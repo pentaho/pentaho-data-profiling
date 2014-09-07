@@ -25,6 +25,7 @@ package com.pentaho.profiling.api;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.measure.MeasureMetadata;
 import com.pentaho.profiling.api.measure.RequestedMeasure;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.List;
 
@@ -41,4 +42,10 @@ public interface ProfilingService {
   public List<ProfileStatus> getActiveProfiles();
 
   public ProfileStatus getProfileUpdate( String profileId );
+
+  public void stopCurrentOperation( String profileId );
+
+  public void startOperation( String profileId, String operationId );
+
+  public List<ProfileOperation> getOperations( String profileId );
 }
