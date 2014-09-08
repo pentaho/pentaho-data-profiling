@@ -24,6 +24,7 @@ package com.pentaho.profiling.api.stats.calculators;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -104,4 +105,75 @@ public class VarianceCalculatorTest {
     double var2 = ( (Double) p.getStatistic().getValue() ).doubleValue();
     assertEquals( var2, var, 0 );
   }
+
+  @Test
+  public void testProcessMissingCountProducer() throws Exception {
+    Map<String, ValueProducer> producerMap = new HashMap<String, ValueProducer>();
+    SumValueProcessor sumP = new SumValueProcessor();
+    sumP.process( new Double( 2.2 ) );
+    sumP.process( new Double( 5.0 ) );
+    sumP.process( new Double( -1.1 ) );
+
+    SumOfSquaresValueProcessor sumSqP = new SumOfSquaresValueProcessor();
+    sumSqP.process( new Double( 2.2 ) );
+    sumSqP.process( new Double( 5.0 ) );
+    sumSqP.process( new Double( -1.1 ) );
+
+    VarianceCalculator p = new VarianceCalculator();
+    try {
+      p.process( producerMap );
+      fail( "Expected an exception for missing count producer" );
+    } catch ( Exception ex ) {
+      //
+    }
+  }
+
+  @Test
+  public void testProcessMissingSumProducer() throws Exception {
+    Map<String, ValueProducer> producerMap = new HashMap<String, ValueProducer>();
+
+    SumOfSquaresValueProcessor sumSqP = new SumOfSquaresValueProcessor();
+    sumSqP.process( new Double( 2.2 ) );
+    sumSqP.process( new Double( 5.0 ) );
+    sumSqP.process( new Double( -1.1 ) );
+
+    CountValueProcessor countP = new CountValueProcessor();
+    countP.setCount( 3L );
+
+    producerMap.put( SumOfSquaresValueProcessor.ID, sumSqP );
+    producerMap.put( CountValueProcessor.ID, countP );
+
+    VarianceCalculator p = new VarianceCalculator();
+    try {
+      p.process( producerMap );
+      fail( "Expected an exception for missing sum producer" );
+    } catch ( Exception ex ) {
+      //
+    }
+  }
+
+  @Test
+  public void testProcessMissingSumSqProducer() throws Exception {
+    Map<String, ValueProducer> producerMap = new HashMap<String, ValueProducer>();
+    SumValueProcessor sumP = new SumValueProcessor();
+    sumP.process( new Double( 2.2 ) );
+    sumP.process( new Double( 5.0 ) );
+    sumP.process( new Double( -1.1 ) );
+
+    CountValueProcessor countP = new CountValueProcessor();
+    countP.setCount( 3L );
+
+    producerMap.put( SumValueProcessor.ID, sumP );
+    producerMap.put( CountValueProcessor.ID, countP );
+
+    VarianceCalculator p = new VarianceCalculator();
+
+    try {
+      p.process( producerMap );
+      fail( "Expected an exception for missing sum of squares producer" );
+    } catch ( Exception ex ) {
+      //
+    }
+  }
+
 }

@@ -73,6 +73,21 @@ public class SumOfSquaresValueProcessor extends AbstractValueProducer implements
     }
   }
 
+  /**
+   * Process an already squared value
+   * 
+   * @param input
+   *          the squared value to process
+   * @throws Exception
+   *           if a problem occurs
+   */
+  public void processSquaredValue( Object input ) throws Exception {
+    if ( input != null ) {
+      double val = ( (Number) input ).doubleValue();
+      sumOfSquares += val;
+    }
+  }
+
   @Override
   public SumOfSquaresValueProcessor aggregate( SumOfSquaresValueProcessor toAggregate ) throws Exception {
     this.sumOfSquares += toAggregate.sumOfSquares;

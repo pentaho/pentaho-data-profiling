@@ -26,8 +26,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -35,14 +37,31 @@ import org.junit.Test;
  * Created by bryan on 8/14/14.
  */
 public class ProfilingFieldTest {
-  /*@Test
-  public void testSetName() {
+  
+  @Test
+  public void testConstructor() {
+    ProfilingField p = new ProfilingField();
+    assertTrue(p.getValues() != null);
+    
+    Map<String, Object> vals = new HashMap<String, Object>();
+    vals.put( "akey", "avalue" );
+    p = new ProfilingField(vals);
+    
+    assertTrue(p.getValues() != null);
+    assertEquals(vals.size(), p.getValues().size());
+    assertEquals("avalue", p.getValues().get( "akey" ).toString());
+  }
+  
+  @Test
+  public void testSetAKeyValuePair() {
     String name = "NAME_VALUE";
     ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-    assertEquals( name, profilingField.getName() );
+    profilingField.getValues().put( "name", name );
+    assertEquals( name, profilingField.getValues().get( "name" ) );
   }
+  
 
+  /*
   @Test
   public void testID() {
     String name = "NAME_VALUE";

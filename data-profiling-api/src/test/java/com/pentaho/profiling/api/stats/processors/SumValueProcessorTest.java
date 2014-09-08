@@ -24,10 +24,16 @@ package com.pentaho.profiling.api.stats.processors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.stats.ValueProducer;
+import com.pentaho.profiling.api.stats.calculators.MeanValueCalculator;
 
 public class SumValueProcessorTest {
 
@@ -48,6 +54,12 @@ public class SumValueProcessorTest {
     assertTrue( ( (Double) p.getValue() ).doubleValue() == 12.2 );
     p.process( new Double( 20.1 ) );
     assertTrue( ( (Double) p.getValue() ).doubleValue() == 32.3 );
+
+    p.process( null );
+    assertTrue( ( (Double) p.getValue() ).doubleValue() == 32.3 );
+
+    p = new SumValueProcessor( new Double( -2.2 ) );
+    assertTrue( ( (Double) p.getValue() ).doubleValue() == -2.2 );
   }
 
   @Test
@@ -75,4 +87,40 @@ public class SumValueProcessorTest {
 
     assertEquals( d, d2, 0.000000001 );
   }
+
+  @Test
+  public void testProcessMissingCountProducer() throws Exception {
+    Map<String, ValueProducer> producerMap = new HashMap<String, ValueProducer>();
+
+    MeanValueCalculator p = new MeanValueCalculator();
+    SumValueProcessor sumP = new SumValueProcessor();
+    sumP.process( new Double( 2.2 ) );
+    sumP.process( new Double( 5.0 ) );
+    sumP.process( new Double( -1.1 ) );
+
+    producerMap.put( SumValueProcessor.ID, sumP );
+    try {
+      p.process( producerMap );
+      fail( "Expected an exception for missing count producer" );
+    } catch ( Exception e ) {
+      //
+    }
+  }
+
+  @Test
+  public void testProcessMissingSumProducer() throws Exception {
+    Map<String, ValueProducer> producerMap = new HashMap<String, ValueProducer>();
+
+    MeanValueCalculator p = new MeanValueCalculator();
+    CountValueProcessor countP = new CountValueProcessor();
+    countP.setCount( 4L );
+    producerMap.put( CountValueProcessor.ID, countP );
+    try {
+      p.process( producerMap );
+      fail( "Expected an exception for missing sum producer" );
+    } catch ( Exception e ) {
+      //
+    }
+  }
+
 }

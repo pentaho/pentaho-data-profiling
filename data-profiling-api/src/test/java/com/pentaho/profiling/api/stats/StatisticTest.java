@@ -37,5 +37,10 @@ public class StatisticTest {
 
     stat = new Statistic( Statistic.Metric.MAX.toString(), new Double( 100 ) );
     assertEquals( new Double( 100 ), stat.getValue() );
+
+    stat.setName( Statistic.Metric.MIN.toString() );
+    assertEquals( Statistic.Metric.MIN.toString(), stat.getName() );
+    stat.setValue( new Double( 50.2 ) );
+    assertEquals( 50.2, ( (Double) stat.getValue() ).doubleValue(), 0.0 );
   }
 }

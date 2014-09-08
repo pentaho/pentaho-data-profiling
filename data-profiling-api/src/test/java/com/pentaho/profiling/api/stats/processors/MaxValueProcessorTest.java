@@ -55,6 +55,10 @@ public class MaxValueProcessorTest {
     p.process( new Double( 10.1 ) );
     d = ( (Double) p.getValue() ).doubleValue();
     assertEquals( 10.1, d, 0.0 );
+
+    p.process( null );
+    d = ( (Double) p.getValue() ).doubleValue();
+    assertEquals( 10.1, d, 0.0 );
   }
 
   @Test

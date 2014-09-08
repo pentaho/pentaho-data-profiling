@@ -49,6 +49,9 @@ public class CountValueProcessorTest {
     p.process( new Integer( 10 ) );
 
     assertEquals( 2L, ( (Number) p.getValue() ).longValue() );
+
+    p.process( null );
+    assertEquals( 2L, ( (Number) p.getValue() ).longValue() );
   }
 
   @Test

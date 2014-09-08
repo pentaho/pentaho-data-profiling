@@ -52,6 +52,7 @@ public class StandardDeviationCalculator extends VarianceCalculator {
 
   @Override
   public Statistic getStatistic() {
+    getValue();
     return new Statistic( getName(), stdDev );
   }
 }

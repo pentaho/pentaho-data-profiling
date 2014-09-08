@@ -53,6 +53,14 @@ public class SumOfSquaresValueProcessorTest {
     p.process( new Double( 3.1 ) );
     d = ( (Double) p.getValue() ).doubleValue();
     assertEquals( 14.45, d, 0.000000001 );
+
+    p.process( null );
+    d = ( (Double) p.getValue() ).doubleValue();
+    assertEquals( 14.45, d, 0.000000001 );
+
+    p = new SumOfSquaresValueProcessor( new Double( 12.2 ) );
+    d = ( (Double) p.getValue() ).doubleValue();
+    assertEquals( 12.2, d, 0.000000001 );
   }
 
   @Test

@@ -70,15 +70,16 @@ public class CategoricalFrequencyStatistics extends Statistic {
    * @param maxCategories
    *          the maximum number of categories to track
    */
+  @SuppressWarnings( "unchecked" )
   public CategoricalFrequencyStatistics( Map<String, CategoryHolder> counts, int maxCategories ) {
-    super( Statistic.Metric.FREQUENCY_DISTRIBUTION.toString(), counts );
+    super( Statistic.Metric.FREQUENCY_DISTRIBUTION.toString(), new TreeMap<String, CategoryHolder>() );
     this.maxCategories = maxCategories;
     sortedByCount = new ArrayList<CategoryHolder>( maxCategories );
 
     for ( Map.Entry<String, CategoryHolder> e : counts.entrySet() ) {
-      sortedByCount.add( e.getValue() );
-      if ( sortedByCount.size() == maxCategories ) {
-        break;
+      if ( sortedByCount.size() < maxCategories ) {
+        sortedByCount.add( e.getValue() );
+        ( (Map<String, CategoryHolder>) value ).put( e.getKey(), e.getValue() );
       }
     }
     Collections.sort( sortedByCount );

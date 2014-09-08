@@ -55,6 +55,10 @@ public class MinValueProcessorTest {
     p.process( new Double( 10.1 ) );
     d = ( (Double) p.getValue() ).doubleValue();
     assertEquals( -2.0, d, 0.0 );
+
+    p.process( null );
+    d = ( (Double) p.getValue() ).doubleValue();
+    assertEquals( -2.0, d, 0.0 );
   }
 
   @Test

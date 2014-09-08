@@ -25,9 +25,13 @@ package com.pentaho.profiling.api.stats;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.Test;
+
+import com.pentaho.profiling.api.stats.CategoricalFrequencyStatistics.CategoryHolder;
 
 public class CategoricalFrequencyStatisticsTest {
 
@@ -37,6 +41,25 @@ public class CategoricalFrequencyStatisticsTest {
     assertEquals( Statistic.Metric.FREQUENCY_DISTRIBUTION.toString(), stats.getName() );
     assertTrue( stats.getValue() != null );
     assertTrue( stats.getValue() instanceof TreeMap );
+
+    assertEquals( CategoricalFrequencyStatistics.DEFAULT_MAX_CATEGORIES, stats.getMaxCategories() );
+
+    stats = new CategoricalFrequencyStatistics( 50 );
+    assertEquals( 50, stats.getMaxCategories() );
+
+    Map<String, CategoryHolder> initialCategories = new HashMap<String, CategoryHolder>();
+    initialCategories.put( "cat1", new CategoryHolder( "cat1", 10 ) );
+    initialCategories.put( "cat2", new CategoryHolder( "cat2", 100 ) );
+    initialCategories.put( "cat3", new CategoryHolder( "cat2", 1 ) );
+
+    stats = new CategoricalFrequencyStatistics( initialCategories, 50 );
+    assertTrue( stats.getDistribution() != null );
+    assertEquals( 3, stats.getDistribution().size() );
+
+    stats = new CategoricalFrequencyStatistics( initialCategories, 2 );
+    assertTrue( stats.getDistribution() != null );
+    assertEquals( 2, stats.getDistribution().size() );
+
   }
 
   @Test

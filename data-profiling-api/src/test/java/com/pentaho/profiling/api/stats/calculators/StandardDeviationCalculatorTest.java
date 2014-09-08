@@ -100,6 +100,7 @@ public class StandardDeviationCalculatorTest {
     assertTrue( p.getStatistic() != null );
     assertEquals( p.getName(), p.getStatistic().getName() );
 
+    assertTrue( !Double.isNaN( ( (Double) p.getStatistic().getValue() ).doubleValue() ) );
     double std = ( (Double) p.getValue() ).doubleValue();
     double std2 = ( (Double) p.getStatistic().getValue() ).doubleValue();
     assertEquals( std2, std, 0 );
