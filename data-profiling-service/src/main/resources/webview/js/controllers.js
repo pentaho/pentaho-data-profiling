@@ -11,22 +11,58 @@ define([
   appControllers.controller('AppController', [
     '$scope',
     '$routeParams',
+    '$translate',
     'Profile',
     'DataSourceService',
     'NotificationService',
-    function($scope, $routeParams, profileService, dataSourceService, notificationService) {
-      $scope.showTemplate    = false;
+    function($scope, $routeParams, $translate, profileService, dataSourceService, notificationService) {
+      // The first profile update does not bring fields.
+      // If the second does not bring fields, we show the "no fields" message.
+      var updateProfileCount = 0;
+      $scope.isLoadingFields = true;
+      $scope.isProcessing    = true;
+
+      $translate('profiling.messages.profiling-data').then(function(text) { $scope.message = text; });
 
       $scope.orderByField    = 'name';
       $scope.isOrderReversed = false;
+
+      function setMessage(text) {
+        $scope.message = text;
+      }
 
       $scope.updateProfile = function(profileStatus) {
         $scope.profileStatus = profileStatus;
 
         // TODO: Until there are real statistics, enhance fields with dummy statistics.
-        if(profileStatus.fields) profileStatus.fields.forEach(function(field) {
-          field.countDistinct = Math.floor(1000 * Math.random());
-        });
+        if(profileStatus.fields) {
+          profileStatus.fields.forEach(function(field) {
+            field.countDistinct = Math.floor(1000 * Math.random());
+          });
+        } else {
+          profileStatus.fields = [];
+        }
+
+        switch(updateProfileCount) {
+          case 0:
+            updateProfileCount++;
+            // assume to still be loading fields.
+            break;
+          case 1:
+            updateProfileCount++;
+            $scope.isLoadingFields = $scope.isProcessing = false;
+
+            if(!profileStatus.fields.length) {
+              $translate('profiling.messages.no-fields').then(setMessage);
+            } else {
+              var entityCount = profileStatus.totalEntities;
+              if(entityCount === 0) {
+                $translate('profiling.messages.no-data').then(setMessage);
+              } else if(entityCount > 0)
+                $translate('profiling.messages.processed-all-rows', {count: entityCount}).then(setMessage);
+            }
+            break;
+        }
 
         $scope.updateDataSource(profileStatus.dataSourceReference);
       };
@@ -58,14 +94,9 @@ define([
       };
 
       $scope.onOrderByField = function(name) {
-        // Cycles through: Ascending -> Descending -> Unsorted
-
+        // Ascending -> Descending -> Ascending ...
         if($scope.orderByField === name) {
-          if($scope.isOrderReversed) {
-            $scope.orderByField = '';
-          } else {
-            $scope.isOrderReversed = true;
-          }
+          $scope.isOrderReversed = !$scope.isOrderReversed;
         } else {
           $scope.orderByField = name;
           $scope.isOrderReversed = false;
