@@ -29,6 +29,7 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.measure.MeasureMetadata;
 import com.pentaho.profiling.api.measure.RequestedMeasure;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -143,5 +144,36 @@ public class ProfilingServiceImplTest {
     when( profile.getProfileUpdate() ).thenReturn( profileStatus );
     ProfilingServiceImpl.getProfileMap().put( profileId, profile );
     assertEquals( profileStatus, profilingService.getProfileUpdate( profileId ) );
+  }
+
+  @Test
+  public void testStop() {
+    String profileId = "PROFILE_ID";
+    ProfileStatus profileStatus = mock( ProfileStatus.class );
+    when( profile.getProfileUpdate() ).thenReturn( profileStatus );
+    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
+    profilingService.stopCurrentOperation( profileId );
+    verify( profile ).stopCurrentOperation();
+  }
+
+  @Test
+  public void testStart() {
+    String profileId = "PROFILE_ID";
+    String operationId = "OPERATION_ID";
+    ProfileStatus profileStatus = mock( ProfileStatus.class );
+    when( profile.getProfileUpdate() ).thenReturn( profileStatus );
+    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
+    profilingService.startOperation( profileId, operationId );
+    verify( profile ).startOperation( operationId );
+  }
+
+  @Test
+  public void testGetOperations() {
+    String profileId = "PROFILE_ID";
+    ProfileOperation profileOperation = mock( ProfileOperation.class );
+    List<ProfileOperation> profileOperations = new ArrayList<ProfileOperation>( Arrays.asList( profileOperation ) );
+    when( profile.getProfileOperations() ).thenReturn( profileOperations );
+    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
+    assertEquals( profileOperations, profilingService.getOperations( profileId ) );
   }
 }
