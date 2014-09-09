@@ -20,32 +20,25 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import java.util.Map;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface to something that can compute a derived statistic given the values from a set of producers
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public interface ValueCalculator extends ValueProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
-
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
-
-  public List<ProfileStatus> getActiveProfiles();
-
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  /**
+   * Compute the derived statistic given the map of base stats
+   * 
+   * @param producerMap
+   *          the base stat producers required
+   * @throws CalculationException
+   *           if the calculation cannot be performed
+   */
+  public void process( Map<String, ValueProducer> producerMap ) throws CalculationException;
 }

@@ -22,6 +22,17 @@ define([
         'pascalprecht.translate'
       ]);
 
+  profileApp.filter('interpolateMessage', function() {
+    return function(message, replacements) {
+      if (replacements) {
+        for (var i = 0; i < replacements.length; i++) {
+          message = message.split("{" + i + "}").join(replacements[i]);
+        }
+      }
+      return message;
+    };
+   });
+
   profileApp.config([
     '$routeProvider',
     '$provide',

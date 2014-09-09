@@ -22,30 +22,29 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 9/7/14.
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+@XmlRootElement
+public class ProfileFieldDefinition {
+  private List<ProfileFieldProperty> profileFieldProperties;
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  public ProfileFieldDefinition() {
+    this( null );
+  }
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  public ProfileFieldDefinition( List<ProfileFieldProperty> profileFieldProperties ) {
+    this.profileFieldProperties = profileFieldProperties;
+  }
 
-  public List<ProfileStatus> getActiveProfiles();
+  public List<ProfileFieldProperty> getProfileFieldProperties() {
+    return profileFieldProperties;
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  public void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties ) {
+    this.profileFieldProperties = profileFieldProperties;
+  }
 }

@@ -22,11 +22,17 @@
 
 package com.pentaho.profiling.api.action;
 
+import com.pentaho.profiling.api.ProfileStatus;
+
 /**
  * Created by bryan on 8/1/14.
  */
 public interface ProfileAction {
+  public void stop();
+
   public ProfileActionResult execute();
 
   public ProfileAction then();
+
+  public void setCurrentOperation( ProfileStatus profileStatus );
 }

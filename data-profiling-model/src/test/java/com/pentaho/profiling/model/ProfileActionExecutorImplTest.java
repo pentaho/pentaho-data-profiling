@@ -57,7 +57,7 @@ public class ProfileActionExecutorImplTest {
     profileStatus = mock( ProfileStatus.class );
     profileAction = mock( ProfileAction.class );
     profileActionResult = mock( ProfileActionResult.class );
-    profileNotificationProvider = mock( ProfileNotificationProvider.class );
+    profileNotificationProvider = mock( ProfileNotificationProviderImpl.class );
     when( profileAction.execute() ).thenReturn( profileActionResult );
   }
 

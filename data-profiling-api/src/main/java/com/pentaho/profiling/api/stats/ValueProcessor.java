@@ -20,32 +20,24 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+package com.pentaho.profiling.api.stats;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface for ValueProducers that can be updated with new values
+ * 
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public interface ValueProcessor extends ValueProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
-
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
-
-  public List<ProfileStatus> getActiveProfiles();
-
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  /**
+   * Process a value
+   * 
+   * @param input
+   *          the value to process
+   * @throws Exception
+   *           if a problem occurs
+   */
+  public void process( Object input ) throws Exception;
 }

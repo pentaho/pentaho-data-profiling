@@ -30,6 +30,7 @@ import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.measure.MeasureMetadata;
 import com.pentaho.profiling.api.measure.RequestedMeasure;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class ProfilingServiceImpl implements ProfilingService {
     for ( ProfileFactory factory : factories ) {
       if ( factory.accepts( dataSourceReference ) ) {
         profile = factory.create( dataSourceReference );
-        synchronized( profileMap ) {
+        synchronized ( profileMap ) {
           profileMap.put( profile.getId(), profile );
         }
         profileNotificationProvider.notify( profile.getId() );
@@ -92,14 +93,14 @@ public class ProfilingServiceImpl implements ProfilingService {
 
   @Override
   public List<MeasureMetadata> getSupportedMeasures( String profileId ) {
-    synchronized( profileMap ) {
+    synchronized ( profileMap ) {
       return profileMap.get( profileId ).getSupportedMeasures();
     }
   }
 
   @Override
   public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures ) {
-    synchronized( profileMap ) {
+    synchronized ( profileMap ) {
       profileMap.get( profileId ).setRequestedMeasures( measures );
     }
     profileNotificationProvider.notify( profileId );
@@ -107,7 +108,7 @@ public class ProfilingServiceImpl implements ProfilingService {
 
   @Override
   public List<ProfileStatus> getActiveProfiles() {
-    synchronized( profileMap ) {
+    synchronized ( profileMap ) {
       List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileMap.size() );
       for ( Profile profile : profileMap.values() ) {
         result.add( profile.getProfileUpdate() );
@@ -118,8 +119,26 @@ public class ProfilingServiceImpl implements ProfilingService {
 
   @Override
   public ProfileStatus getProfileUpdate( String profileId ) {
-    synchronized( profileMap ) {
+    synchronized ( profileMap ) {
       return profileMap.get( profileId ).getProfileUpdate();
+    }
+  }
+
+  @Override public void stopCurrentOperation( String profileId ) {
+    synchronized ( profileMap ) {
+      profileMap.get( profileId ).stopCurrentOperation();
+    }
+  }
+
+  @Override public void startOperation( String profileId, String operationId ) {
+    synchronized ( profileMap ) {
+      profileMap.get( profileId ).startOperation( operationId );
+    }
+  }
+
+  @Override public List<ProfileOperation> getOperations( String profileId ) {
+    synchronized ( profileMap ) {
+      return profileMap.get( profileId ).getProfileOperations();
     }
   }
 }

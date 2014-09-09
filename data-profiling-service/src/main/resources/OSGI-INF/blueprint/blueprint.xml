@@ -22,6 +22,9 @@
         <jaxrs:serviceBeans>
             <ref component-id="profilingServiceWebserviceImpl" />
         </jaxrs:serviceBeans>
+        <jaxrs:providers>
+          <bean id="profilingFieldMessageBodyWriter" class="com.pentaho.profiling.services.ProfilingFieldMessageBodyWriter"/>
+        </jaxrs:providers>
     </jaxrs:server>
 
     <jaxrs:server address="/data-profiling-service/dataSource" id="profileDsService">

@@ -11,14 +11,18 @@
     <property name="profileNotificationProvider" ref="profilingNotificationProvider"/>
   </bean>
 
-  <bean id="profilingNotificationProvider" class="com.pentaho.profiling.model.ProfileNotificationProvider"
+  <bean id="profilingNotificationProvider" class="com.pentaho.profiling.model.ProfileNotificationProviderImpl"
         scope="singleton"/>
 
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
            interface="com.pentaho.profiling.api.ProfilingService"/>
   <service id="profilingActionExecutorImplService" ref="profilingActionExecutorImpl"
            interface="com.pentaho.profiling.api.action.ProfileActionExecutor"/>
-  <service id="profilingNotificationProviderService" ref="profilingNotificationProvider"
-           interface="com.pentaho.profiling.notification.api.NotificationProvider"/>
+  <service id="profilingNotificationProviderService" ref="profilingNotificationProvider">
+    <interfaces>
+      <value>com.pentaho.profiling.notification.api.NotificationProvider</value>
+      <value>com.pentaho.profiling.model.ProfileNotificationProvider</value>
+    </interfaces>
+  </service>
   <reference-list id="factoryRef" interface="com.pentaho.profiling.api.ProfileFactory" availability="optional"/>
 </blueprint>

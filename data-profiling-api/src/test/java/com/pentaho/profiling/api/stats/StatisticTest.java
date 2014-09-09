@@ -20,32 +20,27 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import org.junit.Test;
 
-/**
- * Created by bryan on 7/31/14.
- */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public class StatisticTest {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  @Test
+  public void testTypical() {
+    Statistic stat = new Statistic();
+    assertTrue( stat.getValue() == null );
+    assertEquals( "unset", stat.getName() );
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+    stat = new Statistic( Statistic.Metric.MAX.toString(), new Double( 100 ) );
+    assertEquals( new Double( 100 ), stat.getValue() );
 
-  public List<ProfileStatus> getActiveProfiles();
-
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+    stat.setName( Statistic.Metric.MIN.toString() );
+    assertEquals( Statistic.Metric.MIN.toString(), stat.getName() );
+    stat.setValue( new Double( 50.2 ) );
+    assertEquals( 50.2, ( (Double) stat.getValue() ).doubleValue(), 0.0 );
+  }
 }

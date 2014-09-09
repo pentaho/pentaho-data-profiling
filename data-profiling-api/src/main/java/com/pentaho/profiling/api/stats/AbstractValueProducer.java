@@ -20,32 +20,53 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Created by bryan on 7/31/14.
+ * Base class for ValueProducers
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public abstract class AbstractValueProducer implements ValueProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  /** The name of this producer */
+  protected String name;
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  /**
+   * Constructor
+   * 
+   * @param name
+   *          the name of the value produced
+   */
+  public AbstractValueProducer( String name ) {
+    setName( name );
+  }
 
-  public List<ProfileStatus> getActiveProfiles();
+  @Override
+  public String getName() {
+    return this.name;
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  /**
+   * Set the name of the value produced
+   * 
+   * @param name
+   */
+  public void setName( String name ) {
+    this.name = name;
+  }
 
-  public void stopCurrentOperation( String profileId );
+  @Override
+  public void setParameters( Map<String, Object> parameters ) {
+    // noop impl
+  }
 
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  @Override
+  public Map<String, Object> getParameters() {
+    return new LinkedHashMap<String, Object>();
+  }
 }

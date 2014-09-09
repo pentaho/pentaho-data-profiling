@@ -20,32 +20,54 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.processors;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import com.pentaho.profiling.api.stats.AbstractValueProducer;
+import com.pentaho.profiling.api.stats.Aggregatable;
+import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.stats.StatisticProducer;
+import com.pentaho.profiling.api.stats.ValueProcessor;
 
 /**
- * Created by bryan on 7/31/14.
+ * Maintains the maximum numeric value seen for a field
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public class MaxValueProcessor extends AbstractValueProducer implements ValueProcessor,
+    Aggregatable<MaxValueProcessor>, StatisticProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  public static final String ID = Statistic.Metric.MAX.toString();
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  /** The max value seen */
+  protected double max = Double.MIN_VALUE;
 
-  public List<ProfileStatus> getActiveProfiles();
+  public MaxValueProcessor() {
+    super( ID );
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  @Override
+  public Object getValue() {
+    return max;
+  }
 
-  public void stopCurrentOperation( String profileId );
+  @Override
+  public void process( Object input ) throws Exception {
+    if ( input != null ) {
+      max = Math.max( ( (Number) input ).doubleValue(), this.max );
+    }
+  }
 
-  public void startOperation( String profileId, String operationId );
+  @Override
+  public MaxValueProcessor aggregate( MaxValueProcessor toAggregate ) throws Exception {
 
-  public List<ProfileOperation> getOperations( String profileId );
+    process( toAggregate.getValue() );
+
+    return this;
+  }
+
+  @Override
+  public Statistic getStatistic() {
+    return new Statistic( getName(), max );
+  }
 }

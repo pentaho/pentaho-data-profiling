@@ -27,6 +27,7 @@ import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.action.ProfileActionResult;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,12 +51,20 @@ public class ProfileActionExecutorImpl implements ProfileActionExecutor {
     executorService.submit( new Runnable() {
       @Override
       public void run() {
-        ProfileActionResult result = action.execute();
-        result.apply( status );
+        action.setCurrentOperation( status );
         profileNotificationProvider.notify( status.getId() );
+        ProfileActionResult result = action.execute();
+        if ( result != null ) {
+          result.apply( status );
+          profileNotificationProvider.notify( status.getId() );
+        }
         ProfileAction then = action.then();
         if ( then != null ) {
           submit( then, status );
+        } else {
+          status.setCurrentOperation( null );
+          status.setCurrentOperationPath( null );
+          status.setCurrentOperationVariables( new ArrayList<String>() );
         }
       }
     } );

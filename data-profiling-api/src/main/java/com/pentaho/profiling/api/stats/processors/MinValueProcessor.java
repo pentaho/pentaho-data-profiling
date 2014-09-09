@@ -20,32 +20,53 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.processors;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import com.pentaho.profiling.api.stats.AbstractValueProducer;
+import com.pentaho.profiling.api.stats.Aggregatable;
+import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.stats.StatisticProducer;
+import com.pentaho.profiling.api.stats.ValueProcessor;
 
 /**
- * Created by bryan on 7/31/14.
+ * Maintains the minimum numeric value seen for a field
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * 
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public class MinValueProcessor extends AbstractValueProducer implements ValueProcessor,
+    Aggregatable<MinValueProcessor>, StatisticProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  public static final String ID = Statistic.Metric.MIN.toString();
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  /** The min value seen */
+  protected double min = Double.MAX_VALUE;
 
-  public List<ProfileStatus> getActiveProfiles();
+  public MinValueProcessor() {
+    super( ID );
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  @Override
+  public Object getValue() {
+    return this.min;
+  }
 
-  public void stopCurrentOperation( String profileId );
+  @Override
+  public void process( Object input ) throws Exception {
+    if ( input != null ) {
+      min = Math.min( ( (Number) input ).doubleValue(), min );
+    }
+  }
 
-  public void startOperation( String profileId, String operationId );
+  @Override
+  public MinValueProcessor aggregate( MinValueProcessor toAggregate ) throws Exception {
+    process( toAggregate.getValue() );
 
-  public List<ProfileOperation> getOperations( String profileId );
+    return this;
+  }
+
+  @Override
+  public Statistic getStatistic() {
+    return new Statistic( getName(), min );
+  }
 }

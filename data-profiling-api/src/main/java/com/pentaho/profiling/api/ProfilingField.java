@@ -22,8 +22,14 @@
 
 package com.pentaho.profiling.api;
 
+import com.pentaho.profiling.api.stats.Statistic;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,98 +37,99 @@ import java.util.TreeMap;
 
 /**
  * Created by bryan on 7/31/14.
+ *
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
+@XmlRootElement
 public class ProfilingField {
 
-  /** The name of the field */
-  private String name;
-
-  /** The known types for this field (and potentially their counts) */
+  /*public static final String ARRAY = "ARRAY"; //$NON-NLS-1$
+  public static final String DOCUMENT = "DOCUMENT"; //$NON-NLS-1$
+  *//**
+   * The full path of the field (including the terminal name part)
+   *//*
+  protected String path;
+  *//**
+   * True if this field is a leaf
+   *//*
+  protected boolean leaf;
+  *//**
+   * True if this field is a document
+   *//*
+  protected boolean document;
+  *//**
+   * True if this field is an array
+   *//*
+  protected boolean array;
+  *//**
+   * The known types for this field (and potentially their counts/stats)
+   *//*
   protected Map<String, ProfilingFieldType> types = new TreeMap<String, ProfilingFieldType>();
+  *//**
+   * The name of the field
+   *//*
+  private String name;*/
 
-  /**
-   * Get the name of this field
-   * 
-   * @return the name of this field
-   */
-  public String getName() {
-    return name;
+  private Map<String, Object> values;
+
+  public ProfilingField() {
+    this( new HashMap<String, Object>(  ) );
   }
 
-  /**
-   * Set the name of this field
-   * 
-   * @param name
-   *          the name of this field
-   */
-  public void setName( String name ) {
-    this.name = name;
+  public ProfilingField( Map<String, Object> values ) {
+    this.values = values;
   }
 
-  /**
-   * Get the ID of this field (hashcode of name)
-   * 
-   * @return the ID of this field
-   */
-  public int getID() {
-    return hashCode();
+  public Map<String, Object> getValues() {
+    return values;
   }
 
-  @Override
-  public int hashCode() {
-    int code = super.hashCode();
-    if ( name != null ) {
-      code = name.hashCode();
+  public void setValues( Map<String, Object> values ) {
+    this.values = values;
+  }
+
+  public ProfilingField copy() {
+    return new ProfilingField( copyMap( values ) );
+  }
+
+  private Object copyObject( Object value ) {
+    if ( value == null ) {
+      return null;
+    } else if ( value instanceof Map ) {
+      return copyMap( (Map<String, Object>) value );
+    } else if ( value instanceof Collection ) {
+      return copyCollection( (Collection<Object>) value );
+    } else if ( value instanceof Statistic ) {
+      Statistic result = null;
+      try {
+        result = (Statistic) value.getClass().newInstance();
+      } catch ( Exception e ) {
+        throw new RuntimeException( e );
+      }
+      result.setValue( ( (Statistic) value ).getValue() );
+      return result;
+    } else {
+      return value;
     }
-
-    return code;
   }
 
-  /**
-   * Add a new type or update the count of an existing type for this field
-   * 
-   * @param type
-   *          the type to add/update
-   */
-  public synchronized void addOrUpdateType( ProfilingFieldType type ) {
-    ProfilingFieldType existing = types.get( type.getTypeName() );
-    if ( existing == null ) {
-      existing = new ProfilingFieldType( type.getTypeName() );
-      types.put( existing.getTypeName(), existing );
+  private Map<String, Object> copyMap( Map<String, Object> map ) {
+    Map<String, Object> result = new HashMap<String, Object>( map.size() );
+    for ( Map.Entry<String, Object> entry : map.entrySet() ) {
+      result.put( entry.getKey(), copyObject( entry.getValue() ) );
     }
-
-    existing.setCount( existing.getCount() + type.getCount() );
+    return result;
   }
 
-  /**
-   * Remove the named type from the list of types for this field
-   * 
-   * @param typeName
-   *          the name of the type to remove
-   */
-  public synchronized void removeNamedType( String typeName ) {
-    types.remove( typeName );
-  }
-
-  /**
-   * Get an immutable iterator over the types for this field
-   * 
-   * @return
-   */
-  public Iterator<ProfilingFieldType> iterator() {
-    List<ProfilingFieldType> l = new ArrayList<ProfilingFieldType>( types.values() );
-
-    return Collections.unmodifiableList( l ).iterator();
-  }
-
-  /**
-   * Get the type info for the named type (or null if we have not seen examples of the named type for this field).
-   * 
-   * @param typeName
-   *          the name of the type to get info on
-   * @return
-   */
-  public ProfilingFieldType getNamedType( String typeName ) {
-    return types.get( typeName );
+  private Collection<Object> copyCollection( Collection<Object> collection ) {
+    try {
+      Collection<Object> result = collection.getClass().newInstance();
+      for ( Object value : collection ) {
+        result.add( copyObject( value ) );
+      }
+      return result;
+    } catch ( Exception e ) {
+      throw new RuntimeException( e );
+    }
   }
 }

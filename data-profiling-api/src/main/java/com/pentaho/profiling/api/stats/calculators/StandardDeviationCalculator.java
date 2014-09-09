@@ -20,32 +20,39 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats.calculators;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import com.pentaho.profiling.api.stats.Statistic;
 
 /**
- * Created by bryan on 7/31/14.
+ * Calculator for standard deviation
+ * 
+ * @author Mark Hall bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public class StandardDeviationCalculator extends VarianceCalculator {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  protected double stdDev = Double.NaN;
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  public static final String ID = Statistic.Metric.STDDEV.toString();
 
-  public List<ProfileStatus> getActiveProfiles();
+  public StandardDeviationCalculator() {
+    setName( ID );
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  @Override
+  public Object getValue() {
+    stdDev = variance;
+    if ( !Double.isNaN( variance ) ) {
+      stdDev = Math.sqrt( variance );
+    }
 
-  public void stopCurrentOperation( String profileId );
+    return stdDev;
+  }
 
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  @Override
+  public Statistic getStatistic() {
+    getValue();
+    return new Statistic( getName(), stdDev );
+  }
 }

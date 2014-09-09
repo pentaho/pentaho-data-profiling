@@ -20,32 +20,48 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+package com.pentaho.profiling.api.stats;
 
 /**
- * Created by bryan on 7/31/14.
+ * Exception for calculation problems
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public class CalculationException extends Exception {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  /**
+   * For serialization
+   */
+  private static final long serialVersionUID = -6722982094457521689L;
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  /**
+   * Constructor
+   */
+  public CalculationException() {
+    super();
+  }
 
-  public List<ProfileStatus> getActiveProfiles();
+  /**
+   * Constructor
+   * 
+   * @param message
+   *          the message
+   */
+  public CalculationException( String message ) {
+    super( message );
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  /**
+   * Constructor
+   * 
+   * @param message
+   *          the message
+   * @param cause
+   *          the cause
+   */
+  public CalculationException( String message, Throwable cause ) {
+    this( message );
+    initCause( cause );
+    fillInStackTrace();
+  }
 }

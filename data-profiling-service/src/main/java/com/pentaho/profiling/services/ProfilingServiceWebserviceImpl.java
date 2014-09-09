@@ -28,6 +28,7 @@ import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.measure.MeasureMetadata;
 import com.pentaho.profiling.api.measure.RequestedMeasure;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;
@@ -90,5 +91,31 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @Override
   public ProfileStatus getProfileUpdate( @PathParam( "profileId" ) String profileId ) {
     return delegate.getProfileUpdate( profileId );
+  }
+
+  @PUT
+  @Path( "/stop" )
+  public void stopCurrentOperation( ProfileIdWrapper profileIdWrapper ) {
+    stopCurrentOperation( profileIdWrapper.getProfileId() );
+  }
+
+  @Override public void stopCurrentOperation( String profileId ) {
+    delegate.stopCurrentOperation( profileId );
+  }
+
+  @Override public void startOperation( String profileId, String operationId ) {
+    delegate.startOperation( profileId, operationId );
+  }
+
+  @GET
+  @Path( "/operations/{profileId}" )
+  @Override public List<ProfileOperation> getOperations( @PathParam( "profileId" ) String profileId ) {
+    return delegate.getOperations( profileId );
+  }
+
+  @PUT
+  @Path( "/start" )
+  public void startOperation( ProfileOperationWrapper profileOperationWrapper ) {
+    startOperation( profileOperationWrapper.getProfileId(), profileOperationWrapper.getOperationId() );
   }
 }

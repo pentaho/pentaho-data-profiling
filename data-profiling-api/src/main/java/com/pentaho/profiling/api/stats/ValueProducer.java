@@ -20,32 +20,44 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.stats;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import java.util.Map;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface to something that can produce a value
+ * 
+ * @author bryan
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public interface ValueProducer {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  /**
+   * Get the name of this statistic
+   * 
+   * @return the name of the value produced
+   */
+  String getName();
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  /**
+   * Get the current value
+   * 
+   * @return the value
+   */
+  Object getValue();
 
-  public List<ProfileStatus> getActiveProfiles();
+  /**
+   * Set the parameters for this producer
+   * 
+   * @param parameters
+   *          the parameters to use
+   */
+  void setParameters( Map<String, Object> parameters );
 
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  /**
+   * Get the parameter settings for this producer
+   * 
+   * @return the parameter settings for this producer
+   */
+  Map<String, Object> getParameters();
 }

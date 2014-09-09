@@ -20,32 +20,50 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.operations;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 9/8/14.
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+@XmlRootElement
+public class ProfileOperation {
+  private String id;
+  private String namePath;
+  private String nameKey;
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
+  public ProfileOperation() {
+    this( null, null, null );
+  }
 
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
+  public ProfileOperation( String id, String namePath, String nameKey ) {
+    this.id = id;
+    this.namePath = namePath;
+    this.nameKey = nameKey;
+  }
 
-  public List<ProfileStatus> getActiveProfiles();
+  public String getNamePath() {
+    return namePath;
+  }
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  public void setNamePath( String namePath ) {
+    this.namePath = namePath;
+  }
 
-  public void stopCurrentOperation( String profileId );
+  public String getNameKey() {
+    return nameKey;
+  }
 
-  public void startOperation( String profileId, String operationId );
+  public void setNameKey( String nameKey ) {
+    this.nameKey = nameKey;
+  }
 
-  public List<ProfileOperation> getOperations( String profileId );
+  public String getId() {
+    return id;
+  }
+
+  public void setId( String id ) {
+    this.id = id;
+  }
 }

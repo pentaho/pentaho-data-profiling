@@ -20,32 +20,26 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+package com.pentaho.profiling.api.stats;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface to something that can be aggregated
+ * 
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * 
+ * @param <E>
+ *          the type of the aggregeable object
  */
-public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+public interface Aggregatable<E> {
 
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
-
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
-
-  public List<ProfileStatus> getActiveProfiles();
-
-  public ProfileStatus getProfileUpdate( String profileId );
-
-  public void stopCurrentOperation( String profileId );
-
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  /**
+   * Aggregate an object with this one
+   * 
+   * @param toAggregate
+   *          the object to aggregate
+   * @return the result of aggregation
+   * @throws Exception
+   *           if the supplied object can't be aggregated for some reason
+   */
+  E aggregate( E toAggregate ) throws Exception;
 }

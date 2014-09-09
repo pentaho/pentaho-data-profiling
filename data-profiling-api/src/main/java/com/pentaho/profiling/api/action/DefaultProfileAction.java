@@ -22,25 +22,36 @@
 
 package com.pentaho.profiling.api.action;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by bryan on 8/1/14.
  */
 public abstract class DefaultProfileAction implements ProfileAction {
+  private final AtomicBoolean stopped;
   private ProfileAction then;
   private volatile boolean thenRequested = false;
 
   public DefaultProfileAction() {
-    this( null );
+    this( null, new AtomicBoolean( false ) );
   }
 
-  public DefaultProfileAction( ProfileAction then ) {
+  public DefaultProfileAction( ProfileAction then, AtomicBoolean stopped ) {
     this.then = then;
+    this.stopped = stopped;
   }
 
   @Override
   public synchronized ProfileAction then() {
     thenRequested = true;
-    return then;
+    if ( stopped.get() ) {
+      return null;
+    } else {
+      if ( then == null ) {
+        stopped.set( true );
+      }
+      return then;
+    }
   }
 
   public synchronized void setThen( ProfileAction then ) throws ThenAlreadyRequestedException {
@@ -49,5 +60,13 @@ public abstract class DefaultProfileAction implements ProfileAction {
     } else {
       throw new ThenAlreadyRequestedException();
     }
+  }
+
+  @Override public void stop() {
+    stopped.set( true );
+  }
+
+  public AtomicBoolean getStopped() {
+    return stopped;
   }
 }
