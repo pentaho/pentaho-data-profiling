@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.api.action;
 
+import com.pentaho.profiling.api.ProfileStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,6 +39,10 @@ public class DefaultProfileActionTest {
       @Override public ProfileActionResult execute() {
         return null;
       }
+
+      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
+
+      }
     };
     assertEquals( null, defaultProfileAction.then() );
   }
@@ -47,6 +52,10 @@ public class DefaultProfileActionTest {
     DefaultProfileAction defaultProfileAction = new DefaultProfileAction() {
       @Override public ProfileActionResult execute() {
         return null;
+      }
+
+      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
+
       }
     };
     defaultProfileAction.then();
@@ -59,6 +68,10 @@ public class DefaultProfileActionTest {
     DefaultProfileAction defaultProfileAction = new DefaultProfileAction() {
       @Override public ProfileActionResult execute() {
         return null;
+      }
+
+      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
+
       }
     };
     defaultProfileAction.setThen( then );

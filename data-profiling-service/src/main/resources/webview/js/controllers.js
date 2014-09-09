@@ -88,24 +88,8 @@ define([
         }
         var fieldRows = $scope.getRows(fieldMap, profileStatus.fields);
         $scope.updateDataSource(profileStatus.dataSourceReference);
-        var currentOperation = profileStatus.currentOperation;
-        if (currentOperation) {
-          if (profileStatus.currentOperationPath && !$translatePartialLoader.isPartAvailable(profileStatus.currentOperationPath)) {
-            $translatePartialLoader.addPart(profileStatus.currentOperationPath);
-          }
-          $translate(currentOperation).then(function (translation) {
-            var currentOperationVariables = profileStatus.currentOperationVariables;
-            if (currentOperationVariables) {
-              for (var i = 0; i < currentOperationVariables.length; i++) {
-                translation = translation.split("{" + i + "}").join(currentOperationVariables[i]);
-              }
-            }
-            $scope.currentOperation = translation;
-          });
-        } else {
-          $scope.currentOperation = "";
-        }
-
+        $scope.currentOperation = profileStatus.currentOperation;
+        $scope.currentOperationVariables = profileStatus.currentOperationVariables;
         $scope.fieldHeaders = fieldHeaders;
         $scope.fieldRows = fieldRows;
       };

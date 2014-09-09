@@ -1,3 +1,25 @@
+/*!
+ * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
+ *
+ * Copyright 2002 - 2014 Pentaho Corporation (Pentaho). All rights reserved.
+ *
+ * NOTICE: All information including source code contained herein is, and
+ * remains the sole property of Pentaho and its licensors. The intellectual
+ * and technical concepts contained herein are proprietary and confidential
+ * to, and are trade secrets of Pentaho and may be covered by U.S. and foreign
+ * patents, or patents in process, and are protected by trade secret and
+ * copyright laws. The receipt or possession of this source code and/or related
+ * information does not convey or imply any rights to reproduce, disclose or
+ * distribute its contents, or to manufacture, use, or sell anything that it
+ * may describe, in whole or in part. Any reproduction, modification, distribution,
+ * or public display of this information without the express written authorization
+ * from Pentaho is strictly prohibited and in violation of applicable laws and
+ * international treaties. Access to the source code contained herein is strictly
+ * prohibited to anyone except those individuals and entities who have executed
+ * confidentiality and non-disclosure agreements or other agreements with Pentaho,
+ * explicitly covering such access.
+ */
+
 package com.pentaho.profiling.api;
 
 import java.util.List;
@@ -5,21 +27,19 @@ import java.util.List;
 /**
  * Created by bryan on 9/7/14.
  */
-public class ProfileFieldProperty<T> {
+public class ProfileFieldProperty {
   private String namePath;
   private String nameKey;
   private List<String> pathToProperty;
-  private Class<T> type;
 
   public ProfileFieldProperty() {
-    this( null, null, null, null );
+    this( null, null, null );
   }
 
-  public ProfileFieldProperty( String namePath, String nameKey, List<String> pathToProperty, Class<T> type ) {
+  public ProfileFieldProperty( String namePath, String nameKey, List<String> pathToProperty ) {
     this.namePath = namePath;
     this.nameKey = nameKey;
     this.pathToProperty = pathToProperty;
-    this.type = type;
   }
 
   public String getNamePath() {
@@ -41,49 +61,6 @@ public class ProfileFieldProperty<T> {
   public void setPathToProperty( List<String> pathToProperty ) {
     this.pathToProperty = pathToProperty;
   }
-
-  /*public Set<T> getValue( Map<String, Object> values ) {
-    Map<String, Object> currentMap = values;
-    for ( int i = 0; i < pathToProperty.size() - 1; i++ ) {
-      String part = pathToProperty.get( i );
-      Object value = values.get( part );
-      if ( value == null ) {
-        return null;
-      } else if ( value instanceof Map ) {
-        currentMap = (Map<String, Object>) value;
-      } else {
-        throw new IllegalStateException( "Expected map at this level, possible conflicting field properties" );
-      }
-    }
-    Object result = currentMap.get( pathToProperty.get( pathToProperty.size() - 1 ) );
-    if ( result == null || type.isAssignableFrom( result.getClass() ) ) {
-      return (T) result;
-    } else {
-      throw new IllegalStateException( "Expected type " + type + " but found " + result.getClass() );
-    }
-  }
-
-  private void getValueHelper( Map<String, Object> currentMap, Set<T> result, int startIndex ) {
-    for ( int i = startIndex; i < pathToProperty.size() - 1; i++ ) {
-      String part = pathToProperty.get( i );
-      Object value = currentMap.get( part );
-      if ( value == null ) {
-        return;
-      } else if ( value instanceof Map ) {
-        currentMap = (Map<String, Object>) value;
-      } else if ( value instanceof Collection ) {
-        Collection<Map<String, Object>>
-      } else {
-        throw new IllegalStateException( "Expected map at this level, possible conflicting field properties" );
-      }
-    }
-    Object result = currentMap.get( pathToProperty.get( pathToProperty.size() - 1 ) );
-    if ( result == null || type.isAssignableFrom( result.getClass() ) ) {
-      return (T) result;
-    } else {
-      throw new IllegalStateException( "Expected type " + type + " but found " + result.getClass() );
-    }
-  }*/
 
   @Override
   public boolean equals( Object o ) {
