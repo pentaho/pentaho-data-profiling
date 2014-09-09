@@ -1,58 +1,75 @@
 
+.pentaho-fieldgroup-major {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
 #profileView {
     padding: 40px;
 }
 
-.profile-dataSource-info-container {
-    border: 1px solid gray;
-    margin: 0 auto 20px auto;
+.profile-dsi-container {
+    margin-bottom: 40px;
 }
 
-/* Table style - from mantleCrystal.css  */
-.pentaho-table .cellTableHeader {
-    padding: 8px 10px 10px 10px;
-    text-align: left;
-    color: white;
-    overflow: hidden;
-    font-size: 16px;
-    border-spacing: 2px;
-    font-weight: normal;
+.profile-fields-container {
+    margin-top: 1em; /* collapses with profiling-fields-title's, unless a border is specified */
 }
 
-.pentaho-table .cellTableCell {
-    padding: 10px 10px;
-    overflow: hidden;
-    text-align: left;
+/* message */
+.profile-message {
+    display: table;
+    border: 1px solid rgb(192,192,192);
+    background-color: rgb(253,253,226);
 }
 
-/* TODO: Must find a way to not need this
-.pentaho-table .cellTableCell:hover {
-    border: 2px solid #ffffff;
+.profile-message-img-cell {
+    display: table-cell;
+    padding: 16px 0 16px 16px; /* right: 0 */
+    vertical-align: middle;
 }
+
+
+.profile-state-processing .profile-message-img {
+    width:  32px;
+    height: 32px;
+    background: url("../images/loading.gif") no-repeat 0px 0px;
+}
+
+.profile-message-text {
+    display: table-cell;
+    padding: 16px;
+    vertical-align: middle;
+}
+
+
+/* Pentaho Table style
+    - extends globalCrystal.css
+    - adapted from mantleCrystal.css
+
+    Table structure:
+
+    table.pentaho-table
+        thead > tr >
+            th.cellTableHeader[.cellTableSortableHeader[.cellTableSortedHeaderAscending|.cellTableSortedHeaderDescending]
+                div.cellTableHeaderContent
+                    div.cellTableHeaderText
+                    div.cellTableHeaderOrderIndicator
+        tbody >
+            tr.cellTableRow.(cellTableOddRow|cellTableEvenRow)
+                td.(cellTableOddRowCell|cellTableEvenRowCell)
+
 */
 
-.pentaho-table .cellTableEvenRow:hover, .pentaho-table .cellTableOddRow:hover {
-    background: #dce7ed;
-    -moz-transition: all 600ms;
-    -webkit-transition: all 600ms;
-}
-
-.pentaho-table .cellTableHoveredRowCell {
-    border: 2px solid #dce7ed;
-    -moz-transition: all 600ms;
-    -webkit-transition: all 600ms;
-}
-
-.pentaho-table .cellTableEvenRow {
-    background: #ffffff;
-}
-
-.pentaho-table .cellTableOddRow {
-    background: #f0f0f0;
-}
-
-.pentaho-table .cellTableOddRowCell {
-    border: 2px solid #f0f0f0;
+/* header */
+.pentaho-table .cellTableHeader {
+    padding: 8px 10px 10px 10px;
+    border-spacing: 2px;
+    overflow: hidden;
+    text-align: left;
+    color: white;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .pentaho-table .cellTableSortableHeader {
@@ -65,26 +82,47 @@
 }
 
 .pentaho-table .cellTableHeaderContent {
-    position:relative;
-    padding-right:18px;
-    zoom:1;
+    position: relative;
+    padding-right: 18px;
+    zoom: 1;
 }
 
-.pentaho-table .cellTableHeaderContent .cellTableHeaderOrderIndicator {
+.pentaho-table .cellTableHeaderOrderIndicator {
     position: absolute;
-    top: 50.0%;
-    line-height: 0.0px;
+    top:    50.0%;
+    right:  0.0px;
+    width:  12px;
+    height: 12px;
     margin-top: -6px;
-    right: 0.0px;
-    width:12px;
-    height:12px;
+    line-height: 0.0px;
 }
 
 .pentaho-table .cellTableSortedHeaderAscending .cellTableHeaderOrderIndicator {
-    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGOng////M/9jglX4NChh0aBEyJZyJMUdxDhLEIjfQbEgsX5JA9k0MCEJALp4URYdEOy6AAAAAElFTkSuQmCC) no-repeat 0px 0px;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGOng////M/9jglX4NChh0aBEyJZyJMUdxDhLEIjfQbEgsX5JA9k0MCEJALp4URYdEOy6AAAAAElFTkSuQmCC) no-repeat 0px 0px;
 }
 
 .pentaho-table .cellTableSortedHeaderDescending .cellTableHeaderOrderIndicator {
-    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGBrg////aUBcTqxiQSB+B8WCxGgo/48AHYQUK/3HBEr4NMzEomEVwzADAByiURYlCo8mAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGBrg////aUBcTqxiQSB+B8WCxGgo/48AHYQUK/3HBEr4NMzEomEVwzADAByiURYlCo8mAAAAAElFTkSuQmCC) no-repeat 0px 0px;
 }
 
+/* body row */
+.pentaho-table .cellTableEvenRow {
+    background: #ffffff;
+}
+
+.pentaho-table .cellTableOddRow {
+    background: #f0f0f0;
+}
+
+.pentaho-table .cellTableRow:hover {
+    background: #dce7ed;
+    -moz-transition: all 600ms;
+    -webkit-transition: all 600ms;
+}
+
+/* cell */
+.pentaho-table .cellTableCell {
+    padding: 10px;
+    overflow: hidden;
+    text-align: left;
+}

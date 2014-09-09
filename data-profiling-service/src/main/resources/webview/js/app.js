@@ -7,6 +7,7 @@ define([
     "common-ui/angular-route",
     "common-ui/angular-translate",
     "common-ui/angular-translate-loader-partial",
+    "common-ui/angular-sanitize",
     "com.pentaho.profiling.services.webview/controllers",
     "com.pentaho.profiling.services.webview/services"
   ], function(require, angular, propertiesParser) {
@@ -15,6 +16,7 @@ define([
       controllerProvider = null,
       profileApp = angular.module('profileApp', [
         'ngRoute',
+        'ngSanitize', // for ngBindHtml
         'appServices',
         'appControllers',
         'pascalprecht.translate'

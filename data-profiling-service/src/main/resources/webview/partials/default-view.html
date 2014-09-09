@@ -1,9 +1,19 @@
 <div>
-    <div class="profile-dataSource-info-container" ng-include="dataSourceUrl"></div>
+    <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
+
+    <div class="profile-message"
+         ng-class="isProcessing ? 'profile-state-processing' : ''"
+         ng-show="isProcessing || message">
+        <div class="profile-message-img-cell" ng-show="isProcessing">
+            <div class="profile-message-img"></div>
+        </div>
+        <div class="profile-message-text" ng-show="message" ng-bind-html="message"></div>
+    </div>
 
     <div class="profile-fields-container">
-        <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
-        <table class="pentaho-table profile-fields-list" cellspacing="0">
+        <div class="pentaho-fieldgroup-major profiling-fields-title" translate="profiling.fields.title"></div>
+        <table class="pentaho-table profile-fields-list" cellspacing="0"
+               ng-show="!isLoadingFields && profileStatus.fields.length">
             <thead>
                 <tr>
                     <th class="cellTableHeader cellTableSortableHeader"
@@ -18,17 +28,18 @@
                         ng-class="orderByField != 'countDistinct' ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
                         ng-click="onOrderByField('countDistinct')">
                         <div class="cellTableHeaderContent">
-                            <div translate="profiling.fields.header.countDistinct"></div>
+                            <div class="cellTableHeaderText" translate="profiling.fields.header.countDistinct"></div>
                             <div class="cellTableHeaderOrderIndicator"></div>
                         </div>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
+                <tr class="cellTableRow"
+                    ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
                     ng-repeat="field in profileStatus.fields | orderBy:orderByField:isOrderReversed">
-                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell cellTableFirstColumn">{{field.name}}</td>
-                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell cellTableLastColumn">{{field.countDistinct}}</td>
+                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell">{{field.name}}</td>
+                    <td ng-class-odd="'cellTableOddRowCell'" ng-class-even="'cellTableEvenRowCell'" class="cellTableCell">{{field.countDistinct}}</td>
                 </tr>
             </tbody>
         </table>
