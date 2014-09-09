@@ -46,6 +46,10 @@ public class ProfileFieldProperty {
     return namePath;
   }
 
+  public void setNamePath( String namePath ) {
+    this.namePath = namePath;
+  }
+
   public String getNameKey() {
     return nameKey;
   }

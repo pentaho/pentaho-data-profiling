@@ -71,11 +71,15 @@ public class ProfileStatus {
   }
 
   public void setFields( List<ProfilingField> fields ) {
-    List<ProfilingField> newFields = new ArrayList<ProfilingField>( fields.size() );
-    for ( ProfilingField field : fields ) {
-      newFields.add( field.copy() );
+    if ( fields == null ) {
+      this.fields = null;
+    } else {
+      List<ProfilingField> newFields = new ArrayList<ProfilingField>( fields.size() );
+      for ( ProfilingField field : fields ) {
+        newFields.add( field.copy() );
+      }
+      this.fields = newFields;
     }
-    this.fields = newFields;
   }
 
   public Long getTotalEntities() {

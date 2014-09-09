@@ -26,7 +26,11 @@ import com.pentaho.profiling.api.ProfileStatus;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -76,5 +80,23 @@ public class DefaultProfileActionTest {
     };
     defaultProfileAction.setThen( then );
     Assert.assertEquals( then, defaultProfileAction.then() );
+  }
+
+  @Test
+  public void testStop() {
+    AtomicBoolean stopped = new AtomicBoolean( false );
+    ProfileAction then = mock( ProfileAction.class );
+    DefaultProfileAction defaultProfileAction = new DefaultProfileAction( then, stopped ) {
+      @Override public ProfileActionResult execute() {
+        return null;
+      }
+
+      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
+
+      }
+    };
+    assertTrue( stopped == defaultProfileAction.getStopped() );
+    defaultProfileAction.stop();
+    assertNull( defaultProfileAction.then() );
   }
 }

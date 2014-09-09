@@ -22,284 +22,87 @@
 
 package com.pentaho.profiling.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by bryan on 8/14/14.
  */
 public class ProfilingFieldTest {
-  
   @Test
   public void testConstructor() {
     ProfilingField p = new ProfilingField();
-    assertTrue(p.getValues() != null);
-    
+    assertTrue( p.getValues() != null );
+
     Map<String, Object> vals = new HashMap<String, Object>();
     vals.put( "akey", "avalue" );
-    p = new ProfilingField(vals);
-    
-    assertTrue(p.getValues() != null);
-    assertEquals(vals.size(), p.getValues().size());
-    assertEquals("avalue", p.getValues().get( "akey" ).toString());
+    p = new ProfilingField( vals );
+
+    assertTrue( p.getValues() != null );
+    assertEquals( vals.size(), p.getValues().size() );
+    assertEquals( "avalue", p.getValues().get( "akey" ).toString() );
   }
-  
+
   @Test
-  public void testSetAKeyValuePair() {
-    String name = "NAME_VALUE";
+  @SuppressWarnings("unchecked")
+  public void testMapConstructor() {
+    Map<String, Object> values = mock( Map.class );
+    ProfilingField profilingField = new ProfilingField( values );
+    assertEquals( values, profilingField.getValues() );
+  }
+
+  @Test
+  @SuppressWarnings( "unchecked" )
+  public void testSetValues() {
+    Map<String, Object> values = mock( Map.class );
     ProfilingField profilingField = new ProfilingField();
-    profilingField.getValues().put( "name", name );
-    assertEquals( name, profilingField.getValues().get( "name" ) );
-  }
-  
-
-  /*
-  @Test
-  public void testID() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-    assertEquals( name.hashCode(), profilingField.getID() );
+    profilingField.setValues( values );
+    assertEquals( values, profilingField.getValues() );
   }
 
   @Test
-  public void testSetPath() {
-    String path = "TEST.PATH.ONE[].TWO";
-    ProfilingField field = new ProfilingField();
-    field.setPath( path );
-    assertEquals( path, field.getPath() );
+  public void testCopy() {
+    String nestedMapKey = "nestedMap";
+    String nestedListKey = "nestedKey";
+
+    Map<String, Object> topMap = new HashMap<String, Object>();
+    Map<String, Object> nestedMap = new HashMap<String, Object>();
+    List<Object> nestedList = new ArrayList<Object>();
+    nestedList.add( 1L );
+    nestedList.add( null );
+    topMap.put( nestedMapKey, nestedMap );
+    nestedMap.put( nestedListKey, nestedList );
+    ProfilingField profilingField = new ProfilingField( topMap );
+    Map<String, Object> deepCopy = profilingField.copy().getValues();
+
+    assertFalse( deepCopy == topMap );
+    assertEquals( 1, deepCopy.size() );
+    assertTrue( deepCopy.containsKey( nestedMapKey ) );
+    Map<String, Object> nestedMapCopy = (Map<String, Object>) deepCopy.get( nestedMapKey );
+
+    assertFalse( nestedMapCopy == nestedMap );
+    assertEquals( 1, nestedMapCopy.size() );
+    assertTrue( nestedMapCopy.containsKey( nestedListKey ) );
+    List<Object> nestedListCopy = (List<Object>) nestedMapCopy.get( nestedListKey );
+
+    assertEquals( 2, nestedListCopy.size() );
+    assertEquals( 1L, nestedListCopy.get( 0 ) );
+    assertNull( nestedListCopy.get( 1 ) );
   }
 
-  @Test
-  public void testSetLeaf() {
-    ProfilingField field = new ProfilingField();
-    assertFalse( field.isLeaf() );
-    field.setLeaf( true );
-    assertTrue( field.isLeaf() );
+  @Test( expected = RuntimeException.class )
+  public void testCopyError() {
+    String nestedListKey = "nestedKey";
+    Map<String, Object> topMap = new HashMap<String, Object>();
+    topMap.put( nestedListKey, Collections.unmodifiableList( new ArrayList<Object>(  ) ) );
+    new ProfilingField( topMap ).copy();
   }
-
-  @Test
-  public void testSetSubDoc() {
-    ProfilingField field = new ProfilingField();
-    assertFalse( field.isDocument() );
-    field.setDocument( true );
-    assertTrue( field.isDocument() );
-  }
-
-  @Test
-  public void testSetArray() {
-    ProfilingField field = new ProfilingField();
-    assertFalse( field.isArray() );
-    field.setArray( true );
-    assertTrue( field.isArray() );
-  }
-
-  @Test
-  public void testPathToFieldsTopLevelTerminal() {
-    String path = "A_SIMPLE_FIELD";
-
-    List<ProfilingField> fields = ProfilingField.pathToFields( path );
-    assertEquals( 1, fields.size() );
-    assertEquals( path, fields.get( 0 ).getName() );
-    assertEquals( "$" + path, fields.get( 0 ).getPath() );
-    assertTrue( fields.get( 0 ).isLeaf() );
-    assertFalse( fields.get( 0 ).isArray() );
-    assertFalse( fields.get( 0 ).isDocument() );
-  }
-
-  @Test
-  public void testPathToFieldsOneSubDoc() {
-    String path = "SUB_DOC.TERMINAL";
-
-    List<ProfilingField> fields = ProfilingField.pathToFields( path );
-    assertEquals( 2, fields.size() );
-    assertEquals( "SUB_DOC", fields.get( 0 ).getName() );
-    assertEquals( "$SUB_DOC", fields.get( 0 ).getPath() );
-    assertFalse( fields.get( 0 ).isLeaf() );
-    assertTrue( fields.get( 0 ).isDocument() );
-    assertFalse( fields.get( 0 ).isArray() );
-
-    assertEquals( "TERMINAL", fields.get( 1 ).getName() );
-    assertEquals( "$" + path, fields.get( 1 ).getPath() );
-    assertTrue( fields.get( 1 ).isLeaf() );
-    assertFalse( fields.get( 1 ).isArray() );
-    assertFalse( fields.get( 1 ).isDocument() );
-  }
-
-  @Test
-  public void testPathToFieldsSubDocWithSubDoc() {
-    String path = "SUB_DOC.SUB_SUB_DOC.TERMINAL";
-
-    List<ProfilingField> fields = ProfilingField.pathToFields( path );
-    assertEquals( 3, fields.size() );
-    assertEquals( "SUB_DOC", fields.get( 0 ).getName() );
-    assertEquals( "$SUB_DOC", fields.get( 0 ).getPath() );
-    assertFalse( fields.get( 0 ).isLeaf() );
-    assertFalse( fields.get( 0 ).isArray() );
-    assertTrue( fields.get( 0 ).isDocument() );
-
-    assertEquals( "SUB_SUB_DOC", fields.get( 1 ).getName() );
-    assertEquals( "$SUB_DOC.SUB_SUB_DOC", fields.get( 1 ).getPath() );
-    assertFalse( fields.get( 1 ).isLeaf() );
-    assertFalse( fields.get( 1 ).isArray() );
-    assertTrue( fields.get( 1 ).isDocument() );
-
-    assertEquals( "TERMINAL", fields.get( 2 ).getName() );
-    assertEquals( "$" + path, fields.get( 2 ).getPath() );
-    assertTrue( fields.get( 2 ).isLeaf() );
-    assertFalse( fields.get( 2 ).isArray() );
-    assertFalse( fields.get( 2 ).isDocument() );
-  }
-
-  @Test
-  public void testPathToFieldsTerminalArray() {
-    String path = "TERMINAL[]";
-
-    List<ProfilingField> fields = ProfilingField.pathToFields( path );
-    assertEquals( 1, fields.size() );
-    assertEquals( "TERMINAL", fields.get( 0 ).getName() );
-    assertEquals( "$" + path, fields.get( 0 ).getPath() );
-    assertTrue( fields.get( 0 ).isLeaf() );
-    assertTrue( fields.get( 0 ).isArray() );
-    assertFalse( fields.get( 0 ).isDocument() );
-  }
-
-  @Test
-  public void testPathToFieldsNonTerminalArray() {
-    String path = "SUB_DOC.ARRAY[].TERMINAL";
-
-    List<ProfilingField> fields = ProfilingField.pathToFields( path );
-    assertEquals( 3, fields.size() );
-    assertEquals( "SUB_DOC", fields.get( 0 ).getName() );
-    assertEquals( "$SUB_DOC", fields.get( 0 ).getPath() );
-    assertFalse( fields.get( 0 ).isLeaf() );
-    assertFalse( fields.get( 0 ).isArray() );
-    assertTrue( fields.get( 0 ).isDocument() );
-
-    assertEquals( "ARRAY", fields.get( 1 ).getName() );
-    assertEquals( "$SUB_DOC.ARRAY[]", fields.get( 1 ).getPath() );
-    assertFalse( fields.get( 1 ).isLeaf() );
-    assertFalse( fields.get( 1 ).isDocument() );
-    assertTrue( fields.get( 1 ).isArray() );
-
-    assertEquals( "TERMINAL", fields.get( 2 ).getName() );
-    assertEquals( "$" + path, fields.get( 2 ).getPath() );
-    assertTrue( fields.get( 2 ).isLeaf() );
-    assertFalse( fields.get( 2 ).isArray() );
-    assertFalse( fields.get( 2 ).isDocument() );
-  }
-
-  @Test
-  public void testAddType() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-
-    assertFalse( profilingField.typesIterator().hasNext() );
-    ProfilingFieldType type = new ProfilingFieldType( ProfilingFieldType.Type.NUMBER.toString() );
-    type.setCount( 1 );
-    profilingField.addOrUpdateType( type );
-    assertTrue( profilingField.typesIterator().hasNext() );
-    Iterator<ProfilingFieldType> i = profilingField.typesIterator();
-
-    ProfilingFieldType retrieved = i.next();
-    assertTrue( retrieved != null );
-    assertEquals( type.getTypeName(), retrieved.getTypeName() );
-    assertEquals( type.getCount(), retrieved.getCount() );
-  }
-
-  @Test
-  public void testUpdateType() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-
-    ProfilingFieldType type = new ProfilingFieldType( ProfilingFieldType.Type.NUMBER.toString() );
-    type.setCount( 1 );
-    profilingField.addOrUpdateType( type );
-    profilingField.addOrUpdateType( type );
-    assertTrue( profilingField.typesIterator().hasNext() );
-    Iterator<ProfilingFieldType> i = profilingField.typesIterator();
-
-    ProfilingFieldType retrieved = i.next();
-    assertTrue( retrieved != null );
-    assertEquals( type.getTypeName(), retrieved.getTypeName() );
-    assertEquals( type.getCount() + type.getCount(), retrieved.getCount() );
-  }
-
-  @Test
-  public void testAddUpdateTwoTypes() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-
-    ProfilingFieldType type = new ProfilingFieldType( ProfilingFieldType.Type.NUMBER.toString() );
-    type.setCount( 1 );
-    profilingField.addOrUpdateType( type );
-
-    ProfilingFieldType type2 = new ProfilingFieldType( ProfilingFieldType.Type.STRING.toString() );
-    type2.setCount( 10 );
-    profilingField.addOrUpdateType( type2 );
-
-    assertTrue( profilingField.typesIterator().hasNext() );
-    Iterator<ProfilingFieldType> i = profilingField.typesIterator();
-    i.next();
-    assertTrue( profilingField.typesIterator().hasNext() );
-
-    ProfilingFieldType retrieved = i.next();
-    assertTrue( retrieved != null );
-    assertEquals( type2.getTypeName(), retrieved.getTypeName() );
-    assertEquals( type2.getCount(), retrieved.getCount() );
-  }
-
-  @Test
-  public void testGetNamedType() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-
-    ProfilingFieldType type = new ProfilingFieldType( ProfilingFieldType.Type.NUMBER.toString() );
-    type.setCount( 1 );
-    profilingField.addOrUpdateType( type );
-
-    ProfilingFieldType type2 = new ProfilingFieldType( ProfilingFieldType.Type.STRING.toString() );
-    type2.setCount( 10 );
-    profilingField.addOrUpdateType( type2 );
-
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.NUMBER.toString() ) != null );
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.STRING.toString() ) != null );
-    assertTrue( profilingField.getNamedType( "goofy" ) == null );
-
-    assertEquals( 10L, profilingField.getNamedType( ProfilingFieldType.Type.STRING.toString() ).getCount() );
-  }
-
-  @Test
-  public void testRemoveNamedType() {
-    String name = "NAME_VALUE";
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setName( name );
-
-    ProfilingFieldType type = new ProfilingFieldType( ProfilingFieldType.Type.NUMBER.toString() );
-    type.setCount( 1 );
-    profilingField.addOrUpdateType( type );
-
-    ProfilingFieldType type2 = new ProfilingFieldType( ProfilingFieldType.Type.STRING.toString() );
-    type2.setCount( 10 );
-    profilingField.addOrUpdateType( type2 );
-
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.NUMBER.toString() ) != null );
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.STRING.toString() ) != null );
-
-    profilingField.removeNamedType( ProfilingFieldType.Type.NUMBER.toString() );
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.STRING.toString() ) != null );
-    assertTrue( profilingField.getNamedType( ProfilingFieldType.Type.NUMBER.toString() ) == null );
-  }*/
 }

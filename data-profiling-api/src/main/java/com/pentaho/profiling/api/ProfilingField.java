@@ -42,34 +42,6 @@ import java.util.TreeMap;
  */
 @XmlRootElement
 public class ProfilingField {
-
-  /*public static final String ARRAY = "ARRAY"; //$NON-NLS-1$
-  public static final String DOCUMENT = "DOCUMENT"; //$NON-NLS-1$
-  *//**
-   * The full path of the field (including the terminal name part)
-   *//*
-  protected String path;
-  *//**
-   * True if this field is a leaf
-   *//*
-  protected boolean leaf;
-  *//**
-   * True if this field is a document
-   *//*
-  protected boolean document;
-  *//**
-   * True if this field is an array
-   *//*
-  protected boolean array;
-  *//**
-   * The known types for this field (and potentially their counts/stats)
-   *//*
-  protected Map<String, ProfilingFieldType> types = new TreeMap<String, ProfilingFieldType>();
-  *//**
-   * The name of the field
-   *//*
-  private String name;*/
-
   private Map<String, Object> values;
 
   public ProfilingField() {
@@ -99,15 +71,6 @@ public class ProfilingField {
       return copyMap( (Map<String, Object>) value );
     } else if ( value instanceof Collection ) {
       return copyCollection( (Collection<Object>) value );
-    } else if ( value instanceof Statistic ) {
-      Statistic result = null;
-      try {
-        result = (Statistic) value.getClass().newInstance();
-      } catch ( Exception e ) {
-        throw new RuntimeException( e );
-      }
-      result.setValue( ( (Statistic) value ).getValue() );
-      return result;
     } else {
       return value;
     }

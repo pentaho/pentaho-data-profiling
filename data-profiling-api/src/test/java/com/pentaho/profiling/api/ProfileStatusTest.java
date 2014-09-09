@@ -30,6 +30,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -54,15 +57,27 @@ public class ProfileStatusTest {
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
   }
 
-  /*@Test
-  public void testSetFields() {
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.getValues().setName( "TEST" );
-    List<ProfilingField> fields = new ArrayList<ProfilingField>( Arrays.asList( profilingField ) );
+  @Test
+  public void testSetFieldsNull() {
     ProfileStatus profileStatus = new ProfileStatus();
-    profileStatus.setFields( fields );
-    assertEquals( fields, profileStatus.getFields() );
-  }*/
+    assertNull( profileStatus.getFields() );
+    profileStatus.setFields( null );
+    assertNull( profileStatus.getFields() );
+  }
+
+  @Test
+  public void testSetFields() {
+    ProfilingField initial = mock( ProfilingField.class );
+    ProfilingField copy = mock( ProfilingField.class );
+    ProfilingField copy2 = mock( ProfilingField.class );
+    when( initial.copy() ).thenReturn( copy );
+    when( copy.copy() ).thenReturn( copy2 );
+    ProfileStatus profileStatus = new ProfileStatus();
+    profileStatus.setFields( Arrays.asList( initial ) );
+    List<ProfilingField> fields = profileStatus.getFields();
+    assertEquals( 1, fields.size() );
+    assertEquals( copy2, fields.get( 0 ) );
+  }
 
   @Test
   public void testSetTotalEntries() {
@@ -70,5 +85,39 @@ public class ProfileStatusTest {
     ProfileStatus profileStatus = new ProfileStatus();
     profileStatus.setTotalEntities( totalEntries );
     assertEquals( totalEntries, profileStatus.getTotalEntities() );
+  }
+
+  @Test
+  public void testSetCurrentOperation() {
+    String operation = "test-operation";
+    ProfileStatus profileStatus = new ProfileStatus();
+    profileStatus.setCurrentOperation( operation );
+    assertEquals( operation, profileStatus.getCurrentOperation() );
+  }
+
+  @Test
+  public void testSetCurrentOperationVariables() {
+    String variable = "test-variable";
+    ProfileStatus profileStatus = new ProfileStatus();
+    profileStatus.setCurrentOperationVariables( Arrays.asList( variable ) );
+    List<String> variables = profileStatus.getCurrentOperationVariables();
+    assertEquals( 1, variables.size() );
+    assertEquals( variable, variables.get( 0 ) );
+  }
+
+  @Test
+  public void testSetProfileFieldDefinition() {
+    ProfileFieldDefinition definition = mock( ProfileFieldDefinition.class );
+    ProfileStatus profileStatus = new ProfileStatus();
+    profileStatus.setProfileFieldDefinition( definition );
+    assertEquals( definition, profileStatus.getProfileFieldDefinition() );
+  }
+
+  @Test
+  public void testGetCurrentOperationPath() {
+    String path = "test-path";
+    ProfileStatus profileStatus = new ProfileStatus();
+    profileStatus.setCurrentOperationPath( path );
+    assertEquals( path, profileStatus.getCurrentOperationPath() );
   }
 }

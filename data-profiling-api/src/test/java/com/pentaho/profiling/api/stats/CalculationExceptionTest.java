@@ -22,44 +22,33 @@
 
 package com.pentaho.profiling.api.stats;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+
 /**
- * Exception for calculation problems
- * 
- * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * Created by bryan on 9/9/14.
  */
-public class CalculationException extends Exception {
-
-  /**
-   * For serialization
-   */
-  private static final long serialVersionUID = -6722982094457521689L;
-
-  /**
-   * Constructor
-   */
-  public CalculationException() {
-    super();
+public class CalculationExceptionTest {
+  @Test
+  public void testNoArgConstructor() {
+    assertNull( new CalculationException().getMessage() );
+    assertNull( new CalculationException().getCause() );
   }
 
-  /**
-   * Constructor
-   * 
-   * @param message
-   *          the message
-   */
-  public CalculationException( String message ) {
-    super( message );
+  @Test
+  public void testMessageConstructor() {
+    assertEquals( "test", new CalculationException( "test" ).getMessage() );
   }
 
-  /**
-   * Constructor
-   *
-   * @param message
-   *          the message
-   * @param cause
-   *          the cause
-   */
-  public CalculationException( String message, Throwable cause ) {
-    super( message, cause );
+  @Test
+  public void testMessageThrowableConstructor() {
+    Throwable throwable = mock( Throwable.class );
+    String message = "test";
+    CalculationException calculationException = new CalculationException( message, throwable );
+    assertEquals( message, calculationException.getMessage() );
+    assertEquals( throwable, calculationException.getCause() );
   }
 }
