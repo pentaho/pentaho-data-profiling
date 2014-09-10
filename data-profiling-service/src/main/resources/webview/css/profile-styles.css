@@ -17,10 +17,11 @@ body {
     margin-top: 30px;
 }
 
-/*
 .profile-dsi-container {
+    margin-bottom: 0.5em;
 }
 
+/*
 .profile-fields-container {
 }
 */
@@ -49,10 +50,13 @@ body {
     display: table-cell;
     padding: 16px;
     vertical-align: middle;
+    white-space: pre;
 }
 
-.profile-message-btn {
-    margin-left: 1ex;
+.profile-message-action {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 16px 16px 16px 0; /* left: 0 */
 }
 
 /* operations */
