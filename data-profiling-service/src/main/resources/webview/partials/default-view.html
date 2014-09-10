@@ -1,8 +1,7 @@
 <div>
-    <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
-    <div class="profile-message"
-          ng-class="currentOperation ? 'profile-state-processing' : ''"
-          ng-if="currentOperation">
+    <div class="profile-section profile-message"
+         ng-class="currentOperation ? 'profile-state-processing' : ''"
+         ng-if="currentOperation">
         <div class="profile-message-img-cell">
             <div class="profile-message-img"></div>
         </div>
@@ -10,7 +9,8 @@
             <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
         </div>
     </div>
-    <div class="profile-fields-container">
+    <div class="profile-section profile-dsi-container" ng-include="dataSourceUrl"></div>
+    <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
         <div class="profile-fields-list-wrapper">
             <table class="pentaho-table profile-fields-list" cellspacing="0">
@@ -39,7 +39,7 @@
             </table>
         </div>
     </div>
-    <div class="profile-operations-container" ng-if="operations">
+    <div class="profile-section profile-operations-container" ng-if="operations">
         <div class="pentaho-fieldgroup-major" translate="profiling.operations.title"></div>
         <button ng-repeat="operation in operations"
                 ng-disabled="!!currentOperation"

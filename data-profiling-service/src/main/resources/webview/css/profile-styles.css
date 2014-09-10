@@ -1,26 +1,36 @@
-
 .pentaho-fieldgroup-major {
     margin-top: 1em;
     margin-bottom: 0.5em;
 }
 
-#profileView {
-    padding: 40px;
+body {
+    text-align: center; /* center child div, which is inline-block */
 }
 
+#profileView {
+    display: inline-block; /* size width to content */
+    padding: 40px;
+    text-align: initial; /* reset body level text-align: center, added only to center this div */
+}
+
+.profile-section + .profile-section {
+    margin-top: 30px;
+}
+
+/*
 .profile-dsi-container {
-    margin-bottom: 30px;
 }
 
 .profile-fields-container {
-    margin-top: 1em; /* collapses with profiling-fields-title's, unless a border is specified */
 }
+*/
 
 /* message */
 .profile-message {
     display: table;
     border: 1px solid rgb(192,192,192);
     background-color: rgb(253,253,226);
+    margin-bottom: 30px;
 }
 
 .profile-message-img-cell {
