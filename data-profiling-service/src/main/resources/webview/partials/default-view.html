@@ -5,13 +5,14 @@
         <div class="profile-message-img-cell">
             <div class="profile-message-img"></div>
         </div>
-        <div class="profile-message-text">{{currentOperation | translate | interpolateMessage:currentOperationVariables}}
+        <div class="profile-message-text">{{currentOperation | translate | interpolateMessage:currentOperationVariables}}</div>
+        <div class="profile-message-action">
             <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
         </div>
     </div>
-    <div class="profile-section profile-dsi-container" ng-include="dataSourceUrl"></div>
     <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
+        <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
         <div class="profile-fields-list-wrapper">
             <table class="pentaho-table profile-fields-list" cellspacing="0">
                 <thead>
