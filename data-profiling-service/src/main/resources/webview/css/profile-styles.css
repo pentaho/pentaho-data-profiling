@@ -9,7 +9,7 @@
 }
 
 .profile-dsi-container {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .profile-fields-container {
@@ -29,7 +29,6 @@
     vertical-align: middle;
 }
 
-
 .profile-state-processing .profile-message-img {
     width:  32px;
     height: 32px;
@@ -42,6 +41,25 @@
     vertical-align: middle;
 }
 
+.profile-message-btn {
+    margin-left: 1ex;
+}
+
+/* operations */
+.profile-operations-container {
+    margin-top: 1em;
+}
+
+.profile-operations-container button + button {
+    margin-left: 5px;
+}
+
+/* table */
+.profile-fields-list-wrapper {
+    overflow:   auto;
+    max-height: 50vh;
+    max-width:  90vw;
+}
 
 /* Pentaho Table style
     - extends globalCrystal.css
