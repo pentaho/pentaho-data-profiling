@@ -25,9 +25,7 @@ define([
     '$translate',
     '$translatePartialLoader',
     function($scope, $routeParams, profileService, dataSourceService, notificationService, $translate, $translatePartialLoader) {
-      $scope.showTemplate    = false;
-
-      $scope.orderByField    = 'name';
+      $scope.orderByField    = '["name"]';
       $scope.isOrderReversed = false;
 
       $scope.stopCurrentOperation = function() {
@@ -43,6 +41,7 @@ define([
         profileService.getOperations({profileId: profileStatus.id}, function(operations){
           $scope.operations = operations.profileOperation;
         });
+
         var fieldMap = {};
         if ( profileStatus.profileFieldDefinition ) {
           if (!Array.isArray(profileStatus.profileFieldDefinition)) {
@@ -67,6 +66,7 @@ define([
             currentMap[definition.pathToProperty[definition.pathToProperty.length - 1]] = definition;
           });
         }
+
         var fieldHeaders = [];
         var addedFields = { };
         if(profileStatus.fields) {
@@ -86,8 +86,11 @@ define([
             fieldHeaders.push(profileStatus.profileFieldDefinition[key]);
           }
         }
+
         var fieldRows = $scope.getRows(fieldMap, profileStatus.fields);
+
         $scope.updateDataSource(profileStatus.dataSourceReference);
+
         $scope.currentOperation = profileStatus.currentOperation;
         $scope.currentOperationVariables = profileStatus.currentOperationVariables;
         $scope.fieldHeaders = fieldHeaders;
@@ -156,7 +159,7 @@ define([
           return result;
         };
         return flatten(pathMap, fieldMap, [{}]);
-      }
+      };
 
       $scope.updateDataSource = function(dataSourceReference) {
         var oldDsr    = $scope.dataSourceReference,
@@ -185,23 +188,19 @@ define([
       };
 
       $scope.onOrderByField = function(fieldHeader) {
-        // Cycles through: Ascending -> Descending -> Unsorted
+        // Cycles through: Ascending -> Descending
 
         if($scope.orderByField === fieldHeader.stringifiedPath) {
-          if($scope.isOrderReversed) {
-            $scope.orderByField = '';
-          } else {
-            $scope.isOrderReversed = true;
-          }
+          $scope.isOrderReversed = !$scope.isOrderReversed;
         } else {
           $scope.orderByField = fieldHeader.stringifiedPath;
           $scope.isOrderReversed = false;
         }
       };
 
-      $scope.orderByPredicate = function(row) {
+      $scope.orderByKey = function(row) {
         return row[$scope.orderByField];
-      }
+      };
 
       notificationService.register(
         /* notifType */

@@ -1,45 +1,50 @@
 <div>
-    <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
-    <div class="profile-message"
-          ng-class="currentOperation ? 'profile-state-processing' : ''"
-          ng-if="currentOperation">
+    <div class="profile-section profile-message"
+         ng-class="currentOperation ? 'profile-state-processing' : ''"
+         ng-if="currentOperation">
         <div class="profile-message-img-cell">
             <div class="profile-message-img"></div>
         </div>
-        <div class="profile-message-text">{{ currentOperation | translate | interpolateMessage:currentOperationVariables }}
-            <button class="pentaho-button" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
+        <div class="profile-message-text">{{currentOperation | translate | interpolateMessage:currentOperationVariables}}
+            <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
         </div>
     </div>
-    <div class="profile-fields-container">
+    <div class="profile-section profile-dsi-container" ng-include="dataSourceUrl"></div>
+    <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
-        <table class="pentaho-table profile-fields-list" cellspacing="0">
-            <thead>
-                <tr>
-                    <th class="cellTableHeader cellTableSortableHeader"
-                        ng-class="orderByField != fieldHeader.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                        ng-click="onOrderByField(fieldHeader)"
-                        ng-repeat="fieldHeader in fieldHeaders">
-                        <div class="cellTableHeaderContent">
-                            <div translate="{{fieldHeader.nameKey}}"></div>
-                            <div class="cellTableHeaderOrderIndicator"></div>
-                        </div>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
-                    ng-repeat="fieldRow in fieldRows | orderBy:orderByPredicate:isOrderReversed">
-                    <td ng-class-odd="'cellTableOddRowCell'"
-                        ng-class-even="'cellTableEvenRowCell'"
-                        class="cellTableCell"
-                        ng-repeat="fieldHeader in fieldHeaders">{{fieldRow[fieldHeader.stringifiedPath]}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="profile-fields-list-wrapper">
+            <table class="pentaho-table profile-fields-list" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="cellTableHeader cellTableSortableHeader"
+                            ng-class="orderByField !== fieldHeader.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+                            ng-click="onOrderByField(fieldHeader)"
+                            ng-repeat="fieldHeader in fieldHeaders">
+                            <div class="cellTableHeaderContent">
+                                <div translate="{{fieldHeader.nameKey}}"></div>
+                                <div class="cellTableHeaderOrderIndicator"></div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
+                        ng-repeat="fieldRow in fieldRows | orderBy:orderByKey:isOrderReversed">
+                        <td ng-class-odd="'cellTableOddRowCell'"
+                            ng-class-even="'cellTableEvenRowCell'"
+                            class="cellTableCell"
+                            ng-repeat="fieldHeader in fieldHeaders">{{fieldRow[fieldHeader.stringifiedPath]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div ng-if="operations">
-      <div ng-repeat="operation in operations">
-        <button class="pentaho-button" ng-click="startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
-      </div>
+    <div class="profile-section profile-operations-container" ng-if="operations">
+        <div class="pentaho-fieldgroup-major" translate="profiling.operations.title"></div>
+        <button ng-repeat="operation in operations"
+                ng-disabled="!!currentOperation"
+                class="pentaho-button"
+                ng-click="startOperation(operation.id)"
+                translate="{{operation.nameKey}}"></button>
     </div>
 </div>
