@@ -28,8 +28,6 @@ import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.ArrayList;
@@ -89,21 +87,6 @@ public class ProfilingServiceImpl implements ProfilingService {
       }
     }
     return null;
-  }
-
-  @Override
-  public List<MeasureMetadata> getSupportedMeasures( String profileId ) {
-    synchronized ( profileMap ) {
-      return profileMap.get( profileId ).getSupportedMeasures();
-    }
-  }
-
-  @Override
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures ) {
-    synchronized ( profileMap ) {
-      profileMap.get( profileId ).setRequestedMeasures( measures );
-    }
-    profileNotificationProvider.notify( profileId );
   }
 
   @Override

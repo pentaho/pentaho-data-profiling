@@ -71,6 +71,16 @@ public class ProfileActionExecutorImplTest {
   }
 
   @Test
+  public void testExecuteNullResult() {
+    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
+    profileActionExecutor.setExecutorService( executorService );
+    ProfileAction profileAction = mock( ProfileAction.class );
+    profileActionExecutor.submit( profileAction, profileStatus );
+    verify( profileStatus, times( 0 ) ).setFields( anyList() );
+  }
+
+  @Test
   public void testExecuteThen() {
     ProfileAction then = mock( ProfileAction.class );
     when( profileAction.then() ).thenReturn( then );

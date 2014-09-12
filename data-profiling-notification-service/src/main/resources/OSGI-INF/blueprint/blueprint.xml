@@ -22,6 +22,9 @@
         <jaxrs:serviceBeans>
             <ref component-id="notificationServiceImpl" />
         </jaxrs:serviceBeans>
+        <jaxrs:providers>
+          <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+        </jaxrs:providers>
     </jaxrs:server>
 
     <bean id="notificationServiceImpl" class="com.pentaho.profiling.notification.service.NotificationService" />

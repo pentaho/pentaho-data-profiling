@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.api.datasource;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -41,6 +42,7 @@ public class DataSourceReference {
     this.dataSourceProvider = dataSourceProvider;
   }
 
+  @XmlElement
   public String getDataSourceProvider() {
     return dataSourceProvider;
   }
@@ -49,6 +51,7 @@ public class DataSourceReference {
     this.dataSourceProvider = dataSourceProvider;
   }
 
+  @XmlElement
   public String getId() {
     return id;
   }

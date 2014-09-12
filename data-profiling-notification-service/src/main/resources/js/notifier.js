@@ -36,9 +36,7 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
         $http({
           method: 'POST',
           url:    '/cxf/notificationService',
-          data: {
-            notificationRequestWrapper: {requests: requestData}
-          },
+          data: { requests: requestData },
           headers: {'Content-Type': 'application/json'},
           timeout: 60 * 1000
         })
@@ -94,9 +92,7 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
         });
       }
 
-      function processResponseData(respData) {
-        var resps = respData && respData.notificationResponse;
-
+      function processResponseData(resps) {
         if(!resps || !resps.length) return;
 
         // Defensive copy.
@@ -111,7 +107,8 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
           var processChangedItem = function(changedItem) {
             var interestedId   = changedItem.id,
                 timestamp      = changedItem.timestamp,
-                interestedRegs = respNotifTypeMap[interestedId];
+                interestedRegs = respNotifTypeMap[interestedId],
+                changedObject  = changedItem.changedObject;
 
             // May have unregistered while waiting.
             if(interestedRegs) {
@@ -119,7 +116,7 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
                 if(registration.interestedIds[interestedId] < timestamp) {
                   registration.interestedIds[interestedId] = timestamp;
 
-                  registration.callback(interestedId);
+                  registration.callback(changedObject);
                 }
               });
             }

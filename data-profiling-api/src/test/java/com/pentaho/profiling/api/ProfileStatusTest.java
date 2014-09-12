@@ -106,11 +106,12 @@ public class ProfileStatusTest {
   }
 
   @Test
-  public void testSetProfileFieldDefinition() {
-    ProfileFieldDefinition definition = mock( ProfileFieldDefinition.class );
+  public void testSetProfileFieldProperties() {
+    ProfileFieldProperty property = mock( ProfileFieldProperty.class );
+    List<ProfileFieldProperty> profileFieldProperties = new ArrayList<ProfileFieldProperty>( Arrays.asList( property ) );
     ProfileStatus profileStatus = new ProfileStatus();
-    profileStatus.setProfileFieldDefinition( definition );
-    assertEquals( definition, profileStatus.getProfileFieldDefinition() );
+    profileStatus.setProfileFieldProperties( profileFieldProperties );
+    assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
   }
 
   @Test

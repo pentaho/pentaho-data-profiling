@@ -22,22 +22,29 @@
 
 package com.pentaho.profiling.notification.api;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Created by bryan on 8/21/14.
  */
+@XmlRootElement
 public class ChangedItem {
   private long timestamp;
   private String id;
+  private Object changedObject;
 
   public ChangedItem() {
-    this( 0L, null );
+    this( 0L, null, null );
   }
 
-  public ChangedItem( long timestamp, String id ) {
+  public ChangedItem( long timestamp, String id, Object changedObject ) {
     this.timestamp = timestamp;
     this.id = id;
+    this.changedObject = changedObject;
   }
 
+  @XmlElement
   public long getTimestamp() {
     return timestamp;
   }
@@ -46,6 +53,16 @@ public class ChangedItem {
     this.timestamp = timestamp;
   }
 
+  @XmlElement
+  public Object getChangedObject() {
+    return changedObject;
+  }
+
+  public void setChangedObject( Object changedObject ) {
+    this.changedObject = changedObject;
+  }
+
+  @XmlElement
   public String getId() {
     return id;
   }

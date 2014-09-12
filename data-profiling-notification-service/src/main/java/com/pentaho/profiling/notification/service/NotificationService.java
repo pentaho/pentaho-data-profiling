@@ -63,7 +63,7 @@ public class NotificationService {
   }
 
   protected void getNotificationsHelper( NotificationRequestWrapper notificationRequestWrapper,
-                                      List<NotificationResponse> result ) {
+                                         List<NotificationResponse> result ) {
     Map<String, NotificationHandlerImpl> notificationHandlerMap = this.notificationHandlerMap;
     for ( NotificationRequest notificationRequest : notificationRequestWrapper.getRequests() ) {
       NotificationHandlerImpl notificationHandlerImpl =
@@ -73,9 +73,10 @@ public class NotificationService {
         for ( NotificationRequestEntry entry : notificationRequest.getEntries() ) {
           String id = entry.getKey();
           Long oldTimestamp = entry.getValue();
-          Long newTimestamp = notificationHandlerImpl.getLastModified( id, oldTimestamp );
+          NotificationState notificationState = notificationHandlerImpl.getLastModified( id, oldTimestamp );
+          Long newTimestamp = notificationState.getTimestamp();
           if ( newTimestamp > oldTimestamp ) {
-            changedItems.add( new ChangedItem( newTimestamp, id ) );
+            changedItems.add( new ChangedItem( newTimestamp, id, notificationState.getChangedObject() ) );
           }
         }
         if ( changedItems.size() > 0 ) {

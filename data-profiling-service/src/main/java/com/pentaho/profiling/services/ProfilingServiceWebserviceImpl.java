@@ -26,8 +26,6 @@ import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import javax.jws.WebService;
@@ -44,8 +42,8 @@ import java.util.List;
 /**
  * Created by bryan on 7/31/14.
  */
-@Produces( { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML } )
-@Consumes( { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML } )
+@Produces( { MediaType.APPLICATION_JSON } )
+@Consumes( { MediaType.APPLICATION_JSON } )
 @WebService
 public class ProfilingServiceWebserviceImpl implements ProfilingService {
   private ProfilingService delegate;
@@ -63,20 +61,6 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @Override
   public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
     return delegate.create( dataSourceReference );
-  }
-
-  @GET
-  @Path( "/measures/supported/{profileId}" )
-  @Override
-  public List<MeasureMetadata> getSupportedMeasures( @PathParam( "profileId" ) String profileId ) {
-    return delegate.getSupportedMeasures( profileId );
-  }
-
-  @PUT
-  @Path( "/measures/requested/{profileId}" )
-  @Override
-  public void setRequestedMeasures( @PathParam( "profileId" ) String profileId, List<RequestedMeasure> measures ) {
-    delegate.setRequestedMeasures( profileId, measures );
   }
 
   @GET

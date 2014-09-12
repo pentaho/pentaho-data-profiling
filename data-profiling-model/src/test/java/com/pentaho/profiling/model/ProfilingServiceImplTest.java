@@ -27,8 +27,6 @@ import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 import org.junit.After;
 import org.junit.Before;
@@ -101,29 +99,6 @@ public class ProfilingServiceImplTest {
     when( profileFactory.accepts( dataSourceReference ) ).thenReturn( true );
     when( profileFactory.create( dataSourceReference ) ).thenReturn( profile );
     assertEquals( profileStatus, profilingService.create( dataSourceReference ) );
-  }
-
-  @Test
-  public void testGetSupportedMeasures() {
-    String profileId = "PROFILE_ID";
-    MeasureMetadata measureMetadata = new MeasureMetadata();
-    measureMetadata.setMeasureName( "TEST" );
-    List<MeasureMetadata> measureMetadatas = new ArrayList<MeasureMetadata>( Arrays.asList( measureMetadata ) );
-    when( profile.getSupportedMeasures() ).thenReturn( measureMetadatas );
-    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
-    assertEquals( measureMetadatas, profilingService.getSupportedMeasures( profileId ) );
-  }
-
-  @Test
-  public void testSetSupportedMeasures() {
-    String profileId = "PROFILE_ID";
-    List<RequestedMeasure> requestedMeasures = new ArrayList<RequestedMeasure>();
-    RequestedMeasure requestedMeasure = new RequestedMeasure();
-    requestedMeasure.setName( "TEST" );
-    requestedMeasures.add( requestedMeasure );
-    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
-    profilingService.setRequestedMeasures( profileId, requestedMeasures );
-    verify( profile ).setRequestedMeasures( requestedMeasures );
   }
 
   @Test

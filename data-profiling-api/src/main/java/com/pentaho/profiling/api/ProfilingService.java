@@ -23,8 +23,6 @@
 package com.pentaho.profiling.api;
 
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.List;
@@ -34,10 +32,6 @@ import java.util.List;
  */
 public interface ProfilingService {
   public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
-
-  public List<MeasureMetadata> getSupportedMeasures( String profileId );
-
-  public void setRequestedMeasures( String profileId, List<RequestedMeasure> measures );
 
   public List<ProfileStatus> getActiveProfiles();
 

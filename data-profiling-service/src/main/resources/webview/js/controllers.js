@@ -29,33 +29,33 @@ define([
       $scope.isOrderReversed = false;
 
       $scope.stopCurrentOperation = function() {
-        profileService.stop({profileIdWrapper: {profileId: $scope.profileId}});
+        profileService.stop({profileId: $scope.profileId});
       };
 
       $scope.startOperation = function(operationId) {
-        profileService.start({profileOperationWrapper: {profileId: $scope.profileId, operationId: operationId}});
+        profileService.start({profileId: $scope.profileId, operationId: operationId});
       };
 
       $scope.updateProfile = function(profileStatus) {
         $scope.profileId = profileStatus.id;
         profileService.getOperations({profileId: profileStatus.id}, function(operations){
-          $scope.operations = operations.profileOperation;
+          $scope.operations = operations;
         });
 
-        var fieldMap = {};
-        if ( profileStatus.profileFieldDefinition ) {
-          if (!Array.isArray(profileStatus.profileFieldDefinition)) {
-            profileStatus.profileFieldDefinition = [profileStatus.profileFieldDefinition];
+        var fieldMap = { values: {} };
+        if ( profileStatus.profileFieldProperties ) {
+          if (!Array.isArray(profileStatus.profileFieldProperties)) {
+            profileStatus.profileFieldProperties = [profileStatus.profileFieldProperties];
           }
           var index = 0;
-          profileStatus.profileFieldDefinition.forEach(function(definition){
+          profileStatus.profileFieldProperties.forEach(function(definition){
             if (!$translatePartialLoader.isPartAvailable(definition.namePath)) {
               $translatePartialLoader.addPart(definition.namePath);
             }
             definition.index = index++;
             definition.isDefinition = true;
             definition.stringifiedPath = JSON.stringify(definition.pathToProperty);
-            var currentMap = fieldMap;
+            var currentMap = fieldMap.values;
             for (var i = 0; i < definition.pathToProperty.length - 1; i++) {
               var pathElement = definition.pathToProperty[i];
               if (!(pathElement in currentMap)) {
@@ -79,11 +79,8 @@ define([
               addedFields[indices[i]] = true;
             }
           });
-          profileStatus.fields.forEach(function(field) {
-
-          });
           for ( var key in addedFields ) {
-            fieldHeaders.push(profileStatus.profileFieldDefinition[key]);
+            fieldHeaders.push(profileStatus.profileFieldProperties[key]);
           }
         }
 
@@ -208,11 +205,9 @@ define([
         /* ids */
         [$routeParams.profileId],
         /* cb */
-        function(changedProfileId) {
+        function(changedProfile) {
           // Get a ProfileStatus of this profile.
-          profileService.query({profileId: changedProfileId}, function(profileStatusWrapper) {
-            $scope.updateProfile(profileStatusWrapper.profileStatus);
-          });
+          $scope.updateProfile(changedProfile);
         });
     }
   ]);

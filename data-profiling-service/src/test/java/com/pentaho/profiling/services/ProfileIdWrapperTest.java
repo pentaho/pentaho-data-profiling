@@ -20,24 +20,35 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.stats;
+package com.pentaho.profiling.services;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
- * Interface for ValueProducers that can be updated with new values
- * 
- * 
- * @author bryan
- * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * Created by bryan on 9/12/14.
  */
-public interface ValueProcessor extends ValueProducer {
+public class ProfileIdWrapperTest {
+  @Test
+  public void testNoArgConstructor() {
+    ProfileIdWrapper profileIdWrapper = new ProfileIdWrapper();
+    assertNull( profileIdWrapper.getProfileId() );
+  }
 
-  /**
-   * Process a value
-   * 
-   * @param input
-   *          the value to process
-   * @throws Exception
-   *           if a problem occurs
-   */
-  public void process( Object input ) throws Exception;
+  @Test
+  public void testIdConstructor() {
+    String id = "test-id";
+    ProfileIdWrapper profileIdWrapper = new ProfileIdWrapper( id );
+    assertEquals( id, profileIdWrapper.getProfileId() );
+  }
+
+  @Test
+  public void testSetId() {
+    String id = "test-id";
+    ProfileIdWrapper profileIdWrapper = new ProfileIdWrapper();
+    profileIdWrapper.setProfileId( id );
+    assertEquals( id, profileIdWrapper.getProfileId() );
+  }
 }
