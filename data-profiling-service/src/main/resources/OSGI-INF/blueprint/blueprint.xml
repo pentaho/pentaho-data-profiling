@@ -23,7 +23,7 @@
             <ref component-id="profilingServiceWebserviceImpl" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-          <bean id="profilingFieldMessageBodyWriter" class="com.pentaho.profiling.services.ProfilingFieldMessageBodyWriter"/>
+          <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:server>
 

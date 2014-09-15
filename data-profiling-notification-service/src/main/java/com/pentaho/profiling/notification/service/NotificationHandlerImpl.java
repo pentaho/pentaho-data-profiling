@@ -36,39 +36,43 @@ import java.util.Set;
  */
 public class NotificationHandlerImpl implements NotificationHandler {
   private final NotificationProvider notificationProvider;
-  private final Map<String, Long> interestedMap;
+  private final Map<String, NotificationState> interestedMap;
 
   public NotificationHandlerImpl( NotificationProvider notificationProvider ) {
     this.notificationProvider = notificationProvider;
-    this.interestedMap = new HashMap<String, Long>( );
+    this.interestedMap = new HashMap<String, NotificationState>();
   }
 
   @Override public Set<String> getInterestedIds() {
-    synchronized ( interestedMap ) {
+    synchronized( interestedMap ) {
       return new HashSet<String>( interestedMap.keySet() );
     }
   }
 
   @Override public void notify( NotificationEvent notificationEvent ) {
-    synchronized ( interestedMap ) {
+    synchronized( interestedMap ) {
       String id = notificationEvent.getId();
-      Long oldTimestamp = interestedMap.get( id );
-      Long newTimestamp = notificationEvent.getTimestamp();
-      if ( oldTimestamp < newTimestamp ) {
-        interestedMap.put( notificationEvent.getId(), notificationEvent.getTimestamp() );
+      NotificationState notificationState = interestedMap.get( id );
+      if ( notificationState != null ) {
+        Long oldTimestamp = notificationState.getTimestamp();
+        Long newTimestamp = notificationEvent.getTimestamp();
+        if ( oldTimestamp < newTimestamp ) {
+          interestedMap.put( notificationEvent.getId(),
+            new NotificationState( notificationEvent.getTimestamp(), notificationEvent.getChangedObject() ) );
+        }
       }
     }
   }
 
-  public Long getLastModified( String id, Long timestamp ) {
-    synchronized ( interestedMap ) {
-      Long oldTimestamp = interestedMap.get( id );
-      if ( oldTimestamp == null ) {
-        interestedMap.put( id, timestamp );
+  public NotificationState getLastModified( String id, Long timestamp ) {
+    synchronized( interestedMap ) {
+      NotificationState notificationState = interestedMap.get( id );
+      if ( notificationState == null ) {
+        interestedMap.put( id, new NotificationState( timestamp, null ) );
         notificationProvider.addInterestedId( id, this );
-        return  interestedMap.get( id );
+        return interestedMap.get( id );
       }
-      return oldTimestamp;
+      return notificationState;
     }
   }
 

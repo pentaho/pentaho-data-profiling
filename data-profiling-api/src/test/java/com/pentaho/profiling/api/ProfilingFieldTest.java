@@ -69,6 +69,7 @@ public class ProfilingFieldTest {
   }
 
   @Test
+  @SuppressWarnings( "unchecked" )
   public void testCopy() {
     String nestedMapKey = "nestedMap";
     String nestedListKey = "nestedKey";

@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.notification.api.NotificationEvent;
 import com.pentaho.profiling.notification.api.NotificationHandler;
 
@@ -37,6 +38,11 @@ public class ProfileNotificationProviderImpl implements ProfileNotificationProvi
   public static String NOTIFICATION_TYPE = "com.pentaho.profiling.model.ProfileNotificationProvider";
   private final Map<String, Long> changedIds = new ConcurrentHashMap<String, Long>();
   private final List<NotificationHandler> notificationHandlers = new ArrayList<NotificationHandler>();
+  private ProfilingService profilingService;
+
+  public void setProfilingService( ProfilingService profilingService ) {
+    this.profilingService = profilingService;
+  }
 
   @Override public void notify( String id ) {
     List<NotificationHandler> notificationHandlers;
@@ -61,7 +67,8 @@ public class ProfileNotificationProviderImpl implements ProfileNotificationProvi
     if ( notificationHandler.getInterestedIds().contains( id ) ) {
       Long timestamp = changedIds.get( id );
       if ( timestamp != null ) {
-        notificationHandler.notify( new NotificationEvent( NOTIFICATION_TYPE, id, timestamp ) );
+        notificationHandler
+          .notify( new NotificationEvent( NOTIFICATION_TYPE, id, profilingService.getProfileUpdate( id ), timestamp ) );
       }
     }
   }

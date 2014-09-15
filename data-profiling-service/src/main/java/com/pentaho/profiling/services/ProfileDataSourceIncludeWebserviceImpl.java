@@ -38,8 +38,8 @@ import java.util.List;
 /**
  * Created by bryan on 8/6/14.
  */
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Produces({ MediaType.APPLICATION_JSON })
+@Consumes({ MediaType.APPLICATION_JSON })
 @WebService
 public class ProfileDataSourceIncludeWebserviceImpl implements ProfileDataSourceIncludeService {
   List<ProfileDataSourceIncludeService> includeServices;

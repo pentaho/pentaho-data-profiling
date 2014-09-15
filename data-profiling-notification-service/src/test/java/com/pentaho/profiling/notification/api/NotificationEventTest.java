@@ -31,10 +31,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class NotificationEventTest {
   @Test
-  public void testNotificationTypeIdTimestampConstructor() {
-    NotificationEvent notificationEvent = new NotificationEvent( "TYPE", "ID", 10L );
+  public void testNotificationTypeIdChangedObjectTimestampConstructor() {
+    Object object = new Object();
+    NotificationEvent notificationEvent = new NotificationEvent( "TYPE", "ID", object, 10L );
     assertEquals( "TYPE", notificationEvent.getNotificationType() );
     assertEquals( "ID", notificationEvent.getId() );
     assertEquals( 10L, notificationEvent.getTimestamp() );
+    assertEquals( object, notificationEvent.getChangedObject() );
   }
 }

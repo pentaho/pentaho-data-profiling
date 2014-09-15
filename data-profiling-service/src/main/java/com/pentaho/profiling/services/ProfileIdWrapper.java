@@ -32,6 +32,11 @@ public class ProfileIdWrapper {
   private String profileId;
 
   public ProfileIdWrapper() {
+    this( null );
+  }
+
+  public ProfileIdWrapper( String profileId ) {
+    this.profileId = profileId;
   }
 
   public String getProfileId() {

@@ -22,18 +22,10 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.stats.Statistic;
-
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by bryan on 7/31/14.
@@ -45,7 +37,7 @@ public class ProfilingField {
   private Map<String, Object> values;
 
   public ProfilingField() {
-    this( new HashMap<String, Object>(  ) );
+    this( new HashMap<String, Object>() );
   }
 
   public ProfilingField( Map<String, Object> values ) {
@@ -64,6 +56,7 @@ public class ProfilingField {
     return new ProfilingField( copyMap( values ) );
   }
 
+  @SuppressWarnings( "unchecked" )
   private Object copyObject( Object value ) {
     if ( value == null ) {
       return null;
@@ -84,6 +77,7 @@ public class ProfilingField {
     return result;
   }
 
+  @SuppressWarnings( "unchecked" )
   private Collection<Object> copyCollection( Collection<Object> collection ) {
     try {
       Collection<Object> result = collection.getClass().newInstance();

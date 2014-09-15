@@ -23,10 +23,8 @@ define(['notifier', 'angular-mocks'], function(notifier) {
       var type = 'TEST_TYPE';
       var id = 'TEST_ID';
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
-        }
-      }).respond({"notificationResponse":[{"changedItems":{"id":id,"timestamp":1408992291626},"notificationType":type}]});
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
+      }).respond([{"changedItems":{"id":id,"timestamp":1408992291626},"notificationType":type}]);
       var callbackCalled =false;
       var registerId = notificationService.register(type, [id], function(id) {
         callbackCalled = true;
@@ -41,15 +39,11 @@ define(['notifier', 'angular-mocks'], function(notifier) {
       var id = 'TEST_ID';
       var id2 = 'TEST_ID_2';
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
-        }
-      }).respond({"notificationResponse":[{"changedItems":[],"notificationType":type}]});
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
+      }).respond([{"changedItems":[],"notificationType":type}]);
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}, {'key': id2, 'value': 0}]}]
-        }
-      }).respond({"notificationResponse":[{"changedItems":[{"id":id,"timestamp":1408992291626}, {"id":id2,"timestamp":1408992291626}],"notificationType":type}]});
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}, {'key': id2, 'value': 0}]}]
+      }).respond([{"changedItems":[{"id":id,"timestamp":1408992291626}, {"id":id2,"timestamp":1408992291626}],"notificationType":type}]);
       var callbackCalled =false;
       var registerId = notificationService.register(type, [id], function(id) {
         callbackCalled = true;
@@ -70,12 +64,10 @@ define(['notifier', 'angular-mocks'], function(notifier) {
       var id = 'TEST_ID';
       var registerId;
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
-        }
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
       }).respond(function() {
         notificationService.unregister(registerId);
-        return {"notificationResponse":[{"changedItems":{"id":"DIFFERENT_ID","timestamp":1408992291626},"notificationType":type}]};
+        return [{"changedItems":{"id":"DIFFERENT_ID","timestamp":1408992291626},"notificationType":type}];
       });
       registerId = notificationService.register(type, [id], function(id) {
         // Fail as we shouldn't get this callback
@@ -88,20 +80,16 @@ define(['notifier', 'angular-mocks'], function(notifier) {
       var type = 'TEST_TYPE';
       var id = 'TEST_ID';
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
-        }
-      }).respond({"notificationResponse":[{"changedItems":{"id":id,"timestamp":5},"notificationType":type}]});
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
+      }).respond([{"changedItems":{"id":id,"timestamp":5},"notificationType":type}]);
       httpBackend.expectPOST('/cxf/notificationService', {
-        'notificationRequestWrapper' : {
-          'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
-        }
-      }).respond({"notificationResponse":[{"changedItems":{"id":id,"timestamp":5},"notificationType":type}]});
+        'requests' : [{'notificationType': type, 'entries': [{'key': id, 'value': 0}]}]
+      }).respond([{"changedItems":{"id":id,"timestamp":5},"notificationType":type}]);
       var callbackCalled = 0;
       var callbackCalled2 = 0;
-      var registerId = notificationService.register(type, [id], function(id) {
+      var registerId = notificationService.register(type, [id], function(changedItem) {
         callbackCalled++;
-        var registerId2 = notificationService.register(type, [id], function(id) {
+        var registerId2 = notificationService.register(type, [id], function(changedItem) {
           callbackCalled2++;
           notificationService.unregister(registerId);
           notificationService.unregister(registerId2);

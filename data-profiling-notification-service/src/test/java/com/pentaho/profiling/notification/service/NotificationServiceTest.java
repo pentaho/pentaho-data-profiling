@@ -62,7 +62,7 @@ public class NotificationServiceTest {
     doAnswer( new Answer<Void>() {
       @Override public Void answer( InvocationOnMock invocation ) throws Throwable {
         ( (NotificationHandler) invocation.getArguments()[ 1 ] )
-          .notify( new NotificationEvent( notificationType, id, 11L ) );
+          .notify( new NotificationEvent( notificationType, id, new Object(), 11L ) );
         return null;
       }
     } ).when( notificationProvider ).addInterestedId( eq( id ), any( NotificationHandler.class ) );
@@ -95,7 +95,7 @@ public class NotificationServiceTest {
     doAnswer( new Answer<Void>() {
       @Override public Void answer( InvocationOnMock invocation ) throws Throwable {
         ( (NotificationHandler) invocation.getArguments()[ 1 ] )
-          .notify( new NotificationEvent( notificationType, id, 9L ) );
+          .notify( new NotificationEvent( notificationType, id, new Object(), 9L ) );
         return null;
       }
     } ).when( notificationProvider ).addInterestedId( eq( id ), any( NotificationHandler.class ) );

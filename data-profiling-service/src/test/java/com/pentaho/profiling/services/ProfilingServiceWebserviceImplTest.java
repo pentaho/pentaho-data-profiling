@@ -22,13 +22,11 @@
 
 package com.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.measure.MeasureMetadata;
-import com.pentaho.profiling.api.measure.RequestedMeasure;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -68,28 +66,8 @@ public class ProfilingServiceWebserviceImplTest {
   }
 
   @Test
-  public void testGetSupportedMeasures() {
-    List<MeasureMetadata> result = new ArrayList<MeasureMetadata>(  );
-    MeasureMetadata measureMetadata = mock( MeasureMetadata.class );
-    result.add( measureMetadata );
-    String id = "id";
-    when( delegate.getSupportedMeasures( id ) ).thenReturn( result );
-    assertEquals( result, webservice.getSupportedMeasures( id ) );
-  }
-
-  @Test
-  public void testSetRequestedMeasures() {
-    List<RequestedMeasure> requestedMeasures = new ArrayList<RequestedMeasure>(  );
-    RequestedMeasure measure = mock( RequestedMeasure.class );
-    requestedMeasures.add( measure );
-    String id = "id";
-    webservice.setRequestedMeasures( id, requestedMeasures );
-    verify( delegate ).setRequestedMeasures( id, requestedMeasures );
-  }
-
-  @Test
   public void testGetActiveProfiles() {
-    List<ProfileStatus> profiles = new ArrayList<ProfileStatus>(  );
+    List<ProfileStatus> profiles = new ArrayList<ProfileStatus>();
     ProfileStatus profile = mock( ProfileStatus.class );
     profiles.add( profile );
     when( delegate.getActiveProfiles() ).thenReturn( profiles );
@@ -102,5 +80,45 @@ public class ProfilingServiceWebserviceImplTest {
     String id = "id";
     when( delegate.getProfileUpdate( id ) ).thenReturn( profile );
     assertEquals( profile, webservice.getProfileUpdate( id ) );
+  }
+
+  @Test
+  public void testStopWrapper() {
+    String id = "test-profile-id";
+    webservice.stopCurrentOperation( new ProfileIdWrapper( id ) );
+    verify( delegate ).stopCurrentOperation( id );
+  }
+
+  @Test
+  public void testStopId() {
+    String id = "test-profile-id";
+    webservice.stopCurrentOperation( id );
+    verify( delegate ).stopCurrentOperation( id );
+  }
+
+  @Test
+  public void testStartWrapper() {
+    String id = "test-profile-id";
+    String operationId = "test-operation-id";
+    webservice.startOperation( new ProfileOperationWrapper( id, operationId ) );
+    verify( delegate ).startOperation( id, operationId );
+  }
+
+  @Test
+  public void testStartProfileIdOperationId() {
+    String id = "test-profile-id";
+    String operationId = "test-operation-id";
+    webservice.startOperation( id, operationId );
+    verify( delegate ).startOperation( id, operationId );
+  }
+
+  @Test
+  public void testGetOperations() {
+    String id = "test-profile-id";
+    List<ProfileOperation> operations = new ArrayList<ProfileOperation>();
+    ProfileOperation operation = mock( ProfileOperation.class );
+    operations.add( operation );
+    when( delegate.getOperations( id ) ).thenReturn( operations );
+    assertEquals( operations, webservice.getOperations( id ) );
   }
 }

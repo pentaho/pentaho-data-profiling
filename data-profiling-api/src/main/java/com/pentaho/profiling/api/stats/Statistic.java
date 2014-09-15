@@ -27,88 +27,38 @@ package com.pentaho.profiling.api.stats;
  * 
  * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
-public class Statistic {
+public interface Statistic {
+  public static final String KEY_PATH = "data-profiling-api/com.pentaho.profiling.api.stats";
 
-  /** The name of this statistic */
-  protected String name = "unset";
+  public static final String COUNT = "count";
 
-  /** The value of this statistic */
-  protected Object value;
+  public static final String MIN = "min";
 
-  public static enum Metric {
+  public static final String MAX = "max";
 
-    COUNT( "Count" ), MIN( "Min" ), MAX( "Max" ), SUM( "Sum" ), SUMSQ( "Sum of squares" ), MEAN( "Mean" ), VARIANCE(
-        "Variance" ), STDDEV( "Standard deviation" ), MEDIAN( "Median" ), TH_PERCENTILE( "th percentile" ), SKEWNESS(
-        "Skewness" ), KURTOSIS( "Kurtosis" ), FREQUENCY_DISTRIBUTION( "Frequency distribution" ), STRING_LENGTH(
-        "String length" ), MAX_WORDS( "Max words" ), MIN_WORDS( "Min words" );
+  public static final String SUM = "sum";
 
-    String sName;
+  public static final String SUM_OF_SQUARES = "sumOfSquares";
 
-    Metric( String name ) {
-      sName = name;
-    }
+  public static final String MEAN = "mean";
 
-    @Override
-    public String toString() {
-      return sName;
-    }
-  }
+  public static final String VARIANCE = "variance";
 
-  /**
-   * Constructor
-   */
-  public Statistic() {
+  public static final String STANDARD_DEVIATION = "standardDeviation";
 
-  }
+  public static final String MEDIAN = "median";
 
-  /**
-   * Constructor
-   * 
-   * @param name
-   *          the name of this statistic
-   * @param value
-   *          the value for this statistic
-   */
-  public Statistic( String name, Object value ) {
-    this.name = name;
-    this.value = value;
-  }
+  public static final String PERCENTILE = "percentile";
 
-  /**
-   * Get the name of this statistic
-   * 
-   * @return the name of this statistic
-   */
-  public String getName() {
-    return this.name;
-  }
+  public static final String SKEWNESS = "skewness";
 
-  /**
-   * Set the name of this statistic
-   * 
-   * @param name
-   *          the name of this statistic
-   */
-  public void setName( String name ) {
-    this.name = name;
-  }
+  public static final String KURTOSIS = "kurtosis";
 
-  /**
-   * Get the value of this statistic
-   * 
-   * @return the value of this statistic
-   */
-  public Object getValue() {
-    return this.value;
-  }
+  public static final String FREQUENCY_DISTRIBUTION = "frequencyDistribution";
 
-  /**
-   * Set the value of this statistic
-   * 
-   * @param value
-   *          the value of this statistic
-   */
-  public void setValue( Object value ) {
-    this.value = value;
-  }
+  public static final String STRING_LENGTH = "stringLength";
+
+  public static final String MAX_WORDS = "maxWords";
+
+  public static final String MIN_WORDS = "minWords";
 }

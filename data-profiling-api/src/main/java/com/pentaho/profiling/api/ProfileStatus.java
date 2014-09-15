@@ -24,6 +24,7 @@ package com.pentaho.profiling.api;
 
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +41,9 @@ public class ProfileStatus {
   String currentOperationPath;
   String currentOperation;
   List<String> currentOperationVariables;
-  ProfileFieldDefinition profileFieldDefinition;
+  private List<ProfileFieldProperty> profileFieldProperties;
 
-
+  @XmlElement
   public String getId() {
     return id;
   }
@@ -51,6 +52,7 @@ public class ProfileStatus {
     this.id = id;
   }
 
+  @XmlElement
   public DataSourceReference getDataSourceReference() {
     return dataSourceReference;
   }
@@ -59,6 +61,7 @@ public class ProfileStatus {
     this.dataSourceReference = dataSourceReference;
   }
 
+  @XmlElement
   public List<ProfilingField> getFields() {
     if ( fields != null ) {
       List<ProfilingField> result = new ArrayList<ProfilingField>( fields.size() );
@@ -82,6 +85,7 @@ public class ProfileStatus {
     }
   }
 
+  @XmlElement
   public Long getTotalEntities() {
     return totalEntities;
   }
@@ -90,6 +94,7 @@ public class ProfileStatus {
     this.totalEntities = totalEntities;
   }
 
+  @XmlElement
   public String getCurrentOperation() {
     return currentOperation;
   }
@@ -98,6 +103,7 @@ public class ProfileStatus {
     this.currentOperation = currentOperation;
   }
 
+  @XmlElement
   public List<String> getCurrentOperationVariables() {
     return currentOperationVariables;
   }
@@ -106,19 +112,21 @@ public class ProfileStatus {
     this.currentOperationVariables = new ArrayList<String>( currentOperationVariables );
   }
 
-  public ProfileFieldDefinition getProfileFieldDefinition() {
-    return profileFieldDefinition;
-  }
-
-  public void setProfileFieldDefinition( ProfileFieldDefinition profileFieldDefinition ) {
-    this.profileFieldDefinition = profileFieldDefinition;
-  }
-
+  @XmlElement
   public String getCurrentOperationPath() {
     return currentOperationPath;
   }
 
   public void setCurrentOperationPath( String currentOperationPath ) {
     this.currentOperationPath = currentOperationPath;
+  }
+
+  @XmlElement
+  public List<ProfileFieldProperty> getProfileFieldProperties() {
+    return profileFieldProperties;
+  }
+
+  public void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties ) {
+    this.profileFieldProperties = profileFieldProperties;
   }
 }

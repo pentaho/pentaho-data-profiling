@@ -59,15 +59,15 @@ public class NotificationHandlerImplTest {
   public void testOutOfDateNotifyDoesntChangeLastModified() {
     NotificationHandlerImpl notificationHandler = new NotificationHandlerImpl( notificationProvider );
     notificationHandler.getLastModified( "ID", 10L );
-    notificationHandler.notify( new NotificationEvent( "TestType", "ID", 9L ) );
-    assertEquals( Long.valueOf( 10L ), notificationHandler.getLastModified( "ID", 9L  ) );
+    notificationHandler.notify( new NotificationEvent( "TestType", "ID", null, 9L ) );
+    assertEquals( 10L, notificationHandler.getLastModified( "ID", 9L  ).getTimestamp() );
   }
 
   @Test
   public void testNotifyChangesLastModified() {
     NotificationHandlerImpl notificationHandler = new NotificationHandlerImpl( notificationProvider );
     notificationHandler.getLastModified( "ID", 10L );
-    notificationHandler.notify( new NotificationEvent( "TestType", "ID", 11L ) );
-    assertEquals( Long.valueOf( 11L ), notificationHandler.getLastModified( "ID", 10L  ) );
+    notificationHandler.notify( new NotificationEvent( "TestType", "ID", null, 11L ) );
+    assertEquals( 11L, notificationHandler.getLastModified( "ID", 10L  ).getTimestamp() );
   }
 }

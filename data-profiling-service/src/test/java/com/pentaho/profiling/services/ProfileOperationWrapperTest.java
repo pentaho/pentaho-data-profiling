@@ -20,35 +20,46 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.stats;
+package com.pentaho.profiling.services;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
 
 /**
- * Created by bryan on 9/9/14.
+ * Created by bryan on 9/12/14.
  */
-public class CalculationExceptionTest {
+public class ProfileOperationWrapperTest {
   @Test
   public void testNoArgConstructor() {
-    assertNull( new CalculationException().getMessage() );
-    assertNull( new CalculationException().getCause() );
+    ProfileOperationWrapper profileOperationWrapper = new ProfileOperationWrapper();
+    assertNull( profileOperationWrapper.getOperationId() );
+    assertNull( profileOperationWrapper.getProfileId() );
   }
 
   @Test
-  public void testMessageConstructor() {
-    assertEquals( "test", new CalculationException( "test" ).getMessage() );
+  public void testProfileIdOperationIdConstructor() {
+    String profileId = "test-profile-id";
+    String operationId = "test-operation-id";
+    ProfileOperationWrapper profileOperationWrapper = new ProfileOperationWrapper( profileId, operationId );
+    assertEquals( operationId, profileOperationWrapper.getOperationId() );
+    assertEquals( profileId, profileOperationWrapper.getProfileId() );
   }
 
   @Test
-  public void testMessageThrowableConstructor() {
-    Throwable throwable = mock( Throwable.class );
-    String message = "test";
-    CalculationException calculationException = new CalculationException( message, throwable );
-    assertEquals( message, calculationException.getMessage() );
-    assertEquals( throwable, calculationException.getCause() );
+  public void testSetProfileId() {
+    String profileId = "test-profile-id";
+    ProfileOperationWrapper profileOperationWrapper = new ProfileOperationWrapper();
+    profileOperationWrapper.setProfileId( profileId );
+    assertEquals( profileId, profileOperationWrapper.getProfileId() );
+  }
+
+  @Test
+  public void testSetOperationId() {
+    String operationId = "test-operation-id";
+    ProfileOperationWrapper profileOperationWrapper = new ProfileOperationWrapper();
+    profileOperationWrapper.setOperationId( operationId );
+    assertEquals( operationId, profileOperationWrapper.getOperationId() );
   }
 }

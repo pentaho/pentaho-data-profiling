@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.notification.api.NotificationEvent;
 import com.pentaho.profiling.notification.api.NotificationHandler;
 import org.junit.Assert;
@@ -51,7 +52,9 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfileNotificationProviderImpl profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfilingService profilingService = mock( ProfilingService.class );
+    profileNotificationProvider.setProfilingService( profilingService );
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );
     profileNotificationProvider.registerHandler( handler );
@@ -65,7 +68,9 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfileNotificationProviderImpl profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfilingService profilingService = mock( ProfilingService.class );
+    profileNotificationProvider.setProfilingService( profilingService );
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );
     profileNotificationProvider.registerHandler( handler );
@@ -82,7 +87,9 @@ public class ProfileNotificationProviderTest {
     NotificationHandler handler = mock( NotificationHandler.class );
     Set<String> interestedIds = new HashSet<String>( Arrays.asList( "TEST" ) );
     when( handler.getInterestedIds() ).thenReturn( interestedIds );
-    ProfileNotificationProvider profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfileNotificationProviderImpl profileNotificationProvider = new ProfileNotificationProviderImpl();
+    ProfilingService profilingService = mock( ProfilingService.class );
+    profileNotificationProvider.setProfilingService( profilingService );
     profileNotificationProvider.registerHandler( handler );
     long timestamp = System.currentTimeMillis();
     profileNotificationProvider.notify( "TEST" );

@@ -20,32 +20,25 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.measure;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Map;
+package com.pentaho.profiling.notification.service;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 9/12/14.
  */
-@XmlRootElement
-public class RequestedMeasure {
-  private String name;
-  private Map<String, String> parameterNameToValueMap;
+public class NotificationState {
+  private final long timestamp;
+  private final Object changedObject;
 
-  public Map<String, String> getParameterNameToValueMap() {
-    return parameterNameToValueMap;
+  public NotificationState( long timestamp, Object changedObject ) {
+    this.timestamp = timestamp;
+    this.changedObject = changedObject;
   }
 
-  public void setParameterNameToValueMap( Map<String, String> parameterNameToValueMap ) {
-    this.parameterNameToValueMap = parameterNameToValueMap;
+  public long getTimestamp() {
+    return timestamp;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName( String name ) {
-    this.name = name;
+  public Object getChangedObject() {
+    return changedObject;
   }
 }

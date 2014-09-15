@@ -27,17 +27,23 @@ package com.pentaho.profiling.notification.api;
  */
 public class NotificationEvent {
   private final String notificationType;
-  private final String id;
   private final long timestamp;
+  private final String id;
+  private final Object changedObject;
 
-  public NotificationEvent( String notificationType, String id, long timestamp ) {
+  public NotificationEvent( String notificationType, String id, Object changedObject, long timestamp ) {
     this.notificationType = notificationType;
     this.id = id;
+    this.changedObject = changedObject;
     this.timestamp = timestamp;
   }
 
   public String getNotificationType() {
     return notificationType;
+  }
+
+  public Object getChangedObject() {
+    return changedObject;
   }
 
   public String getId() {

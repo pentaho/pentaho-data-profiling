@@ -36,13 +36,16 @@ public class ChangedItemTest {
     ChangedItem changedItem = new ChangedItem(  );
     assertEquals( 0L, changedItem.getTimestamp() );
     assertNull( changedItem.getId() );
+    assertNull( changedItem.getChangedObject() );
   }
 
   @Test
-  public void testTimestampIdConstructor() {
-    ChangedItem changedItem = new ChangedItem( 1L, "TEST" );
+  public void testTimestampIdObjectConstructor() {
+    Object object = new Object();
+    ChangedItem changedItem = new ChangedItem( 1L, "TEST", object );
     assertEquals( 1L, changedItem.getTimestamp() );
     assertEquals( "TEST", changedItem.getId() );
+    assertEquals( object, changedItem.getChangedObject() );
   }
 
   @Test
@@ -57,5 +60,13 @@ public class ChangedItemTest {
     ChangedItem changedItem = new ChangedItem(  );
     changedItem.setId( "TEST_ID" );
     assertEquals( "TEST_ID", changedItem.getId() );
+  }
+
+  @Test
+  public void testSetChangedObject() {
+    Object object = new Object();
+    ChangedItem changedItem = new ChangedItem();
+    changedItem.setChangedObject( object );
+    assertEquals( object, changedItem.getChangedObject() );
   }
 }

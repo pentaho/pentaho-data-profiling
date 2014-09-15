@@ -12,7 +12,9 @@
   </bean>
 
   <bean id="profilingNotificationProvider" class="com.pentaho.profiling.model.ProfileNotificationProviderImpl"
-        scope="singleton"/>
+        scope="singleton">
+    <property name="profilingService" ref="profilingServiceImpl"/>
+  </bean>
 
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
            interface="com.pentaho.profiling.api.ProfilingService"/>

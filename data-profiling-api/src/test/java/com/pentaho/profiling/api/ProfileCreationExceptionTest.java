@@ -24,7 +24,7 @@ package com.pentaho.profiling.api;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by bryan on 8/14/14.
