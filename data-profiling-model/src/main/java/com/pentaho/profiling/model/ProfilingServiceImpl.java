@@ -103,7 +103,11 @@ public class ProfilingServiceImpl implements ProfilingService {
   @Override
   public ProfileStatus getProfileUpdate( String profileId ) {
     synchronized ( profileMap ) {
-      return profileMap.get( profileId ).getProfileUpdate();
+      Profile profile = profileMap.get( profileId );
+      if ( profile != null ) {
+        return profile.getProfileUpdate();
+      }
+      return null;
     }
   }
 
@@ -122,6 +126,12 @@ public class ProfilingServiceImpl implements ProfilingService {
   @Override public List<ProfileOperation> getOperations( String profileId ) {
     synchronized ( profileMap ) {
       return profileMap.get( profileId ).getProfileOperations();
+    }
+  }
+
+  @Override public void discardProfile( String profileId ) {
+    synchronized ( profileMap ) {
+      profileMap.remove( profileId );
     }
   }
 }

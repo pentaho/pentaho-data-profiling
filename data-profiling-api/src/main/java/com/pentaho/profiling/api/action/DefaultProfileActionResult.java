@@ -27,7 +27,7 @@ package com.pentaho.profiling.api.action;
  */
 public abstract class DefaultProfileActionResult implements ProfileActionResult {
   @Override
-  public Exception getProfileException() {
+  public ProfileActionException getProfileException() {
     return null;
   }
 }

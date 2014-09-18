@@ -23,10 +23,17 @@
 package com.pentaho.profiling.api.action;
 
 import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.operations.ProfileOperation;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
@@ -35,16 +42,22 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class ExceptionProfileActionResultTest {
   @Test
   public void testExceptionProfileActionResultStoresException() {
-    Exception exception = new Exception();
+    ProfileActionException exception = new ProfileActionException( new ProfileStatusMessage(), null );
     ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult( exception );
     assertEquals( exception, exceptionProfileActionResult.getProfileException() );
   }
 
   @Test
-  public void testExceptionProfileActionResultDoesNothingOnApply() {
-    ProfileStatus status = mock( ProfileStatus.class );
-    ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult( null );
+  public void testExceptionProfileActionResultAppliesError() {
+    ProfileStatus status = new ProfileStatus();
+    List<ProfileOperation> recoverOperations = new ArrayList<ProfileOperation>();
+    ProfileOperation mockRecover = mock( ProfileOperation.class );
+    recoverOperations.add( mockRecover );
+    ProfileActionException profileActionException = new ProfileActionException( new ProfileStatusMessage( "test-path", "test-key", new ArrayList<String>() ), null, recoverOperations );
+    ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult( profileActionException );
     exceptionProfileActionResult.apply( status );
-    verifyNoMoreInteractions( status );
+    assertEquals( "test-path", status.getOperationError().getMessage().getMessagePath() );
+    assertEquals( "test-key", status.getOperationError().getMessage().getMessageKey() );
+    assertEquals( recoverOperations, status.getOperationError().getRecoveryOperations() );
   }
 }

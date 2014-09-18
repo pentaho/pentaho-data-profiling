@@ -20,15 +20,33 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api.util;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 9/17/14.
  */
-public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+public class ObjectHolderTest {
+  @Test
+  public void testNoArgConstructor() {
+    assertNull( new ObjectHolder<Object>().getObject() );
+  }
 
-  public ProfileActionException getProfileException();
+  @Test
+  public void testObjectConstructor() {
+    Object testObj = new Object();
+    assertEquals( testObj, new ObjectHolder<Object>( testObj ).getObject() );
+  }
+
+  @Test
+  public void testSetter() {
+    Object testObj = new Object();
+    ObjectHolder<Object> objectObjectHolder = new ObjectHolder<Object>();
+    objectObjectHolder.setObject( testObj );
+    assertEquals( testObj, objectObjectHolder.getObject() );
+  }
 }

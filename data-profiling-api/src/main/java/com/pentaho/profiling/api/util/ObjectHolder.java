@@ -20,15 +20,27 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
-
-import com.pentaho.profiling.api.ProfileStatus;
+package com.pentaho.profiling.api.util;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 9/16/14.
  */
-public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+public class ObjectHolder<T> {
+  private T object;
 
-  public ProfileActionException getProfileException();
+  public ObjectHolder() {
+    this( null );
+  }
+
+  public ObjectHolder( T object ) {
+    this.object = object;
+  }
+
+  public T getObject() {
+    return object;
+  }
+
+  public void setObject( T object ) {
+    this.object = object;
+  }
 }

@@ -46,6 +46,12 @@ body {
     background: url("../images/loading.gif") no-repeat 0px 0px;
 }
 
+.profile-error-message .profile-message-img {
+    width:  32px;
+    height: 32px;
+    background: url("../images/error.png") no-repeat 0px 0px;
+}
+
 .profile-message-text {
     display: table-cell;
     padding: 16px;
@@ -57,6 +63,18 @@ body {
     display: table-cell;
     vertical-align: middle;
     padding: 16px 16px 16px 0; /* left: 0 */
+}
+
+.profile-button-list {
+    list-style-type: none;
+}
+
+.profile-button-list-element {
+    margin: 10px;
+}
+
+.profile-button {
+    width: 100%;
 }
 
 /* operations */

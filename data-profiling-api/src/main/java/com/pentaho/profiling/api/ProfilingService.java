@@ -42,4 +42,6 @@ public interface ProfilingService {
   public void startOperation( String profileId, String operationId );
 
   public List<ProfileOperation> getOperations( String profileId );
+
+  public void discardProfile( String profileId );
 }

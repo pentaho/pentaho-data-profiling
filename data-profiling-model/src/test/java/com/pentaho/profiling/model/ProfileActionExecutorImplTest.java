@@ -24,6 +24,7 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.action.ProfileAction;
+import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.action.ProfileActionResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,21 @@ public class ProfileActionExecutorImplTest {
     profileActionResult = mock( ProfileActionResult.class );
     profileNotificationProvider = mock( ProfileNotificationProviderImpl.class );
     when( profileAction.execute() ).thenReturn( profileActionResult );
+  }
+
+  @Test
+  public void testExecuteClearsOperationError() {
+    String id = "test-id";
+    when( profileStatus.getId() ).thenReturn( id );
+    ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
+    when( profileStatus.getOperationError() ).thenReturn( profileActionExceptionWrapper );
+    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
+    profileActionExecutor.setExecutorService( executorService );
+    profileActionExecutor.submit( profileAction, profileStatus );
+    verify( profileActionResult ).apply( profileStatus );
+    verify( profileStatus ).setOperationError( null );
+    verify( profileNotificationProvider, times( 3 ) ).notify( id );
   }
 
   @Test

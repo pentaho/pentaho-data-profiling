@@ -1,14 +1,27 @@
 <div>
     <div class="profile-section profile-message"
-         ng-class="currentOperation ? 'profile-state-processing' : ''"
-         ng-if="currentOperation">
+         ng-class="operationError ? 'profile-error-message' : ''"
+         ng-if="operationError">
         <div class="profile-message-img-cell">
             <div class="profile-message-img"></div>
         </div>
-        <div class="profile-message-text">{{currentOperation | translate | interpolateMessage:currentOperationVariables}}</div>
-        <div class="profile-message-action">
-            <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
-        </div>
+        <div class="profile-message-text">{{operationError.message.messageKey | translate | interpolateMessage:operationError.message.messageVariables}}</div>
+        <ul class="profile-button-list">
+          <li class="profile-button-list-element" ng-repeat="operation in operationError.recoveryOperations">
+            <button class="pentaho-button profile-button" ng-click="startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
+          </li>
+        </ul>
+    </div>
+    <div class="profile-section profile-message"
+        ng-class="currentOperation ? 'profile-state-processing' : ''"
+        ng-if="currentOperation">
+      <div class="profile-message-img-cell">
+        <div class="profile-message-img"></div>
+      </div>
+      <div class="profile-message-text">{{currentOperation.messageKey | translate | interpolateMessage:currentOperation.messageVariables}}</div>
+      <div class="profile-message-action">
+        <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
+      </div>
     </div>
     <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>

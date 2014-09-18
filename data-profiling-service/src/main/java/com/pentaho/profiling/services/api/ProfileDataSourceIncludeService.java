@@ -29,4 +29,5 @@ import com.pentaho.profiling.api.datasource.DataSourceReference;
  */
 public interface ProfileDataSourceIncludeService {
   public ProfileDataSourceInclude getInclude( DataSourceReference dataSourceReference );
+  public String getCreateUrl( DataSourceReference dataSourceReference );
 }

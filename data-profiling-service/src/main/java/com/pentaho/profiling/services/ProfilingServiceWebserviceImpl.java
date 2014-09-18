@@ -98,6 +98,17 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   @PUT
+  @Path( "/discard" )
+  public void discardProfile( ProfileIdWrapper profileIdWrapper ) {
+    discardProfile( profileIdWrapper.getProfileId() );
+  }
+
+
+  @Override public void discardProfile( String profileId ) {
+    delegate.discardProfile( profileId );
+  }
+
+  @PUT
   @Path( "/start" )
   public void startOperation( ProfileOperationWrapper profileOperationWrapper ) {
     startOperation( profileOperationWrapper.getProfileId(), profileOperationWrapper.getOperationId() );

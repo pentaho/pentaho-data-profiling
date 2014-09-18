@@ -22,13 +22,35 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.operations.ProfileOperation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 9/16/14.
  */
-public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+public class ProfileActionException extends Exception {
+  private final ProfileStatusMessage profileStatusMessage;
+  private final List<ProfileOperation> recoveryOperations;
 
-  public ProfileActionException getProfileException();
+  public ProfileActionException( ProfileStatusMessage profileStatusMessage, Throwable cause ) {
+    this( profileStatusMessage, cause, new ArrayList<ProfileOperation>() );
+  }
+
+  public ProfileActionException( ProfileStatusMessage profileStatusMessage, Throwable cause,
+                                 List<ProfileOperation> recoveryOperations ) {
+    super( cause );
+    this.profileStatusMessage = profileStatusMessage;
+    this.recoveryOperations = recoveryOperations;
+  }
+
+  public ProfileStatusMessage getProfileStatusMessage() {
+    return profileStatusMessage;
+  }
+
+  public List<ProfileOperation> getRecoveryOperations() {
+    return recoveryOperations;
+  }
 }

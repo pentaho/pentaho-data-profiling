@@ -121,4 +121,10 @@ public class ProfilingServiceWebserviceImplTest {
     when( delegate.getOperations( id ) ).thenReturn( operations );
     assertEquals( operations, webservice.getOperations( id ) );
   }
+
+  @Test
+  public void testDiscardProfile() {
+    webservice.discardProfile( new ProfileIdWrapper( "test-id" ) );
+    verify( delegate ).discardProfile( "test-id" );
+  }
 }

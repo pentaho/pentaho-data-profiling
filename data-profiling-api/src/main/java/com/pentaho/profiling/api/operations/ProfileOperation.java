@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class ProfileOperation {
+  public static final String KEY_PATH = "profiling-api/com.pentaho.profiling.api.operations.messages";
+  public static final String PROFILE_OPERATION_DISCARD_KEY = "ProfileDiscard";
+  public static final ProfileOperation PROFILE_OPERATION_DISCARD = new ProfileOperation( PROFILE_OPERATION_DISCARD_KEY, KEY_PATH, PROFILE_OPERATION_DISCARD_KEY );
   private String id;
   private String namePath;
   private String nameKey;
