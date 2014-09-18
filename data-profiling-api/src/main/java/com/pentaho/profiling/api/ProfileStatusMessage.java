@@ -20,15 +20,55 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 9/16/14.
  */
-public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+@XmlRootElement
+public class ProfileStatusMessage {
+  String messagePath;
+  String messageKey;
+  List<String> messageVariables;
 
-  public ProfileActionException getProfileException();
+  public ProfileStatusMessage( String messagePath, String messageKey, List<String> messageVariables ) {
+    this.messagePath = messagePath;
+    this.messageKey = messageKey;
+    this.messageVariables = messageVariables;
+  }
+
+  public ProfileStatusMessage() {
+    this( null, null, null );
+  }
+
+  @XmlElement
+  public String getMessagePath() {
+    return messagePath;
+  }
+
+  public void setMessagePath( String messagePath ) {
+    this.messagePath = messagePath;
+  }
+
+  @XmlElement
+  public List<String> getMessageVariables() {
+    return messageVariables;
+  }
+
+  public void setMessageVariables( List<String> messageVariables ) {
+    this.messageVariables = messageVariables;
+  }
+
+  @XmlElement
+  public String getMessageKey() {
+    return messageKey;
+  }
+
+  public void setMessageKey( String messageKey ) {
+    this.messageKey = messageKey;
+  }
 }

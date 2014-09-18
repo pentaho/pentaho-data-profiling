@@ -15,8 +15,9 @@ define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
 
   appServices.factory('DataSourceService', ['$resource',
     function($resource) {
-      return $resource('/cxf/data-profiling-service/dataSource/:id/:dataSourceProvider', {}, {
-        query: {method: 'GET', params: {profileId: 'profileId'}}
+      return $resource('/cxf/data-profiling-service/dataSource/include/:id/:dataSourceProvider', {}, {
+        getInclude: {method: 'GET', params: {id: 'id', dataSourceProvider: 'dataSourceProvider'}},
+        getCreate:  {method: 'GET', params: {id: 'id', dataSourceProvider: 'dataSourceProvider'}, url: '/cxf/data-profiling-service/dataSource/create/:id/:dataSourceProvider' }
       });
   }]);
 

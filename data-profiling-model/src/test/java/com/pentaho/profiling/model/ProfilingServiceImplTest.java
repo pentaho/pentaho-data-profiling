@@ -151,4 +151,15 @@ public class ProfilingServiceImplTest {
     ProfilingServiceImpl.getProfileMap().put( profileId, profile );
     assertEquals( profileOperations, profilingService.getOperations( profileId ) );
   }
+
+  @Test
+  public void testDiscard() {
+    String profileId = "PROFILE_ID";
+    ProfileStatus profileStatus = mock( ProfileStatus.class );
+    when( profile.getProfileUpdate() ).thenReturn( profileStatus );
+    ProfilingServiceImpl.getProfileMap().put( profileId, profile );
+    assertEquals( profileStatus, profilingService.getProfileUpdate( profileId ) );
+    profilingService.discardProfile( profileId );
+    assertNull( profilingService.getProfileUpdate( profileId ) );
+  }
 }

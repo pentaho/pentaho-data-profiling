@@ -89,36 +89,19 @@ public class ProfileStatusTest {
 
   @Test
   public void testSetCurrentOperation() {
-    String operation = "test-operation";
+    ProfileStatusMessage operation = new ProfileStatusMessage();
     ProfileStatus profileStatus = new ProfileStatus();
     profileStatus.setCurrentOperation( operation );
     assertEquals( operation, profileStatus.getCurrentOperation() );
   }
 
   @Test
-  public void testSetCurrentOperationVariables() {
-    String variable = "test-variable";
-    ProfileStatus profileStatus = new ProfileStatus();
-    profileStatus.setCurrentOperationVariables( Arrays.asList( variable ) );
-    List<String> variables = profileStatus.getCurrentOperationVariables();
-    assertEquals( 1, variables.size() );
-    assertEquals( variable, variables.get( 0 ) );
-  }
-
-  @Test
   public void testSetProfileFieldProperties() {
     ProfileFieldProperty property = mock( ProfileFieldProperty.class );
-    List<ProfileFieldProperty> profileFieldProperties = new ArrayList<ProfileFieldProperty>( Arrays.asList( property ) );
+    List<ProfileFieldProperty> profileFieldProperties =
+      new ArrayList<ProfileFieldProperty>( Arrays.asList( property ) );
     ProfileStatus profileStatus = new ProfileStatus();
     profileStatus.setProfileFieldProperties( profileFieldProperties );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
-  }
-
-  @Test
-  public void testGetCurrentOperationPath() {
-    String path = "test-path";
-    ProfileStatus profileStatus = new ProfileStatus();
-    profileStatus.setCurrentOperationPath( path );
-    assertEquals( path, profileStatus.getCurrentOperationPath() );
   }
 }

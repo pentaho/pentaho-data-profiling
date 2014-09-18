@@ -36,62 +36,83 @@ define([
         profileService.start({profileId: $scope.profileId, operationId: operationId});
       };
 
+      $scope.addPathIfNecessary = function(path) {
+        if (!$translatePartialLoader.isPartAvailable(path)) {
+          $translatePartialLoader.addPart(path);
+        }
+      }
+
       $scope.updateProfile = function(profileStatus) {
-        $scope.profileId = profileStatus.id;
-        profileService.getOperations({profileId: profileStatus.id}, function(operations){
-          $scope.operations = operations;
-        });
+        if (profileStatus) {
+          $scope.profileId = profileStatus.id;
+          profileService.getOperations({profileId: profileStatus.id}, function(operations){
+            $scope.operations = operations;
+          });
 
-        var fieldMap = { values: {} };
-        if ( profileStatus.profileFieldProperties ) {
-          if (!Array.isArray(profileStatus.profileFieldProperties)) {
-            profileStatus.profileFieldProperties = [profileStatus.profileFieldProperties];
-          }
-          var index = 0;
-          profileStatus.profileFieldProperties.forEach(function(definition){
-            if (!$translatePartialLoader.isPartAvailable(definition.namePath)) {
-              $translatePartialLoader.addPart(definition.namePath);
+          var fieldMap = { values: {} };
+          if ( profileStatus.profileFieldProperties ) {
+            if (!Array.isArray(profileStatus.profileFieldProperties)) {
+              profileStatus.profileFieldProperties = [profileStatus.profileFieldProperties];
             }
-            definition.index = index++;
-            definition.isDefinition = true;
-            definition.stringifiedPath = JSON.stringify(definition.pathToProperty);
-            var currentMap = fieldMap.values;
-            for (var i = 0; i < definition.pathToProperty.length - 1; i++) {
-              var pathElement = definition.pathToProperty[i];
-              if (!(pathElement in currentMap)) {
-                currentMap[pathElement] = {};
+            var index = 0;
+            profileStatus.profileFieldProperties.forEach(function(definition){
+              $scope.addPathIfNecessary(definition.namePath)
+              definition.index = index++;
+              definition.isDefinition = true;
+              definition.stringifiedPath = JSON.stringify(definition.pathToProperty);
+              var currentMap = fieldMap.values;
+              for (var i = 0; i < definition.pathToProperty.length - 1; i++) {
+                var pathElement = definition.pathToProperty[i];
+                if (!(pathElement in currentMap)) {
+                  currentMap[pathElement] = {};
+                }
+                currentMap = currentMap[pathElement];
               }
-              currentMap = currentMap[pathElement];
+              currentMap[definition.pathToProperty[definition.pathToProperty.length - 1]] = definition;
+            });
+          }
+
+          var fieldHeaders = [];
+          var addedFields = { };
+          if(profileStatus.fields) {
+            if (!Array.isArray(profileStatus.fields)) {
+              profileStatus.fields = [profileStatus.fields];
             }
-            currentMap[definition.pathToProperty[definition.pathToProperty.length - 1]] = definition;
+            profileStatus.fields.forEach(function(field) {
+              var indices = $scope.getAddedFields(fieldMap, field);
+              for (var i = 0; i < indices.length; i++) {
+                addedFields[indices[i]] = true;
+              }
+            });
+            for ( var key in addedFields ) {
+              fieldHeaders.push(profileStatus.profileFieldProperties[key]);
+            }
+          }
+
+          var fieldRows = $scope.getRows(fieldMap, profileStatus.fields);
+
+          $scope.updateDataSource(profileStatus.dataSourceReference);
+
+          if (profileStatus.currentOperation) {
+            $scope.addPathIfNecessary(profileStatus.currentOperation.messagePath);
+          }
+          $scope.currentOperation = profileStatus.currentOperation;
+          if (profileStatus.operationError) {
+            $scope.addPathIfNecessary(profileStatus.operationError.message.messagePath);
+            if (profileStatus.operationError.recoveryOperations) {
+              profileStatus.operationError.recoveryOperations.forEach(function(recoveryOperation){
+                $scope.addPathIfNecessary(recoveryOperation.namePath);
+              });
+            }
+          }
+          $scope.operationError = profileStatus.operationError;
+          $scope.fieldHeaders = fieldHeaders;
+          $scope.fieldRows = fieldRows;
+        } else {
+          dataSourceService.getCreate({id: $scope.dataSourceReference.id, dataSourceProvider: $scope.dataSourceReference.dataSourceProvider}, function(createWrapper) {
+            window.location.href = createWrapper.profileDataSourceInclude.url;
           });
         }
-
-        var fieldHeaders = [];
-        var addedFields = { };
-        if(profileStatus.fields) {
-          if (!Array.isArray(profileStatus.fields)) {
-            profileStatus.fields = [profileStatus.fields];
-          }
-          profileStatus.fields.forEach(function(field) {
-            var indices = $scope.getAddedFields(fieldMap, field);
-            for (var i = 0; i < indices.length; i++) {
-              addedFields[indices[i]] = true;
-            }
-          });
-          for ( var key in addedFields ) {
-            fieldHeaders.push(profileStatus.profileFieldProperties[key]);
-          }
-        }
-
-        var fieldRows = $scope.getRows(fieldMap, profileStatus.fields);
-
-        $scope.updateDataSource(profileStatus.dataSourceReference);
-
-        $scope.currentOperation = profileStatus.currentOperation;
-        $scope.currentOperationVariables = profileStatus.currentOperationVariables;
-        $scope.fieldHeaders = fieldHeaders;
-        $scope.fieldRows = fieldRows;
       };
 
       $scope.getCell = function(fieldHeader, fieldRow) {
@@ -167,7 +188,7 @@ define([
           $scope.dataSourceReference = dataSourceReference;
 
           if(!oldDsr || oldDsr.dataSourceProvider != newDsProv) {
-            dataSourceService.get({id: newDsId, dataSourceProvider: newDsProv}, function(dsIncludeWrapper) {
+            dataSourceService.getInclude({id: newDsId, dataSourceProvider: newDsProv}, function(dsIncludeWrapper) {
 
               var dsInclude = dsIncludeWrapper.profileDataSourceInclude;
               if(dsInclude.require) {
@@ -177,7 +198,6 @@ define([
                 });
               } else {
                 $scope.dataSourceUrl = dsInclude.url;
-                // $scope.$apply() already within an apply, when in a resource callback.
               }
             });
           }

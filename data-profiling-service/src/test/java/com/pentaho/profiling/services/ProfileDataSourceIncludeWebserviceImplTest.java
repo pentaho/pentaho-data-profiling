@@ -30,6 +30,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -93,12 +94,44 @@ public class ProfileDataSourceIncludeWebserviceImplTest {
     when( service.getInclude( any( DataSourceReference.class ) ) ).thenAnswer( new Answer<ProfileDataSourceInclude>() {
       @Override public ProfileDataSourceInclude answer( InvocationOnMock invocation ) throws Throwable {
         DataSourceReference dataSourceReference = (DataSourceReference) invocation.getArguments()[ 0 ];
-        if ( id.equals( dataSourceReference.getId() ) && provider.equals( dataSourceReference.getDataSourceProvider() ) ) {
+        if ( id.equals( dataSourceReference.getId() ) && provider
+          .equals( dataSourceReference.getDataSourceProvider() ) ) {
           return profileDataSourceInclude;
         }
         return null;
       }
     } );
     assertEquals( profileDataSourceInclude, profileDataSourceIncludeWebservice.getIncludeUrl( id, provider ) );
+  }
+
+  @Test
+  public void testGetCreateUrlDsReference() {
+    ProfileDataSourceIncludeWebserviceImpl profileDataSourceIncludeWebservice =
+      new ProfileDataSourceIncludeWebserviceImpl();
+    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
+    ProfileDataSourceIncludeService nullService = mock( ProfileDataSourceIncludeService.class );
+    ProfileDataSourceIncludeService urlService = mock( ProfileDataSourceIncludeService.class );
+    profileDataSourceIncludeWebservice.setIncludeServices( Arrays.asList( nullService, urlService ) );
+    when( urlService.getCreateUrl( dataSourceReference ) ).thenReturn( "test-url" );
+    assertEquals( "test-url", profileDataSourceIncludeWebservice.getCreateUrl( dataSourceReference ) );
+  }
+
+  @Test
+  public void testGetCreateUrlStrings() {
+    ProfileDataSourceIncludeWebserviceImpl profileDataSourceIncludeWebservice =
+      new ProfileDataSourceIncludeWebserviceImpl();
+    ProfileDataSourceIncludeService nullService = mock( ProfileDataSourceIncludeService.class );
+    ProfileDataSourceIncludeService urlService = mock( ProfileDataSourceIncludeService.class );
+    profileDataSourceIncludeWebservice.setIncludeServices( Arrays.asList( nullService, urlService ) );
+    when( urlService.getCreateUrl( any( DataSourceReference.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        DataSourceReference reference = (DataSourceReference) invocation.getArguments()[ 0 ];
+        if ( "test-id".equals( reference.getId() ) && "test-provider".equals( reference.getDataSourceProvider() ) ) {
+          return "test-url";
+        }
+        return null;
+      }
+    } );
+    assertEquals( "test-url", profileDataSourceIncludeWebservice.getCreateUrl( "test-id", "test-provider" ).getUrl() );
   }
 }

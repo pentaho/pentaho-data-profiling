@@ -28,19 +28,19 @@ import com.pentaho.profiling.api.ProfileStatus;
  * Created by bryan on 8/1/14.
  */
 public class ExceptionProfileActionResult implements ProfileActionResult {
-  private final Exception exception;
+  private final ProfileActionException exception;
 
-  public ExceptionProfileActionResult( Exception exception ) {
+  public ExceptionProfileActionResult( ProfileActionException exception ) {
     this.exception = exception;
   }
 
   @Override
   public void apply( ProfileStatus status ) {
-    //Noop
+    status.setOperationError( new ProfileActionExceptionWrapper( exception ) );
   }
 
   @Override
-  public Exception getProfileException() {
+  public ProfileActionException getProfileException() {
     return exception;
   }
 }

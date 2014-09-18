@@ -38,8 +38,8 @@ import java.util.List;
 /**
  * Created by bryan on 8/6/14.
  */
-@Produces({ MediaType.APPLICATION_JSON })
-@Consumes({ MediaType.APPLICATION_JSON })
+@Produces( { MediaType.APPLICATION_JSON } )
+@Consumes( { MediaType.APPLICATION_JSON } )
 @WebService
 public class ProfileDataSourceIncludeWebserviceImpl implements ProfileDataSourceIncludeService {
   List<ProfileDataSourceIncludeService> includeServices;
@@ -65,9 +65,28 @@ public class ProfileDataSourceIncludeWebserviceImpl implements ProfileDataSource
   }
 
   @GET
-  @Path("/{id}/{dataSourceProvider}")
-  public ProfileDataSourceInclude getIncludeUrl( @PathParam("id") String id,
-                                                 @PathParam("dataSourceProvider") String dataSourceProvider ) {
+  @Path( "/create/{id}/{dataSourceProvider}" )
+  public ProfileDataSourceInclude getCreateUrl( @PathParam( "id" ) String id,
+                              @PathParam( "dataSourceProvider" ) String dataSourceProvider ) {
+    DataSourceReference dataSourceReference = new DataSourceReference( id, dataSourceProvider );
+    return new ProfileDataSourceInclude( getCreateUrl( dataSourceReference ), null );
+  }
+
+  @Override public String getCreateUrl( DataSourceReference dataSourceReference ) {
+    String result = null;
+    for ( ProfileDataSourceIncludeService service : includeServices ) {
+      result = service.getCreateUrl( dataSourceReference );
+      if ( result != null ) {
+        break;
+      }
+    }
+    return result;
+  }
+
+  @GET
+  @Path( "/include/{id}/{dataSourceProvider}" )
+  public ProfileDataSourceInclude getIncludeUrl( @PathParam( "id" ) String id,
+                                                 @PathParam( "dataSourceProvider" ) String dataSourceProvider ) {
     DataSourceReference dataSourceReference = new DataSourceReference( id, dataSourceProvider );
     return getInclude( dataSourceReference );
   }

@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.api;
 
+import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -34,14 +35,14 @@ import java.util.List;
  */
 @XmlRootElement
 public class ProfileStatus {
-  String id;
-  DataSourceReference dataSourceReference;
-  List<ProfilingField> fields;
-  Long totalEntities;
-  String currentOperationPath;
-  String currentOperation;
-  List<String> currentOperationVariables;
+  private String id;
+  private DataSourceReference dataSourceReference;
+  private List<ProfilingField> fields;
+  private Long totalEntities;
+  private ProfileStatusMessage currentOperation;
+  private ProfileActionExceptionWrapper operationError;
   private List<ProfileFieldProperty> profileFieldProperties;
+
 
   @XmlElement
   public String getId() {
@@ -95,30 +96,21 @@ public class ProfileStatus {
   }
 
   @XmlElement
-  public String getCurrentOperation() {
+  public ProfileStatusMessage getCurrentOperation() {
     return currentOperation;
   }
 
-  public void setCurrentOperation( String currentOperation ) {
+  public void setCurrentOperation( ProfileStatusMessage currentOperation ) {
     this.currentOperation = currentOperation;
   }
 
   @XmlElement
-  public List<String> getCurrentOperationVariables() {
-    return currentOperationVariables;
+  public ProfileActionExceptionWrapper getOperationError() {
+    return operationError;
   }
 
-  public void setCurrentOperationVariables( List<String> currentOperationVariables ) {
-    this.currentOperationVariables = new ArrayList<String>( currentOperationVariables );
-  }
-
-  @XmlElement
-  public String getCurrentOperationPath() {
-    return currentOperationPath;
-  }
-
-  public void setCurrentOperationPath( String currentOperationPath ) {
-    this.currentOperationPath = currentOperationPath;
+  public void setOperationError( ProfileActionExceptionWrapper operationError ) {
+    this.operationError = operationError;
   }
 
   @XmlElement

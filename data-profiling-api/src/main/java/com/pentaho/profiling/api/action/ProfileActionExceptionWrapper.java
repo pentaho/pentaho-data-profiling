@@ -22,13 +22,31 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.operations.ProfileOperation;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 9/17/14.
  */
-public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+@XmlRootElement
+public class ProfileActionExceptionWrapper {
+  private final ProfileActionException profileActionException;
 
-  public ProfileActionException getProfileException();
+  public ProfileActionExceptionWrapper( ProfileActionException profileActionException ) {
+    this.profileActionException = profileActionException;
+  }
+
+  @XmlElement
+  public ProfileStatusMessage getMessage() {
+    return profileActionException.getProfileStatusMessage();
+  }
+
+  @XmlElement
+  public List<ProfileOperation> getRecoveryOperations() {
+    return profileActionException.getRecoveryOperations();
+  }
 }
