@@ -30,24 +30,25 @@
             <table class="pentaho-table profile-fields-list" cellspacing="0">
                 <thead>
                     <tr>
-                        <th class="cellTableHeader cellTableSortableHeader"
-                            ng-class="orderByField !== fieldHeader.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                            ng-click="onOrderByField(fieldHeader)"
-                            ng-repeat="fieldHeader in fieldHeaders">
+                        <th class="cellTableCol cellTableSortableHeader"
+                            ng-repeat="fieldCol in fieldCols"
+                            ng-class="orderByCol !== fieldCol.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+                            ng-click="onOrderByCol(fieldCol)">
                             <div class="cellTableHeaderContent">
-                                <div translate="{{fieldHeader.nameKey}}"></div>
+                                <div translate="{{fieldCol.nameKey}}"></div>
                                 <div class="cellTableHeaderOrderIndicator"></div>
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-class-odd="'cellTableOddRow'" ng-class-even="'cellTableEvenRow'"
+                    <tr ng-class-odd="'cellTableOddRow'"
+                        ng-class-even="'cellTableEvenRow'"
                         ng-repeat="fieldRow in fieldRows | orderBy:orderByKey:isOrderReversed">
-                        <td ng-class-odd="'cellTableOddRowCell'"
-                            ng-class-even="'cellTableEvenRowCell'"
-                            class="cellTableCell"
-                            ng-repeat="fieldHeader in fieldHeaders">{{fieldRow[fieldHeader.stringifiedPath]}}</td>
+                        <td class="cellTableCell"
+                            ng-repeat="fieldCol in fieldCols"
+                            ng-class-odd="'cellTableOddRowCell'"
+                            ng-class-even="'cellTableEvenRowCell'">{{fieldRow[fieldCol.stringifiedPath]}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -55,9 +56,9 @@
     </div>
     <div class="profile-section profile-operations-container" ng-if="operations">
         <div class="pentaho-fieldgroup-major" translate="profiling.operations.title"></div>
-        <button ng-repeat="operation in operations"
+        <button class="pentaho-button"
+                ng-repeat="operation in operations"
                 ng-disabled="!!currentOperation"
-                class="pentaho-button"
                 ng-click="startOperation(operation.id)"
                 translate="{{operation.nameKey}}"></button>
     </div>

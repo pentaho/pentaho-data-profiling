@@ -1,6 +1,9 @@
 'use-strict';
 
-define(["common-ui/angular", "common-ui/angular-resource"], function(angular) {
+define([
+  "common-ui/angular",
+  "common-ui/angular-resource"
+], function(angular) {
   var appServices = angular.module('appServices', ['ngResource']);
 
   appServices.factory('Profile', ['$resource',

@@ -1,16 +1,14 @@
 'use-strict';
 
 define([
-    "require",
     "common-ui/angular",
-    "common-ui/properties-parser",
     "common-ui/angular-route",
     "common-ui/angular-translate",
     "common-ui/angular-translate-loader-partial",
     "common-ui/angular-sanitize",
     "com.pentaho.profiling.services.webview/controllers",
     "com.pentaho.profiling.services.webview/services"
-  ], function(require, angular, propertiesParser) {
+  ], function(angular) {
 
   var provide = null,
       controllerProvider = null,
@@ -53,9 +51,6 @@ define([
         });
 
 
-      // The local requirejs require function allows de-referencing urls
-      // relative to this AMD module's parent location.
-      // Includes ending "/".
       $translatePartialLoaderProvider.addPart("data-profiling/com.pentaho.profiling.services.messages");
 
       $translateProvider
@@ -77,8 +72,6 @@ define([
       //})
       //.determinePreferredLanguage()
     }]);
-
-  //profileApp.value('$translatePropertiesFormatAdapter', propertiesParser);
 
   return {
     getProvide: function() {

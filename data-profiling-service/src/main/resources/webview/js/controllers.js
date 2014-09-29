@@ -3,13 +3,12 @@
 define([
     "require",
     "common-ui/angular",
-    "common-ui/properties-parser",
     "common-ui/angular-route",
     "common-ui/angular-translate",
     "common-ui/angular-translate-loader-partial",
-    "com.pentaho.profiling.services.webview/services",
+    "./services",
     "com.pentaho.profiling.notification.service"
-  ], function(require, angular/*, services, notification*/) {
+  ], function(require, angular) {
 
   var appControllers = angular.module('appControllers', [
     'NotificationServiceModule',
@@ -25,164 +24,162 @@ define([
     '$translate',
     '$translatePartialLoader',
     function($scope, $routeParams, profileService, dataSourceService, notificationService, $translate, $translatePartialLoader) {
-      $scope.orderByField    = '["name"]';
+      $scope.orderByCol = JSON.stringify(["name"]);
       $scope.isOrderReversed = false;
 
-      $scope.stopCurrentOperation = function() {
-        profileService.stop({profileId: $scope.profileId});
-      };
+      // -----
+      // Methods accessible by the view, through $scope.
 
+      /**
+       * Starts an operation on the scope object's profile, given its id.
+       *
+       * This method is published in the scope object and can thus be called by the view.
+       *
+       * @param {string} operationId The id of the operation to start.
+       */
       $scope.startOperation = function(operationId) {
         profileService.start({profileId: $scope.profileId, operationId: operationId});
       };
 
-      $scope.addPathIfNecessary = function(path) {
-        if (!$translatePartialLoader.isPartAvailable(path)) {
-          $translatePartialLoader.addPart(path);
-        }
-      }
+      /**
+       * Orders to stop the current operation on the scope object's profile.
+       *
+       * This method is published in the scope object and can thus be called by the view.
+       */
+      $scope.stopCurrentOperation = function() {
+        profileService.stop({profileId: $scope.profileId});
+      };
 
-      $scope.updateProfile = function(profileStatus) {
-        if (profileStatus) {
+      /**
+       * Called to change the column by which field rows are sorted.
+       *
+       * This method is published in the scope object and can thus be called by the view.
+       *
+       * @param {Column} col The column by which to sort rows.
+       */
+      $scope.onOrderByCol = function(col) {
+        // Cycles through: Ascending -> Descending
+
+        if($scope.orderByCol === col.stringifiedPath) {
+          $scope.isOrderReversed = !$scope.isOrderReversed;
+        } else {
+          $scope.orderByCol = col.stringifiedPath;
+          $scope.isOrderReversed = false;
+        }
+      };
+
+      /**
+       * Gets the order by value of a row.
+       *
+       * This method is published in the scope object and can thus be called by the view.
+       *
+       * @param {Row} row The row.
+       * @return {Object} The order by value.
+       */
+      $scope.orderByKey = function(row) {
+        return row[$scope.orderByCol];
+      };
+
+      // Register to receive profile status updates.
+      notificationService.register(
+        /* notifType */
+        "com.pentaho.profiling.model.ProfileNotificationProvider",
+        /* ids */
+        [$routeParams.profileId],
+        /* cb */
+        function(profileStatus) { updateProfile(profileStatus); });
+
+      // -----
+      // Methods not-accessible to the view.
+
+      /**
+       * Updates the profile information with the given profile status object.
+       *
+       * This function is called each time a profile status update
+       * is received by the profile notification service.
+       *
+       * It handles:
+       * <ul>
+       *   <li>obtaining available operations,</li>
+       *   <li>determining the rows and columns structures corresponding to the fields in the profile,</li>
+       *   <li>any errors reported by the profiling service.</li>
+       * </ul>
+       *
+       * @param {ProfileStatus} profileStatus The profile status.
+       */
+      function updateProfile(profileStatus) {
+        if(profileStatus) {
           $scope.profileId = profileStatus.id;
-          profileService.getOperations({profileId: profileStatus.id}, function(operations){
+
+          // Load available operations asynchronously.
+          profileService.getOperations({profileId: profileStatus.id}, function(operations) {
             $scope.operations = operations;
           });
 
-          var fieldMap = { values: {} };
-          if ( profileStatus.profileFieldProperties ) {
-            if (!Array.isArray(profileStatus.profileFieldProperties)) {
-              profileStatus.profileFieldProperties = [profileStatus.profileFieldProperties];
-            }
-            var index = 0;
-            profileStatus.profileFieldProperties.forEach(function(definition){
-              $scope.addPathIfNecessary(definition.namePath)
-              definition.index = index++;
-              definition.isDefinition = true;
-              definition.stringifiedPath = JSON.stringify(definition.pathToProperty);
-              var currentMap = fieldMap.values;
-              for (var i = 0; i < definition.pathToProperty.length - 1; i++) {
-                var pathElement = definition.pathToProperty[i];
-                if (!(pathElement in currentMap)) {
-                  currentMap[pathElement] = {};
-                }
-                currentMap = currentMap[pathElement];
-              }
-              currentMap[definition.pathToProperty[definition.pathToProperty.length - 1]] = definition;
+          // Update datasource.
+          updateDataSource(profileStatus.dataSourceReference);
+
+          var itemSchema = {values: {}},
+              cols = toArray(profileStatus.profileFieldProperties),
+              colCount = cols && cols.length;
+
+          if(colCount) {
+            cols.forEach(function(col, index) {
+              ensureTranslationPart(col.namePath);
+
+              var colPropPath = col.pathToProperty;
+
+              // Easily detect columns/leafs when traversing the index.
+              col.isColumn = true;
+              col.index = index;
+              col.stringifiedPath = JSON.stringify(colPropPath);
+
+              // Index the col by its colPropPath steps.
+              setPath(itemSchema.values, colPropPath, col);
             });
           }
 
-          var fieldHeaders = [];
-          var addedFields = { };
-          if(profileStatus.fields) {
-            if (!Array.isArray(profileStatus.fields)) {
-              profileStatus.fields = [profileStatus.fields];
-            }
-            profileStatus.fields.forEach(function(field) {
-              var indices = $scope.getAddedFields(fieldMap, field);
-              for (var i = 0; i < indices.length; i++) {
-                addedFields[indices[i]] = true;
-              }
-            });
-            for ( var key in addedFields ) {
-              fieldHeaders.push(profileStatus.profileFieldProperties[key]);
-            }
-          }
+          var items = toArray(profileStatus.fields);
 
-          var fieldRows = $scope.getRows(fieldMap, profileStatus.fields);
+          $scope.fieldCols = getCols(itemSchema, items, colCount);
+          $scope.fieldRows = getRows(itemSchema, items);
 
-          $scope.updateDataSource(profileStatus.dataSourceReference);
+          var currentOper = $scope.currentOperation = profileStatus.currentOperation;
+          if(currentOper) ensureTranslationPart(currentOper.messagePath);
 
-          if (profileStatus.currentOperation) {
-            $scope.addPathIfNecessary(profileStatus.currentOperation.messagePath);
-          }
-          $scope.currentOperation = profileStatus.currentOperation;
-          if (profileStatus.operationError) {
-            $scope.addPathIfNecessary(profileStatus.operationError.message.messagePath);
-            if (profileStatus.operationError.recoveryOperations) {
-              profileStatus.operationError.recoveryOperations.forEach(function(recoveryOperation){
-                $scope.addPathIfNecessary(recoveryOperation.namePath);
+          var operError = $scope.operationError = profileStatus.operationError;
+          if(operError) {
+            ensureTranslationPart(operError.message.messagePath);
+
+            if(operError.recoveryOperations) {
+              operError.recoveryOperations.forEach(function(recoveryOperation) {
+                ensureTranslationPart(recoveryOperation.namePath);
               });
             }
           }
-          $scope.operationError = profileStatus.operationError;
-          $scope.fieldHeaders = fieldHeaders;
-          $scope.fieldRows = fieldRows;
         } else {
-          dataSourceService.getCreate({id: $scope.dataSourceReference.id, dataSourceProvider: $scope.dataSourceReference.dataSourceProvider}, function(createWrapper) {
-            window.location.href = createWrapper.profileDataSourceInclude.url;
-          });
+          dataSourceService.getCreate({
+              id:                 $scope.dataSourceReference.id,
+              dataSourceProvider: $scope.dataSourceReference.dataSourceProvider
+            }, function(createWrapper) {
+              window.location.href = createWrapper.profileDataSourceInclude.url;
+            });
         }
-      };
-
-      $scope.getCell = function(fieldHeader, fieldRow) {
-        for(var i = 0; i < fieldHeader.pathToProperty.length; i++) {
-          var pathElement = fieldHeader.pathToProperty[i];
-          if (pathElement in fieldRow) {
-            fieldRow = fieldRow[pathElement];
-          } else {
-            return null;
-          }
-        }
-        return fieldRow;
       }
 
-      $scope.getAddedFields = function(pathMap, fieldMap) {
-        var result = [];
-        if (Array.isArray(fieldMap)) {
-          fieldMap.forEach(function(entry){
-            result = result.concat($scope.getAddedFields(pathMap, entry));
-          });
-        } else {
-          for ( var key in fieldMap ) {
-            if ( key in pathMap ) {
-              if ( pathMap[key].isDefinition ) {
-                result.push(pathMap[key].index);
-              } else {
-                result = result.concat($scope.getAddedFields(pathMap[key], fieldMap[key]));
-              }
-            }
-          }
-        }
-        return result;
-      }
-
-      $scope.getRows = function(pathMap, fieldMap) {
-        var flatten = function(currentPathMap, currentFieldMap, result) {
-          if (Array.isArray(currentFieldMap)) {
-            var newResult = [];
-            var length = currentFieldMap.length;
-            for(var i = 0; i < length - 1; i++) {
-              newResult = newResult.concat(flatten(currentPathMap, currentFieldMap[i], result.map(function(item){
-                return angular.copy(item);
-              })));
-            }
-            if ( length >= 1) {
-              result = newResult.concat(flatten(currentPathMap, currentFieldMap[length - 1], result));
-            }
-          } else if (currentFieldMap) {
-            for (var key in currentPathMap) {
-              if(key in currentFieldMap) {
-                var nextPathMap = currentPathMap[key];
-                if (nextPathMap.isDefinition) {
-                  result.forEach(function(item){
-                    item[nextPathMap.stringifiedPath] = currentFieldMap[key];
-                  });
-                } else {
-                  result = flatten(currentPathMap[key], currentFieldMap[key], result);
-                }
-              }
-            }
-          }
-          return result;
-        };
-        return flatten(pathMap, fieldMap, [{}]);
-      };
-
-      $scope.updateDataSource = function(dataSourceReference) {
-        var oldDsr    = $scope.dataSourceReference,
-            newDsId   = dataSourceReference.id,
-            newDsProv = dataSourceReference.dataSourceProvider;
+      /**
+       * Shows the "info" view of the given data source reference.
+       *
+       * When the given data source reference is different from the current data source reference,
+       * the data source <i>getInclude</i> service is called to obtain
+       * the new data source's requireJS module and view url.
+       *
+       * @param {DataSourceReference} dataSourceReference The data source reference.
+       */
+      function updateDataSource(dataSourceReference) {
+        var oldDsr  = $scope.dataSourceReference,
+          newDsId   = dataSourceReference.id,
+          newDsProv = dataSourceReference.dataSourceProvider;
 
         if(!oldDsr || oldDsr.id != newDsId) {
           $scope.dataSourceReference = dataSourceReference;
@@ -202,35 +199,153 @@ define([
             });
           }
         }
-      };
+      }
 
-      $scope.onOrderByField = function(fieldHeader) {
-        // Cycles through: Ascending -> Descending
-
-        if($scope.orderByField === fieldHeader.stringifiedPath) {
-          $scope.isOrderReversed = !$scope.isOrderReversed;
-        } else {
-          $scope.orderByField = fieldHeader.stringifiedPath;
-          $scope.isOrderReversed = false;
-        }
-      };
-
-      $scope.orderByKey = function(row) {
-        return row[$scope.orderByField];
-      };
-
-      notificationService.register(
-        /* notifType */
-        "com.pentaho.profiling.model.ProfileNotificationProvider",
-        /* ids */
-        [$routeParams.profileId],
-        /* cb */
-        function(changedProfile) {
-          // Get a ProfileStatus of this profile.
-          $scope.updateProfile(changedProfile);
-        });
+      /**
+       * Ensures that a given translation part, given its path, is loaded.
+       *
+       * @param {string} partPath The path of the translation part.
+       */
+      function ensureTranslationPart(partPath) {
+        if(!$translatePartialLoader.isPartAvailable(partPath))
+          $translatePartialLoader.addPart(partPath);
+      }
     }
   ]);
 
   return appControllers;
+
+  // -----
+
+  /**
+   * Obtains the columns for which the given items have values.
+   *
+   * The returned columns are in the order given by their <i>index</i> property.
+   *
+   * @param {Object} rootItemSchema The item schema containing columns, indexed under their property paths.
+   * @param {Object[]} rootItems The items.
+   * @param {number} colCount The total number of columns in <i>rootItemSchema</i>.
+   * This allows early exit, as soon as every column is found to be present.
+   *
+   * @return {Column[]} The present columns.
+   */
+  function getCols(rootItemSchema, rootItems, colCount) {
+    // Each column is only output once.
+    var seenCols = {},
+        usedCols = [];
+
+    function recursive(itemSchema, item) {
+      if(Array.isArray(item)) {
+        for(var i = 0, L = item.length; i < L; i++) {
+          if(recursive(itemSchema, item[i]) === false) return false;
+        }
+      } else {
+        var childSchema;
+        for(var propName in item) {
+          if((childSchema = itemSchema[propName])) {
+            if(childSchema.isColumn) {
+              if(!seenCols[childSchema.index]) {
+                seenCols[childSchema.index] = 1;
+
+                usedCols.push(childSchema);
+
+                // No use in traversing all rows if all possible columns
+                // have already been output.
+                if(usedCols.length >= colCount) return false;
+              }
+            } else {
+              if(recursive(childSchema, item[propName]) === false) return false;
+            }
+          }
+        }
+      }
+    }
+
+    if(rootItems && colCount) recursive(rootItemSchema, rootItems);
+
+    // Make sure columns are in the original order.
+    return usedCols.sort(function(a, b) {
+      return compare(a.index, b.index);
+    });
+  }
+
+  /**
+   * Obtains rows representing the given items in a tabular form.
+   *
+   * Rows have one property for each column present in the given item schema,
+   * named with the column's <i>stringifiedPath</i>.
+   *
+   * For each given root item,
+   * one row will be output for each combination of the different values
+   * on the columns present in <i>rootItemSchema</i>.
+   *
+   * @param {Object} rootItemSchema The item schema containing columns, indexed under their property paths.
+   * @param {Object[]} rootItems The items.
+   * @return {Row[]} The rows.
+   */
+  function getRows(rootItemSchema, rootItems) {
+
+    function flatten(itemSchema, item, rows) {
+      if(Array.isArray(item)) {
+        var L = item.length;
+        if(L === 1) {
+          rows = flatten(itemSchema, item[0], rows);
+        } else if(L > 1) {
+          var newRows = [],
+            copyRows = function() {
+              return rows.map(function(row) { return angular.copy(row); });
+            };
+
+          for(var i = 0; i < L - 1; i++)
+            append(newRows, flatten(itemSchema, item[i], copyRows()));
+
+          rows = append(newRows, flatten(itemSchema, item[L - 1], rows));
+        }
+      } else if(item) {
+        for(var propName in itemSchema) {
+          if(propName in item) {
+            var childItemSchema = itemSchema[propName],
+              childItem = item[propName];
+            if(childItemSchema.isColumn) {
+              var colStrPath = childItemSchema.stringifiedPath;
+              rows.forEach(function(row) { row[colStrPath] = childItem; });
+            } else {
+              rows = flatten(childItemSchema, childItem, rows);
+            }
+          }
+        }
+      }
+
+      return rows;
+    }
+
+    return flatten(rootItemSchema, rootItems, [{}]);
+  }
+
+  // -----
+  // UTIL
+
+  function toArray(t) {
+    return (t == null || Array.isArray(t)) ? t : [t];
+  }
+
+  function getLazyMap(o, p) {
+    return o[p] || (o[p] = {});
+  }
+
+  function setPath(o, path, value) {
+    for(var i = 0, P = path.length; i < P - 1; i++)
+      o = getLazyMap(o, path[i]);
+
+    o[path[P - 1]] = value;
+  }
+
+  function append(a1, a2) {
+    for(var i = 0, L = a2.length; i < L; i++) a1.push(a2[i]);
+    return a1;
+  }
+
+  function compare(a, b) {
+    return a > b ? 1 : a < b ? -1 : 0;
+  }
 });
