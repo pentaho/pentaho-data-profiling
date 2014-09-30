@@ -119,30 +119,17 @@ define([
           // Update datasource.
           updateDataSource(profileStatus.dataSourceReference);
 
-          var itemSchema = {values: {}},
-              cols = toArray(profileStatus.profileFieldProperties),
-              colCount = cols && cols.length;
-
-          if(colCount) {
-            cols.forEach(function(col, index) {
-              ensureTranslationPart(col.namePath);
-
-              var colPropPath = col.pathToProperty;
-
-              // Easily detect columns/leafs when traversing the index.
-              col.isColumn = true;
-              col.index = index;
-              col.stringifiedPath = JSON.stringify(colPropPath);
-
-              // Index the col by its colPropPath steps.
-              setPath(itemSchema.values, colPropPath, col);
-            });
-          }
-
-          var items = toArray(profileStatus.fields);
+          var cols = toArray(profileStatus.profileFieldProperties),
+              colCount = cols && cols.length,
+              itemSchema = buildItemSchema(cols),
+              items = toArray(profileStatus.fields);
 
           $scope.fieldCols = getCols(itemSchema, items, colCount);
           $scope.fieldRows = getRows(itemSchema, items);
+
+          $scope.fieldCols.forEach(function(col) {
+            ensureTranslationPart(col.namePath);
+          });
 
           var currentOper = $scope.currentOperation = profileStatus.currentOperation;
           if(currentOper) ensureTranslationPart(currentOper.messagePath);
@@ -217,12 +204,78 @@ define([
 
   // -----
 
+  function buildItemSchema(cols) {
+
+    var valuesItemSchema = {
+        name: 'values',
+        props: [],
+        propsByName: {}
+      },
+      rootItemSchema = {
+        // name: ''
+        props: [
+          valuesItemSchema
+        ],
+        propsByName: {
+          'values': valuesItemSchema
+        }
+      };
+
+    if(cols) {
+      cols.forEach(function(col, index) {
+        var propPath = col.pathToProperty;
+
+        // Easily detect columns/leafs when traversing the item schema.
+        col.isColumn = true;
+        col.index    = index;
+        col.stringifiedPath = JSON.stringify(propPath);
+
+        // Index the col by its colPropPath steps.
+        buildItemSchemaRecursive(valuesItemSchema, propPath, col);
+      });
+    }
+
+    return rootItemSchema;
+  }
+
+  function buildItemSchemaRecursive(itemSchema, propPath, col) {
+    var propName;
+
+    for(var i = 0, P = propPath.length; i < P - 1; i++) {
+      if(itemSchema.isColumn) throw new Error("Invalid property.");
+
+      propName = propPath[i];
+
+      var childItemSchema = itemSchema.propsByName[propName];
+      if(!childItemSchema) {
+        childItemSchema = {
+          name: propName,
+          props: [],
+          propsByName: {}
+        };
+        itemSchema.props.push(childItemSchema);
+        itemSchema.propsByName[propName] = childItemSchema;
+      }
+
+      itemSchema = childItemSchema;
+    }
+
+    propName = propPath[P - 1];
+
+    if(itemSchema.isColumn || itemSchema.propsByName[propName]) throw new Error("Invalid property.");
+
+    col.name = propName;
+    itemSchema.props.push(col);
+    itemSchema.propsByName[propName] = col;
+  }
+
+
   /**
    * Obtains the columns for which the given items have values.
    *
    * The returned columns are in the order given by their <i>index</i> property.
    *
-   * @param {Object} rootItemSchema The item schema containing columns, indexed under their property paths.
+   * @param {ItemSchema} rootItemSchema The item schema containing columns, indexed under their property paths.
    * @param {Object[]} rootItems The items.
    * @param {number} colCount The total number of columns in <i>rootItemSchema</i>.
    * This allows early exit, as soon as every column is found to be present.
@@ -235,14 +288,21 @@ define([
         usedCols = [];
 
     function recursive(itemSchema, item) {
+      var i, L;
       if(Array.isArray(item)) {
-        for(var i = 0, L = item.length; i < L; i++) {
+        i = -1;
+        L = item.length;
+        while(++i < L) {
           if(recursive(itemSchema, item[i]) === false) return false;
         }
       } else {
-        var childSchema;
-        for(var propName in item) {
-          if((childSchema = itemSchema[propName])) {
+        var props = itemSchema.props, propName, childSchema;
+        i = -1;
+        L = props.length
+        while(++i < L) {
+          childSchema = props[i];
+          propName = childSchema.name;
+          if(propName in item) {
             if(childSchema.isColumn) {
               if(!seenCols[childSchema.index]) {
                 seenCols[childSchema.index] = 1;
@@ -279,7 +339,7 @@ define([
    * one row will be output for each combination of the different values
    * on the columns present in <i>rootItemSchema</i>.
    *
-   * @param {Object} rootItemSchema The item schema containing columns, indexed under their property paths.
+   * @param {ItemSchema} rootItemSchema The item schema containing columns, indexed under their property paths.
    * @param {Object[]} rootItems The items.
    * @return {Row[]} The rows.
    */
@@ -296,23 +356,20 @@ define([
               return rows.map(function(row) { return angular.copy(row); });
             };
 
-          for(var i = 0; i < L - 1; i++)
-            append(newRows, flatten(itemSchema, item[i], copyRows()));
+          for(var i = 0; i < L - 1; i++) append(newRows, flatten(itemSchema, item[i], copyRows()));
 
-          rows = append(newRows, flatten(itemSchema, item[L - 1], rows));
+          rows = append(newRows, flatten(itemSchema, item[L -1], rows));
         }
       } else if(item) {
-        for(var propName in itemSchema) {
-          if(propName in item) {
-            var childItemSchema = itemSchema[propName],
-              childItem = item[propName];
-            if(childItemSchema.isColumn) {
-              var colStrPath = childItemSchema.stringifiedPath;
-              rows.forEach(function(row) { row[colStrPath] = childItem; });
-            } else {
-              rows = flatten(childItemSchema, childItem, rows);
-            }
-          }
+        if(itemSchema.isColumn) {
+          var colStrPath = itemSchema.stringifiedPath;
+          rows.forEach(function(row) { row[colStrPath] = item; });
+        } else {
+          itemSchema.props.forEach(function(childItemSchema) {
+            var propName = childItemSchema.name;
+            if(propName in item)
+              rows = flatten(childItemSchema, item[propName], rows);
+          });
         }
       }
 
@@ -327,17 +384,6 @@ define([
 
   function toArray(t) {
     return (t == null || Array.isArray(t)) ? t : [t];
-  }
-
-  function getLazyMap(o, p) {
-    return o[p] || (o[p] = {});
-  }
-
-  function setPath(o, path, value) {
-    for(var i = 0, P = path.length; i < P - 1; i++)
-      o = getLazyMap(o, path[i]);
-
-    o[path[P - 1]] = value;
   }
 
   function append(a1, a2) {
