@@ -20,54 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.notification.api;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+package com.pentaho.profiling.api;
 
 /**
- * Created by bryan on 8/21/14.
+ * Created by bryan on 9/29/14.
  */
-@XmlRootElement
-public class ChangedItem {
-  private long timestamp;
-  private String id;
-  private Object changedObject;
-
-  public ChangedItem() {
-    this( 0L, null, null );
-  }
-
-  public ChangedItem( long timestamp, String id, Object changedObject ) {
-    this.timestamp = timestamp;
-    this.id = id;
-    this.changedObject = changedObject;
-  }
-
-  @XmlElement
-  public long getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp( long timestamp ) {
-    this.timestamp = timestamp;
-  }
-
-  @XmlElement
-  public Object getChangedObject() {
-    return changedObject;
-  }
-
-  public void setChangedObject( Object changedObject ) {
-    this.changedObject = changedObject;
-  }
-
-  @XmlElement
-  public String getId() {
-    return id;
-  }
-
-  public void setId( String id ) {
-    this.id = id;
-  }
+public interface ProfileStatusReadOperation<T> {
+  public T read( ProfileStatus profileStatus );
 }

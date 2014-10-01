@@ -45,36 +45,4 @@ public class DataSourceReferenceTest {
     assertEquals( id, dataSourceReference.getId() );
     assertEquals( dataSourceProvider, dataSourceReference.getDataSourceProvider() );
   }
-
-  @Test
-  public void testSetIdRoundTrip() {
-    String id = "VALUE_1";
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    dataSourceReference.setId( id );
-    assertEquals( id, dataSourceReference.getId() );
-  }
-
-  @Test
-  public void testSetDataSourceProviderRoundTrip() {
-    String dataSourceId = "VALUE_1";
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    dataSourceReference.setDataSourceProvider( dataSourceId );
-    assertEquals( dataSourceId, dataSourceReference.getDataSourceProvider() );
-  }
-
-  @Test
-  public void testSetId() {
-    String id = "VALUE_1";
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    dataSourceReference.setId( id );
-    assertEquals( id, dataSourceReference.getId() );
-  }
-
-  @Test
-  public void testSetDataSourceProvider() {
-    String dataSourceProvider = "VALUE_1";
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    dataSourceReference.setDataSourceProvider( dataSourceProvider );
-    assertEquals( dataSourceProvider, dataSourceReference.getDataSourceProvider() );
-  }
 }

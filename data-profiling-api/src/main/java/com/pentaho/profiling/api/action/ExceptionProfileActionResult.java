@@ -22,7 +22,9 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 
 /**
  * Created by bryan on 8/1/14.
@@ -35,8 +37,13 @@ public class ExceptionProfileActionResult implements ProfileActionResult {
   }
 
   @Override
-  public void apply( ProfileStatus status ) {
-    status.setOperationError( new ProfileActionExceptionWrapper( exception ) );
+  public void apply( ProfileStatusManager status ) {
+    status.write( new ProfileStatusWriteOperation<Void>() {
+      @Override public Void write( MutableProfileStatus profileStatus ) {
+        profileStatus.setOperationError( new ProfileActionExceptionWrapper( exception ) );
+        return null;
+      }
+    } );
   }
 
   @Override

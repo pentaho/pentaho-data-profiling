@@ -24,6 +24,8 @@ package com.pentaho.profiling.api;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +40,10 @@ public class ProfileStatusMessage {
   public ProfileStatusMessage( String messagePath, String messageKey, List<String> messageVariables ) {
     this.messagePath = messagePath;
     this.messageKey = messageKey;
-    this.messageVariables = messageVariables;
+    if ( messageVariables == null ) {
+      messageVariables = new ArrayList<String>();
+    }
+    this.messageVariables = Collections.unmodifiableList( new ArrayList<String>( messageVariables ) );
   }
 
   public ProfileStatusMessage() {
@@ -50,25 +55,13 @@ public class ProfileStatusMessage {
     return messagePath;
   }
 
-  public void setMessagePath( String messagePath ) {
-    this.messagePath = messagePath;
-  }
-
   @XmlElement
   public List<String> getMessageVariables() {
     return messageVariables;
   }
 
-  public void setMessageVariables( List<String> messageVariables ) {
-    this.messageVariables = messageVariables;
-  }
-
   @XmlElement
   public String getMessageKey() {
     return messageKey;
-  }
-
-  public void setMessageKey( String messageKey ) {
-    this.messageKey = messageKey;
   }
 }

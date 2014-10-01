@@ -47,16 +47,8 @@ public class DataSourceReference {
     return dataSourceProvider;
   }
 
-  public void setDataSourceProvider( String dataSourceProvider ) {
-    this.dataSourceProvider = dataSourceProvider;
-  }
-
   @XmlElement
   public String getId() {
     return id;
-  }
-
-  public void setId( String id ) {
-    this.id = id;
   }
 }

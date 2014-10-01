@@ -22,6 +22,8 @@
 
 package com.pentaho.profiling.api;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,31 +41,22 @@ public class ProfileFieldProperty {
   public ProfileFieldProperty( String namePath, String nameKey, List<String> pathToProperty ) {
     this.namePath = namePath;
     this.nameKey = nameKey;
-    this.pathToProperty = pathToProperty;
+    if ( pathToProperty == null ) {
+      pathToProperty = new ArrayList<String>();
+    }
+    this.pathToProperty = Collections.unmodifiableList( new ArrayList<String>( pathToProperty ) );
   }
 
   public String getNamePath() {
     return namePath;
   }
 
-  public void setNamePath( String namePath ) {
-    this.namePath = namePath;
-  }
-
   public String getNameKey() {
     return nameKey;
   }
 
-  public void setNameKey( String nameKey ) {
-    this.nameKey = nameKey;
-  }
-
   public List<String> getPathToProperty() {
     return pathToProperty;
-  }
-
-  public void setPathToProperty( List<String> pathToProperty ) {
-    this.pathToProperty = pathToProperty;
   }
 
   @Override

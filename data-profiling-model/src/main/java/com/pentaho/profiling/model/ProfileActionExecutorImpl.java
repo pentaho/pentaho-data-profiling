@@ -22,7 +22,9 @@
 
 package com.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.action.ProfileActionResult;
@@ -35,37 +37,37 @@ import java.util.concurrent.Executors;
  */
 public class ProfileActionExecutorImpl implements ProfileActionExecutor {
   private ExecutorService executorService = Executors.newCachedThreadPool();
-  private ProfileNotificationProvider profileNotificationProvider;
 
   protected void setExecutorService( ExecutorService executorService ) {
     this.executorService = executorService;
   }
 
-  public void setProfileNotificationProvider( ProfileNotificationProvider profileNotificationProvider ) {
-    this.profileNotificationProvider = profileNotificationProvider;
-  }
-
   @Override
-  public void submit( final ProfileAction action, final ProfileStatus status ) {
+  public void submit( final ProfileAction action, final ProfileStatusManager statusManager ) {
     executorService.submit( new Runnable() {
       @Override
       public void run() {
-        if ( status.getOperationError() != null ) {
-          status.setOperationError( null );
-          profileNotificationProvider.notify( status.getId() );
-        }
-        action.setCurrentOperation( status );
-        profileNotificationProvider.notify( status.getId() );
+        statusManager.write( new ProfileStatusWriteOperation<Void>() {
+          @Override public Void write( MutableProfileStatus profileStatus ) {
+            profileStatus.setOperationError( null );
+            profileStatus.setCurrentOperation( action.getCurrentOperation() );
+            return null;
+          }
+        } );
         ProfileActionResult result = action.execute();
         if ( result != null ) {
-          result.apply( status );
-          profileNotificationProvider.notify( status.getId() );
+          result.apply( statusManager );
         }
         ProfileAction then = action.then();
         if ( then != null ) {
-          submit( then, status );
+          submit( then, statusManager );
         } else {
-          status.setCurrentOperation( null );
+          statusManager.write( new ProfileStatusWriteOperation<Void>() {
+            @Override public Void write( MutableProfileStatus profileStatus ) {
+              profileStatus.setCurrentOperation( null );
+              return null;
+            }
+          } );
         }
       }
     } );

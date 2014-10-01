@@ -22,8 +22,7 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
-import org.junit.Assert;
+import com.pentaho.profiling.api.ProfileStatusMessage;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,8 +43,8 @@ public class DefaultProfileActionTest {
         return null;
       }
 
-      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
-
+      @Override public ProfileStatusMessage getCurrentOperation() {
+        return null;
       }
     };
     assertEquals( null, defaultProfileAction.then() );
@@ -58,8 +57,8 @@ public class DefaultProfileActionTest {
         return null;
       }
 
-      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
-
+      @Override public ProfileStatusMessage getCurrentOperation() {
+        return null;
       }
     };
     defaultProfileAction.then();
@@ -74,12 +73,12 @@ public class DefaultProfileActionTest {
         return null;
       }
 
-      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
-
+      @Override public ProfileStatusMessage getCurrentOperation() {
+        return null;
       }
     };
     defaultProfileAction.setThen( then );
-    Assert.assertEquals( then, defaultProfileAction.then() );
+    assertEquals( then, defaultProfileAction.then() );
   }
 
   @Test
@@ -91,8 +90,8 @@ public class DefaultProfileActionTest {
         return null;
       }
 
-      @Override public void setCurrentOperation( ProfileStatus profileStatus ) {
-
+      @Override public ProfileStatusMessage getCurrentOperation() {
+        return null;
       }
     };
     assertTrue( stopped == defaultProfileAction.getStopped() );

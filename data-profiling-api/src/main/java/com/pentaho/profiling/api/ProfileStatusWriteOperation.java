@@ -20,32 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.notification.service;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+package com.pentaho.profiling.api;
 
 /**
- * Created by bryan on 8/21/14.
+ * Created by bryan on 9/29/14.
  */
-@XmlRootElement
-public class NotificationRequestWrapper {
-  private List<NotificationRequest> requests;
-
-  public NotificationRequestWrapper() {
-    this( null );
-  }
-
-  public NotificationRequestWrapper(
-    List<NotificationRequest> requests ) {
-    this.requests = requests;
-  }
-
-  public List<NotificationRequest> getRequests() {
-    return requests;
-  }
-
-  public void setRequests( List<NotificationRequest> requests ) {
-    this.requests = requests;
-  }
+public interface ProfileStatusWriteOperation<T> {
+  public T write( MutableProfileStatus profileStatus );
 }

@@ -31,11 +31,11 @@ import java.util.List;
  * Created by bryan on 7/31/14.
  */
 public interface ProfilingService {
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
 
-  public List<ProfileStatus> getActiveProfiles();
+  public List<ProfileStatusManager> getActiveProfiles();
 
-  public ProfileStatus getProfileUpdate( String profileId );
+  public ProfileStatusManager getProfileUpdate( String profileId );
 
   public void stopCurrentOperation( String profileId );
 

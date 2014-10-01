@@ -26,6 +26,7 @@ import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class ProfileActionException extends Exception {
                                  List<ProfileOperation> recoveryOperations ) {
     super( cause );
     this.profileStatusMessage = profileStatusMessage;
-    this.recoveryOperations = recoveryOperations;
+    this.recoveryOperations = Collections.unmodifiableList( new ArrayList<ProfileOperation>( recoveryOperations ) );
   }
 
   public ProfileStatusMessage getProfileStatusMessage() {

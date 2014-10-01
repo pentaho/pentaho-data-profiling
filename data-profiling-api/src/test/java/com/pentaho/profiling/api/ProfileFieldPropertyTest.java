@@ -39,7 +39,7 @@ public class ProfileFieldPropertyTest {
     ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty();
     assertNull( profileFieldProperty.getNameKey() );
     assertNull( profileFieldProperty.getNamePath() );
-    assertNull( profileFieldProperty.getPathToProperty() );
+    assertEquals( 0, profileFieldProperty.getPathToProperty().size() );
   }
 
   @Test
@@ -50,30 +50,6 @@ public class ProfileFieldPropertyTest {
     ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty( testPath, testKey, testPathToProperty );
     assertEquals( testPath, profileFieldProperty.getNamePath() );
     assertEquals( testKey, profileFieldProperty.getNameKey() );
-    assertEquals( testPathToProperty, profileFieldProperty.getPathToProperty() );
-  }
-
-  @Test
-  public void testSetPath() {
-    ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty();
-    String testPath = "test-path";
-    profileFieldProperty.setNamePath( testPath );
-    assertEquals( testPath, profileFieldProperty.getNamePath() );
-  }
-
-  @Test
-  public void testSetKey() {
-    String testKey = "test-key";
-    ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty();
-    profileFieldProperty.setNameKey( testKey );
-    assertEquals( testKey, profileFieldProperty.getNameKey() );
-  }
-
-  @Test
-  public void testSetPathToProperty() {
-    List<String> testPathToProperty = new ArrayList<String>( Arrays.asList( "A", "b", "C" ) );
-    ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty();
-    profileFieldProperty.setPathToProperty( testPathToProperty );
     assertEquals( testPathToProperty, profileFieldProperty.getPathToProperty() );
   }
 

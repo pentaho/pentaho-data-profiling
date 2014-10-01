@@ -24,16 +24,21 @@ package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,27 +64,46 @@ public class ProfilingServiceWebserviceImplTest {
 
   @Test
   public void testCreate() throws ProfileCreationException {
-    ProfileStatus result = mock( ProfileStatus.class );
+    final ProfileStatus profileStatus = mock( ProfileStatus.class );
+    ProfileStatusManager result = mock( ProfileStatusManager.class );
+    when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+      }
+    } );
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     when( delegate.create( dataSourceReference ) ).thenReturn( result );
-    assertEquals( result, webservice.create( dataSourceReference ) );
+    assertEquals( profileStatus, webservice.createWebservice( dataSourceReference ) );
   }
 
   @Test
   public void testGetActiveProfiles() {
-    List<ProfileStatus> profiles = new ArrayList<ProfileStatus>();
-    ProfileStatus profile = mock( ProfileStatus.class );
-    profiles.add( profile );
+    List<ProfileStatusManager> profiles = new ArrayList<ProfileStatusManager>();
+    final ProfileStatus profileStatus = mock( ProfileStatus.class );
+    ProfileStatusManager result = mock( ProfileStatusManager.class );
+    when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+      }
+    } );
+    profiles.add( result );
     when( delegate.getActiveProfiles() ).thenReturn( profiles );
-    assertEquals( profiles, webservice.getActiveProfiles() );
+    assertEquals( 1, webservice.getActiveProfilesWebservice().size() );
+    assertEquals( profileStatus, webservice.getActiveProfilesWebservice().get( 0 ) );
   }
 
   @Test
   public void testGetProfileUpdate() {
-    ProfileStatus profile = mock( ProfileStatus.class );
+    final ProfileStatus profileStatus = mock( ProfileStatus.class );
+    ProfileStatusManager result = mock( ProfileStatusManager.class );
+    when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+      }
+    } );
     String id = "id";
-    when( delegate.getProfileUpdate( id ) ).thenReturn( profile );
-    assertEquals( profile, webservice.getProfileUpdate( id ) );
+    when( delegate.getProfileUpdate( id ) ).thenReturn( result );
+    assertEquals( profileStatus, webservice.getProfileUpdateWebservice( id ) );
   }
 
   @Test

@@ -20,37 +20,13 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.notification.api;
+package com.pentaho.profiling.api;
 
 /**
- * Created by bryan on 8/22/14.
+ * Created by bryan on 9/29/14.
  */
-public class NotificationEvent {
-  private final String notificationType;
-  private final long timestamp;
-  private final String id;
-  private final Object changedObject;
+public interface ProfileStatusManager extends ProfileStatus {
+  public <T> T read( ProfileStatusReadOperation<T> profileStatusReadOperation );
 
-  public NotificationEvent( String notificationType, String id, Object changedObject, long timestamp ) {
-    this.notificationType = notificationType;
-    this.id = id;
-    this.changedObject = changedObject;
-    this.timestamp = timestamp;
-  }
-
-  public String getNotificationType() {
-    return notificationType;
-  }
-
-  public Object getChangedObject() {
-    return changedObject;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public long getTimestamp() {
-    return timestamp;
-  }
+  public <T> T write( ProfileStatusWriteOperation<T> profileStatusWriteOperation );
 }
