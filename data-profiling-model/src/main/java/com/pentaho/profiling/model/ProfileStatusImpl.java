@@ -23,6 +23,7 @@
 package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
@@ -38,6 +39,7 @@ import java.util.List;
  * Created by bryan on 9/29/14.
  */
 public class ProfileStatusImpl implements ProfileStatus {
+  protected ProfileState state;
   protected List<ProfilingField> fields;
   protected Long totalEntities;
   protected ProfileStatusMessage currentOperation;
@@ -52,20 +54,22 @@ public class ProfileStatusImpl implements ProfileStatus {
   }
 
   public ProfileStatusImpl( String id, DataSourceReference dataSourceReference, long sequenceNumber ) {
-    this( null, null, null, null, null, id, dataSourceReference, sequenceNumber );
+    this( ProfileState.ACTIVE, null, null, null, null, null, id, dataSourceReference, sequenceNumber );
   }
 
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
-    this( profileStatus.getFields(), profileStatus.getTotalEntities(), profileStatus.getCurrentOperation(),
+    this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
+      profileStatus.getCurrentOperation(),
       profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(), profileStatus.getId(),
       profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1 );
   }
 
-  public ProfileStatusImpl( List<ProfilingField> fields, Long totalEntities,
+  public ProfileStatusImpl( ProfileState profileState, List<ProfilingField> fields, Long totalEntities,
                             ProfileStatusMessage currentOperation,
                             ProfileActionExceptionWrapper operationError,
                             List<ProfileFieldProperty> profileFieldProperties, String id,
                             DataSourceReference dataSourceReference, long sequenceNumber ) {
+    this.state = profileState;
     if ( fields == null ) {
       fields = new ArrayList<ProfilingField>();
     }
@@ -118,7 +122,13 @@ public class ProfileStatusImpl implements ProfileStatus {
     return profileFieldProperties;
   }
 
+  @XmlElement
   @Override public long getSequenceNumber() {
     return sequenceNumber;
+  }
+
+  @XmlElement
+  @Override public ProfileState getProfileState() {
+    return state;
   }
 }

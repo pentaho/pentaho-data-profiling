@@ -22,11 +22,14 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
@@ -111,12 +114,21 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override public List<ProfileOperation> getOperations( String profileId ) {
-    return profileMap.get( profileId ).getProfileOperations();
+    Profile profile = profileMap.get( profileId );
+    if ( profile != null ) {
+      return profile.getProfileOperations();
+    }
+    return null;
   }
 
   @Override public void discardProfile( String profileId ) {
-    profileMap.remove( profileId );
-    notify( profileStatusManagerMap.remove( profileId ) );
+    profileMap.remove( profileId ).stopCurrentOperation();
+    profileStatusManagerMap.get( profileId ).write( new ProfileStatusWriteOperation<Void>() {
+      @Override public Void write( MutableProfileStatus profileStatus ) {
+        profileStatus.setProfileState( ProfileState.DISCARDED );
+        return null;
+      }
+    } );
   }
 
   @Override public List<NotificationObject> getPreviousNotificationObjects() {

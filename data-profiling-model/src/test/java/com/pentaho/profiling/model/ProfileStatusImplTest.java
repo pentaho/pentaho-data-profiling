@@ -23,6 +23,7 @@
 package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
@@ -77,7 +78,8 @@ public class ProfileStatusImplTest {
     long sequence = 99L;
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     ProfileStatusImpl profileStatus =
-      new ProfileStatusImpl( fieldList, totalEntities, profileStatusMessage, profileActionExceptionWrapper,
+      new ProfileStatusImpl( ProfileState.ACTIVE, fieldList, totalEntities, profileStatusMessage,
+        profileActionExceptionWrapper,
         profileFieldProperties, id, dataSourceReference, sequence );
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );

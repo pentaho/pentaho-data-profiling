@@ -22,31 +22,9 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-
-import javax.xml.bind.annotation.XmlElement;
-import java.util.List;
-
 /**
- * Created by bryan on 9/29/14.
+ * Created by bryan on 10/2/14.
  */
-public interface ProfileStatus {
-  ProfileState getProfileState();
-
-  String getId();
-
-  DataSourceReference getDataSourceReference();
-
-  List<ProfilingField> getFields();
-
-  Long getTotalEntities();
-
-  ProfileStatusMessage getCurrentOperation();
-
-  ProfileActionExceptionWrapper getOperationError();
-
-  List<ProfileFieldProperty> getProfileFieldProperties();
-
-  long getSequenceNumber();
+public enum ProfileState {
+  ACTIVE, DISCARDED
 }

@@ -26,6 +26,7 @@ import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
@@ -159,10 +160,18 @@ public class ProfilingServiceImplTest {
   @Test
   public void testDiscard() {
     when( profileStatusManager.getId() ).thenReturn( profileId );
+    profilingService.getProfileMap().put( profileId, profile );
     profilingService.getProfileStatusManagerMap().put( profileId, profileStatusManager );
     assertEquals( profileStatusManager, profilingService.getProfileUpdate( profileId ) );
+    final MutableProfileStatus mutableProfileStatus = mock( MutableProfileStatus.class );
+    when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusWriteOperation) invocation.getArguments()[ 0 ] ).write( mutableProfileStatus );
+      }
+    } );
     profilingService.discardProfile( profileId );
-    assertNull( profilingService.getProfileUpdate( profileId ) );
+    verify( profile ).stopCurrentOperation();
+    verify( mutableProfileStatus ).setProfileState( ProfileState.DISCARDED );
   }
 
   @Test
@@ -197,7 +206,7 @@ public class ProfilingServiceImplTest {
   public void testPreviousNotifications() {
     when( profileStatusManager.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusReadOperation) invocation.getArguments()[0]).read( profileStatus );
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
     profilingService.notify( profileStatus );
