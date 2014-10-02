@@ -26,44 +26,37 @@ import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
+import org.pentaho.osgi.notification.api.NotificationListener;
+import org.pentaho.osgi.notification.api.NotificationObject;
+import org.pentaho.osgi.notification.api.NotifierWithHistory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by bryan on 7/31/14.
  */
-public class ProfilingServiceImpl implements ProfilingService {
-  private static Map<String, Profile> profileMap = new HashMap<String, Profile>();
+public class ProfilingServiceImpl implements ProfilingService, NotifierWithHistory {
+  private final Map<String, Profile> profileMap = new ConcurrentHashMap<String, Profile>();
+  private final Map<String, ProfileStatusManager> profileStatusManagerMap = new ConcurrentHashMap<String,
+    ProfileStatusManager>();
+  private final Map<String, NotificationObject> previousNotifications = new ConcurrentHashMap<String,
+    NotificationObject>();
+  private final DelegatingNotifierImpl delegatingNotifier =
+    new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
+      this );
   private List<ProfileFactory> factories;
-  private ProfileNotificationProvider profileNotificationProvider;
-
-  /**
-   * FOR UNIT TESTS ONLY
-   *
-   * @return
-   */
-  protected static Map<String, Profile> getProfileMap() {
-    return profileMap;
-  }
-
-  /**
-   * FOR UNIT TESTS ONLY
-   *
-   * @param profileMap
-   */
-  protected static void setProfileMap( Map<String, Profile> profileMap ) {
-    ProfilingServiceImpl.profileMap = profileMap;
-  }
-
-  public void setProfileNotificationProvider( ProfileNotificationProvider profileNotificationProvider ) {
-    this.profileNotificationProvider = profileNotificationProvider;
-  }
 
   public List<ProfileFactory> getFactories() {
     return factories;
@@ -73,65 +66,80 @@ public class ProfilingServiceImpl implements ProfilingService {
     this.factories = factories;
   }
 
+  // FOR UNIT TEST ONLY
+  protected Map<String, Profile> getProfileMap() {
+    return profileMap;
+  }
+
+  // FOR UNIT TEST ONLY
+  protected Map<String, ProfileStatusManager> getProfileStatusManagerMap() {
+    return profileStatusManagerMap;
+  }
+
   @Override
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
+  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
     Profile profile = null;
     for ( ProfileFactory factory : factories ) {
       if ( factory.accepts( dataSourceReference ) ) {
-        profile = factory.create( dataSourceReference );
-        synchronized ( profileMap ) {
-          profileMap.put( profile.getId(), profile );
-        }
-        profileNotificationProvider.notify( profile.getId() );
-        return profile.getProfileUpdate();
+        ProfileStatusManager profileStatusManager =
+          new ProfileStatusManagerImpl( UUID.randomUUID().toString(), dataSourceReference, this );
+        profile = factory.create( profileStatusManager );
+        profileMap.put( profile.getId(), profile );
+        profileStatusManagerMap.put( profile.getId(), profileStatusManager );
+        return profileStatusManager;
       }
     }
     return null;
   }
 
   @Override
-  public List<ProfileStatus> getActiveProfiles() {
-    synchronized ( profileMap ) {
-      List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileMap.size() );
-      for ( Profile profile : profileMap.values() ) {
-        result.add( profile.getProfileUpdate() );
-      }
-      return result;
-    }
+  public List<ProfileStatusManager> getActiveProfiles() {
+    return new ArrayList<ProfileStatusManager>( profileStatusManagerMap.values() );
   }
 
   @Override
-  public ProfileStatus getProfileUpdate( String profileId ) {
-    synchronized ( profileMap ) {
-      Profile profile = profileMap.get( profileId );
-      if ( profile != null ) {
-        return profile.getProfileUpdate();
-      }
-      return null;
-    }
+  public ProfileStatusManager getProfileUpdate( String profileId ) {
+    return profileStatusManagerMap.get( profileId );
   }
 
   @Override public void stopCurrentOperation( String profileId ) {
-    synchronized ( profileMap ) {
-      profileMap.get( profileId ).stopCurrentOperation();
-    }
+    profileMap.get( profileId ).stopCurrentOperation();
   }
 
   @Override public void startOperation( String profileId, String operationId ) {
-    synchronized ( profileMap ) {
-      profileMap.get( profileId ).startOperation( operationId );
-    }
+    profileMap.get( profileId ).startOperation( operationId );
   }
 
   @Override public List<ProfileOperation> getOperations( String profileId ) {
-    synchronized ( profileMap ) {
-      return profileMap.get( profileId ).getProfileOperations();
-    }
+    return profileMap.get( profileId ).getProfileOperations();
   }
 
   @Override public void discardProfile( String profileId ) {
-    synchronized ( profileMap ) {
-      profileMap.remove( profileId );
-    }
+    profileMap.remove( profileId );
+    notify( profileStatusManagerMap.remove( profileId ) );
+  }
+
+  @Override public List<NotificationObject> getPreviousNotificationObjects() {
+    return new ArrayList<NotificationObject>( previousNotifications.values() );
+  }
+
+  @Override public Set<String> getEmittedTypes() {
+    return delegatingNotifier.getEmittedTypes();
+  }
+
+  @Override public void register( NotificationListener notificationListener ) {
+    delegatingNotifier.register( notificationListener );
+  }
+
+  @Override public void unregister( NotificationListener notificationListener ) {
+    delegatingNotifier.unregister( notificationListener );
+  }
+
+  public void notify( ProfileStatus profileStatus ) {
+    NotificationObject notificationObject =
+      new NotificationObject( ProfilingServiceImpl.class.getCanonicalName(), profileStatus.getId(),
+        profileStatus.getSequenceNumber(), profileStatus );
+    previousNotifications.put( profileStatus.getId(), notificationObject );
+    delegatingNotifier.notify( notificationObject );
   }
 }

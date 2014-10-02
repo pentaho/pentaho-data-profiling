@@ -22,7 +22,9 @@
 
 package com.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.action.ProfileActionResult;
@@ -34,17 +36,22 @@ import org.mockito.stubbing.Answer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 8/14/14.
  */
 public class ProfileActionExecutorImplTest {
   private ExecutorService executorService;
-  private ProfileStatus profileStatus;
+  private ProfileStatusManager profileStatusManager;
+  private MutableProfileStatus profileStatus;
   private ProfileAction profileAction;
   private ProfileActionResult profileActionResult;
-  private ProfileNotificationProvider profileNotificationProvider;
 
   @Before
   public void setup() {
@@ -55,10 +62,15 @@ public class ProfileActionExecutorImplTest {
         return null;
       }
     } );
-    profileStatus = mock( ProfileStatus.class );
+    profileStatusManager = mock( ProfileStatusManager.class );
+    profileStatus = mock( MutableProfileStatus.class );
+    when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusWriteOperation) invocation.getArguments()[0]).write( profileStatus );
+      }
+    } );
     profileAction = mock( ProfileAction.class );
     profileActionResult = mock( ProfileActionResult.class );
-    profileNotificationProvider = mock( ProfileNotificationProviderImpl.class );
     when( profileAction.execute() ).thenReturn( profileActionResult );
   }
 
@@ -69,30 +81,26 @@ public class ProfileActionExecutorImplTest {
     ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
     when( profileStatus.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatus );
-    verify( profileActionResult ).apply( profileStatus );
+    profileActionExecutor.submit( profileAction, profileStatusManager );
+    verify( profileActionResult ).apply( profileStatusManager );
     verify( profileStatus ).setOperationError( null );
-    verify( profileNotificationProvider, times( 3 ) ).notify( id );
   }
 
   @Test
   public void testExecuteNoThen() {
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatus );
-    verify( profileActionResult ).apply( profileStatus );
+    profileActionExecutor.submit( profileAction, profileStatusManager );
+    verify( profileActionResult ).apply( profileStatusManager );
   }
 
   @Test
   public void testExecuteNullResult() {
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
     ProfileAction profileAction = mock( ProfileAction.class );
-    profileActionExecutor.submit( profileAction, profileStatus );
+    profileActionExecutor.submit( profileAction, profileStatusManager );
     verify( profileStatus, times( 0 ) ).setFields( anyList() );
   }
 
@@ -103,10 +111,9 @@ public class ProfileActionExecutorImplTest {
     ProfileActionResult thenResult = mock( ProfileActionResult.class );
     when( then.execute() ).thenReturn( thenResult );
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setProfileNotificationProvider( profileNotificationProvider );
     profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatus );
-    verify( profileActionResult ).apply( profileStatus );
-    verify( thenResult ).apply( profileStatus );
+    profileActionExecutor.submit( profileAction, profileStatusManager );
+    verify( profileActionResult ).apply( profileStatusManager );
+    verify( thenResult ).apply( profileStatusManager );
   }
 }

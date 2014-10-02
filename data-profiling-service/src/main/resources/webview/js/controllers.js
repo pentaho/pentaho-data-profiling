@@ -83,7 +83,7 @@ define([
       // Register to receive profile status updates.
       notificationService.register(
         /* notifType */
-        "com.pentaho.profiling.model.ProfileNotificationProvider",
+        "com.pentaho.profiling.model.ProfilingServiceImpl",
         /* ids */
         [$routeParams.profileId],
         /* cb */

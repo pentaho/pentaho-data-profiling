@@ -24,6 +24,8 @@ package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
@@ -37,6 +39,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,22 +61,51 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
 
   @POST
   @Path( "/" )
+  public ProfileStatus createWebservice( DataSourceReference dataSourceReference ) throws ProfileCreationException {
+    return create( dataSourceReference ).read( new ProfileStatusReadOperation<ProfileStatus>() {
+      @Override public ProfileStatus read( ProfileStatus profileStatus ) {
+        return profileStatus;
+      }
+    } );
+  }
+
   @Override
-  public ProfileStatus create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
+  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
     return delegate.create( dataSourceReference );
   }
 
   @GET
   @Path( "/" )
+  public List<ProfileStatus> getActiveProfilesWebservice() {
+    List<ProfileStatusManager> profileStatusManagers = getActiveProfiles();
+    List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileStatusManagers.size() );
+    for ( ProfileStatusManager profileStatusManager : profileStatusManagers ) {
+      result.add( profileStatusManager.read( new ProfileStatusReadOperation<ProfileStatus>() {
+        @Override public ProfileStatus read( ProfileStatus profileStatus ) {
+          return profileStatus;
+        }
+      } ) );
+    }
+    return result;
+  }
+
   @Override
-  public List<ProfileStatus> getActiveProfiles() {
+  public List<ProfileStatusManager> getActiveProfiles() {
     return delegate.getActiveProfiles();
   }
 
   @GET
   @Path( "/{profileId}" )
+  public ProfileStatus getProfileUpdateWebservice( @PathParam( "profileId" ) String profileId ) {
+    return getProfileUpdate( profileId ).read( new ProfileStatusReadOperation<ProfileStatus>() {
+      @Override public ProfileStatus read( ProfileStatus profileStatus ) {
+        return profileStatus;
+      }
+    } );
+  }
+
   @Override
-  public ProfileStatus getProfileUpdate( @PathParam( "profileId" ) String profileId ) {
+  public ProfileStatusManager getProfileUpdate( String profileId ) {
     return delegate.getProfileUpdate( profileId );
   }
 

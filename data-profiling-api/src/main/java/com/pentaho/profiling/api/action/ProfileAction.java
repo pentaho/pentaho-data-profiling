@@ -22,7 +22,7 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusMessage;
 
 /**
  * Created by bryan on 8/1/14.
@@ -34,5 +34,5 @@ public interface ProfileAction {
 
   public ProfileAction then();
 
-  public void setCurrentOperation( ProfileStatus profileStatus );
+  public ProfileStatusMessage getCurrentOperation();
 }

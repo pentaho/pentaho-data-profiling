@@ -20,43 +20,43 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.notification.service;
+package com.pentaho.profiling.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.ProfilingField;
+import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import com.pentaho.profiling.api.datasource.DataSourceReference;
+
 import java.util.List;
 
 /**
- * Created by bryan on 8/21/14.
+ * Created by bryan on 7/31/14.
  */
-@XmlRootElement
-public class NotificationRequest {
-  private String notificationType;
-  private List<NotificationRequestEntry> entries;
-
-  public NotificationRequest() {
-    this( null, null );
+public class MutableProfileStatusImpl extends ProfileStatusImpl implements MutableProfileStatus {
+  public MutableProfileStatusImpl( ProfileStatus profileStatus ) {
+    super( profileStatus );
   }
 
-  public NotificationRequest( String notificationType,
-                              List<NotificationRequestEntry> entries ) {
-
-    this.notificationType = notificationType;
-    this.entries = entries;
+  @Override public void setFields( List<ProfilingField> fields ) {
+    this.fields = fields;
   }
 
-  public String getNotificationType() {
-    return notificationType;
+  @Override public void setTotalEntities( Long totalEntities ) {
+    this.totalEntities = totalEntities;
   }
 
-  public void setNotificationType( String notificationType ) {
-    this.notificationType = notificationType;
+  @Override public void setCurrentOperation( ProfileStatusMessage currentOperation ) {
+    this.currentOperation = currentOperation;
   }
 
-  public List<NotificationRequestEntry> getEntries() {
-    return entries;
+  @Override public void setOperationError( ProfileActionExceptionWrapper operationError ) {
+    this.operationError = operationError;
   }
 
-  public void setEntries( List<NotificationRequestEntry> entries ) {
-    this.entries = entries;
+  @Override public void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties ) {
+    this.profileFieldProperties = profileFieldProperties;
   }
 }

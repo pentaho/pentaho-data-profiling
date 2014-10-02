@@ -22,13 +22,13 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
 
 /**
  * Created by bryan on 8/1/14.
  */
 public interface ProfileActionResult {
-  public void apply( ProfileStatus status );
+  public void apply( ProfileStatusManager statusManager );
 
   public ProfileActionException getProfileException();
 }

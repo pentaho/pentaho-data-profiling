@@ -40,7 +40,7 @@ public class ProfileStatusMessageTest {
     ProfileStatusMessage profileStatusMessage = new ProfileStatusMessage();
     assertNull( profileStatusMessage.getMessagePath() );
     assertNull( profileStatusMessage.getMessageKey() );
-    assertNull( profileStatusMessage.getMessageVariables() );
+    assertEquals( 0, profileStatusMessage.getMessageVariables().size() );
   }
 
   @Test
@@ -51,30 +51,6 @@ public class ProfileStatusMessageTest {
     ProfileStatusMessage profileStatusMessage = new ProfileStatusMessage( messagePath, messageKey, messageVariables );
     assertEquals( messagePath, profileStatusMessage.getMessagePath() );
     assertEquals( messageKey, profileStatusMessage.getMessageKey() );
-    assertEquals( messageVariables, profileStatusMessage.getMessageVariables() );
-  }
-
-  @Test
-  public void testSetMessagePath() {
-    String messagePath = "test-path";
-    ProfileStatusMessage profileStatusMessage = new ProfileStatusMessage();
-    profileStatusMessage.setMessagePath( messagePath );
-    assertEquals( messagePath, profileStatusMessage.getMessagePath() );
-  }
-
-  @Test
-  public void testSetMessageKey() {
-    String messageKey = "test-key";
-    ProfileStatusMessage profileStatusMessage = new ProfileStatusMessage();
-    profileStatusMessage.setMessageKey( messageKey );
-    assertEquals( messageKey, profileStatusMessage.getMessageKey() );
-  }
-
-  @Test
-  public void testSetMessageVariables() {
-    List<String> messageVariables = new ArrayList<String>( Arrays.asList( "test-var" ) );
-    ProfileStatusMessage profileStatusMessage = new ProfileStatusMessage();
-    profileStatusMessage.setMessageVariables( messageVariables );
     assertEquals( messageVariables, profileStatusMessage.getMessageVariables() );
   }
 }

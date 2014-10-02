@@ -26,99 +26,25 @@ import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 9/29/14.
  */
-@XmlRootElement
-public class ProfileStatus {
-  private String id;
-  private DataSourceReference dataSourceReference;
-  private List<ProfilingField> fields;
-  private Long totalEntities;
-  private ProfileStatusMessage currentOperation;
-  private ProfileActionExceptionWrapper operationError;
-  private List<ProfileFieldProperty> profileFieldProperties;
+public interface ProfileStatus {
+  String getId();
 
+  DataSourceReference getDataSourceReference();
 
-  @XmlElement
-  public String getId() {
-    return id;
-  }
+  List<ProfilingField> getFields();
 
-  public void setId( String id ) {
-    this.id = id;
-  }
+  Long getTotalEntities();
 
-  @XmlElement
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
-  }
+  ProfileStatusMessage getCurrentOperation();
 
-  public void setDataSourceReference( DataSourceReference dataSourceReference ) {
-    this.dataSourceReference = dataSourceReference;
-  }
+  ProfileActionExceptionWrapper getOperationError();
 
-  @XmlElement
-  public List<ProfilingField> getFields() {
-    if ( fields != null ) {
-      List<ProfilingField> result = new ArrayList<ProfilingField>( fields.size() );
-      for ( ProfilingField field : fields ) {
-        result.add( field.copy() );
-      }
-      return result;
-    }
-    return null;
-  }
+  List<ProfileFieldProperty> getProfileFieldProperties();
 
-  public void setFields( List<ProfilingField> fields ) {
-    if ( fields == null ) {
-      this.fields = null;
-    } else {
-      List<ProfilingField> newFields = new ArrayList<ProfilingField>( fields.size() );
-      for ( ProfilingField field : fields ) {
-        newFields.add( field.copy() );
-      }
-      this.fields = newFields;
-    }
-  }
-
-  @XmlElement
-  public Long getTotalEntities() {
-    return totalEntities;
-  }
-
-  public void setTotalEntities( Long totalEntities ) {
-    this.totalEntities = totalEntities;
-  }
-
-  @XmlElement
-  public ProfileStatusMessage getCurrentOperation() {
-    return currentOperation;
-  }
-
-  public void setCurrentOperation( ProfileStatusMessage currentOperation ) {
-    this.currentOperation = currentOperation;
-  }
-
-  @XmlElement
-  public ProfileActionExceptionWrapper getOperationError() {
-    return operationError;
-  }
-
-  public void setOperationError( ProfileActionExceptionWrapper operationError ) {
-    this.operationError = operationError;
-  }
-
-  @XmlElement
-  public List<ProfileFieldProperty> getProfileFieldProperties() {
-    return profileFieldProperties;
-  }
-
-  public void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties ) {
-    this.profileFieldProperties = profileFieldProperties;
-  }
+  long getSequenceNumber();
 }

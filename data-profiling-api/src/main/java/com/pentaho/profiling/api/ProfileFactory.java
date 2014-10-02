@@ -30,5 +30,5 @@ import com.pentaho.profiling.api.datasource.DataSourceReference;
 public interface ProfileFactory {
   public boolean accepts( DataSourceReference dataSourceReference );
 
-  public Profile create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+  public Profile create( ProfileStatusManager profileStatusManager ) throws ProfileCreationException;
 }

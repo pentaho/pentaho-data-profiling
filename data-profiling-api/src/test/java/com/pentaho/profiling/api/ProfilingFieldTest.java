@@ -54,23 +54,15 @@ public class ProfilingFieldTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testMapConstructor() {
-    Map<String, Object> values = mock( Map.class );
+    Map<String, Object> values = new HashMap<String, Object>();
+    values.put( "test", 2 );
     ProfilingField profilingField = new ProfilingField( values );
     assertEquals( values, profilingField.getValues() );
   }
 
   @Test
   @SuppressWarnings( "unchecked" )
-  public void testSetValues() {
-    Map<String, Object> values = mock( Map.class );
-    ProfilingField profilingField = new ProfilingField();
-    profilingField.setValues( values );
-    assertEquals( values, profilingField.getValues() );
-  }
-
-  @Test
-  @SuppressWarnings( "unchecked" )
-  public void testCopy() {
+  public void testCopyConstructor() {
     String nestedMapKey = "nestedMap";
     String nestedListKey = "nestedKey";
 
@@ -82,7 +74,7 @@ public class ProfilingFieldTest {
     topMap.put( nestedMapKey, nestedMap );
     nestedMap.put( nestedListKey, nestedList );
     ProfilingField profilingField = new ProfilingField( topMap );
-    Map<String, Object> deepCopy = profilingField.copy().getValues();
+    Map<String, Object> deepCopy = new ProfilingField( profilingField.getValues() ).getValues();
 
     assertFalse( deepCopy == topMap );
     assertEquals( 1, deepCopy.size() );
@@ -104,6 +96,6 @@ public class ProfilingFieldTest {
     String nestedListKey = "nestedKey";
     Map<String, Object> topMap = new HashMap<String, Object>();
     topMap.put( nestedListKey, Collections.unmodifiableList( new ArrayList<Object>(  ) ) );
-    new ProfilingField( topMap ).copy();
+    new ProfilingField( topMap );
   }
 }

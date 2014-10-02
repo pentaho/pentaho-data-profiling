@@ -41,19 +41,11 @@ public class ProfilingField {
   }
 
   public ProfilingField( Map<String, Object> values ) {
-    this.values = values;
+    this.values = copyMap( values );
   }
 
   public Map<String, Object> getValues() {
-    return values;
-  }
-
-  public void setValues( Map<String, Object> values ) {
-    this.values = values;
-  }
-
-  public ProfilingField copy() {
-    return new ProfilingField( copyMap( values ) );
+    return copyMap( values );
   }
 
   @SuppressWarnings( "unchecked" )

@@ -20,15 +20,24 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.notification.api;
+package com.pentaho.profiling.api;
 
-import java.util.Set;
+import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import com.pentaho.profiling.api.datasource.DataSourceReference;
+
+import java.util.List;
 
 /**
- * Created by bryan on 8/22/14.
+ * Created by bryan on 9/29/14.
  */
-public interface NotificationHandler {
-  public Set<String> getInterestedIds();
+public interface MutableProfileStatus extends ProfileStatus {
+  void setFields( List<ProfilingField> fields );
 
-  public void notify( NotificationEvent notificationEvent );
+  void setTotalEntities( Long totalEntities );
+
+  void setCurrentOperation( ProfileStatusMessage currentOperation );
+
+  void setOperationError( ProfileActionExceptionWrapper operationError );
+
+  void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties );
 }

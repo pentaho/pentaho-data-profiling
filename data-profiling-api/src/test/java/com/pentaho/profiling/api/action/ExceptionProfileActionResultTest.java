@@ -22,10 +22,16 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatus;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import com.pentaho.profiling.api.util.ObjectHolder;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 8/11/14.
@@ -49,15 +55,29 @@ public class ExceptionProfileActionResultTest {
 
   @Test
   public void testExceptionProfileActionResultAppliesError() {
-    ProfileStatus status = new ProfileStatus();
-    List<ProfileOperation> recoverOperations = new ArrayList<ProfileOperation>();
+    ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
+    final List<ProfileOperation> recoverOperations = new ArrayList<ProfileOperation>();
     ProfileOperation mockRecover = mock( ProfileOperation.class );
     recoverOperations.add( mockRecover );
-    ProfileActionException profileActionException = new ProfileActionException( new ProfileStatusMessage( "test-path", "test-key", new ArrayList<String>() ), null, recoverOperations );
-    ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult( profileActionException );
-    exceptionProfileActionResult.apply( status );
-    assertEquals( "test-path", status.getOperationError().getMessage().getMessagePath() );
-    assertEquals( "test-key", status.getOperationError().getMessage().getMessageKey() );
-    assertEquals( recoverOperations, status.getOperationError().getRecoveryOperations() );
+    ProfileActionException profileActionException = new ProfileActionException( new ProfileStatusMessage(
+      "test-path", "test-key", new ArrayList<String>() ), null, recoverOperations );
+    final ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult(
+      profileActionException );
+    final ObjectHolder<ProfileActionExceptionWrapper> objectHolder = new ObjectHolder<ProfileActionExceptionWrapper>();
+    when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        ArgumentCaptor<ProfileActionExceptionWrapper> exceptionWrapperArgumentCaptor =
+          ArgumentCaptor.forClass( ProfileActionExceptionWrapper.class );
+        MutableProfileStatus mutableProfileStatus = mock( MutableProfileStatus.class );
+        ( (ProfileStatusWriteOperation) invocation.getArguments()[ 0 ] ).write( mutableProfileStatus );
+        verify( mutableProfileStatus ).setOperationError( exceptionWrapperArgumentCaptor.capture() );
+        objectHolder.setObject( exceptionWrapperArgumentCaptor.getValue() );
+        return null;
+      }
+    } );
+    exceptionProfileActionResult.apply( profileStatusManager );
+    assertEquals( "test-path", objectHolder.getObject().getMessage().getMessagePath() );
+    assertEquals( "test-key", objectHolder.getObject().getMessage().getMessageKey() );
+    assertEquals( recoverOperations, objectHolder.getObject().getRecoveryOperations() );
   }
 }
