@@ -7,7 +7,7 @@ define([
   'controllers'
 ], function(angular) {
 
-  var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.model.ProfileNotificationProvider";
+  var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.model.ProfilingServiceImpl";
   var PROFILE_GETOPERS_URL = "/cxf/profile/operations/";
   var DATASOURCE_GETINCLUDE_URL = "/cxf/data-profiling-service/dataSource/include/";
 
