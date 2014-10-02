@@ -24,6 +24,7 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
@@ -38,6 +39,10 @@ import java.util.List;
 public class MutableProfileStatusImpl extends ProfileStatusImpl implements MutableProfileStatus {
   public MutableProfileStatusImpl( ProfileStatus profileStatus ) {
     super( profileStatus );
+  }
+
+  @Override public void setProfileState( ProfileState profileState ) {
+    this.state = profileState;
   }
 
   @Override public void setFields( List<ProfilingField> fields ) {

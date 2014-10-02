@@ -108,7 +108,7 @@ define([
        * @param {ProfileStatus} profileStatus The profile status.
        */
       function updateProfile(profileStatus) {
-        if(profileStatus) {
+        if(profileStatus && profileStatus.profileState != 'DISCARDED') {
           $scope.profileId = profileStatus.id;
 
           // Load available operations asynchronously.

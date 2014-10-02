@@ -23,6 +23,7 @@
 package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
@@ -68,6 +69,15 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
       return result;
     } finally {
       readWriteLock.writeLock().unlock();
+    }
+  }
+
+  @Override public ProfileState getProfileState() {
+    readWriteLock.readLock().lock();
+    try {
+      return profileStatus.getProfileState();
+    } finally {
+      readWriteLock.readLock().unlock();
     }
   }
 

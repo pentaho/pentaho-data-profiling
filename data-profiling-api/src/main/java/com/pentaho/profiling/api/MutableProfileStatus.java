@@ -31,6 +31,8 @@ import java.util.List;
  * Created by bryan on 9/29/14.
  */
 public interface MutableProfileStatus extends ProfileStatus {
+  void setProfileState( ProfileState profileState );
+
   void setFields( List<ProfilingField> fields );
 
   void setTotalEntities( Long totalEntities );
