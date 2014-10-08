@@ -20,15 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+package com.pentaho.profiling.api.action;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 10/6/14.
  */
-public interface ProfileFactory {
-  public boolean accepts( DataSourceReference dataSourceReference );
-
-  public Profile create( ProfileStatusManager profileStatusManager ) throws ProfileCreationException;
+public interface ProfileActionExecutionCallback {
+  public void call( ProfileActionResult profileActionResult );
 }

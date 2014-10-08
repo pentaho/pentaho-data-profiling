@@ -22,11 +22,10 @@
 
 package com.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatusManager;
 
 /**
  * Created by bryan on 8/1/14.
  */
 public interface ProfileActionExecutor {
-  public void submit( ProfileAction action, ProfileStatusManager status );
+  public void submit( ProfileAction action, ProfileActionExecutionCallback profileActionExecutionCallback );
 }

@@ -59,7 +59,7 @@ public class ProfileStatusImpl implements ProfileStatus {
 
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
-      profileStatus.getCurrentOperation(),
+      profileStatus.getCurrentOperationMessage(),
       profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(), profileStatus.getId(),
       profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1 );
   }
@@ -108,7 +108,7 @@ public class ProfileStatusImpl implements ProfileStatus {
   }
 
   @Override @XmlElement
-  public ProfileStatusMessage getCurrentOperation() {
+  public ProfileStatusMessage getCurrentOperationMessage() {
     return currentOperation;
   }
 

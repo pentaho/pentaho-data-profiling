@@ -27,6 +27,7 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 import com.pentaho.profiling.api.util.ObjectHolder;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +58,7 @@ public class ExceptionProfileActionResultTest {
   public void testExceptionProfileActionResultAppliesError() {
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
     final List<ProfileOperation> recoverOperations = new ArrayList<ProfileOperation>();
-    ProfileOperation mockRecover = mock( ProfileOperation.class );
+    ProfileOperation mockRecover = mock( ProfileOperationImpl.class );
     recoverOperations.add( mockRecover );
     ProfileActionException profileActionException = new ProfileActionException( new ProfileStatusMessage(
       "test-path", "test-key", new ArrayList<String>() ), null, recoverOperations );

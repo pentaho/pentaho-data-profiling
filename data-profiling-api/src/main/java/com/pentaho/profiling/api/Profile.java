@@ -37,4 +37,8 @@ public interface Profile {
   public List<ProfileOperation> getProfileOperations();
 
   public void startOperation( String operationId );
+
+  public ProfileOperation getProfileDiscardOperation();
+
+  public ProfileOperation getRetryOperation();
 }

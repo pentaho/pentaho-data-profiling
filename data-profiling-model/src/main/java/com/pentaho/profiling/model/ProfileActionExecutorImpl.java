@@ -22,12 +22,9 @@
 
 package com.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileAction;
+import com.pentaho.profiling.api.action.ProfileActionExecutionCallback;
 import com.pentaho.profiling.api.action.ProfileActionExecutor;
-import com.pentaho.profiling.api.action.ProfileActionResult;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,32 +40,12 @@ public class ProfileActionExecutorImpl implements ProfileActionExecutor {
   }
 
   @Override
-  public void submit( final ProfileAction action, final ProfileStatusManager statusManager ) {
+  public void submit( final ProfileAction action,
+                      final ProfileActionExecutionCallback profileActionExecutionCallback ) {
     executorService.submit( new Runnable() {
       @Override
       public void run() {
-        statusManager.write( new ProfileStatusWriteOperation<Void>() {
-          @Override public Void write( MutableProfileStatus profileStatus ) {
-            profileStatus.setOperationError( null );
-            profileStatus.setCurrentOperation( action.getCurrentOperation() );
-            return null;
-          }
-        } );
-        ProfileActionResult result = action.execute();
-        if ( result != null ) {
-          result.apply( statusManager );
-        }
-        ProfileAction then = action.then();
-        if ( then != null ) {
-          submit( then, statusManager );
-        } else {
-          statusManager.write( new ProfileStatusWriteOperation<Void>() {
-            @Override public Void write( MutableProfileStatus profileStatus ) {
-              profileStatus.setCurrentOperation( null );
-              return null;
-            }
-          } );
-        }
+        profileActionExecutionCallback.call( action.execute() );
       }
     } );
   }

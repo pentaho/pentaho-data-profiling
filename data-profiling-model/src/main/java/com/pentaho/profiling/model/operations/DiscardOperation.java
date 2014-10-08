@@ -20,23 +20,44 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.operations;
+package com.pentaho.profiling.model.operations;
 
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.ProfilingService;
+import com.pentaho.profiling.api.action.ProfileAction;
+import com.pentaho.profiling.api.action.ProfileActionResult;
+import com.pentaho.profiling.api.operations.ProfileOperationImpl;
+import com.pentaho.profiling.model.ProfileImpl;
 
 /**
  * Created by bryan on 10/3/14.
  */
-public interface ProfileOperation {
-  String getNamePath();
+public class DiscardOperation extends ProfileOperationImpl {
+  public static final String PROFILE_OPERATION_DISCARD_KEY = "ProfileDiscard";
+  private ProfileAction next;
 
-  String getNameKey();
+  public DiscardOperation( final ProfilingService profilingService, final ProfileStatusManager profileStatusManager ) {
+    super( PROFILE_OPERATION_DISCARD_KEY, ProfileImpl.KEY_PATH, PROFILE_OPERATION_DISCARD_KEY, profileStatusManager );
+    next = new ProfileAction() {
+      @Override public ProfileActionResult execute() {
+        profilingService.discardProfile( profileStatusManager.getId() );
+        return null;
+      }
 
-  String getId();
+      @Override public ProfileStatusMessage getCurrentOperationMessage() {
+        return null;
+      }
+    };
+  }
 
-  void start( ProfileActionExecutor profileActionExecutor );
+  @Override protected ProfileAction getNext() {
+    ProfileAction result = next;
+    next = null;
+    return result;
+  }
 
-  void stop();
+  @Override protected void resetState() {
 
-  boolean isRunning();
+  }
 }

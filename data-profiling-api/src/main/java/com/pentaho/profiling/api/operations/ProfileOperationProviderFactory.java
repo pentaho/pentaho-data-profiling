@@ -20,10 +20,20 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api.operations;
+
+import com.pentaho.profiling.api.Profile;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.datasource.DataSourceReference;
+
+import java.io.IOException;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 10/3/14.
  */
-public class ThenAlreadyRequestedException extends Exception {
+public interface ProfileOperationProviderFactory {
+  public boolean accepts( DataSourceReference dataSourceReference );
+
+  public ProfileOperationProvider create( DataSourceReference dataSourceReference, Profile profile,
+                                          ProfileStatusManager profileStatusManager );
 }

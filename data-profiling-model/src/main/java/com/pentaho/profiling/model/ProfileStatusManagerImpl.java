@@ -117,10 +117,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
     }
   }
 
-  @Override public ProfileStatusMessage getCurrentOperation() {
+  @Override public ProfileStatusMessage getCurrentOperationMessage() {
     readWriteLock.readLock().lock();
     try {
-      return profileStatus.getCurrentOperation();
+      return profileStatus.getCurrentOperationMessage();
     } finally {
       readWriteLock.readLock().unlock();
     }

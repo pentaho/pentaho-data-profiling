@@ -25,14 +25,16 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
+import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import com.pentaho.profiling.api.operations.ProfileOperationProvider;
+import com.pentaho.profiling.api.operations.ProfileOperationProviderFactory;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
 import org.pentaho.osgi.notification.api.NotificationListener;
 import org.pentaho.osgi.notification.api.NotificationObject;
@@ -59,13 +61,22 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   private final DelegatingNotifierImpl delegatingNotifier =
     new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
       this );
-  private List<ProfileFactory> factories;
+  private List<ProfileOperationProviderFactory> factories;
+  private ProfileActionExecutor profileActionExecutor;
 
-  public List<ProfileFactory> getFactories() {
+  public ProfileActionExecutor getProfileActionExecutor() {
+    return profileActionExecutor;
+  }
+
+  public void setProfileActionExecutor( ProfileActionExecutor profileActionExecutor ) {
+    this.profileActionExecutor = profileActionExecutor;
+  }
+
+  public List<ProfileOperationProviderFactory> getFactories() {
     return factories;
   }
 
-  public void setFactories( List<ProfileFactory> factories ) {
+  public void setFactories( List<ProfileOperationProviderFactory> factories ) {
     this.factories = factories;
   }
 
@@ -81,12 +92,16 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
 
   @Override
   public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
-    Profile profile = null;
-    for ( ProfileFactory factory : factories ) {
+    ProfileImpl profile = null;
+    for ( ProfileOperationProviderFactory factory : factories ) {
       if ( factory.accepts( dataSourceReference ) ) {
+        String profileId = UUID.randomUUID().toString();
         ProfileStatusManager profileStatusManager =
-          new ProfileStatusManagerImpl( UUID.randomUUID().toString(), dataSourceReference, this );
-        profile = factory.create( profileStatusManager );
+          new ProfileStatusManagerImpl( profileId, dataSourceReference, this );
+        profile = new ProfileImpl( profileId, profileActionExecutor, profileStatusManager, this );
+        ProfileOperationProvider profileOperationProvider =
+          factory.create( dataSourceReference, profile, profileStatusManager );
+        profile.setProfileOperationProvider( profileOperationProvider );
         profileMap.put( profile.getId(), profile );
         profileStatusManagerMap.put( profile.getId(), profileStatusManager );
         return profileStatusManager;

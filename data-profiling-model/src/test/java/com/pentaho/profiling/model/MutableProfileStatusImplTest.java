@@ -22,7 +22,9 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
@@ -65,7 +67,7 @@ public class MutableProfileStatusImplTest {
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     when( constructorArg.getFields() ).thenReturn( fieldList );
     when( constructorArg.getTotalEntities() ).thenReturn( totalEntities );
-    when( constructorArg.getCurrentOperation() ).thenReturn( profileStatusMessage );
+    when( constructorArg.getCurrentOperationMessage() ).thenReturn( profileStatusMessage );
     when( constructorArg.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( constructorArg.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( constructorArg.getId() ).thenReturn( id );
@@ -76,7 +78,7 @@ public class MutableProfileStatusImplTest {
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperation() );
+    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
@@ -106,8 +108,8 @@ public class MutableProfileStatusImplTest {
   public void testSetCurrentOperation() {
     ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
     MutableProfileStatusImpl profileStatus = new MutableProfileStatusImpl( constructorArg );
-    profileStatus.setCurrentOperation( profileStatusMessage );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperation() );
+    profileStatus.setCurrentOperationMessage( profileStatusMessage );
+    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
   }
 
   @Test
@@ -126,5 +128,14 @@ public class MutableProfileStatusImplTest {
     MutableProfileStatusImpl profileStatus = new MutableProfileStatusImpl( constructorArg );
     profileStatus.setProfileFieldProperties( profileFieldProperties );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
+  }
+
+  @Test
+  public void testSetProfileState() {
+    MutableProfileStatus mutableProfileStatus = new MutableProfileStatusImpl( constructorArg );
+    mutableProfileStatus.setProfileState( ProfileState.ACTIVE );
+    assertEquals( ProfileState.ACTIVE, mutableProfileStatus.getProfileState() );
+    mutableProfileStatus.setProfileState( ProfileState.DISCARDED );
+    assertEquals( ProfileState.DISCARDED, mutableProfileStatus.getProfileState() );
   }
 }

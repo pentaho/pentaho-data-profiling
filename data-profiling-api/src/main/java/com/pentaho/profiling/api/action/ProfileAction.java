@@ -28,11 +28,7 @@ import com.pentaho.profiling.api.ProfileStatusMessage;
  * Created by bryan on 8/1/14.
  */
 public interface ProfileAction {
-  public void stop();
-
   public ProfileActionResult execute();
 
-  public ProfileAction then();
-
-  public ProfileStatusMessage getCurrentOperation();
+  public ProfileStatusMessage getCurrentOperationMessage();
 }

@@ -131,7 +131,7 @@ define([
             ensureTranslationPart(col.namePath);
           });
 
-          var currentOper = $scope.currentOperation = profileStatus.currentOperation;
+          var currentOper = $scope.currentOperationMessage = profileStatus.currentOperationMessage;
           if(currentOper) ensureTranslationPart(currentOper.messagePath);
 
           var operError = $scope.operationError = profileStatus.operationError;

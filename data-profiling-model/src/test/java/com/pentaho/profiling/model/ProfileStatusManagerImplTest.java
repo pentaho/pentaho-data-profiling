@@ -24,6 +24,7 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
@@ -40,7 +41,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 9/30/14.
@@ -118,11 +118,11 @@ public class ProfileStatusManagerImplTest {
     final ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
-        profileStatus.setCurrentOperation( profileStatusMessage );
+        profileStatus.setCurrentOperationMessage( profileStatusMessage );
         return profileStatus.getId();
       }
     } ) );
-    assertEquals( profileStatusMessage, profileStatusManager.getCurrentOperation() );
+    assertEquals( profileStatusMessage, profileStatusManager.getCurrentOperationMessage() );
   }
 
   @Test
@@ -165,5 +165,24 @@ public class ProfileStatusManagerImplTest {
       }
     } ) );
     assertEquals( 2L, profileStatusManager.getSequenceNumber() );
+  }
+
+  @Test
+  public void testGetProfileState() {
+    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
+      @Override public Object write( MutableProfileStatus profileStatus ) {
+        profileStatus.setProfileState( ProfileState.ACTIVE );
+        return null;
+      }
+    } );
+    assertEquals( ProfileState.ACTIVE, profileStatusManager.getProfileState() );
+    profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
+      @Override public Object write( MutableProfileStatus profileStatus ) {
+        profileStatus.setProfileState( ProfileState.DISCARDED );
+        return null;
+      }
+    } );
+    assertEquals( ProfileState.DISCARDED, profileStatusManager.getProfileState() );
   }
 }

@@ -29,6 +29,7 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -140,7 +141,7 @@ public class ProfilingServiceWebserviceImplTest {
   public void testGetOperations() {
     String id = "test-profile-id";
     List<ProfileOperation> operations = new ArrayList<ProfileOperation>();
-    ProfileOperation operation = mock( ProfileOperation.class );
+    ProfileOperation operation = mock( ProfileOperationImpl.class );
     operations.add( operation );
     when( delegate.getOperations( id ) ).thenReturn( operations );
     assertEquals( operations, webservice.getOperations( id ) );
