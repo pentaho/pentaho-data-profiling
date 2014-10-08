@@ -27,6 +27,7 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import com.pentaho.profiling.api.action.ProfileActionExecutionCallback;
 import com.pentaho.profiling.api.action.ProfileActionResult;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,10 +49,6 @@ import static org.mockito.Mockito.when;
  */
 public class ProfileActionExecutorImplTest {
   private ExecutorService executorService;
-  private ProfileStatusManager profileStatusManager;
-  private MutableProfileStatus profileStatus;
-  private ProfileAction profileAction;
-  private ProfileActionResult profileActionResult;
 
   @Before
   public void setup() {
@@ -62,58 +59,17 @@ public class ProfileActionExecutorImplTest {
         return null;
       }
     } );
-    profileStatusManager = mock( ProfileStatusManager.class );
-    profileStatus = mock( MutableProfileStatus.class );
-    when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
-      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusWriteOperation) invocation.getArguments()[0]).write( profileStatus );
-      }
-    } );
-    profileAction = mock( ProfileAction.class );
-    profileActionResult = mock( ProfileActionResult.class );
-    when( profileAction.execute() ).thenReturn( profileActionResult );
   }
 
   @Test
-  public void testExecuteClearsOperationError() {
-    String id = "test-id";
-    when( profileStatus.getId() ).thenReturn( id );
-    ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
-    when( profileStatus.getOperationError() ).thenReturn( profileActionExceptionWrapper );
+  public void testSubmit() {
     ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatusManager );
-    verify( profileActionResult ).apply( profileStatusManager );
-    verify( profileStatus ).setOperationError( null );
-  }
-
-  @Test
-  public void testExecuteNoThen() {
-    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatusManager );
-    verify( profileActionResult ).apply( profileStatusManager );
-  }
-
-  @Test
-  public void testExecuteNullResult() {
-    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
-    profileActionExecutor.setExecutorService( executorService );
     ProfileAction profileAction = mock( ProfileAction.class );
-    profileActionExecutor.submit( profileAction, profileStatusManager );
-    verify( profileStatus, times( 0 ) ).setFields( anyList() );
-  }
-
-  @Test
-  public void testExecuteThen() {
-    ProfileAction then = mock( ProfileAction.class );
-    when( profileAction.then() ).thenReturn( then );
-    ProfileActionResult thenResult = mock( ProfileActionResult.class );
-    when( then.execute() ).thenReturn( thenResult );
-    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    ProfileActionResult profileActionResult = mock( ProfileActionResult.class );
+    when( profileAction.execute() ).thenReturn( profileActionResult );
+    ProfileActionExecutionCallback profileActionExecutionCallback = mock( ProfileActionExecutionCallback.class );
     profileActionExecutor.setExecutorService( executorService );
-    profileActionExecutor.submit( profileAction, profileStatusManager );
-    verify( profileActionResult ).apply( profileStatusManager );
-    verify( thenResult ).apply( profileStatusManager );
+    profileActionExecutor.submit( profileAction, profileActionExecutionCallback );
+    verify( profileActionExecutionCallback ).call( profileActionResult );
   }
 }

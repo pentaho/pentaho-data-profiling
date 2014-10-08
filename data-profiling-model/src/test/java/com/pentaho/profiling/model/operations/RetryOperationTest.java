@@ -20,26 +20,24 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.model.operations;
 
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import org.junit.Test;
 
-import java.util.List;
+import static org.junit.Assert.assertNull;
 
 /**
- * Created by bryan on 9/29/14.
+ * Created by bryan on 10/8/14.
  */
-public interface MutableProfileStatus extends ProfileStatus {
-  void setProfileState( ProfileState profileState );
+public class RetryOperationTest {
+  @Test
+  public void testGetNext() {
+    assertNull( new RetryOperation().getNext() );
+  }
 
-  void setFields( List<ProfilingField> fields );
-
-  void setTotalEntities( Long totalEntities );
-
-  void setCurrentOperationMessage( ProfileStatusMessage currentOperation );
-
-  void setOperationError( ProfileActionExceptionWrapper operationError );
-
-  void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties );
+  @Test
+  public void testReset() {
+    // Noop
+    new RetryOperation().resetState();
+  }
 }

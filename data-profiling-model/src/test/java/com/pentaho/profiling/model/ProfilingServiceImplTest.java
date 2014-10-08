@@ -25,14 +25,17 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.operations.ProfileOperation;
+import com.pentaho.profiling.api.operations.ProfileOperationImpl;
+import com.pentaho.profiling.api.operations.ProfileOperationProvider;
+import com.pentaho.profiling.api.operations.ProfileOperationProviderFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -41,6 +44,7 @@ import org.mockito.stubbing.Answer;
 import org.pentaho.osgi.notification.api.NotificationListener;
 import org.pentaho.osgi.notification.api.NotificationObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,6 +53,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -58,7 +63,7 @@ import static org.mockito.Mockito.when;
  * Created by bryan on 8/14/14.
  */
 public class ProfilingServiceImplTest {
-  private ProfileFactory profileFactory;
+  private ProfileOperationProviderFactory profileFactory;
   private ProfilingServiceImpl profilingService;
   private Profile profile;
   private ProfileStatus profileStatus;
@@ -67,7 +72,7 @@ public class ProfilingServiceImplTest {
 
   @Before
   public void setup() {
-    profileFactory = mock( ProfileFactory.class );
+    profileFactory = mock( ProfileOperationProviderFactory.class );
     profilingService = new ProfilingServiceImpl();
     profilingService.setFactories( Arrays.asList( profileFactory ) );
     profile = mock( Profile.class );
@@ -81,7 +86,7 @@ public class ProfilingServiceImplTest {
   @Test
   public void testSetFactories() {
     ProfilingServiceImpl profilingService = new ProfilingServiceImpl();
-    List<ProfileFactory> profileFactories = new ArrayList<ProfileFactory>();
+    List<ProfileOperationProviderFactory> profileFactories = new ArrayList<ProfileOperationProviderFactory>();
     profileFactories.add( profileFactory );
     profilingService.setFactories( profileFactories );
     assertEquals( profileFactories, profilingService.getFactories() );
@@ -89,7 +94,7 @@ public class ProfilingServiceImplTest {
 
   @Test
   public void testCreateNoFactories() throws ProfileCreationException {
-    profilingService.setFactories( new ArrayList<ProfileFactory>() );
+    profilingService.setFactories( new ArrayList<ProfileOperationProviderFactory>() );
     assertNull( profilingService.create( new DataSourceReference( "Test", "Test" ) ) );
   }
 
@@ -101,11 +106,12 @@ public class ProfilingServiceImplTest {
   }
 
   @Test
-  public void testCreateMatchingFactory() throws ProfileCreationException {
+  public void testCreateMatchingFactory() throws ProfileCreationException, IOException {
     DataSourceReference dataSourceReference = new DataSourceReference();
-    ProfileStatus profileStatus = mock( ProfileStatusImpl.class );
+    ProfileOperationProvider profileOperationProvider = mock( ProfileOperationProvider.class );
+    when( profileOperationProvider.getProfileOperations() ).thenReturn( new ArrayList<ProfileOperation>(  ) );
     when( profileFactory.accepts( dataSourceReference ) ).thenReturn( true );
-    when( profileFactory.create( any( ProfileStatusManager.class ) ) ).thenReturn( profile );
+    when( profileFactory.create( eq( dataSourceReference ), any( Profile.class ), any( ProfileStatusManager.class ) ) ).thenReturn( profileOperationProvider );
     ProfileStatusManager profileStatusManager = profilingService.create( dataSourceReference );
     assertEquals( dataSourceReference, profileStatusManager.getDataSourceReference() );
   }
@@ -150,7 +156,7 @@ public class ProfilingServiceImplTest {
   @Test
   public void testGetOperations() {
     String profileId = "PROFILE_ID";
-    ProfileOperation profileOperation = mock( ProfileOperation.class );
+    ProfileOperation profileOperation = mock( ProfileOperationImpl.class );
     List<ProfileOperation> profileOperations = new ArrayList<ProfileOperation>( Arrays.asList( profileOperation ) );
     when( profile.getProfileOperations() ).thenReturn( profileOperations );
     profilingService.getProfileMap().put( profileId, profile );
@@ -218,5 +224,12 @@ public class ProfilingServiceImplTest {
     assertEquals( profileId, notificationObject.getId() );
     assertEquals( ProfilingServiceImpl.class.getCanonicalName(), notificationObject.getType() );
     assertEquals( profileStatus, notificationObject.getObject() );
+  }
+
+  @Test
+  public void testSetProfileActionExecutor() {
+    ProfileActionExecutor profileActionExecutor = mock( ProfileActionExecutor.class );
+    profilingService.setProfileActionExecutor( profileActionExecutor );
+    assertEquals( profileActionExecutor, profilingService.getProfileActionExecutor() );
   }
 }

@@ -13,12 +13,12 @@
         </ul>
     </div>
     <div class="profile-section profile-message"
-        ng-class="currentOperation ? 'profile-state-processing' : ''"
-        ng-if="currentOperation">
+        ng-class="currentOperationMessage ? 'profile-state-processing' : ''"
+        ng-if="currentOperationMessage">
       <div class="profile-message-img-cell">
         <div class="profile-message-img"></div>
       </div>
-      <div class="profile-message-text">{{currentOperation.messageKey | translate | interpolateMessage:currentOperation.messageVariables}}</div>
+      <div class="profile-message-text">{{currentOperationMessage.messageKey | translate | interpolateMessage:currentOperationMessage.messageVariables}}</div>
       <div class="profile-message-action">
         <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
       </div>
@@ -58,7 +58,7 @@
         <div class="pentaho-fieldgroup-major" translate="profiling.operations.title"></div>
         <button class="pentaho-button"
                 ng-repeat="operation in operations"
-                ng-disabled="!!currentOperation"
+                ng-disabled="!!currentOperationMessage"
                 ng-click="startOperation(operation.id)"
                 translate="{{operation.nameKey}}"></button>
     </div>

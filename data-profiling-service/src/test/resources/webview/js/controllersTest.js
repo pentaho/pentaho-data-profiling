@@ -87,12 +87,12 @@ define([
             id: 'abc',
             dataSourceProvider: 'cde'
           },
-          currentOperation: currentOper
+          currentOperationMessage: currentOper
         });
 
         notificationService.flush();
 
-        expect($scope.currentOperation).toBe(currentOper);
+        expect($scope.currentOperationMessage).toBe(currentOper);
       });
 
       it("should set the scope property 'operationError'", function() {

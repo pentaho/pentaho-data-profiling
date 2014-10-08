@@ -20,53 +20,29 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.model.operations;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.action.ProfileAction;
+import com.pentaho.profiling.api.action.ProfileActionExecutor;
+import com.pentaho.profiling.api.operations.ProfileOperationImpl;
+import com.pentaho.profiling.model.ProfileImpl;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 10/3/14.
  */
-public abstract class DefaultProfileAction implements ProfileAction {
-  private final AtomicBoolean stopped;
-  private ProfileAction then;
-  private volatile boolean thenRequested = false;
+public class RetryOperation extends ProfileOperationImpl {
+  public static final String PROFILE_OPERATION_RETRY_KEY = "ProfileRetry";
 
-  public DefaultProfileAction() {
-    this( null, new AtomicBoolean( false ) );
+  public RetryOperation() {
+    super( PROFILE_OPERATION_RETRY_KEY, ProfileImpl.KEY_PATH, PROFILE_OPERATION_RETRY_KEY, null );
   }
 
-  public DefaultProfileAction( ProfileAction then, AtomicBoolean stopped ) {
-    this.then = then;
-    this.stopped = stopped;
+  @Override protected ProfileAction getNext() {
+    return null;
   }
 
-  @Override
-  public synchronized ProfileAction then() {
-    thenRequested = true;
-    if ( stopped.get() ) {
-      return null;
-    } else {
-      if ( then == null ) {
-        stopped.set( true );
-      }
-      return then;
-    }
-  }
+  @Override protected void resetState() {
 
-  public synchronized void setThen( ProfileAction then ) throws ThenAlreadyRequestedException {
-    if ( !thenRequested ) {
-      this.then = then;
-    } else {
-      throw new ThenAlreadyRequestedException();
-    }
-  }
-
-  @Override public void stop() {
-    stopped.set( true );
-  }
-
-  public AtomicBoolean getStopped() {
-    return stopped;
   }
 }

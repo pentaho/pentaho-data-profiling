@@ -84,12 +84,13 @@ public class ProfileStatusImplTest {
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperation() );
+    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( sequence, profileStatus.getSequenceNumber() );
+    assertEquals( ProfileState.ACTIVE, profileStatus.getProfileState() );
   }
 
   @Test
@@ -97,6 +98,7 @@ public class ProfileStatusImplTest {
     List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
     ProfilingField mockField = mock( ProfilingField.class );
     fieldList.add( mockField );
+    ProfileState profileState = ProfileState.DISCARDED;
     Long totalEntities = 150L;
     ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
     ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
@@ -109,22 +111,24 @@ public class ProfileStatusImplTest {
     ProfileStatus profileStatusToCopy = mock( ProfileStatus.class );
     when( profileStatusToCopy.getFields() ).thenReturn( fieldList );
     when( profileStatusToCopy.getTotalEntities() ).thenReturn( totalEntities );
-    when( profileStatusToCopy.getCurrentOperation() ).thenReturn( profileStatusMessage );
+    when( profileStatusToCopy.getCurrentOperationMessage() ).thenReturn( profileStatusMessage );
     when( profileStatusToCopy.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( profileStatusToCopy.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( profileStatusToCopy.getId() ).thenReturn( id );
     when( profileStatusToCopy.getDataSourceReference() ).thenReturn( dataSourceReference );
     when( profileStatusToCopy.getSequenceNumber() ).thenReturn( sequence );
+    when( profileStatusToCopy.getProfileState() ).thenReturn( profileState );
     ProfileStatusImpl profileStatus =
       new ProfileStatusImpl( profileStatusToCopy );
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperation() );
+    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( sequence + 1, profileStatus.getSequenceNumber() );
+    assertEquals( profileState, profileStatus.getProfileState() );
   }
 }

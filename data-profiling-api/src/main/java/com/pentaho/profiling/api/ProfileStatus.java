@@ -42,7 +42,7 @@ public interface ProfileStatus {
 
   Long getTotalEntities();
 
-  ProfileStatusMessage getCurrentOperation();
+  ProfileStatusMessage getCurrentOperationMessage();
 
   ProfileActionExceptionWrapper getOperationError();
 

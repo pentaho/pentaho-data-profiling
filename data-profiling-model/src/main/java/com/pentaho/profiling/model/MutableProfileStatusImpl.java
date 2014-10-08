@@ -53,7 +53,7 @@ public class MutableProfileStatusImpl extends ProfileStatusImpl implements Mutab
     this.totalEntities = totalEntities;
   }
 
-  @Override public void setCurrentOperation( ProfileStatusMessage currentOperation ) {
+  @Override public void setCurrentOperationMessage( ProfileStatusMessage currentOperation ) {
     this.currentOperation = currentOperation;
   }
 

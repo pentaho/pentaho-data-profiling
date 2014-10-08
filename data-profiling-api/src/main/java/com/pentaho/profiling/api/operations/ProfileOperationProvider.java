@@ -20,26 +20,19 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.operations;
 
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
 import java.util.List;
 
 /**
- * Created by bryan on 9/29/14.
+ * Created by bryan on 10/3/14.
  */
-public interface MutableProfileStatus extends ProfileStatus {
-  void setProfileState( ProfileState profileState );
+public interface ProfileOperationProvider {
+  public DataSourceReference getDataSourceReference();
 
-  void setFields( List<ProfilingField> fields );
+  public List<ProfileOperation> getProfileOperations();
 
-  void setTotalEntities( Long totalEntities );
-
-  void setCurrentOperationMessage( ProfileStatusMessage currentOperation );
-
-  void setOperationError( ProfileActionExceptionWrapper operationError );
-
-  void setProfileFieldProperties( List<ProfileFieldProperty> profileFieldProperties );
+  public ProfileOperation getInitialOperation();
 }
