@@ -54,12 +54,4 @@
             </table>
         </div>
     </div>
-    <div class="profile-section profile-operations-container" ng-if="operations">
-        <div class="pentaho-fieldgroup-major" translate="profiling.operations.title"></div>
-        <button class="pentaho-button"
-                ng-repeat="operation in operations"
-                ng-disabled="!!currentOperationMessage"
-                ng-click="startOperation(operation.id)"
-                translate="{{operation.nameKey}}"></button>
-    </div>
 </div>

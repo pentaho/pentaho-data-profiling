@@ -20,15 +20,13 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api.process;
 
-
-import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.action.ProfileActionExecutor;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 10/22/14.
  */
-public interface ProfileActionExecutor {
-  public void submit( ProfileAction action, ProfileActionExecutionCallback profileActionExecutionCallback );
-  public void submit( Profiler profiler );
+public interface ProfileProcess {
+  public void execute( ProfileActionExecutor profileActionExecutor );
 }
