@@ -22,9 +22,11 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExecutionCallback;
 import com.pentaho.profiling.api.action.ProfileActionExecutor;
+import com.pentaho.profiling.api.action.Profiler;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +48,14 @@ public class ProfileActionExecutorImpl implements ProfileActionExecutor {
       @Override
       public void run() {
         profileActionExecutionCallback.call( action.execute() );
+      }
+    } );
+  }
+
+  @Override public void submit( final Profiler profiler ) {
+    executorService.submit( new Runnable() {
+      @Override public void run() {
+        profiler.execute();
       }
     } );
   }

@@ -194,8 +194,10 @@ define([
        * @param {string} partPath The path of the translation part.
        */
       function ensureTranslationPart(partPath) {
-        if(!$translatePartialLoader.isPartAvailable(partPath))
+        if(!$translatePartialLoader.isPartAvailable(partPath)) {
           $translatePartialLoader.addPart(partPath);
+          $translate.refresh();
+        }
       }
     }
   ]);
