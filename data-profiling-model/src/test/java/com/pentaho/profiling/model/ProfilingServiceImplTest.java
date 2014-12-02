@@ -47,6 +47,7 @@ import org.pentaho.osgi.notification.api.NotificationObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class ProfilingServiceImplTest {
   public void setup() {
     profileFactory = mock( ProfileOperationProviderFactory.class );
     profilingService = new ProfilingServiceImpl();
-    profilingService.setFactories( Arrays.asList( profileFactory ) );
+    profilingService.profileOperationProviderFactoryAdded( profileFactory, new HashMap(  ) );
     profile = mock( Profile.class );
     profileId = "test-id";
     when( profile.getId() ).thenReturn( profileId );
@@ -84,17 +85,8 @@ public class ProfilingServiceImplTest {
   }
 
   @Test
-  public void testSetFactories() {
-    ProfilingServiceImpl profilingService = new ProfilingServiceImpl();
-    List<ProfileOperationProviderFactory> profileFactories = new ArrayList<ProfileOperationProviderFactory>();
-    profileFactories.add( profileFactory );
-    profilingService.setFactories( profileFactories );
-    assertEquals( profileFactories, profilingService.getFactories() );
-  }
-
-  @Test
   public void testCreateNoFactories() throws ProfileCreationException {
-    profilingService.setFactories( new ArrayList<ProfileOperationProviderFactory>() );
+    profilingService.profileOperationProviderFactoryRemoved( profileFactory, new HashMap(  ) );
     assertNull( profilingService.create( new DataSourceReference( "Test", "Test" ) ) );
   }
 
