@@ -1,17 +1,38 @@
 'use-strict';
+// UTILITIES
+var Pentaho = Pentaho || {};
+
+Pentaho.utilities = {
+  toArray: function(t) {
+    return (t == null || Array.isArray(t)) ? t : [t];
+  },
+  append: function(a1, a2) {
+    for(var i = 0, L = a2.length; i < L; i++) a1.push(a2[i]);
+    return a1;
+  },
+  compare: function(a, b) {
+    return a > b ? 1 : a < b ? -1 : 0;
+  }
+};
 
 define([
   'common-ui/angular',
   'common-ui/angular-route',
   'common-ui/angular-mocks',
-  'controllers'
+  'controllers/controllers',
+  'controllers/profileAppController',
+  'services/services',
+  'services/profileService',
+  'services/dataSourceService',
+  'services/profileAppService',
+  'services/tabularService'
 ], function(angular) {
 
   var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.model.ProfilingServiceImpl";
   var PROFILE_GETOPERS_URL = "/cxf/profile/operations/";
   var DATASOURCE_GETINCLUDE_URL = "/cxf/data-profiling-service/dataSource/include/";
 
-  describe("Profiling Service AppController -", function() {
+  describe("Profiling Service profileAppController -", function() {
 
     angular.module('profileApp', [
       'ngRoute',
@@ -34,21 +55,21 @@ define([
 
       $routeParams.profileId = 'ABCD';
 
-      $controller("AppController", {$scope: $scope, $routeParams: $routeParams});
+      $controller("profileAppController", {$scope: $scope, $routeParams: $routeParams});
     }));
 
     describe("scope object initialization -", function() {
 
       it("should have a property 'isOrderReversed' with value false", function() {
-        expect($scope.isOrderReversed).toBe(false);
+        expect($scope.profileAppService.tabularService.isOrderReversed).toBe(false);
       });
 
       it("should have a property 'orderByCol' with value [\"aFieldName\"]", function() {
-        expect(/^\["[^"]+"\]$/.test($scope.orderByCol)).toBe(true);
+        expect(/^\["[^"]+"\]$/.test($scope.profileAppService.tabularService.orderByCol)).toBe(true);
       });
 
       it("should not have a property 'profileId'", function() {
-        expect($scope.profileId).toBeUndefined();
+        expect($scope.profileAppService.profileId).toBeUndefined();
       });
 
       it("should register for a ProfileStatus notification for id 'ABCD'", function() {
@@ -69,7 +90,7 @@ define([
 
         notificationService.flush();
 
-        expect($scope.profileId).toBe('ABCD');
+        expect($scope.profileAppService.profileId).toBe('ABCD');
 
         notificationService.verifyNoUnfulfilledRegistrations();
       });
@@ -92,7 +113,7 @@ define([
 
         notificationService.flush();
 
-        expect($scope.currentOperationMessage).toBe(currentOper);
+        expect($scope.profileAppService.currentOperationMessage).toBe(currentOper);
       });
 
       it("should set the scope property 'operationError'", function() {
@@ -118,7 +139,7 @@ define([
 
         notificationService.flush();
 
-        expect($scope.operationError).toBe(operationError);
+        expect($scope.profileAppService.operationError).toBe(operationError);
       });
 
       it("should issue GET on the profile getOperations service", function() {
@@ -165,7 +186,7 @@ define([
 
           notificationService.flush();
 
-          expect($scope.fieldCols instanceof Array).toBe(true);
+          expect($scope.profileAppService.tabularService.fieldCols instanceof Array).toBe(true);
         });
 
         it("should only contain columns for which at least on field has a value for", function() {
@@ -184,8 +205,8 @@ define([
 
           notificationService.flush();
 
-          expect($scope.fieldCols.length).toBe(1);
-          var col = $scope.fieldCols[0];
+          expect($scope.profileAppService.tabularService.fieldCols.length).toBe(1);
+          var col = $scope.profileAppService.tabularService.fieldCols[0];
           expect(col.stringifiedPath).toBe(JSON.stringify(['name']));
         });
 
@@ -203,7 +224,7 @@ define([
 
           notificationService.flush();
 
-          var col = $scope.fieldCols[0];
+          var col = $scope.profileAppService.tabularService.fieldCols[0];
           expect(col.index).toBe(0);
           expect(col.isColumn).toBe(true);
           expect(col.nameKey).toBe('NAME');
@@ -225,7 +246,7 @@ define([
 
           notificationService.flush();
 
-          var col = $scope.fieldCols[0];
+          var col = $scope.profileAppService.tabularService.fieldCols[0];
           expect(col.pathToProperty).toEqual(['bag', 'needle']);
           expect(col.stringifiedPath).toBe(JSON.stringify(['bag', 'needle']));
         });
@@ -243,8 +264,8 @@ define([
           });
 
           notificationService.flush();
-          expect($scope.fieldCols.length).toBe(1);
-          var col = $scope.fieldCols[0];
+          expect($scope.profileAppService.tabularService.fieldCols.length).toBe(1);
+          var col = $scope.profileAppService.tabularService.fieldCols[0];
           expect(col.pathToProperty).toEqual(['name']);
         });
 
@@ -265,8 +286,8 @@ define([
           });
 
           notificationService.flush();
-          var col0 = $scope.fieldCols[0];
-          var col1 = $scope.fieldCols[1];
+          var col0 = $scope.profileAppService.tabularService.fieldCols[0];
+          var col1 = $scope.profileAppService.tabularService.fieldCols[1];
           expect(col0.index).toBe(0);
           expect(col0.pathToProperty).toEqual(['age']);
 
@@ -287,7 +308,7 @@ define([
 
           notificationService.flush();
 
-          expect($scope.fieldRows instanceof Array).toBe(true);
+          expect($scope.profileAppService.tabularService.fieldRows instanceof Array).toBe(true);
         });
 
         it("should be in the number of one row per field, when all fields' properties have a single value", function() {
@@ -307,7 +328,7 @@ define([
 
           notificationService.flush();
 
-          expect($scope.fieldRows.length).toBe(2);
+          expect($scope.profileAppService.tabularService.fieldRows.length).toBe(2);
         });
 
         it("should have properties for every column, when the corresponding field has the property", function() {
@@ -331,8 +352,8 @@ define([
           var propAgeId  = JSON.stringify(['age']);
           var propTypeCodeId = JSON.stringify(['type', 'code']);
 
-          var row0 = $scope.fieldRows[0];
-          var row1 = $scope.fieldRows[1];
+          var row0 = $scope.profileAppService.tabularService.fieldRows[0];
+          var row1 = $scope.profileAppService.tabularService.fieldRows[1];
 
           expect(row0[propNameId]).toBe('A');
           expect(row0[propAgeId]).toBe(12);
@@ -363,8 +384,8 @@ define([
           var propAgeId  = JSON.stringify(['age']);
           var propTypeCodeId = JSON.stringify(['type', 'code']);
 
-          var row0 = $scope.fieldRows[0];
-          var row1 = $scope.fieldRows[1];
+          var row0 = $scope.profileAppService.tabularService.fieldRows[0];
+          var row1 = $scope.profileAppService.tabularService.fieldRows[1];
 
           expect(row0.hasOwnProperty(propTypeCodeId)).toBe(false);
           expect(row1.hasOwnProperty(propAgeId)).toBe(false);
@@ -390,7 +411,7 @@ define([
           var propAgeId  = JSON.stringify(['age']);
           var propNameId = JSON.stringify(['name']);
 
-          var rows = $scope.fieldRows;
+          var rows = $scope.profileAppService.tabularService.fieldRows;
           expect(rows.length).toBe(1 + 1 + 2);
 
           expect(rows[0][propNameId]).toBe('A');
@@ -428,7 +449,7 @@ define([
           var propNameId = JSON.stringify(['name']);
           var propExpId  = JSON.stringify(['experience']);
 
-          var rows = $scope.fieldRows;
+          var rows = $scope.profileAppService.tabularService.fieldRows;
           expect(rows.length).toBe(1 + 1 + 2*3);
 
           expect(rows[0][propNameId]).toBe('A');
@@ -492,7 +513,7 @@ define([
         $httpBackend.flush();
 
         // angular.equals takes care of ignoring special angular $properties.
-        expect(angular.equals($scope.operations, operations)).toBe(true);
+        expect(angular.equals($scope.profileAppService.operations, operations)).toBe(true);
       });
     });
 
@@ -520,7 +541,7 @@ define([
           notificationService.flush();
           $httpBackend.flush();
 
-          expect($scope.dataSourceUrl).toBe("foo");
+          expect($scope.profileAppService.dataSourceUrl).toBe("foo");
         });
 
       });
@@ -556,11 +577,11 @@ define([
           });
 
           waitsFor(function() {
-            return !!$scope.dataSourceUrl;
+            return !!$scope.profileAppService.dataSourceUrl;
           }, "The data source url should have changed", 5000);
 
           runs(function() {
-            expect($scope.dataSourceUrl).toBe("foo");
+            expect($scope.profileAppService.dataSourceUrl).toBe("foo");
           });
         });
 
