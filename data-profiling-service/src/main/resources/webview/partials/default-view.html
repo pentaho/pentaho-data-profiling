@@ -1,39 +1,39 @@
 <div>
     <div class="profile-section profile-message"
-         ng-class="operationError ? 'profile-error-message' : ''"
-         ng-if="operationError">
+         ng-class="profileAppService.operationError ? 'profile-error-message' : ''"
+         ng-if="profileAppService.operationError">
         <div class="profile-message-img-cell">
             <div class="profile-message-img"></div>
         </div>
-        <div class="profile-message-text">{{operationError.message.messageKey | translate | interpolateMessage:operationError.message.messageVariables}}</div>
+        <div class="profile-message-text">{{profileAppService.operationError.message.messageKey | translate | interpolateMessage:profileAppService.operationError.message.messageVariables}}</div>
         <ul class="profile-button-list">
-          <li class="profile-button-list-element" ng-repeat="operation in operationError.recoveryOperations">
-            <button class="pentaho-button profile-button" ng-click="startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
+          <li class="profile-button-list-element" ng-repeat="operation in profileAppService.operationError.recoveryOperations">
+            <button class="pentaho-button profile-button" ng-click="profileAppService.startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
           </li>
         </ul>
     </div>
     <div class="profile-section profile-message"
-        ng-class="currentOperationMessage ? 'profile-state-processing' : ''"
-        ng-if="currentOperationMessage">
+        ng-class="profileAppService.currentOperationMessage ? 'profile-state-processing' : ''"
+        ng-if="profileAppService.currentOperationMessage">
       <div class="profile-message-img-cell">
         <div class="profile-message-img"></div>
       </div>
-      <div class="profile-message-text">{{currentOperationMessage.messageKey | translate | interpolateMessage:currentOperationMessage.messageVariables}}</div>
+      <div class="profile-message-text">{{profileAppService.currentOperationMessage.messageKey | translate | interpolateMessage:profileAppService.currentOperationMessage.messageVariables}}</div>
       <div class="profile-message-action">
-        <button class="pentaho-button profile-message-btn" ng-click="stopCurrentOperation();" translate="profiling.fields.stop"></button>
+        <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopCurrentOperation();" translate="profiling.fields.stop"></button>
       </div>
     </div>
     <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
-        <div class="profile-dsi-container" ng-include="dataSourceUrl"></div>
+        <div class="profile-dsi-container" ng-include="profileAppService.dataSourceUrl"></div>
         <div class="profile-fields-list-wrapper">
             <table class="pentaho-table profile-fields-list" cellspacing="0">
                 <thead>
                     <tr>
                         <th class="cellTableCol cellTableSortableHeader"
-                            ng-repeat="fieldCol in fieldCols"
-                            ng-class="orderByCol !== fieldCol.stringifiedPath ? '' : isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                            ng-click="onOrderByCol(fieldCol)">
+                            ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
+                            ng-class="profileAppService.tabularService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+                            ng-click="profileAppService.tabularService.onOrderByCol(fieldCol)">
                             <div class="cellTableHeaderContent">
                                 <div translate="{{fieldCol.nameKey}}"></div>
                                 <div class="cellTableHeaderOrderIndicator"></div>
@@ -44,9 +44,9 @@
                 <tbody>
                     <tr ng-class-odd="'cellTableOddRow'"
                         ng-class-even="'cellTableEvenRow'"
-                        ng-repeat="fieldRow in fieldRows | orderBy:orderByKey:isOrderReversed">
+                        ng-repeat="fieldRow in profileAppService.tabularService.fieldRows | orderBy:profileAppService.tabularService.orderByKey:profileAppService.tabularService.isOrderReversed">
                         <td class="cellTableCell"
-                            ng-repeat="fieldCol in fieldCols"
+                            ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
                             ng-class-odd="'cellTableOddRowCell'"
                             ng-class-even="'cellTableEvenRowCell'">{{fieldRow[fieldCol.stringifiedPath]}}</td>
                     </tr>

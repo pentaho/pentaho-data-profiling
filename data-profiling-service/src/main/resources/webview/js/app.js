@@ -1,15 +1,35 @@
 'use-strict';
+// UTILITIES
+var Pentaho = Pentaho || {};
 
+Pentaho.utilities = {
+  toArray: function(t) {
+    return (t == null || Array.isArray(t)) ? t : [t];
+  },
+  append: function(a1, a2) {
+    for(var i = 0, L = a2.length; i < L; i++) a1.push(a2[i]);
+    return a1;
+  },
+  compare: function(a, b) {
+    return a > b ? 1 : a < b ? -1 : 0;
+  }
+};
+// -----
 define([
-    "common-ui/angular",
-    "common-ui/angular-route",
-    "common-ui/angular-translate",
-    "common-ui/angular-translate-loader-partial",
-    "common-ui/angular-sanitize",
-    "com.pentaho.profiling.services.webview/controllers",
-    "com.pentaho.profiling.services.webview/services"
-  ], function(angular) {
-
+  "require",
+  "common-ui/angular",
+  "common-ui/angular-route",
+  "common-ui/angular-translate",
+  "common-ui/angular-translate-loader-partial",
+  "common-ui/angular-sanitize",
+  "com.pentaho.profiling.services.webview/controllers/controllers",
+  "com.pentaho.profiling.services.webview/controllers/profileAppController",
+  "com.pentaho.profiling.services.webview/services/services",
+  "com.pentaho.profiling.services.webview/services/profileService",
+  "com.pentaho.profiling.services.webview/services/dataSourceService",
+  "com.pentaho.profiling.services.webview/services/profileAppService",
+  "com.pentaho.profiling.services.webview/services/tabularService"
+], function (require, angular) {
   var provide = null,
       controllerProvider = null,
       profileApp = angular.module('profileApp', [
@@ -20,8 +40,8 @@ define([
         'pascalprecht.translate'
       ]);
 
-  profileApp.filter('interpolateMessage', function() {
-    return function(message, replacements) {
+  profileApp.filter('interpolateMessage', function () {
+    return function (message, replacements) {
       if (replacements) {
         for (var i = 0; i < replacements.length; i++) {
           message = message.split("{" + i + "}").join(replacements[i]);
@@ -29,7 +49,7 @@ define([
       }
       return message;
     };
-   });
+  });
 
   profileApp.config([
     '$routeProvider',
@@ -37,29 +57,29 @@ define([
     '$controllerProvider',
     '$translateProvider',
     '$translatePartialLoaderProvider',
-    function($routeProvider, $provide, $controllerProvider, $translateProvider, $translatePartialLoaderProvider) {
+    function ($routeProvider, $provide, $controllerProvider, $translateProvider, $translatePartialLoaderProvider) {
       provide = $provide;
       controllerProvider = $controllerProvider;
 
       $routeProvider
-        .when('/:profileId', {
-          templateUrl: 'partials/default-view.html',
-          controller:  'AppController'
-        })
-        .otherwise({
-          redirectTo: '/'
-        });
+          .when('/:profileId', {
+            templateUrl: 'partials/default-view.html',
+            controller: 'profileAppController'
+          })
+          .otherwise({
+            redirectTo: '/'
+          });
 
 
       $translatePartialLoaderProvider.addPart("data-profiling/com.pentaho.profiling.services.messages");
 
       $translateProvider
-        .useLoader('$translatePartialLoader', {
-          urlTemplate: '/cxf/i18n/{part}/{lang}'
-        })
+          .useLoader('$translatePartialLoader', {
+            urlTemplate: '/cxf/i18n/{part}/{lang}'
+          })
         // TODO: SESSION_LOCALE - webcontext.js had this global variable
-        .preferredLanguage('en')
-        .fallbackLanguage('en');
+          .preferredLanguage('en')
+          .fallbackLanguage('en');
 
       // TODO: must still improve composite locales support (ex: en_US)
       // to be able to connect directly to the browser's locale.
@@ -74,18 +94,18 @@ define([
     }]);
 
   return {
-    getProvide: function() {
+    getProvide: function () {
       return provide;
     },
 
-    getControllerProvider: function() {
+    getControllerProvider: function () {
       return controllerProvider;
     },
 
     app: profileApp,
 
-    init: function() {
-      angular.element(document).ready(function() {
+    init: function () {
+      angular.element(document).ready(function () {
         angular.bootstrap(document.getElementById('profileView'), ['profileApp']);
       });
     }
