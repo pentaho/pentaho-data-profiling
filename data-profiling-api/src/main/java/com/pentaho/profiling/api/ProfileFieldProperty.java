@@ -83,6 +83,14 @@ public class ProfileFieldProperty {
     return true;
   }
 
+  @Override public String toString() {
+    return "ProfileFieldProperty{" +
+      "namePath='" + namePath + '\'' +
+      ", nameKey='" + nameKey + '\'' +
+      ", pathToProperty=" + pathToProperty +
+      '}';
+  }
+
   @Override
   public int hashCode() {
     int result = namePath.hashCode();
