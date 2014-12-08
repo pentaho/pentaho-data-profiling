@@ -3,14 +3,14 @@
 var Pentaho = Pentaho || {};
 
 Pentaho.utilities = {
-  toArray: function(t) {
+  toArray: function (t) {
     return (t == null || Array.isArray(t)) ? t : [t];
   },
-  append: function(a1, a2) {
-    for(var i = 0, L = a2.length; i < L; i++) a1.push(a2[i]);
+  append: function (a1, a2) {
+    for (var i = 0, L = a2.length; i < L; i++) a1.push(a2[i]);
     return a1;
   },
-  compare: function(a, b) {
+  compare: function (a, b) {
     return a > b ? 1 : a < b ? -1 : 0;
   }
 };
@@ -20,7 +20,6 @@ define([
   "common-ui/angular",
   "common-ui/angular-route",
   "common-ui/angular-translate",
-  "common-ui/angular-translate-loader-partial",
   "common-ui/angular-sanitize",
   "com.pentaho.profiling.services.webview/controllers/controllers",
   "com.pentaho.profiling.services.webview/controllers/profileAppController",
@@ -51,13 +50,38 @@ define([
     };
   });
 
+  profileApp.factory('translationCustomAsyncLoader', function ($q, $http) {
+
+    return function () {
+      var deferred = $q.defer();
+
+      $http.post('/cxf/i18n/wildcard',
+          {
+            "resourceBundleRequest":{
+              "wildcards":[
+                {"keyRegex":"mongo-profiling.*"},
+                {"keyRegex":"data-profiling.*"}
+              ],
+              "locale":"en_us"
+            }
+          }).
+          success(function (data, status, headers, config) {
+            deferred.resolve(data);
+          }).
+          error(function (data, status, headers, config) {
+            // ...
+          });
+
+      return deferred.promise;
+    };
+  });
+
   profileApp.config([
     '$routeProvider',
     '$provide',
     '$controllerProvider',
     '$translateProvider',
-    '$translatePartialLoaderProvider',
-    function ($routeProvider, $provide, $controllerProvider, $translateProvider, $translatePartialLoaderProvider) {
+    function ($routeProvider, $provide, $controllerProvider, $translateProvider) {
       provide = $provide;
       controllerProvider = $controllerProvider;
 
@@ -70,13 +94,8 @@ define([
             redirectTo: '/'
           });
 
-
-      $translatePartialLoaderProvider.addPart("data-profiling/com.pentaho.profiling.services.messages");
-
       $translateProvider
-          .useLoader('$translatePartialLoader', {
-            urlTemplate: '/cxf/i18n/{part}/{lang}'
-          })
+          .useLoader('translationCustomAsyncLoader')
         // TODO: SESSION_LOCALE - webcontext.js had this global variable
           .preferredLanguage('en')
           .fallbackLanguage('en');
