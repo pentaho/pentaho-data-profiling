@@ -1,9 +1,7 @@
 define(["require", './services'], function (require, appServices) {
   appServices.factory('ProfileAppService', [
     '$routeParams',
-    '$translate',
-    '$translatePartialLoader',
-    function ($routeParams, $translate, $translatePartialLoader) {
+    function ($routeParams) {
       function ProfileAppService() {
         this.profileId;
         this.operations;
@@ -73,23 +71,9 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.tabularService.fieldCols = profileAppService.tabularService.getCols(itemSchema, items, colCount);
             profileAppService.tabularService.fieldRows = profileAppService.tabularService.getRows(itemSchema, items);
 
-            profileAppService.tabularService.fieldCols.forEach(function (col) {
-              profileAppService.ensureTranslationPart(col.namePath);
-            });
+            profileAppService.currentOperationMessage = profileStatus.currentOperationMessage;
 
-            var currentOper = profileAppService.currentOperationMessage = profileStatus.currentOperationMessage;
-            if (currentOper) profileAppService.ensureTranslationPart(currentOper.messagePath);
-
-            var operError = profileAppService.operationError = profileStatus.operationError;
-            if (operError) {
-              profileAppService.ensureTranslationPart(operError.message.messagePath);
-
-              if (operError.recoveryOperations) {
-                operError.recoveryOperations.forEach(function (recoveryOperation) {
-                  profileAppService.ensureTranslationPart(recoveryOperation.namePath);
-                });
-              }
-            }
+            profileAppService.operationError = profileStatus.operationError;
           } else {
             profileAppService.dataSourceService.getCreate({
               id: profileAppService.dataSourceReference.id,
@@ -130,17 +114,6 @@ define(["require", './services'], function (require, appServices) {
                 }
               });
             }
-          }
-        },
-        /**
-         * Ensures that a given translation part, given its path, is loaded.
-         *
-         * @param {string} partPath The path of the translation part.
-         */
-        ensureTranslationPart: function (partPath) {
-          if(!$translatePartialLoader.isPartAvailable(partPath)) {
-            $translatePartialLoader.addPart(partPath);
-            $translate.refresh();
           }
         },
         /**
