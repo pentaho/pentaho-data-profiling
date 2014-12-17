@@ -31,6 +31,8 @@ import java.util.List;
  * Created by bryan on 7/31/14.
  */
 public interface ProfilingService {
+  public boolean accepts( DataSourceReference dataSourceReference );
+
   public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
 
   public List<ProfileStatusManager> getActiveProfiles();
