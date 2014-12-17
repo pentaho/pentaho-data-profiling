@@ -69,6 +69,12 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     } );
   }
 
+  @POST
+  @Path( "/accepts" )
+  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
+    return delegate.accepts( dataSourceReference );
+  }
+
   @Override
   public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
     return delegate.create( dataSourceReference );

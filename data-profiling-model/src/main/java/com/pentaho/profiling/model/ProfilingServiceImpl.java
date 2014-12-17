@@ -84,18 +84,25 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     return profileStatusManagerMap;
   }
 
-  @Override
-  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
-    ProfileOperationProviderFactory profileOperationProviderFactory = null;
+  private ProfileOperationProviderFactory getProfileOperationProviderFactory( DataSourceReference dataSourceReference ) {
     synchronized( factories ) {
       for ( Pair<Integer, ProfileOperationProviderFactory> factoryPair : factories ) {
         ProfileOperationProviderFactory factory = factoryPair.getSecond();
         if ( factory.accepts( dataSourceReference ) ) {
-          profileOperationProviderFactory = factory;
-          break;
+          return factory;
         }
       }
     }
+    return null;
+  }
+
+  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
+    return getProfileOperationProviderFactory( dataSourceReference ) != null;
+  }
+
+  @Override
+  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
+    ProfileOperationProviderFactory profileOperationProviderFactory = getProfileOperationProviderFactory( dataSourceReference );
     if ( profileOperationProviderFactory != null ) {
       String profileId = UUID.randomUUID().toString();
       ProfileStatusManager profileStatusManager =
