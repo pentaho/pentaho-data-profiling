@@ -107,7 +107,7 @@ define(["require", './services'], function (require, appServices) {
                 if (dsInclude.require) {
                   require([dsInclude.require], function () {
                     profileAppService.dataSourceUrl = dsInclude.url;
-//                    $scope.$apply();
+                    $scope.$apply();
                   });
                 } else {
                   profileAppService.dataSourceUrl = dsInclude.url;
