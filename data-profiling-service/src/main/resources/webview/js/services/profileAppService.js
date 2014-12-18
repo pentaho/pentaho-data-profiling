@@ -17,7 +17,7 @@ define(["require", './services'], function (require, appServices) {
 
       ProfileAppService.prototype = {
         constructor: ProfileAppService,
-        init: function (aTabularService, aProfileService, aDataSourceService, aNotificationService) {
+        init: function (aTabularService, aProfileService, aDataSourceService, aNotificationService, scope) {
           //Because of the way we are using services as singleton instances of objects that are injectable, yet leverage the
           //dual binding that angular provides, we need to initialize the TabularService and set it on the ProfileAppService
           aTabularService.init(JSON.stringify(["name"]), false);
@@ -25,6 +25,7 @@ define(["require", './services'], function (require, appServices) {
           profileAppService.profileService = aProfileService;
           profileAppService.dataSourceService = aDataSourceService;
           profileAppService.notificationService = aNotificationService;
+          profileAppService.scope = scope;
           // Register to receive profile status updates.
           profileAppService.notificationService.register(
               /* notifType */
@@ -107,7 +108,7 @@ define(["require", './services'], function (require, appServices) {
                 if (dsInclude.require) {
                   require([dsInclude.require], function () {
                     profileAppService.dataSourceUrl = dsInclude.url;
-                    $scope.$apply();
+                    profileAppService.scope.$apply();
                   });
                 } else {
                   profileAppService.dataSourceUrl = dsInclude.url;

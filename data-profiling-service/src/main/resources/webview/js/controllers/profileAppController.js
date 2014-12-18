@@ -8,7 +8,7 @@ define(['./controllers'], function (appControllers) {
     'TabularService',
     function ($scope, profileService, dataSourceService, notificationService, profileAppService, tabularService) {
 
-      profileAppService.init(tabularService, profileService, dataSourceService, notificationService);
+      profileAppService.init(tabularService, profileService, dataSourceService, notificationService, $scope);
       $scope.profileAppService = profileAppService;
     }
   ])
