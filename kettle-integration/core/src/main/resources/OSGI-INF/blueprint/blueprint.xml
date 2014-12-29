@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" xmlns:cxf="http://cxf.apache.org/blueprint/core"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs" xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
+           xsi:schemaLocation="
+  http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+  http://www.osgi.org/xmlns/blueprint-ext/v1.1.0 https://svn.apache.org/repos/asf/aries/tags/blueprint-0.3.1/blueprint-core/src/main/resources/org/apache/aries/blueprint/ext/blueprint-ext.xsd
+  http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
+  http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
+  http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+  ">
+  <bean id="executionResultsProfileTabImpl" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabImpl" scope="prototype"/>
+  <bean id="executionResultsProfileTab" class="org.pentaho.di.osgi.OSGIPlugin" scope="prototype">
+    <property name="mainType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface"/>
+    <property name="name" value="Profile Tab"/>
+    <property name="ID" value="Profile Tab"/>
+    <property name="imageFile" value=""/>
+    <property name="description" value="Adds a tab to the Execution Results Panel in Spoon"/>
+    <property name="pluginTypeInterface" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
+    <property name="category" value=""/>
+    <property name="classToBeanMap">
+      <map>
+        <entry key="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface" value="executionResultsProfileTabImpl"/>
+      </map>
+    </property>
+  </bean>
+
+  <!-- Register the plugin as a service so Kettle can find it -->
+  <service id="executionResultsProfileTabService" interface="org.pentaho.di.core.plugins.PluginInterface" ref="executionResultsProfileTab">
+    <service-properties>
+      <entry key="PluginType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
+    </service-properties>
+  </service>
+</blueprint>
