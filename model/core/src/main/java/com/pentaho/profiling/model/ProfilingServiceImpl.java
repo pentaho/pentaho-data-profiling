@@ -178,7 +178,11 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
         new NotificationObject( ProfilingServiceImpl.class.getCanonicalName(), profileStatus.getId(),
         profileStatus.getSequenceNumber(), profileStatus );
     previousNotifications.put( profileStatus.getId(), notificationObject );
-    delegatingNotifier.notify( notificationObject );
+    try {
+      delegatingNotifier.notify(notificationObject);
+    } catch ( Throwable e ) {
+      e.printStackTrace();
+    }
   }
 
   public void profileOperationProviderFactoryAdded( ProfileOperationProviderFactory profileOperationProviderFactory,
