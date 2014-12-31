@@ -23,7 +23,6 @@
 package com.pentaho.profiling.api;
 
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
 
 import java.util.List;
 

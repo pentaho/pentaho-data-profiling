@@ -84,11 +84,16 @@ public class ProfileFieldProperty {
   }
 
   @Override public String toString() {
-    return "ProfileFieldProperty{" +
-      "namePath='" + namePath + '\'' +
-      ", nameKey='" + nameKey + '\'' +
-      ", pathToProperty=" + pathToProperty +
-      '}';
+    return "ProfileFieldProperty{"
+      + "namePath='"
+      + namePath
+      + '\''
+      + ", nameKey='"
+      + nameKey
+      + '\''
+      + ", pathToProperty="
+      + pathToProperty
+      + '}';
   }
 
   @Override

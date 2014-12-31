@@ -93,7 +93,7 @@ public abstract class ProfileOperationImpl implements ProfileOperation {
       }
     } );
     profileActionExecutor.submit( action,
-      new ProfileOperationActionExecutionCallback( this, profileActionExecutor, profileStatusManager, running ) );
+        new ProfileOperationActionExecutionCallback( this, profileActionExecutor, profileStatusManager, running ) );
   }
 
   @Override public void stop() {
