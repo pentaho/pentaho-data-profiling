@@ -24,7 +24,6 @@ package com.pentaho.profiling.api.action;
 
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.operations.ProfileOperation;
-import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;

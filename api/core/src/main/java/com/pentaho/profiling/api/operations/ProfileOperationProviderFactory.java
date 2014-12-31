@@ -26,8 +26,6 @@ import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
-import java.io.IOException;
-
 /**
  * Created by bryan on 10/3/14.
  */
