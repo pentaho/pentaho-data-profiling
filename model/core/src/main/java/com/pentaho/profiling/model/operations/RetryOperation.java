@@ -22,9 +22,7 @@
 
 package com.pentaho.profiling.model.operations;
 
-import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.action.ProfileAction;
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 import com.pentaho.profiling.model.ProfileImpl;
 
