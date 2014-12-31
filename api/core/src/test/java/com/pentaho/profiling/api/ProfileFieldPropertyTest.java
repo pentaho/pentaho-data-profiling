@@ -125,4 +125,16 @@ public class ProfileFieldPropertyTest {
     assertFalse( profileFieldProperty.equals(
       new ProfileFieldProperty( testPath, testKey, new ArrayList<String>( Arrays.asList( "D", "e", "F" ) ) ) ) );
   }
+
+  @Test
+  public void testToString() {
+    String testPath = "test-path";
+    String testKey = "test-key";
+    List<String> testPathToProperty = new ArrayList<String>( Arrays.asList( "A", "b", "C" ) );
+    ProfileFieldProperty profileFieldProperty = new ProfileFieldProperty( testPath, testKey, testPathToProperty );
+    assertTrue( profileFieldProperty.toString().startsWith( ProfileFieldProperty.class.getSimpleName() ) );
+    assertTrue( profileFieldProperty.toString().contains( testKey ) );
+    assertTrue( profileFieldProperty.toString().contains( testPath ) );
+    assertTrue( profileFieldProperty.toString().contains( testPathToProperty.toString() ) );
+  }
 }
