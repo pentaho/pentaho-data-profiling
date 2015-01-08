@@ -1,0 +1,5 @@
+{
+  "kettle-integration-core": [
+    "com/pentaho/plugin/integration/messages"
+  ]
+}
