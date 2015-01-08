@@ -11,7 +11,11 @@
   http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
   http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
   ">
-  <bean id="executionResultsProfileTabImpl" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabImpl" scope="prototype"/>
+  <bean id="executionResultsProfileTabIcon" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabIcon" scope="singleton"/>
+  <bean id="executionResultsProfileTabImpl" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabImpl" scope="prototype">
+    <argument ref="localizationService"/>
+    <argument ref="executionResultsProfileTabIcon"/>
+  </bean>
   <bean id="executionResultsProfileTab" class="org.pentaho.di.osgi.OSGIPlugin" scope="prototype">
     <property name="mainType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface"/>
     <property name="name" value="Profile Tab"/>
@@ -26,6 +30,8 @@
       </map>
     </property>
   </bean>
+
+  <reference id="localizationService" interface="org.pentaho.osgi.i18n.LocalizationService"/>
 
   <!-- Register the plugin as a service so Kettle can find it -->
   <service id="executionResultsProfileTabService" interface="org.pentaho.di.core.plugins.PluginInterface" ref="executionResultsProfileTab">
