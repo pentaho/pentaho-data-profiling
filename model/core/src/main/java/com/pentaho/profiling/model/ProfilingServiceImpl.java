@@ -179,7 +179,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
         profileStatus.getSequenceNumber(), profileStatus );
     previousNotifications.put( profileStatus.getId(), notificationObject );
     try {
-      delegatingNotifier.notify(notificationObject);
+      delegatingNotifier.notify( notificationObject );
     } catch ( Throwable e ) {
       e.printStackTrace();
     }
