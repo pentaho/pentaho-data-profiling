@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <bean id="categoricalMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.CategoricalMetricContributor"/>
+  <bean id="dateMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.DateMetricContributor"/>
+  <bean id="numericMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.NumericMetricContributor"/>
+  <bean id="emailMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.EmailAddressMetricContributor"/>
+  <bean id="stringLengthMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.StringLengthMetricContributor"/>
+  <bean id="wordCountMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.WordCountMetricContributor"/>
+  <bean id="percentileMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.PercentileMetricContributor"/>
+  <bean id="cardinalityMetricContributor"
+        class="com.pentaho.model.metrics.contributor.impl.CardinalityMetricContributor"/>
+
+  <service id="categoricalMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="categoricalMetricContributor"/>
+  <service id="dateMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="dateMetricContributor"/>
+  <service id="numericMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="numericMetricContributor"/>
+  <service id="emailMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="emailMetricContributor"/>
+  <service id="stringLengthMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="stringLengthMetricContributor"/>
+  <service id="wordCountMetricContributorService"
+           interface="com.pentaho.model.metrics.contributor.MetricContributor"
+           ref="wordCountMetricContributor"/>
+
+  <reference-list id="metricContributors"
+                  interface="com.pentaho.model.metrics.contributor.MetricContributor"
+                  availability="optional"/>
+</blueprint>

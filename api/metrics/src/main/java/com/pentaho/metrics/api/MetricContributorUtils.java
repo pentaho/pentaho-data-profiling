@@ -1,7 +1,7 @@
 /*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
- * Copyright 2002 - 2014 Pentaho Corporation (Pentaho). All rights reserved.
+ * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
  *
  * NOTICE: All information including source code contained herein is, and
  * remains the sole property of Pentaho and its licensors. The intellectual
@@ -20,47 +20,30 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.stats;
+package com.pentaho.metrics.api;
+
+import com.pentaho.profiling.api.ProfileFieldProperty;
+
+import java.util.Arrays;
 
 /**
- * Base class for statistics
- * 
- * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * Created by mhall on 25/01/15.
  */
-public interface Statistic {
-  public static final String KEY_PATH = "data-profiling-api/com.pentaho.profiling.api.stats";
+public class MetricContributorUtils {
 
+  public static final String TYPE = "type";
+  public static final String FIELD_NOT_FOUND = "Expected field was not found: ";
+  public static final String STATISTICS = "statistics";
   public static final String COUNT = "count";
+  public static final String CATEGORIES = "categories";
+  public static final String CATEGORICAL = "categorical";
 
-  public static final String MIN = "min";
-
-  public static final String MAX = "max";
-
-  public static final String SUM = "sum";
-
-  public static final String SUM_OF_SQUARES = "sumOfSquares";
-
-  public static final String MEAN = "mean";
-
-  public static final String VARIANCE = "variance";
-
-  public static final String STANDARD_DEVIATION = "standardDeviation";
-
-  public static final String MEDIAN = "median";
-
-  public static final String PERCENTILE = "percentile";
-
-  public static final String CARDINALITY = "cardinality";
-
-  public static final String SKEWNESS = "skewness";
-
-  public static final String KURTOSIS = "kurtosis";
-
-  public static final String FREQUENCY_DISTRIBUTION = "frequencyDistribution";
-
-  public static final String STRING_LENGTH = "stringLength";
-
-  public static final String MAX_WORDS = "maxWords";
-
-  public static final String MIN_WORDS = "minWords";
+  public static ProfileFieldProperty createMetricProperty( String keyPath, String nameKey, String... metricPath ) {
+    String[] fullPath = new String[metricPath.length + 1];
+    fullPath[0] = TYPE;
+    for ( int i = 0; i < metricPath.length; i++ ) {
+      fullPath[i + 1] = metricPath[i];
+    }
+    return new ProfileFieldProperty( keyPath, nameKey, Arrays.asList( fullPath ) );
+  }
 }
