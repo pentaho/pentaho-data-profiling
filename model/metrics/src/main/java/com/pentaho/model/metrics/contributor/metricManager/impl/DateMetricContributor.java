@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class DateMetricContributor implements MetricManagerContributor {
   public static final List<String[]> CLEAR_LIST =
-    new ArrayList<String[]>( Arrays.asList( NumericMetricContributor.MIN_PATH, NumericMetricContributor.MAX_PATH ) );
+      new ArrayList<String[]>( Arrays.asList( NumericMetricContributor.MIN_PATH, NumericMetricContributor.MAX_PATH ) );
   private final NVL nvl;
 
   public DateMetricContributor() {

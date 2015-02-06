@@ -48,13 +48,13 @@ import java.util.Set;
  */
 public class CategoricalMetricContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
-    MessageUtils.getId( Constants.KEY, CategoricalMetricContributor.class );
+      MessageUtils.getId( Constants.KEY, CategoricalMetricContributor.class );
   public static final ProfileFieldProperty
-    CATEGORICAL_FIELD =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, "MongoFieldCategorical", Statistic.FREQUENCY_DISTRIBUTION,
+      CATEGORICAL_FIELD =
+      MetricContributorUtils.createMetricProperty( KEY_PATH, "MongoFieldCategorical", Statistic.FREQUENCY_DISTRIBUTION,
       MetricContributorUtils.CATEGORICAL );
   public static final List<String[]> CLEAR_PATHS =
-    new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { Statistic.FREQUENCY_DISTRIBUTION } ) );
+      new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { Statistic.FREQUENCY_DISTRIBUTION } ) );
   private static final Logger LOGGER = LoggerFactory.getLogger( CategoricalMetricContributor.class );
 
   @Override public Set<String> getTypes() {
@@ -97,9 +97,9 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
     Map<String, Object> firstCategoricalMap =
-      into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
+        into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
     Map<String, Object> secondCategoricalMap =
-      from.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
+        from.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
     if ( firstCategoricalMap == null ) {
       firstCategoricalMap = secondCategoricalMap;
     } else if ( secondCategoricalMap == null ) {
@@ -108,9 +108,9 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
       // Both are considered categorical, merge and determine if they still are
       if ( (Boolean) secondCategoricalMap.get( MetricContributorUtils.CATEGORICAL ) ) {
         Map<String, Integer> firstCategoryCountMap =
-          (Map<String, Integer>) firstCategoricalMap.get( MetricContributorUtils.CATEGORIES );
+            (Map<String, Integer>) firstCategoricalMap.get( MetricContributorUtils.CATEGORIES );
         for ( Map.Entry<String, Integer> secondEntry : ( (Map<String, Integer>) secondCategoricalMap
-          .get( MetricContributorUtils.CATEGORIES ) ).entrySet() ) {
+            .get( MetricContributorUtils.CATEGORIES ) ).entrySet() ) {
           String secondCategoryKey = secondEntry.getKey();
           Integer firstValue = firstCategoryCountMap.get( secondCategoryKey );
           if ( firstValue == null ) {

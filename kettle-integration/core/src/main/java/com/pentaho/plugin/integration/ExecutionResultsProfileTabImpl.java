@@ -69,7 +69,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
       transGraph.addExtraView();
     }
     ResourceBundle resourceBundle =
-      localizationService.getResourceBundle( PROJECT_NAME, PACKAGE_NAME, Locale.getDefault() );
+        localizationService.getResourceBundle( PROJECT_NAME, PACKAGE_NAME, Locale.getDefault() );
     String tabText = resourceBundle.getString( KEY_NAME );
 
     CTabItem transProfileTab = createCTabItem( transGraph.extraViewTabFolder, SWT.NONE );
@@ -80,7 +80,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
     transProfileTab.setControl( transProfileBrowser );
 
     ExecutionResultsProfileTabStepListener selectedStepListener =
-      createExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
+        createExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
     transGraph.addSelectedStepListener( selectedStepListener );
     selectedStepListener.onSelect( transGraph.getCurrentStep() );
   }
@@ -97,7 +97,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
 
   //For unit testing purposes
   protected ExecutionResultsProfileTabStepListener createExecutionResultsProfileTabStepListener(
-    Browser transProfileBrowser, TransGraph transGraph ) {
+      Browser transProfileBrowser, TransGraph transGraph ) {
     return new ExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
   }
 }
