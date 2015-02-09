@@ -32,6 +32,8 @@ import java.util.Map;
  * Created by mhall on 23/01/15.
  */
 public class DataSourceFieldValue {
+  private static final String PHYSICAL_NAME = "physicalName";
+  private static final String LOGICAL_NAME = "logicalName";
   /**
    * The actual value
    */

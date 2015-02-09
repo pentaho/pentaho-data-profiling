@@ -37,4 +37,7 @@
   <service id="wordCountMetricContributorService"
            interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
            ref="wordCountMetricContributor"/>
+  <service id="cardinalityMetricContributorService"
+           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
+           ref="cardinalityMetricContributor"/>
 </blueprint>

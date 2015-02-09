@@ -60,7 +60,8 @@ define([
             "resourceBundleRequest":{
               "wildcards":[
                 {"keyRegex":"mongo-profiling.*"},
-                {"keyRegex":"data-profiling.*"}
+                {"keyRegex":"data-profiling.*"},
+                {"keyRegex":"profiling-metrics.*"}
               ],
               "locale":"en_us"
             }
