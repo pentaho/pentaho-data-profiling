@@ -22,9 +22,7 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.operations.ProfileOperation;
-
-import java.util.List;
+import com.pentaho.profiling.api.action.ProfileActionExecutor;
 
 /**
  * Created by bryan on 7/31/14.
@@ -32,13 +30,9 @@ import java.util.List;
 public interface Profile {
   public String getId();
 
-  public void stopCurrentOperation();
+  void start( ProfileActionExecutor profileActionExecutor );
 
-  public List<ProfileOperation> getProfileOperations();
+  void stop();
 
-  public void startOperation( String operationId );
-
-  public ProfileOperation getProfileDiscardOperation();
-
-  public ProfileOperation getRetryOperation();
+  boolean isRunning();
 }

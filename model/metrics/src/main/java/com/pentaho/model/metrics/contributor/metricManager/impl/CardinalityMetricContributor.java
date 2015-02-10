@@ -66,10 +66,9 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
   public static final List<String[]> CLEAR_PATHS =
       new ArrayList<String[]>( Arrays.asList( CARDINALITY_PATH, CARDINALITY_PATH_ESTIMATOR ) );
   public static final String KEY_PATH =
-      MessageUtils.getId( Constants.KEY, CardinalityMetricContributor.class );
-  public static final String CARDINALITY_LABEL = "Cardinality";
+    MessageUtils.getId( Constants.KEY, CardinalityMetricContributor.class );
   public static final ProfileFieldProperty CARDINALITY =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, CARDINALITY_LABEL, CARDINALITY_PATH );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "CardinalityMetricContributor", CARDINALITY_PATH );
   private static final Logger LOGGER = LoggerFactory.getLogger( CardinalityMetricContributor.class );
   private static final Set<Class<?>> supportedTypes =
       Collections.unmodifiableSet( new HashSet<Class<?>>( Arrays.asList( Integer.class, Long.class,

@@ -50,8 +50,8 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
       MessageUtils.getId( Constants.KEY, CategoricalMetricContributor.class );
   public static final ProfileFieldProperty
-      CATEGORICAL_FIELD =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "MongoFieldCategorical", Statistic.FREQUENCY_DISTRIBUTION,
+    CATEGORICAL_FIELD =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "CategoricalMetricContributor", Statistic.FREQUENCY_DISTRIBUTION,
       MetricContributorUtils.CATEGORICAL );
   public static final List<String[]> CLEAR_PATHS =
       new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { Statistic.FREQUENCY_DISTRIBUTION } ) );

@@ -14,7 +14,7 @@
            interface="com.pentaho.profiling.api.action.ProfileActionExecutor"/>
   <service id="profilingServiceNotifierWithHistory" ref="profilingServiceImpl"
            interface="org.pentaho.osgi.notification.api.NotifierWithHistory"/>
-  <reference-list id="profileOperationProviderFactoryRefList" interface="com.pentaho.profiling.api.operations.ProfileOperationProviderFactory" availability="optional">
-    <reference-listener ref="profilingServiceImpl" bind-method="profileOperationProviderFactoryAdded" unbind-method="profileOperationProviderFactoryRemoved"/>
+  <reference-list id="profileFactoryRefList" interface="com.pentaho.profiling.api.ProfileFactory" availability="optional">
+    <reference-listener ref="profilingServiceImpl" bind-method="profileFactoryAdded" unbind-method="profileFactoryRemoved"/>
   </reference-list>
 </blueprint>

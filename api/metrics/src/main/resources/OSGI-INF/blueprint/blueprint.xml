@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-  <bean id="metricManagerContributorListener"
-        class="com.pentaho.profiling.api.metrics.univariate.MetricManagerContributorListener">
-    <argument ref="blueprintBundleContext"/>
-  </bean>
+  <bean id="metricManagerBasedMetricContributor"
+        class="com.pentaho.profiling.api.metrics.univariate.MetricManagerBasedMetricContributor"/>
+
+  <service id="metricManagerBasedMetricContributorService"
+           ref="metricManagerBasedMetricContributor"
+           interface="com.pentaho.profiling.api.metrics.MetricContributor"/>
+
   <reference-list id="metricManagerContributors" interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
                   availability="optional">
-    <reference-listener ref="metricManagerContributorListener" bind-method="implAdded" unbind-method="implRemoved"/>
+    <reference-listener ref="metricManagerBasedMetricContributor" bind-method="implAdded" unbind-method="implRemoved"/>
   </reference-list>
 </blueprint>

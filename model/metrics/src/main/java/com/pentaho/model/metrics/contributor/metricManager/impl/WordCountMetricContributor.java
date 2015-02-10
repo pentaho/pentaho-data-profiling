@@ -44,11 +44,11 @@ import java.util.StringTokenizer;
 public class WordCountMetricContributor implements MetricManagerContributor {
 
   public static final String KEY_PATH =
-      MessageUtils.getId( Constants.KEY, WordCountMetricContributor.class );
-  public static final String WORD_COUNT_MAX_LABEL = "WordCountMax";
-  public static final String WORD_COUNT_MIN_LABEL = "WordCountMin";
-  public static final String WORD_COUNT_SUM_LABEL = "WordCountSum";
-  public static final String WORD_COUNT_MEAN_LABEL = "WordCountMean";
+    MessageUtils.getId( Constants.KEY, WordCountMetricContributor.class );
+  public static final String WORD_COUNT_MAX_LABEL = "WordCountMetricContributor.WordCountMax";
+  public static final String WORD_COUNT_MIN_LABEL = "WordCountMetricContributor.WordCountMin";
+  public static final String WORD_COUNT_SUM_LABEL = "WordCountMetricContributor.WordCountSum";
+  public static final String WORD_COUNT_MEAN_LABEL = "WordCountMetricContributor.WordCountMean";
   public static final String WORD_COUNT_KEY_MAX = "com.pentaho.str.max_word_count";
   public static final String WORD_COUNT_KEY_MIN = "com.pentaho.str.min_word_count";
   public static final String WORD_COUNT_KEY_SUM = "com.pentaho.str.sum_word_count";

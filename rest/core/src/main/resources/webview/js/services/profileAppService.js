@@ -4,7 +4,6 @@ define(["require", './services'], function (require, appServices) {
     function ($routeParams) {
       function ProfileAppService() {
         this.profileId;
-        this.operations;
         this.dataSourceUrl;
         this.dataSourceReference;
         this.currentOperationMessage;
@@ -55,11 +54,6 @@ define(["require", './services'], function (require, appServices) {
         updateProfile: function (profileStatus) {
           if (profileStatus && profileStatus.profileState != 'DISCARDED') {
             profileAppService.profileId = profileStatus.id;
-
-            // Load available operations asynchronously.
-            profileAppService.profileService.getOperations({profileId: profileStatus.id}, function (operations) {
-              profileAppService.operations = operations;
-            });
 
             // Update datasource.
             profileAppService.updateDataSource(profileStatus.dataSourceReference);
@@ -116,16 +110,6 @@ define(["require", './services'], function (require, appServices) {
               });
             }
           }
-        },
-        /**
-         * Starts an operation on the scope object's profile, given its id.
-         *
-         * This method is published in the scope object and can thus be called by the view.
-         *
-         * @param {string} operationId The id of the operation to start.
-         */
-        startOperation: function (operationId) {
-          profileAppService.profileService.start({profileId: profileAppService.profileId, operationId: operationId});
         },
         /**
          * Orders to stop the current operation on the scope object's profile.

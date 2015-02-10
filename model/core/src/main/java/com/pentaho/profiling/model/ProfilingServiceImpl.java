@@ -25,6 +25,7 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreationException;
+import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
@@ -32,9 +33,7 @@ import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-import com.pentaho.profiling.api.operations.ProfileOperationProvider;
-import com.pentaho.profiling.api.operations.ProfileOperationProviderFactory;
+import com.pentaho.profiling.api.util.Pair;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
 import org.pentaho.osgi.notification.api.NotificationListener;
 import org.pentaho.osgi.notification.api.NotificationObject;
@@ -57,14 +56,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProfilingServiceImpl implements ProfilingService, NotifierWithHistory {
   private final Map<String, Profile> profileMap = new ConcurrentHashMap<String, Profile>();
   private final Map<String, ProfileStatusManager> profileStatusManagerMap = new ConcurrentHashMap<String,
-      ProfileStatusManager>();
+    ProfileStatusManager>();
   private final Map<String, NotificationObject> previousNotifications = new ConcurrentHashMap<String,
-      NotificationObject>();
+    NotificationObject>();
   private final DelegatingNotifierImpl delegatingNotifier =
-      new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
-        this );
-  private List<Pair<Integer, ProfileOperationProviderFactory>> factories =
-      new ArrayList<Pair<Integer, ProfileOperationProviderFactory>>();
+    new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
+      this );
+  private List<Pair<Integer, ProfileFactory>> factories = new ArrayList<Pair<Integer, ProfileFactory>>();
   private ProfileActionExecutor profileActionExecutor;
 
   public ProfileActionExecutor getProfileActionExecutor() {
@@ -85,11 +83,11 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     return profileStatusManagerMap;
   }
 
-  private ProfileOperationProviderFactory getProfileOperationProviderFactory(
-      DataSourceReference dataSourceReference ) {
+  private ProfileFactory getProfileOperationProviderFactory(
+    DataSourceReference dataSourceReference ) {
     synchronized ( factories ) {
-      for ( Pair<Integer, ProfileOperationProviderFactory> factoryPair : factories ) {
-        ProfileOperationProviderFactory factory = factoryPair.getSecond();
+      for ( Pair<Integer, ProfileFactory> factoryPair : factories ) {
+        ProfileFactory factory = factoryPair.getSecond();
         if ( factory.accepts( dataSourceReference ) ) {
           return factory;
         }
@@ -104,16 +102,13 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
 
   @Override
   public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
-    ProfileOperationProviderFactory profileOperationProviderFactory =
-          getProfileOperationProviderFactory( dataSourceReference );
+    ProfileFactory profileOperationProviderFactory = getProfileOperationProviderFactory( dataSourceReference );
     if ( profileOperationProviderFactory != null ) {
       String profileId = UUID.randomUUID().toString();
       ProfileStatusManager profileStatusManager =
-          new ProfileStatusManagerImpl( profileId, dataSourceReference, this );
-      ProfileImpl profile = new ProfileImpl( profileId, profileActionExecutor, profileStatusManager, this );
-      ProfileOperationProvider profileOperationProvider =
-          profileOperationProviderFactory.create( dataSourceReference, profile, profileStatusManager );
-      profile.setProfileOperationProvider( profileOperationProvider );
+        new ProfileStatusManagerImpl( profileId, dataSourceReference, this );
+      Profile profile = profileOperationProviderFactory.create( dataSourceReference, profileStatusManager );
+      profile.start( profileActionExecutor );
       profileMap.put( profile.getId(), profile );
       profileStatusManagerMap.put( profile.getId(), profileStatusManager );
       return profileStatusManager;
@@ -131,24 +126,16 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     return profileStatusManagerMap.get( profileId );
   }
 
-  @Override public void stopCurrentOperation( String profileId ) {
-    profileMap.get( profileId ).stopCurrentOperation();
+  @Override public void stop( String profileId ) {
+    profileMap.get( profileId ).stop();
   }
 
-  @Override public void startOperation( String profileId, String operationId ) {
-    profileMap.get( profileId ).startOperation( operationId );
-  }
-
-  @Override public List<ProfileOperation> getOperations( String profileId ) {
-    Profile profile = profileMap.get( profileId );
-    if ( profile != null ) {
-      return profile.getProfileOperations();
-    }
-    return null;
+  @Override public boolean isRunning( String profileId ) {
+    return profileMap.get( profileId ).isRunning();
   }
 
   @Override public void discardProfile( String profileId ) {
-    profileMap.remove( profileId ).stopCurrentOperation();
+    profileMap.remove( profileId ).stop();
     profileStatusManagerMap.get( profileId ).write( new ProfileStatusWriteOperation<Void>() {
       @Override public Void write( MutableProfileStatus profileStatus ) {
         profileStatus.setProfileState( ProfileState.DISCARDED );
@@ -175,7 +162,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
 
   public void notify( ProfileStatus profileStatus ) {
     NotificationObject notificationObject =
-        new NotificationObject( ProfilingServiceImpl.class.getCanonicalName(), profileStatus.getId(),
+      new NotificationObject( ProfilingServiceImpl.class.getCanonicalName(), profileStatus.getId(),
         profileStatus.getSequenceNumber(), profileStatus );
     previousNotifications.put( profileStatus.getId(), notificationObject );
     try {
@@ -185,17 +172,16 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     }
   }
 
-  public void profileOperationProviderFactoryAdded( ProfileOperationProviderFactory profileOperationProviderFactory,
-                                                    Map properties ) {
+  public void profileFactoryAdded( ProfileFactory profileFactory, Map properties ) {
     Integer ranking = (Integer) properties.get( "service.ranking" );
     if ( ranking == null ) {
       ranking = 0;
     }
     synchronized ( factories ) {
-      factories.add( Pair.of( ranking, profileOperationProviderFactory ) );
-      Collections.sort( factories, new Comparator<Pair<Integer, ProfileOperationProviderFactory>>() {
-        @Override public int compare( Pair<Integer, ProfileOperationProviderFactory> o1,
-                                      Pair<Integer, ProfileOperationProviderFactory> o2 ) {
+      factories.add( Pair.of( ranking, profileFactory ) );
+      Collections.sort( factories, new Comparator<Pair<Integer, ProfileFactory>>() {
+        @Override public int compare( Pair<Integer, ProfileFactory> o1,
+                                      Pair<Integer, ProfileFactory> o2 ) {
           int result = o2.getFirst() - o1.getFirst();
           if ( result == 0 ) {
             result = o1.getSecond().toString().compareTo( o2.getSecond().toString() );
@@ -206,14 +192,13 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     }
   }
 
-  public void profileOperationProviderFactoryRemoved( ProfileOperationProviderFactory profileOperationProviderFactory,
-                                                      Map properties ) {
-    List<Pair<Integer, ProfileOperationProviderFactory>> newFactories = null;
+  public void profileFactoryRemoved( ProfileFactory profileFactory, Map properties ) {
+    List<Pair<Integer, ProfileFactory>> newFactories = null;
     synchronized ( this.factories ) {
       newFactories =
-        new ArrayList<Pair<Integer, ProfileOperationProviderFactory>>( Math.max( 0, this.factories.size() - 1 ) );
-      for ( Pair<Integer, ProfileOperationProviderFactory> factoryPair : this.factories ) {
-        if ( !factoryPair.getSecond().equals( profileOperationProviderFactory ) ) {
+        new ArrayList<Pair<Integer, ProfileFactory>>( Math.max( 0, this.factories.size() - 1 ) );
+      for ( Pair<Integer, ProfileFactory> factoryPair : this.factories ) {
+        if ( !factoryPair.getSecond().equals( profileFactory ) ) {
           newFactories.add( factoryPair );
         }
       }
