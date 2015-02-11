@@ -4,8 +4,7 @@ define(['./services'], function (appServices) {
       return $resource('../cxf/profile/:profileId', {}, {
         query: {method: 'GET', params: {profileId: 'profileId'}},
         stop: {method: 'PUT', url: '../cxf/profile/stop' },
-        start: {method: 'PUT', url: '../cxf/profile/start' },
-        getOperations: {method: 'GET', params: {profileId: 'profileId'}, url: '../cxf/profile/operations/:profileId', isArray: true }
+        start: {method: 'PUT', url: '../cxf/profile/start' }
       });
     }])
 });

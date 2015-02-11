@@ -28,7 +28,6 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;
@@ -118,21 +117,17 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @PUT
   @Path( "/stop" )
   public void stopCurrentOperation( ProfileIdWrapper profileIdWrapper ) {
-    stopCurrentOperation( profileIdWrapper.getProfileId() );
+    stop( profileIdWrapper.getProfileId() );
   }
 
-  @Override public void stopCurrentOperation( String profileId ) {
-    delegate.stopCurrentOperation( profileId );
-  }
-
-  @Override public void startOperation( String profileId, String operationId ) {
-    delegate.startOperation( profileId, operationId );
+  @Override public void stop( String profileId ) {
+    delegate.stop( profileId );
   }
 
   @GET
-  @Path( "/operations/{profileId}" )
-  @Override public List<ProfileOperation> getOperations( @PathParam( "profileId" ) String profileId ) {
-    return delegate.getOperations( profileId );
+  @Path( "/isRunning/{profileId}" )
+  @Override public boolean isRunning( String profileId ) {
+    return delegate.isRunning( profileId );
   }
 
   @PUT
@@ -144,11 +139,5 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
 
   @Override public void discardProfile( String profileId ) {
     delegate.discardProfile( profileId );
-  }
-
-  @PUT
-  @Path( "/start" )
-  public void startOperation( ProfileOperationWrapper profileOperationWrapper ) {
-    startOperation( profileOperationWrapper.getProfileId(), profileOperationWrapper.getOperationId() );
   }
 }

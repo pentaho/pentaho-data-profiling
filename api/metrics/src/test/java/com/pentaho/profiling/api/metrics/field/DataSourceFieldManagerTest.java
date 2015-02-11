@@ -23,8 +23,6 @@
 package com.pentaho.profiling.api.metrics.field;
 
 import com.pentaho.profiling.api.ProfilingField;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,8 +53,8 @@ public class DataSourceFieldManagerTest {
     dataSourceField2.getMetricManagerForType( "test", true );
 
     dataSourceFieldManager =
-        new DataSourceFieldManager(
-            Arrays.asList( dataSourceField.getProfilingField(), dataSourceField2.getProfilingField() ) );
+      new DataSourceFieldManager(
+        Arrays.asList( dataSourceField.getProfilingField(), dataSourceField2.getProfilingField() ) );
   }
 
   @Test public void testGetPathToMetricManagerMap() {
@@ -72,8 +70,8 @@ public class DataSourceFieldManagerTest {
 
   @Test public void testGetFieldPropertyToFieldMap() {
     Map<String, DataSourceField>
-        fieldPropToFieldMap =
-        dataSourceFieldManager.getFieldPropertyToDataSourceFieldMap( "OrigPath" );
+      fieldPropToFieldMap =
+      dataSourceFieldManager.getFieldPropertyToDataSourceFieldMap( "OrigPath" );
     assertEquals( 2, fieldPropToFieldMap.size() );
     assertTrue( fieldPropToFieldMap.containsKey( "a[].b" ) );
     assertTrue( fieldPropToFieldMap.containsKey( "a[].c" ) );

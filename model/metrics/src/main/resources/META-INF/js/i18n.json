@@ -1,0 +1,5 @@
+{
+  "profiling-metrics": [
+    "com/pentaho/model/metrics/contributor/metricManager/impl/messages"
+  ]
+}

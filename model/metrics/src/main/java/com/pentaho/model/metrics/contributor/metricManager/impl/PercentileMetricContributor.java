@@ -53,9 +53,9 @@ public class PercentileMetricContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
       MessageUtils.getId( Constants.KEY, PercentileMetricContributor.class );
 
-  public static final String PERCENTILE_FIRSTQUARTILE_LABEL = "25thPercentile";
-  public static final String PERCENTILE_MEDIAN_LABEL = "Median";
-  public static final String PERCENTILE_THIRDQUARTILE_LABEL = "75thPercentile";
+  public static final String PERCENTILE_FIRSTQUARTILE_LABEL = "PercentileMetricContributor.25thPercentile";
+  public static final String PERCENTILE_MEDIAN_LABEL = "PercentileMetricContributor.Median";
+  public static final String PERCENTILE_THIRDQUARTILE_LABEL = "PercentileMetricContributor.75thPercentile";
 
   public static final String[] PERCENTILE_PATH_25 =
     new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" };

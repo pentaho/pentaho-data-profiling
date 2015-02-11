@@ -26,8 +26,6 @@ import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 import com.pentaho.profiling.api.util.ObjectHolder;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +33,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -57,11 +54,8 @@ public class ExceptionProfileActionResultTest {
   @Test
   public void testExceptionProfileActionResultAppliesError() {
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
-    final List<ProfileOperation> recoverOperations = new ArrayList<ProfileOperation>();
-    ProfileOperation mockRecover = mock( ProfileOperationImpl.class );
-    recoverOperations.add( mockRecover );
     ProfileActionException profileActionException = new ProfileActionException( new ProfileStatusMessage(
-      "test-path", "test-key", new ArrayList<String>() ), null, recoverOperations );
+      "test-path", "test-key", new ArrayList<String>() ), null );
     final ExceptionProfileActionResult exceptionProfileActionResult = new ExceptionProfileActionResult(
       profileActionException );
     final ObjectHolder<ProfileActionExceptionWrapper> objectHolder = new ObjectHolder<ProfileActionExceptionWrapper>();
@@ -79,6 +73,5 @@ public class ExceptionProfileActionResultTest {
     exceptionProfileActionResult.apply( profileStatusManager );
     assertEquals( "test-path", objectHolder.getObject().getMessage().getMessagePath() );
     assertEquals( "test-key", objectHolder.getObject().getMessage().getMessageKey() );
-    assertEquals( recoverOperations, objectHolder.getObject().getRecoveryOperations() );
   }
 }

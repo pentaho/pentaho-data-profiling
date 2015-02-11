@@ -47,11 +47,10 @@ public class EmailAddressMetricContributor implements MetricManagerContributor {
       MessageUtils.getId( Constants.KEY, EmailAddressMetricContributor.class );
   public static final String EMAIL_ADDRESS_KEY = "com.pentaho.str.email_address";
   public static final List<String[]> CLEAR_LIST =
-      new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { EMAIL_ADDRESS_KEY } ) );
-  public static final String EMAIL_ADDRESS_LABEL = "EmailAddress";
+    new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { EMAIL_ADDRESS_KEY } ) );
   public static final ProfileFieldProperty
-      EMAIL_ADDRESS_COUNT =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, EMAIL_ADDRESS_LABEL, EMAIL_ADDRESS_KEY );
+    EMAIL_ADDRESS_COUNT =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "EmailAddressMetricContributor", EMAIL_ADDRESS_KEY );
   private static final String
       EMAIL_PATTERN =
       "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";

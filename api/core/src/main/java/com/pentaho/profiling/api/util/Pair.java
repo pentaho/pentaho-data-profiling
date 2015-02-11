@@ -20,23 +20,66 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.operations;
-
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
+package com.pentaho.profiling.api.util;
 
 /**
- * Created by bryan on 10/3/14.
+ * Created by bryan on 12/2/14.
  */
-public interface ProfileOperation {
-  String getNamePath();
+public class Pair<First, Second> {
+  private final First first;
+  private final Second second;
 
-  String getNameKey();
+  public static <First, Second> Pair of( First first, Second second ) {
+    return new Pair( first, second );
+  }
 
-  String getId();
+  public Pair( First first, Second second ) {
+    this.first = first;
+    this.second = second;
+  }
 
-  void start( ProfileActionExecutor profileActionExecutor );
+  public First getFirst() {
+    return first;
+  }
 
-  void stop();
+  public Second getSecond() {
+    return second;
+  }
 
-  boolean isRunning();
+  @Override public String toString() {
+    return "Pair{"
+      + "first="
+      + first
+      + ", second="
+      + second
+      + '}';
+  }
+
+  @Override
+  public boolean equals( Object o ) {
+    if ( this == o ) {
+      return true;
+    }
+    if ( o == null || getClass() != o.getClass() ) {
+      return false;
+    }
+
+    Pair pair = (Pair) o;
+
+    if ( first != null ? !first.equals( pair.first ) : pair.first != null ) {
+      return false;
+    }
+    if ( second != null ? !second.equals( pair.second ) : pair.second != null ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = first != null ? first.hashCode() : 0;
+    result = 31 * result + ( second != null ? second.hashCode() : 0 );
+    return result;
+  }
 }

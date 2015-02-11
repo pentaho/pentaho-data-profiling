@@ -28,8 +28,6 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.operations.ProfileOperation;
-import com.pentaho.profiling.api.operations.ProfileOperationImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -39,7 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,7 +70,7 @@ public class ProfilingServiceWebserviceImplTest {
     ProfileStatusManager result = mock( ProfileStatusManager.class );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
@@ -84,7 +85,7 @@ public class ProfilingServiceWebserviceImplTest {
     ProfileStatusManager result = mock( ProfileStatusManager.class );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
     profiles.add( result );
@@ -99,7 +100,7 @@ public class ProfilingServiceWebserviceImplTest {
     ProfileStatusManager result = mock( ProfileStatusManager.class );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusReadOperation) invocation.getArguments()[0] ).read( profileStatus );
+        return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
     String id = "id";
@@ -111,45 +112,35 @@ public class ProfilingServiceWebserviceImplTest {
   public void testStopWrapper() {
     String id = "test-profile-id";
     webservice.stopCurrentOperation( new ProfileIdWrapper( id ) );
-    verify( delegate ).stopCurrentOperation( id );
+    verify( delegate ).stop( id );
   }
 
   @Test
   public void testStopId() {
     String id = "test-profile-id";
-    webservice.stopCurrentOperation( id );
-    verify( delegate ).stopCurrentOperation( id );
-  }
-
-  @Test
-  public void testStartWrapper() {
-    String id = "test-profile-id";
-    String operationId = "test-operation-id";
-    webservice.startOperation( new ProfileOperationWrapper( id, operationId ) );
-    verify( delegate ).startOperation( id, operationId );
-  }
-
-  @Test
-  public void testStartProfileIdOperationId() {
-    String id = "test-profile-id";
-    String operationId = "test-operation-id";
-    webservice.startOperation( id, operationId );
-    verify( delegate ).startOperation( id, operationId );
-  }
-
-  @Test
-  public void testGetOperations() {
-    String id = "test-profile-id";
-    List<ProfileOperation> operations = new ArrayList<ProfileOperation>();
-    ProfileOperation operation = mock( ProfileOperationImpl.class );
-    operations.add( operation );
-    when( delegate.getOperations( id ) ).thenReturn( operations );
-    assertEquals( operations, webservice.getOperations( id ) );
+    webservice.stop( id );
+    verify( delegate ).stop( id );
   }
 
   @Test
   public void testDiscardProfile() {
     webservice.discardProfile( new ProfileIdWrapper( "test-id" ) );
     verify( delegate ).discardProfile( "test-id" );
+  }
+
+  @Test
+  public void testAccepts() {
+    when( delegate.accepts( any( DataSourceReference.class ) ) ).thenReturn( true );
+    assertTrue( webservice.accepts( null ) );
+    when( delegate.accepts( any( DataSourceReference.class ) ) ).thenReturn( false );
+    assertFalse( webservice.accepts( null ) );
+  }
+
+  @Test
+  public void testIsRunning() {
+    when( delegate.isRunning( anyString() ) ).thenReturn( true );
+    assertTrue( webservice.isRunning( null ) );
+    when( delegate.isRunning( anyString() ) ).thenReturn( false );
+    assertFalse( webservice.isRunning( null ) );
   }
 }

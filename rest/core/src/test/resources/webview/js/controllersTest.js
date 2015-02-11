@@ -142,22 +142,6 @@ define([
         expect($scope.profileAppService.operationError).toBe(operationError);
       });
 
-      it("should issue GET on the profile getOperations service", function() {
-        notificationService.notify(PROFILE_STATUS_NOTIF_STYPE, "ABCD", {
-          id: "ABCD",
-          dataSourceReference: {
-            id: 'abc',
-            dataSourceProvider: 'cde'
-          }
-        });
-
-        $httpBackend.expectGET(PROFILE_GETOPERS_URL + 'ABCD').respond("");
-        $httpBackend.whenGET(DATASOURCE_GETINCLUDE_URL + 'abc/cde').respond("");
-
-        notificationService.flush();
-        $httpBackend.verifyNoOutstandingExpectation();
-      });
-
       it("should issue GET on the data source getInclude service", function() {
         notificationService.notify(PROFILE_STATUS_NOTIF_STYPE, "ABCD", {
           id: "ABCD",
@@ -490,30 +474,6 @@ define([
           expect(rows[7][propExpId]).toBe(10);
 
         });
-      });
-    });
-
-    describe("when the response of the profile getOperations service arrives", function() {
-      it("should set the scope property 'operations'", function() {
-        notificationService.notify(PROFILE_STATUS_NOTIF_STYPE, "ABCD", {
-          id: "ABCD",
-          dataSourceReference: {
-            id: 'abc',
-            dataSourceProvider: 'cde'
-          }
-        });
-
-        var operations = [{id: 'a', nameKey: 'b'}];
-        $httpBackend.expectGET(PROFILE_GETOPERS_URL + 'ABCD').respond(operations);
-        $httpBackend.whenGET(DATASOURCE_GETINCLUDE_URL + 'abc/cde').respond({
-          profileDataSourceInclude: {url: 'foo'}
-        });
-
-        notificationService.flush();
-        $httpBackend.flush();
-
-        // angular.equals takes care of ignoring special angular $properties.
-        expect(angular.equals($scope.profileAppService.operations, operations)).toBe(true);
       });
     });
 

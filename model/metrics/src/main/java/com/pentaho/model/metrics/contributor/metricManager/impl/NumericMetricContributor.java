@@ -63,30 +63,30 @@ public class NumericMetricContributor implements MetricManagerContributor {
       MessageUtils.getId( Constants.KEY, NumericMetricContributor.class );
 
   public static final ProfileFieldProperty
-      MIN =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "Min", MetricContributorUtils.STATISTICS, Statistic.MIN );
+    MIN =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "NumericMetricContributor.Min", MetricContributorUtils.STATISTICS, Statistic.MIN );
   public static final ProfileFieldProperty
-      MAX =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "Max", MetricContributorUtils.STATISTICS, Statistic.MAX );
+    MAX =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "NumericMetricContributor.Max", MetricContributorUtils.STATISTICS, Statistic.MAX );
   public static final ProfileFieldProperty
-      MEAN =
-      MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "Mean", MetricContributorUtils.STATISTICS, Statistic.MEAN );
+    MEAN =
+    MetricContributorUtils
+      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Mean", MetricContributorUtils.STATISTICS, Statistic.MEAN );
   public static final ProfileFieldProperty
-      STD_DEV =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "StandardDeviation", MetricContributorUtils.STATISTICS,
+    STD_DEV =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "NumericMetricContributor.StandardDeviation", MetricContributorUtils.STATISTICS,
       Statistic.STANDARD_DEVIATION );
   public static final ProfileFieldProperty
-      SUM =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "Sum", MetricContributorUtils.STATISTICS, Statistic.SUM );
+    SUM =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "NumericMetricContributor.Sum", MetricContributorUtils.STATISTICS, Statistic.SUM );
   public static final ProfileFieldProperty
-      SUM_OF_SQ =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, "SumOfSquares", MetricContributorUtils.STATISTICS,
+    SUM_OF_SQ =
+    MetricContributorUtils.createMetricProperty( KEY_PATH, "NumericMetricContributor.SumOfSquares", MetricContributorUtils.STATISTICS,
       Statistic.SUM_OF_SQUARES );
   public static final ProfileFieldProperty
-      VARIANCE =
-      MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "Variance", MetricContributorUtils.STATISTICS, Statistic.VARIANCE );
+    VARIANCE =
+    MetricContributorUtils
+      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Variance", MetricContributorUtils.STATISTICS, Statistic.VARIANCE );
 
   private final NVL nvl;
 

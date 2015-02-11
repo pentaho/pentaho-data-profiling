@@ -23,11 +23,9 @@
 package com.pentaho.profiling.api.action;
 
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 
 /**
  * Created by bryan on 9/17/14.
@@ -43,10 +41,5 @@ public class ProfileActionExceptionWrapper {
   @XmlElement
   public ProfileStatusMessage getMessage() {
     return profileActionException.getProfileStatusMessage();
-  }
-
-  @XmlElement
-  public List<ProfileOperation> getRecoveryOperations() {
-    return profileActionException.getRecoveryOperations();
   }
 }

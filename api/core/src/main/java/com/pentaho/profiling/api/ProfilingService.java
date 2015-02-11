@@ -23,7 +23,6 @@
 package com.pentaho.profiling.api;
 
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.operations.ProfileOperation;
 
 import java.util.List;
 
@@ -39,11 +38,9 @@ public interface ProfilingService {
 
   public ProfileStatusManager getProfileUpdate( String profileId );
 
-  public void stopCurrentOperation( String profileId );
+  public void stop( String profileId );
 
-  public void startOperation( String profileId, String operationId );
-
-  public List<ProfileOperation> getOperations( String profileId );
+  public boolean isRunning( String profileId );
 
   public void discardProfile( String profileId );
 }
