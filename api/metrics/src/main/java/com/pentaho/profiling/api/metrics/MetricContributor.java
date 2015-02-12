@@ -47,6 +47,14 @@ public interface MetricContributor {
   void processFields( DataSourceFieldManager manager, List<DataSourceFieldValue> values ) throws ProfileActionException;
 
   /**
+   * Sets the derived statistics on a field (useful when they are expensive as in HyperLogLogPlus
+   *
+   * @param dataSourceFieldManager
+   * @throws ProfileActionException
+   */
+  void setDerived( DataSourceFieldManager dataSourceFieldManager ) throws ProfileActionException;
+
+  /**
    * Merge a new manager's values in
    *
    * @param into the existing manager

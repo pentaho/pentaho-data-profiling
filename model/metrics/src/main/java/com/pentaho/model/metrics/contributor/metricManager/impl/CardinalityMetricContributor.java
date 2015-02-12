@@ -97,7 +97,6 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
         dataSourceMetricManager.setValue( hllp, CARDINALITY_PATH_ESTIMATOR );
       }
       hllp.offer( value );
-      dataSourceMetricManager.setValue( hllp.cardinality(), CARDINALITY_PATH );
     } catch ( Exception e ) {
       throw new ProfileActionException( new ProfileStatusMessage( KEY_PATH, "Updating HyperLogLogPlus failed", null ),
         e );
@@ -122,6 +121,13 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     into.setValue( originalEstimator, CARDINALITY_PATH_ESTIMATOR );
     if ( originalEstimator != null ) {
       into.setValue( originalEstimator.cardinality(), CARDINALITY_PATH );
+    }
+  }
+
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+    ICardinality hllp = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
+    if ( hllp != null ) {
+      dataSourceMetricManager.setValue( hllp.cardinality(), CARDINALITY_PATH );
     }
   }
 

@@ -72,6 +72,10 @@ public class DateMetricContributor implements MetricManagerContributor {
     nvl.performAndSet( NVLOperations.DATE_MAX, into, from, NumericMetricContributor.MAX_PATH );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_LIST );
   }

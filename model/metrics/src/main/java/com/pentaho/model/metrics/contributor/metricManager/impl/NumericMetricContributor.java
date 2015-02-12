@@ -175,6 +175,10 @@ public class NumericMetricContributor implements MetricManagerContributor {
     setDerived( into, newSumStat, newSumSqStat );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_PATHS );
   }

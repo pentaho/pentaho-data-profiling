@@ -48,6 +48,14 @@ public interface MetricManagerContributor {
   public void merge( DataSourceMetricManager into, DataSourceMetricManager from ) throws MetricMergeException;
 
   /**
+   * Sets the derived statistics on a field (useful when they are expensive as in HyperLogLogPlus
+   *
+   * @param dataSourceMetricManager
+   * @throws ProfileActionException
+   */
+  public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException;
+
+  /**
    * Gets the ProfileFieldProperty objects that describe what the contributor is contributing
    * @return the ProfileFieldProperty objects that describe what the contributor is contributing
    */

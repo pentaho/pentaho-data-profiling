@@ -131,6 +131,10 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
     into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_PATHS );
   }
