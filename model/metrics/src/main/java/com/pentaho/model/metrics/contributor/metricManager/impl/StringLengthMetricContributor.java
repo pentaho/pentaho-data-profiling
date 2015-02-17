@@ -64,6 +64,10 @@ public class StringLengthMetricContributor implements MetricManagerContributor {
     numericMetricManagerContributor.merge( into, from );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     numericMetricManagerContributor.clear( dataSourceMetricManager );
   }

@@ -138,6 +138,10 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     setDerived( into, tDigest );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   public List<ProfileFieldProperty> getProfileFieldProperties() {
     return Arrays.asList( PERCENTILE_FIRSTQUARTILE, PERCENTILE_MEDIAN, PERCENTILE_THIRDQUARTILE );
   }

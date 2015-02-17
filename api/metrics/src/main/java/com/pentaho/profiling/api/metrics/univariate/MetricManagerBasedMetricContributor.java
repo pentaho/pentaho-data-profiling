@@ -77,10 +77,33 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
     }
   }
 
+  @Override public void setDerived( DataSourceFieldManager dataSourceFieldManager ) throws ProfileActionException {
+    Map<String, Set<DataSourceMetricManager>> dataSourceMetricManagersByType = new HashMap<String,
+      Set<DataSourceMetricManager>>();
+    Lock readLock = readWriteLock.readLock();
+    readLock.lock();
+    try {
+      for ( Map.Entry<String, List<MetricManagerContributor>> metricManagerContributorsForType :
+        metricManagerContributorMap
+          .entrySet() ) {
+        for ( DataSourceMetricManager dataSourceMetricManager : dataSourceFieldManager
+          .getPathToMetricManagerForTypeMap( metricManagerContributorsForType.getKey() ).values() ) {
+          for ( MetricManagerContributor metricManagerContributor : metricManagerContributorsForType.getValue() ) {
+            metricManagerContributor.setDerived( dataSourceMetricManager );
+          }
+        }
+      }
+    } finally {
+      readLock.unlock();
+    }
+  }
+
   @Override public void merge( DataSourceFieldManager existing, DataSourceFieldManager update )
     throws MetricMergeException {
+    Set<String> processedNames = new HashSet<String>();
     for ( DataSourceField firstDataSourceField : existing.getDataSourceFields() ) {
       String physicalName = firstDataSourceField.getPhysicalName();
+      processedNames.add( physicalName );
       DataSourceField secondDataSourceField = update.getPathToDataSourceFieldMap().get( physicalName );
       if ( secondDataSourceField != null ) {
         Lock readLock = readWriteLock.readLock();
@@ -98,6 +121,11 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
         } finally {
           readLock.unlock();
         }
+      }
+    }
+    for ( DataSourceField dataSourceField : update.getDataSourceFields() ) {
+      if ( !processedNames.contains( dataSourceField.getPhysicalName() ) ) {
+        existing.addDataSourceField( dataSourceField );
       }
     }
   }

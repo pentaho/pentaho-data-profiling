@@ -110,6 +110,10 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     setDerived( into, newSumStat );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
     return Arrays.asList( WORD_COUNT_MIN, WORD_COUNT_MAX, WORD_COUNT_SUM, WORD_COUNT_MEAN );
   }

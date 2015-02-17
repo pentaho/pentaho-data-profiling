@@ -78,6 +78,10 @@ public class EmailAddressMetricContributor implements MetricManagerContributor {
     into.setValue( intoCount + fromCount, EMAIL_ADDRESS_KEY );
   }
 
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+
+  }
+
   @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
     return Arrays.asList( EMAIL_ADDRESS_COUNT );
   }
