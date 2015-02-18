@@ -26,8 +26,10 @@ import com.pentaho.profiling.api.ProfilingField;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class representing a field being processed from a data source. Keeps track of types seen for the field and their
@@ -112,6 +114,10 @@ public class DataSourceField {
    */
   public List<DataSourceMetricManager> getMetricManagers() {
     return new ArrayList<DataSourceMetricManager>( metricsByTypeMap.values() );
+  }
+
+  public Set<String> getMetricManagerTypes() {
+    return new HashSet<String>( metricsByTypeMap.keySet() );
   }
 
   /**

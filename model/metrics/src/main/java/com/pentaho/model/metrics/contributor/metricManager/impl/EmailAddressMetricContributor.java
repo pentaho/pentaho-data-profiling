@@ -73,8 +73,8 @@ public class EmailAddressMetricContributor implements MetricManagerContributor {
 
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
-    Long intoCount = into.getValue( 0L, EMAIL_ADDRESS_KEY );
-    Long fromCount = from.getValue( 0L, EMAIL_ADDRESS_KEY );
+    Long intoCount = into.getValue( (Number) 0L, EMAIL_ADDRESS_KEY ).longValue();
+    Long fromCount = from.getValue( (Number) 0L, EMAIL_ADDRESS_KEY ).longValue();
     into.setValue( intoCount + fromCount, EMAIL_ADDRESS_KEY );
   }
 

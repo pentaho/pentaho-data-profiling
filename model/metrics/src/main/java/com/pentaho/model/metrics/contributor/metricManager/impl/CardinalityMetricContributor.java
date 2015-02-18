@@ -25,26 +25,29 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
 import com.clearspring.analytics.stream.cardinality.ICardinality;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.model.metrics.contributor.Constants;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.MetricContributorUtils;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.stats.Statistic;
+import org.codehaus.jackson.node.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -64,14 +67,14 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
   public static final String[] CARDINALITY_PATH_ESTIMATOR =
     new String[] { MetricContributorUtils.STATISTICS, Statistic.CARDINALITY + "_estimator" };
   public static final List<String[]> CLEAR_PATHS =
-      new ArrayList<String[]>( Arrays.asList( CARDINALITY_PATH, CARDINALITY_PATH_ESTIMATOR ) );
+    new ArrayList<String[]>( Arrays.asList( CARDINALITY_PATH, CARDINALITY_PATH_ESTIMATOR ) );
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, CardinalityMetricContributor.class );
   public static final ProfileFieldProperty CARDINALITY =
     MetricContributorUtils.createMetricProperty( KEY_PATH, "CardinalityMetricContributor", CARDINALITY_PATH );
   private static final Logger LOGGER = LoggerFactory.getLogger( CardinalityMetricContributor.class );
   private static final Set<Class<?>> supportedTypes =
-      Collections.unmodifiableSet( new HashSet<Class<?>>( Arrays.asList( Integer.class, Long.class,
+    Collections.unmodifiableSet( new HashSet<Class<?>>( Arrays.asList( Integer.class, Long.class,
       Float.class, Double.class, String.class, Boolean.class, Date.class, byte[].class ) ) );
 
   @Override public Set<String> getTypes() {
@@ -103,10 +106,35 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     }
   }
 
+  private ICardinality getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
+    Object estimatorObject = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
+    if ( estimatorObject instanceof ICardinality ) {
+      return (ICardinality) estimatorObject;
+    } else if ( estimatorObject instanceof Map ) {
+      Object byteObject = ( (Map) estimatorObject ).get( "bytes" );
+      if ( byteObject instanceof String ) {
+        try {
+          byteObject = new TextNode( (String) byteObject ).getBinaryValue();
+        } catch ( IOException e ) {
+          LOGGER.error( e.getMessage(), e );
+        }
+      }
+      try {
+        return HyperLogLogPlus.Builder.build( (byte[]) byteObject );
+      } catch ( IOException e ) {
+        LOGGER.error( e.getMessage(), e );
+      }
+    } else {
+      LOGGER.warn( CARDINALITY_PATH_ESTIMATOR + " was of type " + estimatorObject == null ? "null" :
+        estimatorObject.getClass().getCanonicalName() );
+    }
+    return null;
+  }
+
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
-    ICardinality originalEstimator = into.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
-    ICardinality secondEstimator = from.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
+    ICardinality originalEstimator = getEstimator( into );
+    ICardinality secondEstimator = getEstimator( from );
     if ( originalEstimator == null ) {
       originalEstimator = secondEstimator;
     } else if ( secondEstimator == null ) {
@@ -119,8 +147,10 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
       }
     }
     into.setValue( originalEstimator, CARDINALITY_PATH_ESTIMATOR );
-    if ( originalEstimator != null ) {
-      into.setValue( originalEstimator.cardinality(), CARDINALITY_PATH );
+    try {
+      setDerived( into );
+    } catch ( ProfileActionException e ) {
+      LOGGER.error( e.getMessage(), e );
     }
   }
 
