@@ -79,8 +79,8 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     this.nvl = nvl;
   }
 
-  private void setDerived( DataSourceMetricManager metricsForFieldType, Long newSumStat ) {
-    Long count = metricsForFieldType.getValueNoDefault( MetricContributorUtils.COUNT );
+  private void setDerived( DataSourceMetricManager metricsForFieldType, Number newSumStat ) {
+    Number count = metricsForFieldType.getValueNoDefault( MetricContributorUtils.COUNT );
     metricsForFieldType.setValue( ( newSumStat.doubleValue() / count.doubleValue() ), WORD_COUNT_KEY_MEAN );
   }
 
@@ -96,7 +96,7 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     long numWords = tokenizer.countTokens();
     nvl.performAndSet( NVLOperations.LONG_MIN, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MAX );
-    Long newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords,
+    Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords,
         WORD_COUNT_KEY_SUM );
     setDerived( dataSourceMetricManager, newSumStat );
   }
@@ -105,7 +105,7 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     throws MetricMergeException {
     nvl.performAndSet( NVLOperations.LONG_MIN, into, from, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, into, from, WORD_COUNT_KEY_MAX );
-    Long newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, into, from,
+    Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, into, from,
         WORD_COUNT_KEY_SUM );
     setDerived( into, newSumStat );
   }
