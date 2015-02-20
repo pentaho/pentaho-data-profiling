@@ -125,8 +125,8 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
         LOGGER.error( e.getMessage(), e );
       }
     } else {
-      LOGGER.warn( CARDINALITY_PATH_ESTIMATOR + " was of type " + estimatorObject == null ? "null" :
-        estimatorObject.getClass().getCanonicalName() );
+      String className = estimatorObject == null ? "null" : estimatorObject.getClass().getCanonicalName();
+      LOGGER.warn( CARDINALITY_PATH_ESTIMATOR + " was of type " + className );
     }
     return null;
   }

@@ -23,12 +23,14 @@
 package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileAction;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.action.ProfileActionExecutionCallback;
 import com.pentaho.profiling.api.action.ProfileActionResult;
+import com.pentaho.profiling.api.action.Profiler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -71,5 +73,14 @@ public class ProfileActionExecutorImplTest {
     profileActionExecutor.setExecutorService( executorService );
     profileActionExecutor.submit( profileAction, profileActionExecutionCallback );
     verify( profileActionExecutionCallback ).call( profileActionResult );
+  }
+
+  @Test
+  public void testSubmitProfiler() {
+    Profiler profiler = mock( Profiler.class );
+    ProfileActionExecutorImpl profileActionExecutor = new ProfileActionExecutorImpl();
+    profileActionExecutor.setExecutorService( executorService );
+    profileActionExecutor.submit( profiler );
+    verify( profiler ).execute();
   }
 }

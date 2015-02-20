@@ -48,7 +48,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -91,6 +93,7 @@ public class ProfilingServiceImplTest {
     DataSourceReference dataSourceReference = new DataSourceReference();
     when( profileFactory.accepts( dataSourceReference ) ).thenReturn( false );
     assertNull( profilingService.create( dataSourceReference ) );
+    assertFalse( profilingService.accepts( dataSourceReference ) );
   }
 
   @Test
@@ -103,6 +106,7 @@ public class ProfilingServiceImplTest {
     when( profileFactory.create( eq( dataSourceReference ), any( ProfileStatusManager.class ) ) ).thenReturn( profile );
     ProfileStatusManager profileStatusManager = profilingService.create( dataSourceReference );
     assertEquals( dataSourceReference, profileStatusManager.getDataSourceReference() );
+    assertTrue( profilingService.accepts( dataSourceReference ) );
   }
 
   @Test
@@ -114,6 +118,14 @@ public class ProfilingServiceImplTest {
     List<ProfileStatusManager> statuses = profilingService.getActiveProfiles();
     assertEquals( 1, statuses.size() );
     assertEquals( profileStatusManager, statuses.get( 0 ) );
+  }
+
+  @Test
+  public void testIsRunning() {
+    String profileId = "PROFILE_ID";
+    profilingService.getProfileMap().put( profileId, profile );
+    when( profile.isRunning() ).thenReturn( true );
+    assertTrue( profilingService.isRunning( profileId ) );
   }
 
   @Test
