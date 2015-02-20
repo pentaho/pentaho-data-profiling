@@ -23,17 +23,17 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.NVL;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.model.metrics.contributor.metricManager.NVLOperations;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.MetricContributorUtils;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.NVL;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.stats.Statistic;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class PercentileMetricContributor implements MetricManagerContributor {
   public static final double Q_COMPRESSION = 50.0;
 
   public static final String KEY_PATH =
-      MessageUtils.getId( Constants.KEY, PercentileMetricContributor.class );
+    MessageUtils.getId( Constants.KEY, PercentileMetricContributor.class );
 
   public static final String PERCENTILE_FIRSTQUARTILE_LABEL = "PercentileMetricContributor.25thPercentile";
   public static final String PERCENTILE_MEDIAN_LABEL = "PercentileMetricContributor.Median";
@@ -67,22 +67,17 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" };
 
   public static final List<String[]> CLEAR_PATH = new ArrayList<String[]>(
-      Arrays.asList( PERCENTILE_PATH_25, PERCENTILE_PATH_50, PERCENTILE_PATH_75, PERCENTILE_PATH_ESTIMATOR ) );
+    Arrays.asList( PERCENTILE_PATH_25, PERCENTILE_PATH_50, PERCENTILE_PATH_75, PERCENTILE_PATH_ESTIMATOR ) );
 
-  public static final ProfileFieldProperty
-      PERCENTILE_FIRSTQUARTILE =
-      MetricContributorUtils
-      .createMetricProperty( KEY_PATH, PERCENTILE_FIRSTQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
-        Statistic.PERCENTILE + "_25" );
-  public static final ProfileFieldProperty
-      PERCENTILE_MEDIAN =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, PERCENTILE_MEDIAN_LABEL, MetricContributorUtils.STATISTICS,
+  public static final ProfileFieldProperty PERCENTILE_FIRSTQUARTILE = MetricContributorUtils
+    .createMetricProperty( KEY_PATH, PERCENTILE_FIRSTQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
+      Statistic.PERCENTILE + "_25" );
+  public static final ProfileFieldProperty PERCENTILE_MEDIAN = MetricContributorUtils
+    .createMetricProperty( KEY_PATH, PERCENTILE_MEDIAN_LABEL, MetricContributorUtils.STATISTICS,
       Statistic.PERCENTILE + "_50" );
-  public static final ProfileFieldProperty
-      PERCENTILE_THIRDQUARTILE =
-      MetricContributorUtils
-      .createMetricProperty( KEY_PATH, PERCENTILE_THIRDQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
-        Statistic.PERCENTILE + "_75" );
+  public static final ProfileFieldProperty PERCENTILE_THIRDQUARTILE = MetricContributorUtils
+    .createMetricProperty( KEY_PATH, PERCENTILE_THIRDQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
+      Statistic.PERCENTILE + "_75" );
 
   private final NVL nvl;
 
@@ -120,7 +115,7 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     double value = ( (Number) dataSourceFieldValue.getFieldValue() ).doubleValue();
 
     TDigest digest = metricsForFieldType.getValueNoDefault( MetricContributorUtils.STATISTICS,
-        Statistic.PERCENTILE + "_estimator" );
+      Statistic.PERCENTILE + "_estimator" );
 
     if ( digest == null ) {
       digest = new TDigest( Q_COMPRESSION );
@@ -134,7 +129,7 @@ public class PercentileMetricContributor implements MetricManagerContributor {
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
     TDigest tDigest = nvl.performAndSet( NVLOperations.TDIGEST_MERGE, into, from, MetricContributorUtils.STATISTICS,
-        Statistic.PERCENTILE + "_estimator" );
+      Statistic.PERCENTILE + "_estimator" );
     setDerived( into, tDigest );
   }
 
