@@ -32,7 +32,7 @@ public class CardinalityMetricContributorTest {
 
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-
+    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
     assertEquals( Long.valueOf( 1L ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
 
@@ -40,10 +40,12 @@ public class CardinalityMetricContributorTest {
       dataSourceFieldValue.setFieldValue( "two" );
       cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
     }
+    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
     assertEquals( Long.valueOf( 2L ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
     dataSourceFieldValue.setFieldValue( "three" );
     cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
     assertEquals( Long.valueOf( 3L ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
 
