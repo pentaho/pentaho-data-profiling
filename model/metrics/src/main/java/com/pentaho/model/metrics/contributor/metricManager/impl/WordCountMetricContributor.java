@@ -22,17 +22,17 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.NVL;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.model.metrics.contributor.metricManager.NVLOperations;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.MetricContributorUtils;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.NVL;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,16 +55,16 @@ public class WordCountMetricContributor implements MetricManagerContributor {
   public static final String WORD_COUNT_KEY_MEAN = "com.pentaho.str.mean_word_count";
 
   public static final ProfileFieldProperty WORD_COUNT_MAX =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MAX_LABEL, WORD_COUNT_KEY_MAX );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MAX_LABEL, WORD_COUNT_KEY_MAX );
   public static final ProfileFieldProperty WORD_COUNT_MIN =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MIN_LABEL, WORD_COUNT_KEY_MIN );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MIN_LABEL, WORD_COUNT_KEY_MIN );
   public static final ProfileFieldProperty WORD_COUNT_SUM =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_SUM_LABEL, WORD_COUNT_KEY_SUM );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_SUM_LABEL, WORD_COUNT_KEY_SUM );
   public static final ProfileFieldProperty WORD_COUNT_MEAN =
-      MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MEAN_LABEL, WORD_COUNT_KEY_MEAN );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MEAN_LABEL, WORD_COUNT_KEY_MEAN );
 
   public static final List<String[]> CLEAR_LIST =
-      new ArrayList<String[]>( Arrays.asList( new String[] { WORD_COUNT_KEY_MIN }, new String[] { WORD_COUNT_KEY_MAX },
+    new ArrayList<String[]>( Arrays.asList( new String[] { WORD_COUNT_KEY_MIN }, new String[] { WORD_COUNT_KEY_MAX },
       new String[] { WORD_COUNT_KEY_SUM }, new String[] { WORD_COUNT_KEY_MEAN } ) );
 
   public static final String DELIMITERS = " \r\n\t.,;:'\"()?!";
@@ -97,7 +97,7 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     nvl.performAndSet( NVLOperations.LONG_MIN, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MAX );
     Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords,
-        WORD_COUNT_KEY_SUM );
+      WORD_COUNT_KEY_SUM );
     setDerived( dataSourceMetricManager, newSumStat );
   }
 
@@ -106,7 +106,7 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     nvl.performAndSet( NVLOperations.LONG_MIN, into, from, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, into, from, WORD_COUNT_KEY_MAX );
     Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, into, from,
-        WORD_COUNT_KEY_SUM );
+      WORD_COUNT_KEY_SUM );
     setDerived( into, newSumStat );
   }
 

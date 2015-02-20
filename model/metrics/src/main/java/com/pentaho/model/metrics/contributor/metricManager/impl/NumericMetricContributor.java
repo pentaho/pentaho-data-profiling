@@ -62,39 +62,25 @@ public class NumericMetricContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, NumericMetricContributor.class );
 
-  public static final ProfileFieldProperty
-    MIN =
-    MetricContributorUtils
+  public static final ProfileFieldProperty MIN = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.Min", MetricContributorUtils.STATISTICS,
         Statistic.MIN );
-  public static final ProfileFieldProperty
-    MAX =
-    MetricContributorUtils
+  public static final ProfileFieldProperty MAX = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.Max", MetricContributorUtils.STATISTICS,
         Statistic.MAX );
-  public static final ProfileFieldProperty
-    MEAN =
-    MetricContributorUtils
+  public static final ProfileFieldProperty MEAN = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.Mean", MetricContributorUtils.STATISTICS,
         Statistic.MEAN );
-  public static final ProfileFieldProperty
-    STD_DEV =
-    MetricContributorUtils
+  public static final ProfileFieldProperty STD_DEV = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.StandardDeviation", MetricContributorUtils.STATISTICS,
         Statistic.STANDARD_DEVIATION );
-  public static final ProfileFieldProperty
-    SUM =
-    MetricContributorUtils
+  public static final ProfileFieldProperty SUM = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.Sum", MetricContributorUtils.STATISTICS,
         Statistic.SUM );
-  public static final ProfileFieldProperty
-    SUM_OF_SQ =
-    MetricContributorUtils
+  public static final ProfileFieldProperty SUM_OF_SQ = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.SumOfSquares", MetricContributorUtils.STATISTICS,
         Statistic.SUM_OF_SQUARES );
-  public static final ProfileFieldProperty
-    VARIANCE =
-    MetricContributorUtils
+  public static final ProfileFieldProperty VARIANCE = MetricContributorUtils
       .createMetricProperty( KEY_PATH, "NumericMetricContributor.Variance", MetricContributorUtils.STATISTICS,
         Statistic.VARIANCE );
 

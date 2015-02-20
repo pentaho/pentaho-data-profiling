@@ -105,9 +105,8 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
     Lock readLock = readWriteLock.readLock();
     readLock.lock();
     try {
-      for ( Map.Entry<String, List<MetricManagerContributor>> metricManagerContributorsForType :
-        metricManagerContributorMap
-          .entrySet() ) {
+      for ( Map.Entry<String, List<MetricManagerContributor>> metricManagerContributorsForType
+        : metricManagerContributorMap.entrySet() ) {
         for ( DataSourceMetricManager dataSourceMetricManager : dataSourceFieldManager
           .getPathToMetricManagerForTypeMap( metricManagerContributorsForType.getKey() ).values() ) {
           for ( MetricManagerContributor metricManagerContributor : metricManagerContributorsForType.getValue() ) {

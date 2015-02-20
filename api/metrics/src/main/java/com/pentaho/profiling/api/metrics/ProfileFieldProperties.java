@@ -26,8 +26,6 @@ import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.metrics.field.DataSourceField;
 import com.pentaho.profiling.api.stats.Statistic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -42,7 +40,8 @@ public class ProfileFieldProperties {
   public static final ProfileFieldProperty PHYSICAL_NAME = new ProfileFieldProperty( KEY_PATH,
     DataSourceField.PHYSICAL_NAME, Arrays.asList( DataSourceField.PHYSICAL_NAME ) );
   public static final ProfileFieldProperty FIELD_TYPE =
-    new ProfileFieldProperty( KEY_PATH, DataSourceField.TYPE_NAME, Arrays.asList( DataSourceField.TYPE, DataSourceField.TYPE_NAME ) );
+    new ProfileFieldProperty( KEY_PATH, DataSourceField.TYPE_NAME,
+      Arrays.asList( DataSourceField.TYPE, DataSourceField.TYPE_NAME ) );
   public static final ProfileFieldProperty COUNT_FIELD = new ProfileFieldProperty( KEY_PATH, Statistic.COUNT,
     Arrays.asList( DataSourceField.TYPE, Statistic.COUNT ) );
 }
