@@ -127,6 +127,10 @@ public class DataSourceMetricManager {
     }
   }
 
+  public void update( DataSourceMetricManager other ) {
+    metricMap.putAll( other.metricMap );
+  }
+
   public void clear( List<String[]> paths ) {
     for ( String[] path : paths ) {
       setValue( null, path );

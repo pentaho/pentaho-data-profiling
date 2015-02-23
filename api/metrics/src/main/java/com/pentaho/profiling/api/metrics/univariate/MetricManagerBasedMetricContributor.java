@@ -134,8 +134,12 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
             for ( String typeName : metricManagerContributor.getTypes() ) {
               DataSourceMetricManager secondMetricManager = secondDataSourceField.getMetricManagerForType( typeName );
               if ( secondMetricManager != null ) {
-                metricManagerContributor
-                  .merge( firstDataSourceField.getMetricManagerForType( typeName, true ), secondMetricManager );
+                DataSourceMetricManager firstMetricManager = firstDataSourceField.getMetricManagerForType( typeName );
+                if ( firstMetricManager != null ) {
+                  metricManagerContributor.merge( firstMetricManager, secondMetricManager );
+                } else {
+                  firstDataSourceField.getMetricManagerForType( typeName, true ).update( secondMetricManager );
+                }
               }
             }
           }

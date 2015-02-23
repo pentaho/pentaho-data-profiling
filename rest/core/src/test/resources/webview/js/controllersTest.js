@@ -117,12 +117,14 @@ define([
         notificationService.verifyNoUnfulfilledRegistrations();
       });
 
-      it("should set the scope property 'currentOperation'", function() {
+      it("should set the scope property 'statusMessages'", function() {
         var currentOper = {
           messageKey: 'A',
           messagePath: '/A',
           messageVariables: []
         };
+
+        var statusMessages = [ currentOper ];
 
         notificationService.notify(PROFILE_STATUS_NOTIF_STYPE, "ABCD", {
           id: "ABCD",
@@ -130,12 +132,12 @@ define([
             id: 'abc',
             dataSourceProvider: 'cde'
           },
-          currentOperationMessage: currentOper
+          statusMessages: statusMessages
         });
 
         notificationService.flush();
 
-        expect($scope.profileAppService.currentOperationMessage).toBe(currentOper);
+        expect($scope.profileAppService.statusMessages).toBe(statusMessages);
       });
 
       it("should set the scope property 'operationError'", function() {

@@ -41,8 +41,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class ProfileStatusManagerImpl implements ProfileStatusManager {
   private final ProfilingServiceImpl profilingService;
-  private ProfileStatusImpl profileStatus;
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+  private ProfileStatusImpl profileStatus;
 
   public ProfileStatusManagerImpl( String id, DataSourceReference dataSourceReference,
                                    ProfilingServiceImpl profilingService ) {
@@ -117,10 +117,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
     }
   }
 
-  @Override public ProfileStatusMessage getCurrentOperationMessage() {
+  @Override public List<ProfileStatusMessage> getStatusMessages() {
     readWriteLock.readLock().lock();
     try {
-      return profileStatus.getCurrentOperationMessage();
+      return profileStatus.getStatusMessages();
     } finally {
       readWriteLock.readLock().unlock();
     }

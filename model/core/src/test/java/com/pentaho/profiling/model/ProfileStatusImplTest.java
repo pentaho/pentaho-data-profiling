@@ -32,6 +32,7 @@ import com.pentaho.profiling.api.datasource.DataSourceReference;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -69,7 +70,7 @@ public class ProfileStatusImplTest {
     ProfilingField mockField = mock( ProfilingField.class );
     fieldList.add( mockField );
     Long totalEntities = 100L;
-    ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
+    List profileStatusMessage = mock( List.class );
     ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
     List<ProfileFieldProperty> profileFieldProperties = new ArrayList<ProfileFieldProperty>();
     ProfileFieldProperty profileFieldProperty = mock( ProfileFieldProperty.class );
@@ -84,7 +85,7 @@ public class ProfileStatusImplTest {
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
+    assertEquals( profileStatusMessage, profileStatus.getStatusMessages() );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
@@ -111,7 +112,7 @@ public class ProfileStatusImplTest {
     ProfileStatus profileStatusToCopy = mock( ProfileStatus.class );
     when( profileStatusToCopy.getFields() ).thenReturn( fieldList );
     when( profileStatusToCopy.getTotalEntities() ).thenReturn( totalEntities );
-    when( profileStatusToCopy.getCurrentOperationMessage() ).thenReturn( profileStatusMessage );
+    when( profileStatusToCopy.getStatusMessages() ).thenReturn( Arrays.asList( profileStatusMessage ) );
     when( profileStatusToCopy.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( profileStatusToCopy.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( profileStatusToCopy.getId() ).thenReturn( id );
@@ -123,7 +124,8 @@ public class ProfileStatusImplTest {
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
+    assertEquals( 1, profileStatus.getStatusMessages().size() );
+    assertEquals( profileStatusMessage, profileStatus.getStatusMessages().get( 0 ) );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );

@@ -37,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -58,19 +59,22 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetId() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     assertEquals( id, profileStatusManager.getId() );
   }
 
   @Test
   public void testGetDataSourceReference() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     assertEquals( dataSourceReference, profileStatusManager.getDataSourceReference() );
   }
 
   @Test
   public void testRead() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     final ObjectHolder<DataSourceReference> dataSourceReferenceObjectHolder = new ObjectHolder<DataSourceReference>();
     assertEquals( id, profileStatusManager.read( new ProfileStatusReadOperation<String>() {
       @Override public String read( ProfileStatus profileStatus ) {
@@ -83,7 +87,8 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetFields() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
 
     final List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
     ProfilingField mockField = mock( ProfilingField.class );
@@ -101,7 +106,8 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetTotalEntries() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
 
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
@@ -114,20 +120,23 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetCurrentOperation() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
-    final ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
+    final List<ProfileStatusMessage> profileStatusMessages = Arrays.asList( profileStatusMessage );
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
-        profileStatus.setCurrentOperationMessage( profileStatusMessage );
+        profileStatus.setStatusMessages( profileStatusMessages );
         return profileStatus.getId();
       }
     } ) );
-    assertEquals( profileStatusMessage, profileStatusManager.getCurrentOperationMessage() );
+    assertEquals( profileStatusMessages, profileStatusManager.getStatusMessages() );
   }
 
   @Test
   public void testGetOperationError() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     final ProfileActionExceptionWrapper profileActionExceptionWrapper = mock( ProfileActionExceptionWrapper.class );
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
@@ -140,7 +149,8 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetProfileFieldProperties() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
 
     final List<ProfileFieldProperty> profileFieldProperties = new ArrayList<ProfileFieldProperty>();
     ProfileFieldProperty profileFieldProperty = mock( ProfileFieldProperty.class );
@@ -157,7 +167,8 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetSequenceNumber() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
 
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
@@ -169,7 +180,8 @@ public class ProfileStatusManagerImplTest {
 
   @Test
   public void testGetProfileState() {
-    ProfileStatusManagerImpl profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    ProfileStatusManagerImpl profileStatusManager =
+      new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
         profileStatus.setProfileState( ProfileState.ACTIVE );

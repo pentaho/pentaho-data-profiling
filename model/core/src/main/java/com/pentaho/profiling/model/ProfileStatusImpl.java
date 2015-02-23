@@ -42,7 +42,7 @@ public class ProfileStatusImpl implements ProfileStatus {
   protected ProfileState state;
   protected List<ProfilingField> fields;
   protected Long totalEntities;
-  protected ProfileStatusMessage currentOperation;
+  protected List<ProfileStatusMessage> statusMessages;
   protected ProfileActionExceptionWrapper operationError;
   protected List<ProfileFieldProperty> profileFieldProperties;
   protected String id;
@@ -59,13 +59,13 @@ public class ProfileStatusImpl implements ProfileStatus {
 
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
-      profileStatus.getCurrentOperationMessage(),
+      profileStatus.getStatusMessages(),
       profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(), profileStatus.getId(),
       profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1 );
   }
 
   public ProfileStatusImpl( ProfileState profileState, List<ProfilingField> fields, Long totalEntities,
-                            ProfileStatusMessage currentOperation,
+                            List<ProfileStatusMessage> statusMessages,
                             ProfileActionExceptionWrapper operationError,
                             List<ProfileFieldProperty> profileFieldProperties, String id,
                             DataSourceReference dataSourceReference, long sequenceNumber ) {
@@ -75,7 +75,7 @@ public class ProfileStatusImpl implements ProfileStatus {
     }
     this.fields = Collections.unmodifiableList( new ArrayList<ProfilingField>( fields ) );
     this.totalEntities = totalEntities;
-    this.currentOperation = currentOperation;
+    this.statusMessages = statusMessages;
     this.operationError = operationError;
     if ( profileFieldProperties == null ) {
       profileFieldProperties = new ArrayList<ProfileFieldProperty>();
@@ -108,8 +108,8 @@ public class ProfileStatusImpl implements ProfileStatus {
   }
 
   @Override @XmlElement
-  public ProfileStatusMessage getCurrentOperationMessage() {
-    return currentOperation;
+  public List<ProfileStatusMessage> getStatusMessages() {
+    return statusMessages;
   }
 
   @Override @XmlElement

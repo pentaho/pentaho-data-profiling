@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -67,7 +68,7 @@ public class MutableProfileStatusImplTest {
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     when( constructorArg.getFields() ).thenReturn( fieldList );
     when( constructorArg.getTotalEntities() ).thenReturn( totalEntities );
-    when( constructorArg.getCurrentOperationMessage() ).thenReturn( profileStatusMessage );
+    when( constructorArg.getStatusMessages() ).thenReturn( Arrays.asList( profileStatusMessage ) );
     when( constructorArg.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( constructorArg.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( constructorArg.getId() ).thenReturn( id );
@@ -78,7 +79,7 @@ public class MutableProfileStatusImplTest {
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
+    assertEquals( profileStatusMessage, profileStatus.getStatusMessages().get( 0 ) );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
@@ -108,8 +109,8 @@ public class MutableProfileStatusImplTest {
   public void testSetCurrentOperation() {
     ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
     MutableProfileStatusImpl profileStatus = new MutableProfileStatusImpl( constructorArg );
-    profileStatus.setCurrentOperationMessage( profileStatusMessage );
-    assertEquals( profileStatusMessage, profileStatus.getCurrentOperationMessage() );
+    profileStatus.setStatusMessages( Arrays.asList( profileStatusMessage ) );
+    assertEquals( profileStatusMessage, profileStatus.getStatusMessages().get( 0 ) );
   }
 
   @Test
