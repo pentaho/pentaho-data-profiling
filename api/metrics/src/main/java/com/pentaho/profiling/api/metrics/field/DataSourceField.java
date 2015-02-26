@@ -214,7 +214,6 @@ public class DataSourceField {
 
     if ( create ) {
       Map<String, Object> typeMap = new HashMap<String, Object>();
-
       ( (List<Map<String, Object>>) values.get( TYPE ) ).add( typeMap );
       DataSourceMetricManager metricManager = new DataSourceMetricManager( typeMap );
       // store the type being managed by the metric manager

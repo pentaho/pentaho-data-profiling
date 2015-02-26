@@ -50,6 +50,10 @@ public class ProfileStatusMessage {
     this( null, null, null );
   }
 
+  public ProfileStatusMessage( String messagePath, String messageKey ) {
+    this( messagePath, messageKey, null );
+  }
+
   @XmlElement
   public String getMessagePath() {
     return messagePath;

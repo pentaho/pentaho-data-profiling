@@ -34,12 +34,14 @@
         </ul>
     </div>
     <div class="profile-section profile-message"
-        ng-class="profileAppService.currentOperationMessage ? 'profile-state-processing' : ''"
-        ng-if="profileAppService.currentOperationMessage">
+        ng-class="profileAppService.statusMessages ? 'profile-state-processing' : ''"
+        ng-if="profileAppService.statusMessages">
       <div class="profile-message-img-cell">
         <div class="profile-message-img"></div>
       </div>
-      <div class="profile-message-text">{{profileAppService.currentOperationMessage.messageKey | translate | interpolateMessage:profileAppService.currentOperationMessage.messageVariables}}</div>
+      <div class="profile-message-text">
+        <div ng-repeat="operationMessage in profileAppService.statusMessages">{{operationMessage.messageKey | translate | interpolateMessage:operationMessage.messageVariables}}</div>
+      </div>
       <div class="profile-message-action">
         <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopCurrentOperation();" translate="profiling.fields.stop"></button>
       </div>

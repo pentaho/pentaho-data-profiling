@@ -36,7 +36,7 @@ public interface MutableProfileStatus extends ProfileStatus {
 
   void setTotalEntities( Long totalEntities );
 
-  void setCurrentOperationMessage( ProfileStatusMessage currentOperation );
+  void setStatusMessages( List<ProfileStatusMessage> messages );
 
   void setOperationError( ProfileActionExceptionWrapper operationError );
 

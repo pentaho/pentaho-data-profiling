@@ -28,7 +28,7 @@ define(["require", './services'], function (require, appServices) {
         this.profileId;
         this.dataSourceUrl;
         this.dataSourceReference;
-        this.currentOperationMessage;
+        this.statusMessages;
         this.operationError;
         this.tabularService;
         this.profileService;
@@ -88,7 +88,7 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.tabularService.fieldCols = profileAppService.tabularService.getCols(itemSchema, items, colCount);
             profileAppService.tabularService.fieldRows = profileAppService.tabularService.getRows(itemSchema, items);
 
-            profileAppService.currentOperationMessage = profileStatus.currentOperationMessage;
+            profileAppService.statusMessages = profileStatus.statusMessages;
 
             profileAppService.operationError = profileStatus.operationError;
           } else {

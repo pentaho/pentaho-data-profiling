@@ -155,7 +155,7 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
   }
 
   @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-    ICardinality hllp = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
+    ICardinality hllp = getEstimator( dataSourceMetricManager );
     if ( hllp != null ) {
       dataSourceMetricManager.setValue( hllp.cardinality(), CARDINALITY_PATH );
     }
