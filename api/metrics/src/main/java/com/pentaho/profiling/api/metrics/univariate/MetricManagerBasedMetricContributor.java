@@ -22,7 +22,6 @@
 
 package com.pentaho.profiling.api.metrics.univariate;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricContributor;
@@ -155,17 +154,14 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
     }
   }
 
-  @Override public void clearProfileStatus( MutableProfileStatus mutableProfileStatus ) {
-    DataSourceFieldManager dataSourceProfilingFieldManager =
-      new DataSourceFieldManager( mutableProfileStatus.getFields() );
+  @Override public void clear( DataSourceFieldManager dataSourceFieldManager ) {
     Lock readLock = readWriteLock.readLock();
     readLock.lock();
     try {
       for ( MetricManagerContributor metricManagerContributor : metricManagerContributors ) {
         for ( String typeName : metricManagerContributor.getTypes() ) {
-          for ( DataSourceMetricManager dsf : dataSourceProfilingFieldManager
-            .getPathToMetricManagerForTypeMap( typeName )
-            .values() ) {
+          for ( DataSourceMetricManager dsf : dataSourceFieldManager.getPathToMetricManagerForTypeMap(
+            typeName ).values() ) {
             metricManagerContributor.clear( dsf );
           }
         }
@@ -213,21 +209,23 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
   }
 
   public void implRemoved( MetricManagerContributor metricManagerContributor, Map properties ) {
-    Lock writeLock = readWriteLock.writeLock();
-    writeLock.lock();
-    try {
-      metricManagerContributors.remove( metricManagerContributor );
-      for ( String typeName : metricManagerContributor.getTypes() ) {
-        List<MetricManagerContributor> metricManagerContributorsForType = metricManagerContributorMap.get( typeName );
-        if ( metricManagerContributorsForType != null ) {
-          metricManagerContributorsForType.remove( metricManagerContributor );
-          if ( metricManagerContributorsForType.size() == 0 ) {
-            metricManagerContributorMap.remove( typeName );
+    if ( metricManagerContributor != null ) {
+      Lock writeLock = readWriteLock.writeLock();
+      writeLock.lock();
+      try {
+        metricManagerContributors.remove( metricManagerContributor );
+        for ( String typeName : metricManagerContributor.getTypes() ) {
+          List<MetricManagerContributor> metricManagerContributorsForType = metricManagerContributorMap.get( typeName );
+          if ( metricManagerContributorsForType != null ) {
+            metricManagerContributorsForType.remove( metricManagerContributor );
+            if ( metricManagerContributorsForType.size() == 0 ) {
+              metricManagerContributorMap.remove( typeName );
+            }
           }
         }
+      } finally {
+        writeLock.unlock();
       }
-    } finally {
-      writeLock.unlock();
     }
   }
 }
