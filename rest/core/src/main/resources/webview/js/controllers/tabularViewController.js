@@ -1,4 +1,4 @@
-<!-- /*!
+/*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
  * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
@@ -18,31 +18,26 @@
  * prohibited to anyone except those individuals and entities who have executed
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
- */ -->
-<html>
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <link rel="stylesheet" type="text/css" href="../content/common-ui/resources/themes/crystal/globalCrystal.css">
-        <link rel="stylesheet" type="text/css" href="css/profile-styles.css">
-        <script src="../requirejs-manager/js/require-init.js"></script>
-        <script type="text/javascript">
-          require(["com.pentaho.profiling.services.webview/app"], function(webviewApp) {
-            webviewApp.init();
+ */
+
+define(['./controllers'], function (appControllers) {
+  appControllers.controller('tabularViewController', [
+    '$scope',
+    'ProfileAppService',
+    '$routeParams',
+    function ($scope, profileAppService, $routeParams) {
+      $scope.profileAppService = profileAppService;
+
+      // Register to receive profile status updates.
+      $scope.profileAppService.notificationService.register(
+          /* notifType */
+          "com.pentaho.profiling.model.ProfilingServiceImpl",
+          /* ids */
+          [$routeParams.profileId],
+          /* cb */
+          function (profileStatus) {
+            profileAppService.updateProfile(profileStatus);
           });
-        </script>
-    </head>
-    <body id="profileApp" ng-controller="profileAppController" class="pentaho-page-background">
-      <div id="pucHeader">
-        Pentaho Data Exploration
-        <div class="hud">
-          <a ng-href="view.html#/{{profileAppService.profileId}}"><i class="fa fa-dashboard">Profiling</i></a>
-          <a href="#"><i class="fa fa-dashboard">Report</i></a>
-          <a href="#"><i class="fa fa-dashboard">Analysis</i></a>
-          <a href="#"><i class="fa fa-dashboard">Viz</i></a>
-        </div>
-      </div>
-        <div id="profileView" class="view-container">
-            <div ng-view class="view-frame"></div>
-        </div>
-    </body>
-</html>
+    }
+  ])
+});

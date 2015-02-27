@@ -43,6 +43,7 @@ define([
   'common-ui/angular-mocks',
   'controllers/controllers',
   'controllers/profileAppController',
+  'controllers/tabularViewController',
   'services/services',
   'services/profileService',
   'services/dataSourceService',
@@ -77,7 +78,8 @@ define([
 
       $routeParams.profileId = 'ABCD';
 
-      $controller("profileAppController", {$scope: $scope, $routeParams: $routeParams});
+      $controller("profileAppController", {$scope: $scope});
+      $controller("tabularViewController", {$scope: $scope});
     }));
 
     describe("scope object initialization -", function() {

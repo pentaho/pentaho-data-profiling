@@ -33,6 +33,8 @@ define(['./services'], function (appServices) {
       TabularService.prototype = {
         constructor: TabularService,
         init: function (col, order) {
+          tabularService.fieldCols = [];
+          tabularService.fieldRows = [];
           tabularService.orderByCol = col;
           tabularService.isOrderReversed = order;
         },
@@ -89,6 +91,7 @@ define(['./services'], function (appServices) {
 
               // Easily detect columns/leafs when traversing the item schema.
               col.isColumn = true;
+              col.display = true;
               col.index = index;
               col.stringifiedPath = JSON.stringify(propPath);
 
@@ -135,7 +138,12 @@ define(['./services'], function (appServices) {
                   if (childSchema.isColumn) {
                     if (!seenCols[childSchema.index]) {
                       seenCols[childSchema.index] = 1;
-
+                      var oldFieldColArray = $.grep(tabularService.fieldCols, function(e){ return e.nameKey == childSchema.nameKey; });
+                      if(oldFieldColArray.length === 1) {
+                        if(oldFieldColArray[0].display !== undefined) {
+                          childSchema.display = oldFieldColArray[0].display;
+                        }
+                      }
                       usedCols.push(childSchema);
 
                       // No use in traversing all rows if all possible columns
@@ -228,6 +236,16 @@ define(['./services'], function (appServices) {
             tabularService.orderByCol = col.stringifiedPath;
             tabularService.isOrderReversed = false;
           }
+        },
+        /**
+         * Called to show or hide the column display.
+         *
+         * This method is published in the scope object and can thus be called by the view.
+         *
+         * @param {Column} col The column by which to sort rows.
+         */
+        toggleColDisplay: function (col) {
+          col.display = !col.display;
         },
         /**
          * Gets the order by value of a row.
