@@ -22,11 +22,10 @@
 
 package com.pentaho.profiling.api.metrics;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public interface MetricContributor {
    * Process a field value
    *
    * @param manager the data source field manager for looking up paths, metrics for types etc.
-   * @param values   the actual data value provided by a data source (along with any relevant metadata)
+   * @param values  the actual data value provided by a data source (along with any relevant metadata)
    * @throws ProfileActionException if a problem occurs
    */
   void processFields( DataSourceFieldManager manager, List<DataSourceFieldValue> values ) throws ProfileActionException;
@@ -63,11 +62,11 @@ public interface MetricContributor {
   void merge( DataSourceFieldManager into, DataSourceFieldManager from ) throws MetricMergeException;
 
   /**
-   * Clear all metric values handled by this contributor from the profile fields in the provided profile status
+   * Clear all metric values handled by this contributor from the DataSourceFieldManager
    *
-   * @param mutableProfileStatus the status to operate on
+   * @param dataSourceFieldManager
    */
-  void clearProfileStatus( MutableProfileStatus mutableProfileStatus );
+  void clear( DataSourceFieldManager dataSourceFieldManager );
 
   /**
    * Get a list of profile field properties for the metrics computed by this contributor
