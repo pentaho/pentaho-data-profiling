@@ -19,7 +19,31 @@
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
  */ -->
-<div>
+<div id="state-form">
+  <div class="nav left">
+    <ul>
+      <li><a ng-click="profileAppService.leftNavSelection = 'stats';" ng-class="{'active': profileAppService.leftNavSelection == 'stats'}">S</a></li>
+      <li><a ng-click="profileAppService.leftNavSelection = 'tree';" ng-class="{'active': profileAppService.leftNavSelection == 'tree'}">T</a></li>
+      <li><a ng-click="profileAppService.leftNavSelection = 'config';" ng-class="{'active': profileAppService.leftNavSelection == 'config'}">C</a></li>
+    </ul>
+  </div>
+
+  <div class="state-form-wrap" ng-switch on="profileAppService.leftNavSelection">
+    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'stats'}" ng-switch-default>
+      <div ng-repeat="fieldCol in profileAppService.tabularService.fieldCols">
+        <input type="checkbox" ng-click="profileAppService.tabularService.toggleColDisplay(fieldCol)" ng-checked="fieldCol.display === true">{{ fieldCol.nameKey | translate }}
+        <br>
+      </div>
+    </div>
+    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'tree'}" ng-switch-when="tree">
+      Aggregate Profile Tree view
+    </div>
+    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'config'}" ng-switch-when="config">
+      Configuration view
+    </div>
+  </div>
+</div>
+<div id="profileTabularView">
     <div class="profile-section profile-message"
          ng-class="profileAppService.operationError ? 'profile-error-message' : ''"
          ng-if="profileAppService.operationError">
@@ -53,7 +77,7 @@
             <table class="pentaho-table profile-fields-list" cellspacing="0">
                 <thead>
                     <tr>
-                        <th class="cellTableCol cellTableSortableHeader"
+                        <th ng-show="fieldCol.display === true" class="cellTableCol cellTableSortableHeader"
                             ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
                             ng-class="profileAppService.tabularService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
                             ng-click="profileAppService.tabularService.onOrderByCol(fieldCol)">
@@ -68,7 +92,7 @@
                     <tr ng-class-odd="'cellTableOddRow'"
                         ng-class-even="'cellTableEvenRow'"
                         ng-repeat="fieldRow in profileAppService.tabularService.fieldRows | orderBy:profileAppService.tabularService.orderByKey:profileAppService.tabularService.isOrderReversed">
-                        <td class="cellTableCell"
+                        <td ng-show="fieldCol.display === true" class="cellTableCell"
                             ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
                             ng-class-odd="'cellTableOddRowCell'"
                             ng-class-even="'cellTableEvenRowCell'">{{fieldRow[fieldCol.stringifiedPath]}}</td>

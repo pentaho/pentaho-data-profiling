@@ -29,12 +29,6 @@ body {
     text-align: center; /* center child div, which is inline-block */
 }
 
-#profileView {
-    display: inline-block; /* size width to content */
-    padding: 40px;
-    text-align: initial; /* reset body level text-align: center, added only to center this div */
-}
-
 .profile-section + .profile-section {
     margin-top: 30px;
 }
@@ -110,9 +104,6 @@ body {
 
 /* table */
 .profile-fields-list-wrapper {
-    overflow:   auto;
-    max-height: 50vh;
-    max-width:  90vw;
 }
 
 /* Pentaho Table style
@@ -197,4 +188,152 @@ body {
     padding: 10px;
     overflow: hidden;
     text-align: left;
+}
+
+#pucHeader .hud {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  color: white;
+}
+
+#pucHeader .hud span {
+  color: #eee;
+}
+
+#pucHeader .hud a {
+  display: inline-block;
+  text-decoration: none;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid #CCCCCC;
+  padding: 0 10px;
+  color: white;
+  text-decoration: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  -moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  background-color: #0085B0;
+}
+
+#pucHeader .hud a span {
+  margin-left: 10px;
+}
+
+#pucHeader .hud a.active, #header .hud a:hover {
+  background: #3e6575;
+  background: -moz-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #3e6575), color-stop(50%, #3e6575), color-stop(50%, #1a2e35), color-stop(100%, #1a2e36));
+  background: -webkit-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -o-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -ms-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: linear-gradient(to bottom, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3e6575', endColorstr='#1a2e36',GradientType=0 );
+}
+
+#pucHeader .hud a.profile {
+  width: 24px;
+  padding: 0;
+  margin-left: 20px;
+}
+
+#state-form .nav {
+  width: 55px;
+  height: 100%;
+  position: fixed;
+  top: 84px;
+  border-right: 1px solid rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+
+#state-form .nav.left {
+  left: 0;
+}
+
+#state-form .nav ul {
+  margin-top: 0px;
+  list-style: none;
+  padding: 0px;
+}
+
+#state-form .nav ul a {
+  display: block;
+  height: 50px;
+  line-height: 55px;
+  text-align: center;
+}
+
+#state-form .nav ul a:hover {
+  background: #8ab3c6;
+}
+
+#state-form .nav ul a.active {
+  background: #3e6575;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+#state-form {
+  width: 300px;
+  float: left;
+  background: #eee;
+  -webkit-box-shadow: inset -1px 0 0 0 black;
+  -moz-box-shadow: inset -1px 0 0 0 black;
+  box-shadow: inset -1px 0 0 0 black;
+}
+
+#state-form .state-form-wrap {
+  margin-left: 55px;
+  position: relative;
+  height: calc(100% - 84px);
+}
+
+#state-form .state-form-view {
+  opacity: 0;
+  position: absolute;
+  top: 10px;
+  width: 100%;
+  left: -300px;
+  height: calc(100% - 40px);
+  overflow: auto;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #111;
+  -webkit-transition: opacity 0.5s, left 0.2s;
+  -moz-transition: opacity 0.5s, left 0.2s;
+  -o-transition: opacity 0.5s, left 0.2s;
+  transition: opacity 0.5s, left 0.2s;
+}
+
+#state-form .state-form-view.active {
+  left: 0;
+  opacity: 1;
+}
+
+#state-form .state-form-view .pad {
+  margin: 0 10px;
+}
+
+#state-form .state-form-view .text-center {
+  text-align: center;
+}
+
+#profileTabularView {
+  display: inline-block; /* size width to content */
+  padding: 10px;
+  text-align: initial; /* reset body level text-align: center, added only to center this div */
+  float: left;
+  width: calc(100% - 325px);
+  height: calc(100% - 144px);
+  margin-top: 40px;
+  overflow: auto;
 }

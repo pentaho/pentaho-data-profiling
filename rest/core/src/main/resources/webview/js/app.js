@@ -45,6 +45,7 @@ define([
   "common-ui/angular-sanitize",
   "com.pentaho.profiling.services.webview/controllers/controllers",
   "com.pentaho.profiling.services.webview/controllers/profileAppController",
+  "com.pentaho.profiling.services.webview/controllers/tabularViewController",
   "com.pentaho.profiling.services.webview/services/services",
   "com.pentaho.profiling.services.webview/services/profileService",
   "com.pentaho.profiling.services.webview/services/dataSourceService",
@@ -111,7 +112,7 @@ define([
       $routeProvider
           .when('/:profileId', {
             templateUrl: 'partials/default-view.html',
-            controller: 'profileAppController'
+            controller: 'tabularViewController'
           })
           .otherwise({
             redirectTo: '/'
@@ -148,7 +149,7 @@ define([
 
     init: function () {
       angular.element(document).ready(function () {
-        angular.bootstrap(document.getElementById('profileView'), ['profileApp']);
+        angular.bootstrap(document.getElementById('profileApp'), ['profileApp']);
       });
     }
   };
