@@ -48,6 +48,11 @@ public class DataSourceFieldValue {
    * Human-friendly name
    */
   private String logicalName;
+
+  /**
+   * Canonical name of field type
+   */
+  private String fieldTypeName;
   /**
    * arbitrary data source specific metadata about this value - e.g. path, whether its a leaf etc.
    */
@@ -119,6 +124,7 @@ public class DataSourceFieldValue {
    * @param fieldValue the field value
    */
   public void setFieldValue( Object fieldValue ) {
+    this.fieldTypeName = null;
     this.fieldValue = fieldValue;
   }
 
@@ -158,5 +164,16 @@ public class DataSourceFieldValue {
    */
   public int getNumMetadataElements() {
     return fieldMetadata.size();
+  }
+
+  public String getFieldTypeName() {
+    if ( fieldTypeName == null ) {
+      fieldTypeName = fieldValue == null ? "null" : fieldValue.getClass().getCanonicalName();
+    }
+    return fieldTypeName;
+  }
+
+  public void setFieldTypeName( String fieldTypeName ) {
+    this.fieldTypeName = fieldTypeName;
   }
 }
