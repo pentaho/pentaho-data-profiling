@@ -65,8 +65,7 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
       if ( dataSourceField == null ) {
         LOGGER.warn( "Got DataSourceFieldValue for nonexistent field " + dataSourceFieldValue.getPhysicalName() );
       } else {
-        Object fieldValue = dataSourceFieldValue.getFieldValue();
-        String typeName = fieldValue == null ? "null" : fieldValue.getClass().getCanonicalName();
+        String typeName = dataSourceFieldValue.getFieldTypeName();
         List<Pair<DataSourceField, DataSourceFieldValue>> values = valuesByType.get( typeName );
         if ( values == null ) {
           values = new ArrayList<Pair<DataSourceField, DataSourceFieldValue>>();
