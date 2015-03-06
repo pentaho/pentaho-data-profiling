@@ -97,7 +97,7 @@ public class AggregateProfileImplTest {
     aggregateProfile.start( executorService );
     aggregateProfile.start( executorService );
     verify( profilingService, times( 1 ) ).register( any( NotificationListener.class ) );
-    verify( executorService, times( 2 ) ).submit( any( Runnable.class ) );
+    verify( executorService, times( 1 ) ).submit( any( Runnable.class ) );
     assertTrue( aggregateProfile.isRunning() );
   }
 
