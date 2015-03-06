@@ -20,24 +20,45 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.AggregateProfile;
+import com.pentaho.profiling.api.AggregateProfileService;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
- * Created by bryan on 8/11/14.
+ * Created by bryan on 3/6/15.
  */
-public class DefaultProfileActionResultTest {
-  @Test
-  public void testDefaultProfileActionExceptionNull() {
-    DefaultProfileActionResult defaultProfileActionResult = new DefaultProfileActionResult() {
-      @Override public void apply( ProfileStatusManager statusManager ) {
+public class AggregateProfileServiceRestImplTest {
+  private AggregateProfileService delegate;
+  private AggregateProfileServiceRestImpl aggregateProfileService;
 
-      }
-    };
-    assertEquals( null, defaultProfileActionResult.getProfileException() );
+  @Before
+  public void setup() {
+    delegate = mock( AggregateProfileService.class );
+    aggregateProfileService = new AggregateProfileServiceRestImpl( delegate );
+  }
+
+  @Test
+  public void testGetAggregateProfiles() {
+    List<AggregateProfile> profiles = mock( List.class );
+    when( delegate.getAggregateProfiles() ).thenReturn( profiles );
+    assertEquals( profiles, aggregateProfileService.getAggregateProfiles() );
+  }
+
+  @Test
+  public void testAddChild() {
+    AggregateAddChildWrapper aggregateAddChildWrapper = new AggregateAddChildWrapper( "testParent", "testChild" );
+    aggregateProfileService.addChild( aggregateAddChildWrapper );
+    verify( delegate )
+      .addChild( aggregateAddChildWrapper.getProfileId(), aggregateAddChildWrapper.getChildProfileId() );
   }
 }

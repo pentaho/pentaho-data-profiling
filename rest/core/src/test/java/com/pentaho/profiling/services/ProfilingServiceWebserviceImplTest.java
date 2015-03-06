@@ -26,6 +26,7 @@ import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
+import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import org.junit.Before;
@@ -80,7 +81,7 @@ public class ProfilingServiceWebserviceImplTest {
 
   @Test
   public void testGetActiveProfiles() {
-    List<ProfileStatusManager> profiles = new ArrayList<ProfileStatusManager>();
+    List<ProfileStatusReader> profiles = new ArrayList<ProfileStatusReader>();
     final ProfileStatus profileStatus = mock( ProfileStatus.class );
     ProfileStatusManager result = mock( ProfileStatusManager.class );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {

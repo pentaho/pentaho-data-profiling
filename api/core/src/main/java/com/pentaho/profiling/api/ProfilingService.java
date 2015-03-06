@@ -34,9 +34,9 @@ public interface ProfilingService {
 
   public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
 
-  public List<ProfileStatusManager> getActiveProfiles();
+  public List<ProfileStatusReader> getActiveProfiles();
 
-  public ProfileStatusManager getProfileUpdate( String profileId );
+  public ProfileStatusReader getProfileUpdate( String profileId );
 
   public void stop( String profileId );
 

@@ -20,11 +20,15 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.services;
+
+import com.pentaho.profiling.api.core.test.BeanTester;
 
 /**
- * Created by bryan on 10/30/14.
+ * Created by bryan on 3/6/15.
  */
-public interface Profiler {
-  public void execute();
+public class AggregateAddChildWrapperTest extends BeanTester {
+  public AggregateAddChildWrapperTest() {
+    super( AggregateAddChildWrapper.class );
+  }
 }

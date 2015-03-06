@@ -29,9 +29,9 @@ import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.util.Pair;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by bryan on 7/31/14.
@@ -63,14 +64,14 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
       this );
   private List<Pair<Integer, ProfileFactory>> factories = new ArrayList<Pair<Integer, ProfileFactory>>();
-  private ProfileActionExecutor profileActionExecutor;
+  private ExecutorService executorService;
 
-  public ProfileActionExecutor getProfileActionExecutor() {
-    return profileActionExecutor;
+  public ExecutorService getExecutorService() {
+    return executorService;
   }
 
-  public void setProfileActionExecutor( ProfileActionExecutor profileActionExecutor ) {
-    this.profileActionExecutor = profileActionExecutor;
+  public void setExecutorService( ExecutorService executorService ) {
+    this.executorService = executorService;
   }
 
   // FOR UNIT TEST ONLY
@@ -108,7 +109,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
       ProfileStatusManager profileStatusManager =
         new ProfileStatusManagerImpl( profileId, dataSourceReference, this );
       Profile profile = profileOperationProviderFactory.create( dataSourceReference, profileStatusManager );
-      profile.start( profileActionExecutor );
+      profile.start( executorService );
       profileMap.put( profile.getId(), profile );
       profileStatusManagerMap.put( profile.getId(), profileStatusManager );
       return profileStatusManager;
@@ -117,8 +118,8 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override
-  public List<ProfileStatusManager> getActiveProfiles() {
-    return new ArrayList<ProfileStatusManager>( profileStatusManagerMap.values() );
+  public List<ProfileStatusReader> getActiveProfiles() {
+    return new ArrayList<ProfileStatusReader>( profileStatusManagerMap.values() );
   }
 
   @Override
@@ -204,5 +205,9 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
       }
       this.factories = newFactories;
     }
+  }
+
+  public Profile getProfile( String profileId ) {
+    return profileMap.get( profileId );
   }
 }

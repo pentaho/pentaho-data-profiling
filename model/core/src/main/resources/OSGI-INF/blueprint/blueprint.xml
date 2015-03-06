@@ -2,19 +2,34 @@
 <blueprint xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   <bean id="profilingServiceImpl" class="com.pentaho.profiling.model.ProfilingServiceImpl">
-    <property name="profileActionExecutor" ref="profilingActionExecutorImpl" />
+    <property name="executorService" ref="executorService"/>
   </bean>
 
-  <bean id="profilingActionExecutorImpl" class="com.pentaho.profiling.model.ProfileActionExecutorImpl"
+  <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"
+        destroy-method="shutdown" scope="singleton"/>
+
+  <bean id="aggregateProfileServiceImpl" class="com.pentaho.profiling.model.AggregateProfileServiceImpl"
         scope="singleton"/>
+  <bean id="aggregateProfileFactory" class="com.pentaho.profiling.model.AggregateProfileFactory" scope="singleton">
+    <argument ref="profilingServiceImpl"/>
+    <argument ref="aggregateProfileServiceImpl"/>
+    <argument ref="metricContributors"/>
+  </bean>
 
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
            interface="com.pentaho.profiling.api.ProfilingService"/>
-  <service id="profilingActionExecutorImplService" ref="profilingActionExecutorImpl"
-           interface="com.pentaho.profiling.api.action.ProfileActionExecutor"/>
+  <service id="executorServiceService" ref="executorService"
+           interface="java.util.concurrent.ExecutorService"/>
   <service id="profilingServiceNotifierWithHistory" ref="profilingServiceImpl"
            interface="org.pentaho.osgi.notification.api.NotifierWithHistory"/>
-  <reference-list id="profileFactoryRefList" interface="com.pentaho.profiling.api.ProfileFactory" availability="optional">
-    <reference-listener ref="profilingServiceImpl" bind-method="profileFactoryAdded" unbind-method="profileFactoryRemoved"/>
+  <service id="aggregateProfileFactoryService" ref="aggregateProfileFactory"
+           interface="com.pentaho.profiling.api.ProfileFactory"/>
+  <service id="aggregateProfileServiceImplService" ref="aggregateProfileServiceImpl"
+           interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <reference-list id="profileFactoryRefList" interface="com.pentaho.profiling.api.ProfileFactory"
+                  availability="optional">
+    <reference-listener ref="profilingServiceImpl" bind-method="profileFactoryAdded"
+                        unbind-method="profileFactoryRemoved"/>
   </reference-list>
+  <reference-list id="metricContributors" interface="com.pentaho.profiling.api.metrics.MetricContributor"/>
 </blueprint>

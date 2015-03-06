@@ -20,34 +20,15 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 3/5/15.
  */
-public class ExceptionProfileActionResult implements ProfileActionResult {
-  private final ProfileActionException exception;
+public interface AggregateProfile extends Profile {
+  public List<Profile> getChildProfiles();
 
-  public ExceptionProfileActionResult( ProfileActionException exception ) {
-    this.exception = exception;
-  }
-
-  @Override
-  public void apply( ProfileStatusManager status ) {
-    status.write( new ProfileStatusWriteOperation<Void>() {
-      @Override public Void write( MutableProfileStatus profileStatus ) {
-        profileStatus.setOperationError( new ProfileActionExceptionWrapper( exception ) );
-        return null;
-      }
-    } );
-  }
-
-  @Override
-  public ProfileActionException getProfileException() {
-    return exception;
-  }
+  public void addChildProfile( String profileId );
 }

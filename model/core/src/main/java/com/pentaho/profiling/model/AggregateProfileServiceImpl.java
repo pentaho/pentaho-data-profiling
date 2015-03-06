@@ -20,11 +20,32 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.model;
+
+import com.pentaho.profiling.api.AggregateProfile;
+import com.pentaho.profiling.api.AggregateProfileService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by bryan on 10/6/14.
+ * Created by bryan on 3/5/15.
  */
-public interface ProfileActionExecutionCallback {
-  public void call( ProfileActionResult profileActionResult );
+public class AggregateProfileServiceImpl implements AggregateProfileService {
+  private final Map<String, AggregateProfile> aggregateProfileMap =
+    new ConcurrentHashMap<String, AggregateProfile>();
+
+  public void registerAggregateProfile( AggregateProfile aggregateProfile ) {
+    aggregateProfileMap.put( aggregateProfile.getId(), aggregateProfile );
+  }
+
+  @Override public List<AggregateProfile> getAggregateProfiles() {
+    return new ArrayList<AggregateProfile>( aggregateProfileMap.values() );
+  }
+
+  @Override public void addChild( String profileId, String childProfileId ) {
+    aggregateProfileMap.get( profileId ).addChildProfile( childProfileId );
+  }
 }
