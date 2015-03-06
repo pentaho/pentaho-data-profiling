@@ -20,15 +20,46 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.ProfileStatusMessage;
+import com.pentaho.profiling.api.AggregateProfile;
+import com.pentaho.profiling.api.AggregateProfileService;
+
+import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 3/5/15.
  */
-public interface ProfileAction {
-  public ProfileActionResult execute();
+@Produces( { MediaType.APPLICATION_JSON } )
+@Consumes( { MediaType.APPLICATION_JSON } )
+@WebService
+public class AggregateProfileServiceRestImpl implements AggregateProfileService {
+  private final AggregateProfileService delegate;
 
-  public ProfileStatusMessage getCurrentOperationMessage();
+  public AggregateProfileServiceRestImpl( AggregateProfileService delegate ) {
+    this.delegate = delegate;
+  }
+
+  @GET
+  @Path( "/" )
+  @Override public List<AggregateProfile> getAggregateProfiles() {
+    return delegate.getAggregateProfiles();
+  }
+
+  @Override public void addChild( String profileId, String childProfileId ) {
+    delegate.addChild( profileId, childProfileId );
+  }
+
+  @POST
+  @Path( "/add" )
+  public void addChild( AggregateAddChildWrapper aggregateAddChildWrapper ) {
+    this.addChild( aggregateAddChildWrapper.getProfileId(), aggregateAddChildWrapper.getChildProfileId() );
+  }
 }

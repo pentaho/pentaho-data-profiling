@@ -30,8 +30,8 @@ import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
+import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +115,7 @@ public class ProfilingServiceImplTest {
     ProfileStatus profileStatus = mock( ProfileStatusImpl.class );
     profilingService.getProfileMap().put( profileId, profile );
     profilingService.getProfileStatusManagerMap().put( profileId, profileStatusManager );
-    List<ProfileStatusManager> statuses = profilingService.getActiveProfiles();
+    List<ProfileStatusReader> statuses = profilingService.getActiveProfiles();
     assertEquals( 1, statuses.size() );
     assertEquals( profileStatusManager, statuses.get( 0 ) );
   }
@@ -207,10 +207,10 @@ public class ProfilingServiceImplTest {
     assertEquals( profileStatus, notificationObject.getObject() );
   }
 
-  @Test
+  /*@Test
   public void testSetProfileActionExecutor() {
     ProfileActionExecutor profileActionExecutor = mock( ProfileActionExecutor.class );
     profilingService.setProfileActionExecutor( profileActionExecutor );
     assertEquals( profileActionExecutor, profilingService.getProfileActionExecutor() );
-  }
+  }*/
 }

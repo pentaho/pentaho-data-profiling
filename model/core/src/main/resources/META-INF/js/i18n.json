@@ -1,5 +1,6 @@
 {
-  "profiling-model": [
+  "data-profiling-model": [
+    "com/pentaho/profiling/model/messages",
     "com/pentaho/profiling/model/operations/messages"
   ]
 }

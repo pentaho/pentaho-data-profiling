@@ -26,6 +26,7 @@ import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
+import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 
@@ -82,9 +83,9 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @GET
   @Path( "/" )
   public List<ProfileStatus> getActiveProfilesWebservice() {
-    List<ProfileStatusManager> profileStatusManagers = getActiveProfiles();
-    List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileStatusManagers.size() );
-    for ( ProfileStatusManager profileStatusManager : profileStatusManagers ) {
+    List<ProfileStatusReader> profileStatusReaders = getActiveProfiles();
+    List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileStatusReaders.size() );
+    for ( ProfileStatusReader profileStatusManager : profileStatusReaders ) {
       result.add( profileStatusManager.read( new ProfileStatusReadOperation<ProfileStatus>() {
         @Override public ProfileStatus read( ProfileStatus profileStatus ) {
           return profileStatus;
@@ -95,7 +96,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   @Override
-  public List<ProfileStatusManager> getActiveProfiles() {
+  public List<ProfileStatusReader> getActiveProfiles() {
     return delegate.getActiveProfiles();
   }
 
@@ -110,7 +111,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   @Override
-  public ProfileStatusManager getProfileUpdate( String profileId ) {
+  public ProfileStatusReader getProfileUpdate( String profileId ) {
     return delegate.getProfileUpdate( profileId );
   }
 

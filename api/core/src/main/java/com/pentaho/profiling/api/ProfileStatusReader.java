@@ -20,14 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.action;
+package com.pentaho.profiling.api;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 3/5/15.
  */
-public abstract class DefaultProfileActionResult implements ProfileActionResult {
-  @Override
-  public ProfileActionException getProfileException() {
-    return null;
-  }
+public interface ProfileStatusReader extends ProfileStatus {
+  public <T> T read( ProfileStatusReadOperation<T> profileStatusReadOperation );
 }

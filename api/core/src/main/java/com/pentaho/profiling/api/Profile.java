@@ -22,7 +22,7 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by bryan on 7/31/14.
@@ -30,7 +30,7 @@ import com.pentaho.profiling.api.action.ProfileActionExecutor;
 public interface Profile {
   public String getId();
 
-  void start( ProfileActionExecutor profileActionExecutor );
+  void start( ExecutorService executorService );
 
   void stop();
 

@@ -25,8 +25,6 @@ package com.pentaho.profiling.api;
 /**
  * Created by bryan on 9/29/14.
  */
-public interface ProfileStatusManager extends ProfileStatus {
-  public <T> T read( ProfileStatusReadOperation<T> profileStatusReadOperation );
-
+public interface ProfileStatusManager extends ProfileStatusReader {
   public <T> T write( ProfileStatusWriteOperation<T> profileStatusWriteOperation );
 }

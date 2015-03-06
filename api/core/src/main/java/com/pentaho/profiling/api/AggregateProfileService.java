@@ -20,42 +20,15 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.model;
+package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.action.ProfileAction;
-import com.pentaho.profiling.api.action.ProfileActionExecutionCallback;
-import com.pentaho.profiling.api.action.ProfileActionExecutor;
-import com.pentaho.profiling.api.action.Profiler;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.List;
 
 /**
- * Created by bryan on 8/1/14.
+ * Created by bryan on 3/5/15.
  */
-public class ProfileActionExecutorImpl implements ProfileActionExecutor {
-  private ExecutorService executorService = Executors.newCachedThreadPool();
+public interface AggregateProfileService {
+  public List<AggregateProfile> getAggregateProfiles();
 
-  protected void setExecutorService( ExecutorService executorService ) {
-    this.executorService = executorService;
-  }
-
-  @Override
-  public void submit( final ProfileAction action,
-                      final ProfileActionExecutionCallback profileActionExecutionCallback ) {
-    executorService.submit( new Runnable() {
-      @Override
-      public void run() {
-        profileActionExecutionCallback.call( action.execute() );
-      }
-    } );
-  }
-
-  @Override public void submit( final Profiler profiler ) {
-    executorService.submit( new Runnable() {
-      @Override public void run() {
-        profiler.execute();
-      }
-    } );
-  }
+  public void addChild( String profileId, String childProfileId );
 }
