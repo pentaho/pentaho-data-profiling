@@ -56,6 +56,8 @@ public class ProfilingField {
       return copyMap( (Map<String, Object>) value );
     } else if ( value instanceof Collection ) {
       return copyCollection( (Collection<Object>) value );
+    } else if ( value instanceof PublicCloneable ) {
+      return ( (PublicCloneable) value ).clone();
     } else {
       return value;
     }

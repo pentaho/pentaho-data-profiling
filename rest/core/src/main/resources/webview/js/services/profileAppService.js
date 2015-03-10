@@ -112,13 +112,15 @@ define(["require", './services'], function (require, appServices) {
               profileAppService.dataSourceService.getInclude({id: newDsId, dataSourceProvider: newDsProv}, function (dsIncludeWrapper) {
 
                 var dsInclude = dsIncludeWrapper.profileDataSourceInclude;
-                if (dsInclude.require) {
-                  require([dsInclude.require], function () {
+                if (dsInclude ) {
+                  if (dsInclude.require) {
+                    require([dsInclude.require], function () {
+                      profileAppService.dataSourceUrl = dsInclude.url;
+                      profileAppService.scope.$apply();
+                    });
+                  } else {
                     profileAppService.dataSourceUrl = dsInclude.url;
-                    profileAppService.scope.$apply();
-                  });
-                } else {
-                  profileAppService.dataSourceUrl = dsInclude.url;
+                  }
                 }
               });
             }

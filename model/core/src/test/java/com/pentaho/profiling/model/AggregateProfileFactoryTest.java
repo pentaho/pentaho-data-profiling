@@ -27,9 +27,8 @@ import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.model.AggregateProfileFactory;
-import com.pentaho.profiling.model.AggregateProfileServiceImpl;
-import com.pentaho.profiling.model.ProfilingServiceImpl;
+import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,14 +47,16 @@ public class AggregateProfileFactoryTest {
   private AggregateProfileServiceImpl aggregateProfileService;
   private List<MetricContributor> metricContributors;
   private AggregateProfileFactory aggregateProfileFactory;
+  private MetricContributorsFactory metricContributorsFactory;
 
   @Before
   public void setup() {
     profilingService = mock( ProfilingServiceImpl.class );
     aggregateProfileService = mock( AggregateProfileServiceImpl.class );
     metricContributors = mock( List.class );
+    metricContributorsFactory = mock( MetricContributorsFactory.class );
     aggregateProfileFactory =
-      new AggregateProfileFactory( profilingService, aggregateProfileService, metricContributors );
+      new AggregateProfileFactory( profilingService, aggregateProfileService, metricContributorsFactory );
   }
 
   @Test
@@ -70,7 +71,8 @@ public class AggregateProfileFactoryTest {
     DataSourceReference dataSourceReference =
       new DataSourceReference( "test-id", AggregateProfileFactory.AGGREGATE_PROFILE );
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
-    Profile profile = aggregateProfileFactory.create( dataSourceReference, profileStatusManager );
+    Profile profile = aggregateProfileFactory
+      .create( dataSourceReference, profileStatusManager, new MetricContributors( metricContributors, null ) );
     assertTrue( profile instanceof AggregateProfile );
     verify( aggregateProfileService ).registerAggregateProfile( (AggregateProfile) profile );
   }

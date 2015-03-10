@@ -22,7 +22,21 @@
 
 package com.pentaho.model.metrics.contributor.metricManager;
 
+import com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor;
+import com.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor;
+import com.pentaho.model.metrics.contributor.metricManager.impl.PercentileMetricContributor;
+import com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor;
+import com.pentaho.profiling.api.ProfileCreateRequest;
+import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.metrics.MetricContributor;
+import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by bryan on 2/5/15.
@@ -32,5 +46,17 @@ public class NVLOperationsTest {
   public void testConstructor() {
     // Required for code coverage, class is only used in static context
     NVLOperations nvlOperations = new NVLOperations();
+  }
+
+  @Test
+  public void testOUt() throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
+    System.out.println( objectMapper.writeValueAsString( new ProfileCreateRequest(
+      new DataSourceReference( "test", "com.pentaho.profiling.mongo.api.MongoProfilingConnectionMetadataService" ), new MetricContributors(
+      new ArrayList<MetricContributor>( Arrays.<MetricContributor>asList() ),
+      new ArrayList<MetricManagerContributor>(
+        Arrays.<MetricManagerContributor>asList( new CategoricalMetricContributor(), new CardinalityMetricContributor(),
+          new RegexAddressMetricContributor(), new PercentileMetricContributor() ) ) ) ) ) );
   }
 }

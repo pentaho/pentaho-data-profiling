@@ -2,7 +2,8 @@
 <blueprint xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   <bean id="profilingServiceImpl" class="com.pentaho.profiling.model.ProfilingServiceImpl">
-    <property name="executorService" ref="executorService"/>
+    <argument ref="executorService"/>
+    <argument ref="metricContributorServiceImpl"/>
   </bean>
 
   <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"
@@ -10,10 +11,27 @@
 
   <bean id="aggregateProfileServiceImpl" class="com.pentaho.profiling.model.AggregateProfileServiceImpl"
         scope="singleton"/>
+
+  <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.model.MetricContributorServiceImpl">
+    <argument ref="metricContributorBundles"/>
+    <argument ref="metricContributorsObjectMapperFactory"/>
+  </bean>
+
+  <bean id="metricContributorsFactoryImpl" class="com.pentaho.profiling.model.MetricContributorsFactoryImpl"
+        scope="singleton">
+    <argument ref="metricContributorServiceImpl"/>
+  </bean>
+
   <bean id="aggregateProfileFactory" class="com.pentaho.profiling.model.AggregateProfileFactory" scope="singleton">
     <argument ref="profilingServiceImpl"/>
     <argument ref="aggregateProfileServiceImpl"/>
-    <argument ref="metricContributors"/>
+    <argument ref="metricContributorsFactoryImpl"/>
+  </bean>
+
+  <bean id="metricContributorsObjectMapperFactory"
+        class="com.pentaho.profiling.model.MetricContributorsObjectMapperFactoryImpl"
+        scope="singleton">
+    <argument ref="metricContributorBundles"/>
   </bean>
 
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
@@ -26,10 +44,16 @@
            interface="com.pentaho.profiling.api.ProfileFactory"/>
   <service id="aggregateProfileServiceImplService" ref="aggregateProfileServiceImpl"
            interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <service id="metricContributorServiceImplService" ref="metricContributorServiceImpl"
+           interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
+  <service interface="com.pentaho.profiling.api.metrics.MetricContributorsFactory" ref="metricContributorsFactoryImpl"/>
+  <service ref="metricContributorsObjectMapperFactory"
+           interface="com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory"/>
   <reference-list id="profileFactoryRefList" interface="com.pentaho.profiling.api.ProfileFactory"
                   availability="optional">
     <reference-listener ref="profilingServiceImpl" bind-method="profileFactoryAdded"
                         unbind-method="profileFactoryRemoved"/>
   </reference-list>
-  <reference-list id="metricContributors" interface="com.pentaho.profiling.api.metrics.MetricContributor"/>
+  <reference-list id="metricContributorBundles"
+                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
 </blueprint>

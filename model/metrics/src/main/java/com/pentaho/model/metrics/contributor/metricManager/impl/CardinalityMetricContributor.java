@@ -24,8 +24,8 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
-import com.clearspring.analytics.stream.cardinality.ICardinality;
 import com.pentaho.model.metrics.contributor.Constants;
+import com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileStatusMessage;
@@ -53,15 +53,7 @@ import java.util.Set;
 /**
  * Created by mhall on 27/01/15.
  */
-public class CardinalityMetricContributor implements MetricManagerContributor {
-  /**
-   * Default precision for the "normal" mode of HyperLogLogPlus
-   */
-  public static final int P_PRECISION = 12;
-  /**
-   * Default precision for the "sparse" mode of HyperLogLogPlus
-   */
-  public static final int SP_PRECISION = 16;
+public class CardinalityMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final String[] CARDINALITY_PATH =
     new String[] { MetricContributorUtils.STATISTICS, Statistic.CARDINALITY };
   public static final String[] CARDINALITY_PATH_ESTIMATOR =
@@ -76,8 +68,16 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
   private static final Set<Class<?>> supportedTypes =
     Collections.unmodifiableSet( new HashSet<Class<?>>( Arrays.asList( Integer.class, Long.class,
       Float.class, Double.class, String.class, Boolean.class, Date.class, byte[].class ) ) );
+  /**
+   * Default precision for the "normal" mode of HyperLogLogPlus
+   */
+  public int normalPrecision = 12;
+  /**
+   * Default precision for the "sparse" mode of HyperLogLogPlus
+   */
+  public int sparsePrecision = 16;
 
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     Set<String> result = new HashSet<String>();
     for ( Class<?> clazz : supportedTypes ) {
       result.add( clazz.getCanonicalName() );
@@ -85,8 +85,8 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     return result;
   }
 
-  public HyperLogLogPlus createHyperLogLogPlus() {
-    return new HyperLogLogPlus( P_PRECISION, SP_PRECISION );
+  public HyperLogLogPlusHolder createHyperLogLogPlus() {
+    return new HyperLogLogPlusHolder( new HyperLogLogPlus( normalPrecision, sparsePrecision ) );
   }
 
   @Override
@@ -94,7 +94,7 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     throws ProfileActionException {
     Object value = dataSourceFieldValue.getFieldValue();
     try {
-      ICardinality hllp = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
+      HyperLogLogPlusHolder hllp = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
       if ( hllp == null ) {
         hllp = createHyperLogLogPlus();
         dataSourceMetricManager.setValue( hllp, CARDINALITY_PATH_ESTIMATOR );
@@ -106,10 +106,10 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     }
   }
 
-  private ICardinality getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
+  private HyperLogLogPlusHolder getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
     Object estimatorObject = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
-    if ( estimatorObject instanceof ICardinality ) {
-      return (ICardinality) estimatorObject;
+    if ( estimatorObject instanceof HyperLogLogPlusHolder ) {
+      return (HyperLogLogPlusHolder) estimatorObject;
     } else if ( estimatorObject instanceof Map ) {
       Object byteObject = ( (Map) estimatorObject ).get( "bytes" );
       if ( byteObject instanceof String ) {
@@ -120,7 +120,7 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
         }
       }
       try {
-        return HyperLogLogPlus.Builder.build( (byte[]) byteObject );
+        return new HyperLogLogPlusHolder( HyperLogLogPlus.Builder.build( (byte[]) byteObject ) );
       } catch ( IOException e ) {
         LOGGER.error( e.getMessage(), e );
       }
@@ -133,8 +133,8 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
 
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
-    ICardinality originalEstimator = getEstimator( into );
-    ICardinality secondEstimator = getEstimator( from );
+    HyperLogLogPlusHolder originalEstimator = getEstimator( into );
+    HyperLogLogPlusHolder secondEstimator = getEstimator( from );
     if ( originalEstimator == null ) {
       originalEstimator = secondEstimator;
     } else if ( secondEstimator == null ) {
@@ -147,15 +147,10 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
       }
     }
     into.setValue( originalEstimator, CARDINALITY_PATH_ESTIMATOR );
-    try {
-      setDerived( into );
-    } catch ( ProfileActionException e ) {
-      LOGGER.error( e.getMessage(), e );
-    }
   }
 
   @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-    ICardinality hllp = getEstimator( dataSourceMetricManager );
+    HyperLogLogPlusHolder hllp = getEstimator( dataSourceMetricManager );
     if ( hllp != null ) {
       dataSourceMetricManager.setValue( hllp.cardinality(), CARDINALITY_PATH );
     }
@@ -165,7 +160,23 @@ public class CardinalityMetricContributor implements MetricManagerContributor {
     dataSourceMetricManager.clear( CLEAR_PATHS );
   }
 
-  public List<ProfileFieldProperty> getProfileFieldProperties() {
+  public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( CARDINALITY );
+  }
+
+  public int getNormalPrecision() {
+    return normalPrecision;
+  }
+
+  public void setNormalPrecision( int normalPrecision ) {
+    this.normalPrecision = normalPrecision;
+  }
+
+  public int getSparsePrecision() {
+    return sparsePrecision;
+  }
+
+  public void setSparsePrecision( int sparsePrecision ) {
+    this.sparsePrecision = sparsePrecision;
   }
 }

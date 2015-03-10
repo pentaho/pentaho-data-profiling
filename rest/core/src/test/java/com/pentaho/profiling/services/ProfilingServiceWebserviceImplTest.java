@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.services;
 
+import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
@@ -29,6 +30,7 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -52,17 +54,13 @@ import static org.mockito.Mockito.when;
 public class ProfilingServiceWebserviceImplTest {
   private ProfilingService delegate;
   private ProfilingServiceWebserviceImpl webservice;
+  private MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
 
   @Before
   public void setup() {
     delegate = mock( ProfilingService.class );
-    webservice = new ProfilingServiceWebserviceImpl();
-    webservice.setDelegate( delegate );
-  }
-
-  @Test
-  public void testGetDelegate() {
-    assertEquals( delegate, webservice.getDelegate() );
+    metricContributorsObjectMapperFactory = mock( MetricContributorsObjectMapperFactory.class );
+    webservice = new ProfilingServiceWebserviceImpl( delegate, metricContributorsObjectMapperFactory );
   }
 
   @Test
@@ -74,9 +72,9 @@ public class ProfilingServiceWebserviceImplTest {
         return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
-    when( delegate.create( dataSourceReference ) ).thenReturn( result );
-    assertEquals( profileStatus, webservice.createWebservice( dataSourceReference ) );
+    ProfileCreateRequest profileCreateRequest = mock( ProfileCreateRequest.class );
+    when( delegate.create( profileCreateRequest ) ).thenReturn( result );
+    assertEquals( result, webservice.create( profileCreateRequest ) );
   }
 
   @Test

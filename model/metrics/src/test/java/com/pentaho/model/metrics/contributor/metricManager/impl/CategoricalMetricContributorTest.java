@@ -96,12 +96,12 @@ public class CategoricalMetricContributorTest {
   }
 
   @Test public void testGetProfileFieldProperties() {
-    assertNotNull( new CategoricalMetricContributor().getProfileFieldProperties() );
+    assertNotNull( new CategoricalMetricContributor().profileFieldProperties() );
   }
 
   @Test
   public void testGetTypes() {
-    assertNotNull( new CategoricalMetricContributor().getTypes() );
+    assertNotNull( new CategoricalMetricContributor().supportedTypes() );
   }
 
   @Test

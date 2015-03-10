@@ -107,11 +107,11 @@ public class DateMetricContributorTest {
 
   @Test
   public void testGetTypes() {
-    assertNotNull( dateMetricContributor.getTypes() );
+    assertNotNull( dateMetricContributor.supportedTypes() );
   }
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( dateMetricContributor.getProfileFieldProperties() );
+    assertNotNull( dateMetricContributor.profileFieldProperties() );
   }
 }
