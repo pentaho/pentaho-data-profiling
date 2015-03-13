@@ -35,6 +35,8 @@ import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.metrics.MetricContributor;
+import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.ProfileFieldProperties;
 import com.pentaho.profiling.api.metrics.field.DataSourceField;
@@ -70,7 +72,7 @@ public class AggregateProfileImpl implements AggregateProfile {
   private final ReadWriteLock readWriteLock;
   private final List<String> childProfileIdList;
   private final Set<String> childProfileIdSet;
-  private final List<MetricContributor> metricContributors;
+  private final List<MetricContributor> metricContributorList;
   private final NotificationListener notificationListener;
   private final AtomicBoolean running;
   private final AtomicBoolean refreshQueued;
@@ -79,11 +81,12 @@ public class AggregateProfileImpl implements AggregateProfile {
 
   public AggregateProfileImpl( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager,
                                ProfilingServiceImpl profilingService,
-                               final List<MetricContributor> metricContributors ) {
+                               MetricContributorsFactory metricContributorsFactory,
+                               MetricContributors metricContributors ) {
     this.dataSourceReference = dataSourceReference;
     this.profileStatusManager = profileStatusManager;
     this.profilingService = profilingService;
-    this.metricContributors = metricContributors;
+    this.metricContributorList = metricContributorsFactory.construct( metricContributors );
     this.childProfileIdList = new ArrayList<String>();
     this.childProfileIdSet = new HashSet<String>();
     this.readWriteLock = new ReentrantReadWriteLock();
@@ -96,7 +99,7 @@ public class AggregateProfileImpl implements AggregateProfile {
           ProfileFieldProperties.PHYSICAL_NAME, ProfileFieldProperties.FIELD_TYPE,
           ProfileFieldProperties.COUNT_FIELD );
         List<ProfileFieldProperty> profileFieldProperties = new ArrayList<ProfileFieldProperty>( intrinsicProperties );
-        for ( MetricContributor metricContributor : metricContributors ) {
+        for ( MetricContributor metricContributor : metricContributorList ) {
           for ( ProfileFieldProperty profileFieldProperty : metricContributor.getProfileFieldProperties() ) {
             profileFieldProperties.add( profileFieldProperty );
           }
@@ -183,7 +186,7 @@ public class AggregateProfileImpl implements AggregateProfile {
         }
       }
     }
-    for ( MetricContributor metricContributor : metricContributors ) {
+    for ( MetricContributor metricContributor : metricContributorList ) {
       try {
         metricContributor.merge( dataSourceFieldManagerInto, dataSourceFieldManagerFrom );
       } catch ( MetricMergeException e ) {

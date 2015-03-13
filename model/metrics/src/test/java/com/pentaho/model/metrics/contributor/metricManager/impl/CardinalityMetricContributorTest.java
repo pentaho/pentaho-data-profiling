@@ -24,6 +24,7 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.ICardinality;
+import com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceField;
@@ -85,7 +86,7 @@ public class CardinalityMetricContributorTest {
 
   @Test
   public void testGetSupportedTypes() {
-    assertTrue( new CardinalityMetricContributor().getTypes().contains( String.class.getCanonicalName() ) );
+    assertTrue( new CardinalityMetricContributor().supportedTypes().contains( String.class.getCanonicalName() ) );
   }
 
   @Test
@@ -99,44 +100,47 @@ public class CardinalityMetricContributorTest {
   }
 
   @Test
-  public void testMergeNoFirst() throws MetricMergeException {
+  public void testMergeNoFirst() throws MetricMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
     DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    ICardinality iCardinality = mock( ICardinality.class );
+    HyperLogLogPlusHolder iCardinality = mock( HyperLogLogPlusHolder.class );
     when( iCardinality.cardinality() ).thenReturn( 5L );
     from.setValue( iCardinality, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
     cardinalityMetricContributor.merge( into, from );
+    cardinalityMetricContributor.setDerived( into );
     assertEquals( iCardinality, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
     assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
   }
 
   @Test
-  public void testMergeNoSecond() throws MetricMergeException {
+  public void testMergeNoSecond() throws MetricMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
     DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    ICardinality iCardinality = mock( ICardinality.class );
+    HyperLogLogPlusHolder iCardinality = mock( HyperLogLogPlusHolder.class );
     when( iCardinality.cardinality() ).thenReturn( 5L );
     into.setValue( iCardinality, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
     cardinalityMetricContributor.merge( into, from );
+    cardinalityMetricContributor.setDerived( into );
     assertEquals( iCardinality, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
     assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
   }
 
   @Test
-  public void testMergeBoth() throws MetricMergeException, CardinalityMergeException {
+  public void testMergeBoth() throws MetricMergeException, CardinalityMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
     DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    ICardinality originalEstimator = mock( ICardinality.class );
-    ICardinality secondEstimator = mock( ICardinality.class );
-    ICardinality mergedEstimator = mock( ICardinality.class );
+    HyperLogLogPlusHolder originalEstimator = mock( HyperLogLogPlusHolder.class );
+    HyperLogLogPlusHolder secondEstimator = mock( HyperLogLogPlusHolder.class );
+    HyperLogLogPlusHolder mergedEstimator = mock( HyperLogLogPlusHolder.class );
     when( originalEstimator.merge( secondEstimator ) ).thenReturn( mergedEstimator );
     when( mergedEstimator.cardinality() ).thenReturn( 5L );
     into.setValue( originalEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
     from.setValue( secondEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
     cardinalityMetricContributor.merge( into, from );
+    cardinalityMetricContributor.setDerived( into );
     verify( originalEstimator ).merge( secondEstimator );
     assertEquals( mergedEstimator, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
     assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
@@ -154,8 +158,8 @@ public class CardinalityMetricContributorTest {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
     DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    ICardinality originalEstimator = mock( ICardinality.class );
-    ICardinality secondEstimator = mock( ICardinality.class );
+    HyperLogLogPlusHolder originalEstimator = mock( HyperLogLogPlusHolder.class );
+    HyperLogLogPlusHolder secondEstimator = mock( HyperLogLogPlusHolder.class );
     when( originalEstimator.merge( secondEstimator ) ).thenThrow( new CardinalityMergeException( "fake" ) {
     } );
     into.setValue( originalEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
@@ -165,6 +169,6 @@ public class CardinalityMetricContributorTest {
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( new CardinalityMetricContributor().getProfileFieldProperties().size() );
+    assertNotNull( new CardinalityMetricContributor().profileFieldProperties().size() );
   }
 }

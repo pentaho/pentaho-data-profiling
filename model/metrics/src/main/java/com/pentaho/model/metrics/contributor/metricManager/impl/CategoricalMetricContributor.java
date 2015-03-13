@@ -46,7 +46,7 @@ import java.util.Set;
 /**
  * Created by mhall on 28/01/15.
  */
-public class CategoricalMetricContributor implements MetricManagerContributor {
+public class CategoricalMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, CategoricalMetricContributor.class );
   public static final ProfileFieldProperty CATEGORICAL_FIELD = MetricContributorUtils
@@ -55,9 +55,20 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
   public static final List<String[]> CLEAR_PATHS =
     new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { Statistic.FREQUENCY_DISTRIBUTION } ) );
   private static final Logger LOGGER = LoggerFactory.getLogger( CategoricalMetricContributor.class );
+  private int distinctAllowed = 100;
 
-  @Override public Set<String> getTypes() {
-    return new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
+  public int getDistinctAllowed() {
+    return distinctAllowed;
+  }
+
+  public void setDistinctAllowed( int distinctAllowed ) {
+    this.distinctAllowed = distinctAllowed;
+  }
+
+  @Override public Set<String> supportedTypes() {
+    HashSet<String> types = new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
+    types.addAll( NumericMetricContributor.getTypesStatic() );
+    return types;
   }
 
   @Override
@@ -86,7 +97,7 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
         frequency += 1;
       }
       frequencyMap.put( category, frequency );
-      if ( frequencyMap.size() > 100 ) {
+      if ( frequencyMap.size() > distinctAllowed ) {
         categoricalMap.remove( MetricContributorUtils.CATEGORIES );
         categoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
       }
@@ -118,7 +129,7 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
           firstCategoryCountMap.put( secondCategoryKey, firstValue + secondEntry.getValue() );
         }
 
-        if ( firstCategoryCountMap.size() > 100 ) {
+        if ( firstCategoryCountMap.size() > distinctAllowed ) {
           firstCategoricalMap.remove( MetricContributorUtils.CATEGORIES );
           firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
         }
@@ -130,15 +141,11 @@ public class CategoricalMetricContributor implements MetricManagerContributor {
     into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
-  }
-
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_PATHS );
   }
 
-  @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
+  @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( CATEGORICAL_FIELD );
   }
 }

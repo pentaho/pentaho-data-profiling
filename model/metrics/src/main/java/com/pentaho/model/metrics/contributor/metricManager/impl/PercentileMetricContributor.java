@@ -24,7 +24,8 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
 import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.model.metrics.contributor.metricManager.NVLOperations;
+import com.pentaho.model.metrics.contributor.metricManager.impl.percentile.PercentileDefinition;
+import com.pentaho.model.metrics.contributor.metricManager.impl.percentile.TDigestHolder;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
@@ -35,20 +36,21 @@ import com.pentaho.profiling.api.metrics.NVL;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.stats.Statistic;
+import org.codehaus.jackson.node.TextNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by mhall on 27/01/15.
  */
-public class PercentileMetricContributor implements MetricManagerContributor {
-  /**
-   * Default compression for TDigest quantile estimators
-   */
-  public static final double Q_COMPRESSION = 50.0;
+public class PercentileMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
 
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, PercentileMetricContributor.class );
@@ -78,8 +80,16 @@ public class PercentileMetricContributor implements MetricManagerContributor {
   public static final ProfileFieldProperty PERCENTILE_THIRDQUARTILE = MetricContributorUtils
     .createMetricProperty( KEY_PATH, PERCENTILE_THIRDQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
       Statistic.PERCENTILE + "_75" );
+  private static final Logger LOGGER = LoggerFactory.getLogger( PercentileMetricContributor.class );
 
   private final NVL nvl;
+
+  /**
+   * Default compression for TDigest quantile estimators
+   */
+  public double compression = 50.0;
+
+  private List<PercentileDefinition> percentileDefinitions = initPercentileDefinitions();
 
   public PercentileMetricContributor() {
     this( new NVL() );
@@ -89,19 +99,43 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     this.nvl = nvl;
   }
 
-  private static void setDerived( DataSourceMetricManager metricsForFieldType, TDigest digest ) {
-    Long count = metricsForFieldType.getValueNoDefault( MetricContributorUtils.COUNT );
+  private List<PercentileDefinition> initPercentileDefinitions() {
+    List<PercentileDefinition> result = new ArrayList<PercentileDefinition>();
+    result.add( new PercentileDefinition( 0.25, PERCENTILE_FIRSTQUARTILE ) );
+    result.add( new PercentileDefinition( 0.5, PERCENTILE_MEDIAN ) );
+    result.add( new PercentileDefinition( 0.75, PERCENTILE_THIRDQUARTILE ) );
+    return result;
+  }
+
+  public List<PercentileDefinition> getPercentileDefinitions() {
+    return percentileDefinitions;
+  }
+
+  public void setPercentileDefinitions( List<PercentileDefinition> percentileDefinitions ) {
+    this.percentileDefinitions = percentileDefinitions;
+  }
+
+  public double getCompression() {
+    return compression;
+  }
+
+  public void setCompression( double compression ) {
+    this.compression = compression;
+  }
+
+  @Override public void setDerived( DataSourceMetricManager metricsForFieldType ) {
+    Long count = metricsForFieldType.<Number>getValueNoDefault( MetricContributorUtils.COUNT ).longValue();
+    TDigestHolder tDigestHolder = getEstimator( metricsForFieldType );
     if ( count >= 5 ) {
-      metricsForFieldType
-        .setValue( digest.quantile( 0.25 ), MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" );
-      metricsForFieldType
-        .setValue( digest.quantile( 0.5 ), MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" );
-      metricsForFieldType
-        .setValue( digest.quantile( 0.75 ), MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_75" );
+      for ( PercentileDefinition percentileDefinition : percentileDefinitions ) {
+        metricsForFieldType
+          .setValue( tDigestHolder.quantile( percentileDefinition.getPercentile() ),
+            percentileDefinition.pathToProperty() );
+      }
     }
   }
 
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     return NumericMetricContributor.getTypesStatic();
   }
 
@@ -109,35 +143,67 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     dataSourceMetricManager.clear( CLEAR_PATH );
   }
 
+  private TDigestHolder getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
+    Object estimatorObject = dataSourceMetricManager
+      .getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
+    if ( estimatorObject instanceof TDigestHolder ) {
+      return (TDigestHolder) estimatorObject;
+    } else if ( estimatorObject instanceof Map ) {
+      Object byteObject = ( (Map) estimatorObject ).get( "bytes" );
+      if ( byteObject instanceof String ) {
+        try {
+          byteObject = new TextNode( (String) byteObject ).getBinaryValue();
+        } catch ( IOException e ) {
+          LOGGER.error( e.getMessage(), e );
+        }
+      }
+      TDigestHolder tDigestHolder = new TDigestHolder();
+      tDigestHolder.setBytes( (byte[]) byteObject );
+      return tDigestHolder;
+    } else {
+      String className = estimatorObject == null ? "null" : estimatorObject.getClass().getCanonicalName();
+      LOGGER.warn( Statistic.PERCENTILE + "_estimator" + " was of type " + className );
+    }
+    return null;
+  }
+
   @Override
   public void process( DataSourceMetricManager metricsForFieldType, DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
     double value = ( (Number) dataSourceFieldValue.getFieldValue() ).doubleValue();
 
-    TDigest digest = metricsForFieldType.getValueNoDefault( MetricContributorUtils.STATISTICS,
-      Statistic.PERCENTILE + "_estimator" );
+    TDigestHolder tDigestHolder =
+      metricsForFieldType.<TDigestHolder>getValueNoDefault( MetricContributorUtils.STATISTICS,
+        Statistic.PERCENTILE + "_estimator" );
 
-    if ( digest == null ) {
-      digest = new TDigest( Q_COMPRESSION );
-      metricsForFieldType.setValue( digest, MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
+    if ( tDigestHolder == null ) {
+      tDigestHolder = new TDigestHolder( new TDigest( compression ) );
+      metricsForFieldType
+        .setValue( tDigestHolder, MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
     }
 
-    digest.add( value );
-    setDerived( metricsForFieldType, digest );
+    tDigestHolder.add( value );
   }
 
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
-    TDigest tDigest = nvl.performAndSet( NVLOperations.TDIGEST_MERGE, into, from, MetricContributorUtils.STATISTICS,
-      Statistic.PERCENTILE + "_estimator" );
-    setDerived( into, tDigest );
+    TDigestHolder originalHolder = getEstimator( into );
+    TDigestHolder secondHolder = getEstimator( from );
+    if ( originalHolder == null ) {
+      originalHolder = secondHolder;
+    } else if ( secondHolder == null ) {
+      LOGGER.debug( "First field had estimator but second field didn't." );
+    } else {
+      originalHolder.add( secondHolder );
+    }
+    into.setValue( originalHolder, MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
-  }
-
-  public List<ProfileFieldProperty> getProfileFieldProperties() {
-    return Arrays.asList( PERCENTILE_FIRSTQUARTILE, PERCENTILE_MEDIAN, PERCENTILE_THIRDQUARTILE );
+  public List<ProfileFieldProperty> profileFieldProperties() {
+    List<ProfileFieldProperty> result = new ArrayList<ProfileFieldProperty>( percentileDefinitions.size() );
+    for ( PercentileDefinition percentileDefinition : percentileDefinitions ) {
+      result.add( percentileDefinition.getProfileFieldProperty() );
+    }
+    return result;
   }
 }

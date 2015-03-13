@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public class WordCountMetricContributor implements MetricManagerContributor {
+public class WordCountMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
 
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, WordCountMetricContributor.class );
@@ -79,12 +79,13 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     this.nvl = nvl;
   }
 
-  private void setDerived( DataSourceMetricManager metricsForFieldType, Number newSumStat ) {
+  @Override public void setDerived( DataSourceMetricManager metricsForFieldType ) {
     Number count = metricsForFieldType.getValueNoDefault( MetricContributorUtils.COUNT );
+    Number newSumStat = metricsForFieldType.getValueNoDefault( WORD_COUNT_KEY_SUM );
     metricsForFieldType.setValue( ( newSumStat.doubleValue() / count.doubleValue() ), WORD_COUNT_KEY_MEAN );
   }
 
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     return new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
   }
 
@@ -96,25 +97,17 @@ public class WordCountMetricContributor implements MetricManagerContributor {
     long numWords = tokenizer.countTokens();
     nvl.performAndSet( NVLOperations.LONG_MIN, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MAX );
-    Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords,
-      WORD_COUNT_KEY_SUM );
-    setDerived( dataSourceMetricManager, newSumStat );
+    nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords, WORD_COUNT_KEY_SUM );
   }
 
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
     throws MetricMergeException {
     nvl.performAndSet( NVLOperations.LONG_MIN, into, from, WORD_COUNT_KEY_MIN );
     nvl.performAndSet( NVLOperations.LONG_MAX, into, from, WORD_COUNT_KEY_MAX );
-    Number newSumStat = nvl.performAndSet( NVLOperations.LONG_SUM, into, from,
-      WORD_COUNT_KEY_SUM );
-    setDerived( into, newSumStat );
+    nvl.performAndSet( NVLOperations.LONG_SUM, into, from, WORD_COUNT_KEY_SUM );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
-  }
-
-  @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
+  @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( WORD_COUNT_MIN, WORD_COUNT_MAX, WORD_COUNT_SUM, WORD_COUNT_MEAN );
   }
 

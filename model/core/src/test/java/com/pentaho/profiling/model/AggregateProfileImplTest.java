@@ -27,6 +27,9 @@ import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.metrics.MetricContributor;
+import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -38,7 +41,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -62,6 +64,7 @@ public class AggregateProfileImplTest {
   private ProfileFieldProperty profileFieldProperty;
   private ExecutorService executorService;
   private AggregateProfileImpl aggregateProfile;
+  private MetricContributorsFactory metricContributorsFactory;
   private Runnable refreshRunnable;
 
   @Before
@@ -74,6 +77,7 @@ public class AggregateProfileImplTest {
     profileFieldProperty = mock( ProfileFieldProperty.class );
     when( metricContributor.getProfileFieldProperties() ).thenReturn( Arrays.asList( profileFieldProperty ) );
     metricContributors.add( metricContributor );
+    metricContributorsFactory = mock( MetricContributorsFactory.class );
     profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
     executorService = mock( ExecutorService.class );
     when( executorService.submit( any( Runnable.class ) ) ).thenAnswer( new Answer<Future>() {
@@ -83,7 +87,8 @@ public class AggregateProfileImplTest {
       }
     } );
     aggregateProfile =
-      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributors );
+      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributorsFactory,
+        new MetricContributors( metricContributors, new ArrayList<MetricManagerContributor>() ) );
   }
 
   @Test

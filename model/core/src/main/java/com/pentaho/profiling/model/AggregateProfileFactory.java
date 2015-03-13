@@ -26,9 +26,8 @@ import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-
-import java.util.List;
+import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 
 /**
  * Created by bryan on 3/5/15.
@@ -37,14 +36,14 @@ public class AggregateProfileFactory implements ProfileFactory {
   public static final String AGGREGATE_PROFILE = "AGGREGATE_PROFILE";
   private final ProfilingServiceImpl profilingService;
   private final AggregateProfileServiceImpl aggregateProfileService;
-  private final List<MetricContributor> metricContributors;
+  private final MetricContributorsFactory metricContributorsFactory;
 
   public AggregateProfileFactory( ProfilingServiceImpl profilingService,
                                   AggregateProfileServiceImpl aggregateProfileService,
-                                  List<MetricContributor> metricContributors ) {
+                                  MetricContributorsFactory metricContributorsFactory ) {
     this.profilingService = profilingService;
     this.aggregateProfileService = aggregateProfileService;
-    this.metricContributors = metricContributors;
+    this.metricContributorsFactory = metricContributorsFactory;
   }
 
   @Override public boolean accepts( DataSourceReference dataSourceReference ) {
@@ -52,9 +51,11 @@ public class AggregateProfileFactory implements ProfileFactory {
   }
 
   @Override
-  public Profile create( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager ) {
+  public Profile create( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager,
+                         MetricContributors metricContributors ) {
     AggregateProfileImpl aggregateProfile =
-      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributors );
+      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributorsFactory,
+        metricContributors );
     aggregateProfileService.registerAggregateProfile( aggregateProfile );
     return aggregateProfile;
   }

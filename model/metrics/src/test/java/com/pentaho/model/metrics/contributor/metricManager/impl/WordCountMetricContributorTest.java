@@ -44,7 +44,9 @@ public class WordCountMetricContributorTest {
     metricManager.setValue( 1L, MetricContributorUtils.COUNT );
     String test = "a test string";
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test );
-    new WordCountMetricContributor().process( metricManager, dataSourceFieldValue );
+    WordCountMetricContributor wordCountMetricContributor = new WordCountMetricContributor();
+    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.setDerived( metricManager );
 
     assertEquals( 3L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
     assertEquals( 3L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
@@ -61,11 +63,13 @@ public class WordCountMetricContributorTest {
 
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test1 );
 
-    new WordCountMetricContributor().process( metricManager, dataSourceFieldValue );
+    WordCountMetricContributor wordCountMetricContributor = new WordCountMetricContributor();
+    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test2 );
-    new WordCountMetricContributor().process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test3 );
-    new WordCountMetricContributor().process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.setDerived( metricManager );
 
     assertEquals( 1L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
     assertEquals( 5L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
@@ -92,6 +96,7 @@ public class WordCountMetricContributorTest {
     wordCountMetricContributor.process( metricManager2, dataSourceFieldValue );
     metricManager.setValue( 3L, MetricContributorUtils.COUNT );
     wordCountMetricContributor.merge( metricManager, metricManager2 );
+    wordCountMetricContributor.setDerived( metricManager );
 
     assertEquals( 1L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
     assertEquals( 5L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
@@ -101,12 +106,12 @@ public class WordCountMetricContributorTest {
 
   @Test
   public void testGetTypes() {
-    assertNotNull( new WordCountMetricContributor().getTypes() );
+    assertNotNull( new WordCountMetricContributor().supportedTypes() );
   }
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( new WordCountMetricContributor().getProfileFieldProperties() );
+    assertNotNull( new WordCountMetricContributor().profileFieldProperties() );
   }
 
   @Test

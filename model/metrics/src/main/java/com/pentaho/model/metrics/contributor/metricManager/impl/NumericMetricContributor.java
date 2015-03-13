@@ -47,7 +47,7 @@ import java.util.Set;
  * <p/>
  * Created by mhall on 23/01/15.
  */
-public class NumericMetricContributor implements MetricManagerContributor {
+public class NumericMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final String[] MIN_PATH = new String[] { MetricContributorUtils.STATISTICS, Statistic.MIN };
   public static final String[] MAX_PATH = new String[] { MetricContributorUtils.STATISTICS, Statistic.MAX };
   public static final List<String[]> CLEAR_PATHS =
@@ -63,26 +63,26 @@ public class NumericMetricContributor implements MetricManagerContributor {
     MessageUtils.getId( Constants.KEY, NumericMetricContributor.class );
 
   public static final ProfileFieldProperty MIN = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Min", MetricContributorUtils.STATISTICS,
-        Statistic.MIN );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.Min", MetricContributorUtils.STATISTICS,
+      Statistic.MIN );
   public static final ProfileFieldProperty MAX = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Max", MetricContributorUtils.STATISTICS,
-        Statistic.MAX );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.Max", MetricContributorUtils.STATISTICS,
+      Statistic.MAX );
   public static final ProfileFieldProperty MEAN = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Mean", MetricContributorUtils.STATISTICS,
-        Statistic.MEAN );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.Mean", MetricContributorUtils.STATISTICS,
+      Statistic.MEAN );
   public static final ProfileFieldProperty STD_DEV = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.StandardDeviation", MetricContributorUtils.STATISTICS,
-        Statistic.STANDARD_DEVIATION );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.StandardDeviation", MetricContributorUtils.STATISTICS,
+      Statistic.STANDARD_DEVIATION );
   public static final ProfileFieldProperty SUM = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Sum", MetricContributorUtils.STATISTICS,
-        Statistic.SUM );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.Sum", MetricContributorUtils.STATISTICS,
+      Statistic.SUM );
   public static final ProfileFieldProperty SUM_OF_SQ = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.SumOfSquares", MetricContributorUtils.STATISTICS,
-        Statistic.SUM_OF_SQUARES );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.SumOfSquares", MetricContributorUtils.STATISTICS,
+      Statistic.SUM_OF_SQUARES );
   public static final ProfileFieldProperty VARIANCE = MetricContributorUtils
-      .createMetricProperty( KEY_PATH, "NumericMetricContributor.Variance", MetricContributorUtils.STATISTICS,
-        Statistic.VARIANCE );
+    .createMetricProperty( KEY_PATH, "NumericMetricContributor.Variance", MetricContributorUtils.STATISTICS,
+      Statistic.VARIANCE );
 
   private final NVL nvl;
 
@@ -103,11 +103,20 @@ public class NumericMetricContributor implements MetricManagerContributor {
     return Arrays.asList( MIN, MAX, MEAN, STD_DEV, SUM, SUM_OF_SQ, VARIANCE );
   }
 
-  private static void setDerived( DataSourceMetricManager dataSourceMetricManager, Number newSumStat,
-                                  Number newSumSqStat ) {
+  public static Set<String> getTypesStatic() {
+    return new HashSet<String>( Arrays
+      .asList( Integer.class.getCanonicalName(), Long.class.getCanonicalName(), Float.class.getCanonicalName(),
+        Double.class.getCanonicalName() ) );
+  }
+
+  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
     Number countNumber = dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.COUNT );
     long count = countNumber.longValue();
 
+    Number newSumStat = dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM );
+
+    Number newSumSqStat = dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS,
+      Statistic.SUM_OF_SQUARES );
     // derived
     double newSumStatDouble = newSumStat.doubleValue();
     dataSourceMetricManager.setValue( newSumStatDouble / count, MetricContributorUtils.STATISTICS, Statistic.MEAN );
@@ -126,13 +135,7 @@ public class NumericMetricContributor implements MetricManagerContributor {
     }
   }
 
-  public static Set<String> getTypesStatic() {
-    return new HashSet<String>( Arrays
-      .asList( Integer.class.getCanonicalName(), Long.class.getCanonicalName(), Float.class.getCanonicalName(),
-        Double.class.getCanonicalName() ) );
-  }
-
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     return getTypesStatic();
   }
 
@@ -150,13 +153,11 @@ public class NumericMetricContributor implements MetricManagerContributor {
     nvl.performAndSet( NVLOperations.DOUBLE_MAX, metricsForFieldType, value, MetricContributorUtils.STATISTICS,
       Statistic.MAX );
 
-    Number newSumStat = nvl.performAndSet( NVLOperations.DOUBLE_SUM, metricsForFieldType, value,
+    nvl.performAndSet( NVLOperations.DOUBLE_SUM, metricsForFieldType, value,
       MetricContributorUtils.STATISTICS, Statistic.SUM );
 
-    Number newSumSqStat = nvl.performAndSet( NVLOperations.DOUBLE_SUM, metricsForFieldType, value * value,
+    nvl.performAndSet( NVLOperations.DOUBLE_SUM, metricsForFieldType, value * value,
       MetricContributorUtils.STATISTICS, Statistic.SUM_OF_SQUARES );
-
-    setDerived( metricsForFieldType, newSumStat, newSumSqStat );
   }
 
   @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
@@ -170,18 +171,13 @@ public class NumericMetricContributor implements MetricManagerContributor {
     Number newSumSqStat =
       nvl.performAndSet( NVLOperations.DOUBLE_SUM, into, from, MetricContributorUtils.STATISTICS,
         Statistic.SUM_OF_SQUARES );
-    setDerived( into, newSumStat, newSumSqStat );
-  }
-
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
   }
 
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_PATHS );
   }
 
-  public List<ProfileFieldProperty> getProfileFieldProperties() {
+  public List<ProfileFieldProperty> profileFieldProperties() {
     return getProfileFieldPropertiesStatic();
   }
 }

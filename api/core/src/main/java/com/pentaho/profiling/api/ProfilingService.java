@@ -32,7 +32,7 @@ import java.util.List;
 public interface ProfilingService {
   public boolean accepts( DataSourceReference dataSourceReference );
 
-  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException;
+  public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException;
 
   public List<ProfileStatusReader> getActiveProfiles();
 

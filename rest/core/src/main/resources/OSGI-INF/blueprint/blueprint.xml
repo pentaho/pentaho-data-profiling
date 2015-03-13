@@ -35,14 +35,34 @@
     </jaxrs:providers>
   </jaxrs:server>
 
+  <jaxrs:server address="/metrics" id="metricContributorService">
+    <jaxrs:serviceBeans>
+      <ref component-id="metricContributorServiceImpl"/>
+    </jaxrs:serviceBeans>
+    <jaxrs:providers>
+      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+    </jaxrs:providers>
+  </jaxrs:server>
+
   <jaxrs:server address="/data-profiling-service/dataSource" id="profileDsService">
     <jaxrs:serviceBeans>
       <ref component-id="profileDataSourceIncludeWebserviceImpl"/>
     </jaxrs:serviceBeans>
   </jaxrs:server>
 
-  <bean id="profilingServiceWebserviceImpl" class="com.pentaho.profiling.services.ProfilingServiceWebserviceImpl">
-    <property name="delegate" ref="delegateRef"/>
+  <bean id="metricContributorBundleClassLoader" class="com.pentaho.profiling.services.metrics.bundle.MetricContributorBundleClassLoader">
+    <argument ref="metricContributorBundles"/>
+  </bean>
+
+  <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl" scope="singleton">
+    <argument ref="metricContributorServiceDelegate"/>
+    <argument ref="metricContributorsObjectMapperFactory"/>
+  </bean>
+
+  <bean id="profilingServiceWebserviceImpl" class="com.pentaho.profiling.services.ProfilingServiceWebserviceImpl"
+        scope="singleton">
+    <argument ref="delegateRef"/>
+    <argument ref="metricContributorsObjectMapperFactory"/>
   </bean>
 
   <bean id="profileDataSourceIncludeWebserviceImpl"
@@ -63,6 +83,11 @@
 
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <reference id="metricContributorServiceDelegate" interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
+  <reference id="metricContributorsObjectMapperFactory" interface="com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory"/>
   <reference-list id="dsServiceList" interface="com.pentaho.profiling.services.api.ProfileDataSourceIncludeService"
+                  availability="optional"/>
+  <reference-list id="metricContributorBundles"
+                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle"
                   availability="optional"/>
 </blueprint>

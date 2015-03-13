@@ -41,7 +41,7 @@ import java.util.Set;
 /**
  * Created by mhall on 27/01/15.
  */
-public class DateMetricContributor implements MetricManagerContributor {
+public class DateMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final List<String[]> CLEAR_LIST =
       new ArrayList<String[]>( Arrays.asList( NumericMetricContributor.MIN_PATH, NumericMetricContributor.MAX_PATH ) );
   private final NVL nvl;
@@ -54,7 +54,7 @@ public class DateMetricContributor implements MetricManagerContributor {
     this.nvl = nvl;
   }
 
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     return new HashSet<String>( Arrays.asList( Date.class.getCanonicalName() ) );
   }
 
@@ -72,15 +72,11 @@ public class DateMetricContributor implements MetricManagerContributor {
     nvl.performAndSet( NVLOperations.DATE_MAX, into, from, NumericMetricContributor.MAX_PATH );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
-  }
-
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_LIST );
   }
 
-  @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
+  @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( NumericMetricContributor.MIN, NumericMetricContributor.MAX );
   }
 }

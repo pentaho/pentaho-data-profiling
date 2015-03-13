@@ -58,7 +58,7 @@ public class PercentileMetricContributorTest {
     dataSourceMetricManager.setValue( 5L, MetricContributorUtils.COUNT );
     dataSourceFieldValue.setFieldValue( 4.75d );
     percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-
+    percentileMetricContributor.setDerived( dataSourceMetricManager );
     assertEquals( Double.valueOf( 2.625 ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
     assertEquals( Double.valueOf( 2.4375 ),
@@ -87,7 +87,7 @@ public class PercentileMetricContributorTest {
     dataSourceFieldValue = new DataSourceFieldValue( 4.75d );
     percentileMetricContributor.process( dataSourceMetricManager2, dataSourceFieldValue );
     percentileMetricContributor.merge( dataSourceMetricManager, dataSourceMetricManager2 );
-
+    percentileMetricContributor.setDerived( dataSourceMetricManager );
     assertEquals( Double.valueOf( 2.625 ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
     assertEquals( Double.valueOf( 2.4375 ),
@@ -98,7 +98,7 @@ public class PercentileMetricContributorTest {
 
   @Test
   public void testGetTypes() {
-    assertNotNull( new PercentileMetricContributor().getTypes() );
+    assertNotNull( new PercentileMetricContributor().supportedTypes() );
   }
 
   @Test
@@ -110,10 +110,10 @@ public class PercentileMetricContributorTest {
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( new PercentileMetricContributor().getProfileFieldProperties() );
+    assertNotNull( new PercentileMetricContributor().profileFieldProperties() );
   }
 
-  /*@Test public void processFieldNotLeaf() throws ProfileActionException {
+  /*Test public void processFieldNotLeaf() throws ProfileActionException {
     DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
     dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.PATH, "a" );
@@ -161,7 +161,7 @@ public class PercentileMetricContributorTest {
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull(new NumericMetricContributor().getProfileFieldProperties());
+    assertNotNull(new NumericMetricContributor().profileFieldProperties());
   }
 
   @Test

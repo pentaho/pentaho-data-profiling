@@ -37,7 +37,7 @@ import java.util.Set;
 /**
  * Created by mhall on 27/01/15.
  */
-public class StringLengthMetricContributor implements MetricManagerContributor {
+public class StringLengthMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   private final NumericMetricContributor numericMetricManagerContributor;
 
   public StringLengthMetricContributor() {
@@ -48,7 +48,7 @@ public class StringLengthMetricContributor implements MetricManagerContributor {
     this.numericMetricManagerContributor = numericMetricManagerContributor;
   }
 
-  @Override public Set<String> getTypes() {
+  @Override public Set<String> supportedTypes() {
     return new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
   }
 
@@ -65,14 +65,14 @@ public class StringLengthMetricContributor implements MetricManagerContributor {
   }
 
   @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
+    numericMetricManagerContributor.setDerived( dataSourceMetricManager );
   }
 
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     numericMetricManagerContributor.clear( dataSourceMetricManager );
   }
 
-  @Override public List<ProfileFieldProperty> getProfileFieldProperties() {
+  @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return NumericMetricContributor.getProfileFieldPropertiesStatic();
   }
 }

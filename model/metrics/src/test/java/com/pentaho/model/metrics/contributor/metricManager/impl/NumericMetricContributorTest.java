@@ -46,7 +46,9 @@ public class NumericMetricContributorTest {
     DataSourceMetricManager manager = new DataSourceMetricManager( new HashMap<String, Object>() );
     manager.setValue( 1L, MetricContributorUtils.COUNT );
     double value = 1.235;
-    new NumericMetricContributor().process( manager, new DataSourceFieldValue( value ) );
+    NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
+    numericMetricContributor.process( manager, new DataSourceFieldValue( value ) );
+    numericMetricContributor.setDerived( manager );
     assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
     assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
     assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ) );
@@ -61,9 +63,11 @@ public class NumericMetricContributorTest {
     double value1 = 1.235;
     double value2 = 1.335;
     double value3 = 1.435;
-    new NumericMetricContributor().process( manager, new DataSourceFieldValue( value1 ) );
-    new NumericMetricContributor().process( manager, new DataSourceFieldValue( value2 ) );
-    new NumericMetricContributor().process( manager, new DataSourceFieldValue( value3 ) );
+    NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
+    numericMetricContributor.process( manager, new DataSourceFieldValue( value1 ) );
+    numericMetricContributor.process( manager, new DataSourceFieldValue( value2 ) );
+    numericMetricContributor.process( manager, new DataSourceFieldValue( value3 ) );
+    numericMetricContributor.setDerived( manager );
     assertEquals( value1, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
     assertEquals( value3, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
     double sum = value1 + value2 + value3;
@@ -95,6 +99,7 @@ public class NumericMetricContributorTest {
     numericMetricContributor.process( manager2, new DataSourceFieldValue( value3 ) );
     numericMetricContributor.process( manager2, new DataSourceFieldValue( value4 ) );
     numericMetricContributor.merge( manager, manager2 );
+    numericMetricContributor.setDerived( manager );
     assertEquals( value1, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
     assertEquals( value4, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
     double sum = value1 + value2 + value3 + value4;
@@ -113,12 +118,12 @@ public class NumericMetricContributorTest {
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( new NumericMetricContributor().getProfileFieldProperties() );
+    assertNotNull( new NumericMetricContributor().profileFieldProperties() );
   }
 
   @Test
   public void testGetTypes() {
-    assertNotNull( new NumericMetricContributor().getTypes() );
+    assertNotNull( new NumericMetricContributor().supportedTypes() );
   }
 
   @Test
@@ -193,7 +198,7 @@ public class NumericMetricContributorTest {
   }
 
   @Test public void testGetProfileFieldProperties() {
-    assertNotNull( new NumericMetricContributor().getProfileFieldProperties() );
+    assertNotNull( new NumericMetricContributor().profileFieldProperties() );
   }
 
   @Test public void testGetClearMap() {

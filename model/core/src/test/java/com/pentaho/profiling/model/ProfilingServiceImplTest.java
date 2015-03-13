@@ -24,6 +24,7 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
+import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
@@ -33,6 +34,8 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.metrics.MetricContributorService;
+import com.pentaho.profiling.api.metrics.MetricContributors;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,6 +49,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -68,11 +72,15 @@ public class ProfilingServiceImplTest {
   private ProfileStatus profileStatus;
   private ProfileStatusManager profileStatusManager;
   private String profileId;
+  private MetricContributorService metricContributorService;
+  private ExecutorService executorService;
 
   @Before
   public void setup() {
     profileFactory = mock( ProfileFactory.class );
-    profilingService = new ProfilingServiceImpl();
+    executorService = mock( ExecutorService.class );
+    metricContributorService = mock( MetricContributorService.class );
+    profilingService = new ProfilingServiceImpl( executorService, metricContributorService );
     profilingService.profileFactoryAdded( profileFactory, new HashMap() );
     profile = mock( Profile.class );
     profileId = "test-id";
@@ -85,14 +93,15 @@ public class ProfilingServiceImplTest {
   @Test
   public void testCreateNoFactories() throws ProfileCreationException {
     profilingService.profileFactoryRemoved( profileFactory, new HashMap() );
-    assertNull( profilingService.create( new DataSourceReference( "Test", "Test" ) ) );
+    assertNull(
+      profilingService.create( new ProfileCreateRequest( new DataSourceReference( "Test", "Test" ), null ) ) );
   }
 
   @Test
   public void testCreateNoMatchingFactories() throws ProfileCreationException {
     DataSourceReference dataSourceReference = new DataSourceReference();
     when( profileFactory.accepts( dataSourceReference ) ).thenReturn( false );
-    assertNull( profilingService.create( dataSourceReference ) );
+    assertNull( profilingService.create( new ProfileCreateRequest( dataSourceReference, null ) ) );
     assertFalse( profilingService.accepts( dataSourceReference ) );
   }
 
@@ -103,8 +112,11 @@ public class ProfilingServiceImplTest {
     String value = "test-id";
     when( profile.getId() ).thenReturn( value );
     when( profileFactory.accepts( dataSourceReference ) ).thenReturn( true );
-    when( profileFactory.create( eq( dataSourceReference ), any( ProfileStatusManager.class ) ) ).thenReturn( profile );
-    ProfileStatusManager profileStatusManager = profilingService.create( dataSourceReference );
+    when( profileFactory
+      .create( eq( dataSourceReference ), any( ProfileStatusManager.class ), any( MetricContributors.class ) ) )
+      .thenReturn( profile );
+    ProfileStatusManager profileStatusManager =
+      profilingService.create( new ProfileCreateRequest( dataSourceReference, null ) );
     assertEquals( dataSourceReference, profileStatusManager.getDataSourceReference() );
     assertTrue( profilingService.accepts( dataSourceReference ) );
   }

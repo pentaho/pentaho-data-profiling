@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.services;
 
+import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
@@ -29,6 +30,9 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;
@@ -49,24 +53,35 @@ import java.util.List;
 @Consumes( { MediaType.APPLICATION_JSON } )
 @WebService
 public class ProfilingServiceWebserviceImpl implements ProfilingService {
-  private ProfilingService delegate;
+  private static final Logger LOGGER = LoggerFactory.getLogger( ProfilingServiceWebserviceImpl.class );
+  private final ProfilingService delegate;
+  private final MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
 
-  public ProfilingService getDelegate() {
-    return delegate;
-  }
-
-  public void setDelegate( ProfilingService delegate ) {
+  public ProfilingServiceWebserviceImpl( ProfilingService delegate,
+                                         MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory ) {
     this.delegate = delegate;
+    this.metricContributorsObjectMapperFactory = metricContributorsObjectMapperFactory;
   }
 
   @POST
   @Path( "/" )
-  public ProfileStatus createWebservice( DataSourceReference dataSourceReference ) throws ProfileCreationException {
-    return create( dataSourceReference ).read( new ProfileStatusReadOperation<ProfileStatus>() {
-      @Override public ProfileStatus read( ProfileStatus profileStatus ) {
-        return profileStatus;
+  public ProfileStatus createWebservice( String profileCreateRequestString ) throws ProfileCreationException {
+    try {
+      ProfileCreateRequest profileCreateRequest =
+        metricContributorsObjectMapperFactory.createObjectMapper()
+          .readValue( profileCreateRequestString, ProfileCreateRequest.class );
+      return create( profileCreateRequest ).read( new ProfileStatusReadOperation<ProfileStatus>() {
+        @Override public ProfileStatus read( ProfileStatus profileStatus ) {
+          return profileStatus;
+        }
+      } );
+    } catch ( Exception e ) {
+      LOGGER.error( e.getMessage(), e );
+      if ( e instanceof ProfileCreationException ) {
+        throw (ProfileCreationException) e;
       }
-    } );
+      throw new ProfileCreationException( e );
+    }
   }
 
   @POST
@@ -76,8 +91,8 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   @Override
-  public ProfileStatusManager create( DataSourceReference dataSourceReference ) throws ProfileCreationException {
-    return delegate.create( dataSourceReference );
+  public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
+    return delegate.create( profileCreateRequest );
   }
 
   @GET

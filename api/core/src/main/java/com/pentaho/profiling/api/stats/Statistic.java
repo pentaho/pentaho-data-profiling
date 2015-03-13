@@ -24,7 +24,7 @@ package com.pentaho.profiling.api.stats;
 
 /**
  * Base class for statistics
- * 
+ *
  * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
 public interface Statistic {

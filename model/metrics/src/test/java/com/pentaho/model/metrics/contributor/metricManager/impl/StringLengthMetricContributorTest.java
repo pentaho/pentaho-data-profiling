@@ -66,8 +66,9 @@ public class StringLengthMetricContributorTest {
     String test = "test-string";
     double value = test.length();
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test );
-    new StringLengthMetricContributor().process( metricManager, dataSourceFieldValue );
-
+    StringLengthMetricContributor stringLengthMetricContributor1 = new StringLengthMetricContributor();
+    stringLengthMetricContributor1.process( metricManager, dataSourceFieldValue );
+    stringLengthMetricContributor1.setDerived( metricManager );
     assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
     assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
     assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ) );
@@ -78,13 +79,13 @@ public class StringLengthMetricContributorTest {
 
   @Test
   public void testGetTypes() {
-    assertNotNull( stringLengthMetricContributor.getTypes() );
-    assertTrue( Collections.disjoint( stringLengthMetricContributor.getTypes(), numericMetricContributor.getTypes() ) );
+    assertNotNull( stringLengthMetricContributor.supportedTypes() );
+    assertTrue( Collections.disjoint( stringLengthMetricContributor.supportedTypes(), numericMetricContributor.supportedTypes() ) );
   }
 
   @Test
   public void testGetProfileFieldProperties() {
-    assertNotNull( stringLengthMetricContributor.getProfileFieldProperties() );
+    assertNotNull( stringLengthMetricContributor.profileFieldProperties() );
   }
 
   @Test

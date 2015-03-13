@@ -22,7 +22,7 @@
 
 package com.pentaho.model.metrics.contributor.metricManager;
 
-import com.clearspring.analytics.stream.quantile.TDigest;
+import com.pentaho.model.metrics.contributor.metricManager.impl.percentile.TDigestHolder;
 import com.pentaho.profiling.api.metrics.NVLOperation;
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public final class NVLOperations {
   public static final NVLOperation<Number> LONG_SUM = new LongSum();
   public static final NVLOperation<Date> DATE_MIN = new DateMin();
   public static final NVLOperation<Date> DATE_MAX = new DateMax();
-  public static final NVLOperation<TDigest> TDIGEST_MERGE = new TDigestMerge();
+  public static final NVLOperation<TDigestHolder> TDIGEST_MERGE = new TDigestMerge();
 
   /**
    * UNIT TEST ONLY
@@ -96,8 +96,8 @@ public final class NVLOperations {
     }
   }
 
-  private static class TDigestMerge implements NVLOperation<TDigest> {
-    @Override public TDigest perform( TDigest first, TDigest second ) {
+  private static class TDigestMerge implements NVLOperation<TDigestHolder> {
+    @Override public TDigestHolder perform( TDigestHolder first, TDigestHolder second ) {
       first.add( second );
       return first;
     }

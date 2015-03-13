@@ -1,43 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+  <bean id="metricContributorBundle" class="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl">
+    <property name="name" value="PentahoDataProfilingMCBundle"/>
+    <property name="metricContributorClasses">
+      <list>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor
+        </value>
+        <value type="java.lang.Class">com.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.PercentileMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor
+        </value>
+      </list>
+    </property>
+  </bean>
 
-  <bean id="categoricalMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor"/>
-  <bean id="dateMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor"/>
-  <bean id="numericMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor"/>
-  <bean id="emailMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.EmailAddressMetricContributor"/>
-  <bean id="stringLengthMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor"/>
-  <bean id="wordCountMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor"/>
-  <bean id="percentileMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.PercentileMetricContributor"/>
-  <bean id="cardinalityMetricContributor"
-        class="com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor"/>
-
-  <service id="categoricalMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="categoricalMetricContributor"/>
-  <service id="dateMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="dateMetricContributor"/>
-  <service id="numericMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="numericMetricContributor"/>
-  <service id="emailMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="emailMetricContributor"/>
-  <service id="stringLengthMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="stringLengthMetricContributor"/>
-  <service id="wordCountMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="wordCountMetricContributor"/>
-  <service id="cardinalityMetricContributorService"
-           interface="com.pentaho.profiling.api.metrics.MetricManagerContributor"
-           ref="cardinalityMetricContributor"/>
+  <service interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" ref="metricContributorBundle"/>
 </blueprint>
