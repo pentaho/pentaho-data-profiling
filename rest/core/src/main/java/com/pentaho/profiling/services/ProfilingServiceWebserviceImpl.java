@@ -22,8 +22,10 @@
 
 package com.pentaho.profiling.services;
 
+import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
+import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
@@ -84,6 +86,10 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     }
   }
 
+  @Override public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference ) {
+    return delegate.getProfileFactory( dataSourceReference );
+  }
+
   @POST
   @Path( "/accepts" )
   @Override public boolean accepts( DataSourceReference dataSourceReference ) {
@@ -113,6 +119,10 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @Override
   public List<ProfileStatusReader> getActiveProfiles() {
     return delegate.getActiveProfiles();
+  }
+
+  @Override public Profile getProfile( String profileId ) {
+    return delegate.getProfile( profileId );
   }
 
   @GET

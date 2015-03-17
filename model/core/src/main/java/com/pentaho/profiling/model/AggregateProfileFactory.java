@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
@@ -33,7 +34,6 @@ import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
  * Created by bryan on 3/5/15.
  */
 public class AggregateProfileFactory implements ProfileFactory {
-  public static final String AGGREGATE_PROFILE = "AGGREGATE_PROFILE";
   private final ProfilingServiceImpl profilingService;
   private final AggregateProfileServiceImpl aggregateProfileService;
   private final MetricContributorsFactory metricContributorsFactory;
@@ -47,7 +47,7 @@ public class AggregateProfileFactory implements ProfileFactory {
   }
 
   @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return AGGREGATE_PROFILE.equals( dataSourceReference.getDataSourceProvider() );
+    return AggregateProfile.AGGREGATE_PROFILE.equals( dataSourceReference.getDataSourceProvider() );
   }
 
   @Override
