@@ -23,6 +23,8 @@
 package com.pentaho.plugin.integration;
 
 import org.eclipse.swt.browser.Browser;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.ui.spoon.trans.SelectedStepListener;
 import org.pentaho.di.ui.spoon.trans.TransGraph;
@@ -31,15 +33,31 @@ import org.pentaho.di.ui.spoon.trans.TransGraph;
  * Created by saslan on 1/6/2015.
  */
 public class ExecutionResultsProfileTabStepListener implements SelectedStepListener {
-  private final TransGraph transGraph;
-  private final Browser transProfileBrowser;
   protected static final String ATTR_GROUP_NAME = "com.pentaho.dataprofiling";
   protected static final String ATTR_KEY = "profileId";
-  protected static final String BASE_URL = "http://localhost:8181/profileWebView/view.html#/";
+  protected final String BASE_URL;
+  protected final String NO_PROFILE_VIEW_URL;
+  protected final String PROFILE_VIEW_URL;
+  private final TransGraph transGraph;
+  private final Browser transProfileBrowser;
+  private final BundleContext bundleContext;
 
-  public ExecutionResultsProfileTabStepListener( Browser transProfileBrowser, TransGraph transGraph ) {
+  public ExecutionResultsProfileTabStepListener( Browser transProfileBrowser, TransGraph transGraph,
+                                                 BundleContext bundleContext ) {
     this.transProfileBrowser = transProfileBrowser;
     this.transGraph = transGraph;
+    this.bundleContext = bundleContext;
+    ServiceReference httpServiceRef = bundleContext.getServiceReference( "org.osgi.service.http.HttpService" );
+    String port = "8181";
+    if ( httpServiceRef != null ) {
+      Object portObj = httpServiceRef.getProperty( "org.osgi.service.http.port" );
+      if ( portObj != null ) {
+        port = portObj.toString();
+      }
+    }
+    BASE_URL = "http://localhost:" + port;
+    NO_PROFILE_VIEW_URL = BASE_URL + "/noProfileWebView/noprofile.html";
+    PROFILE_VIEW_URL = BASE_URL + "/profileWebView/view.html#/";
   }
 
   @Override
@@ -53,12 +71,12 @@ public class ExecutionResultsProfileTabStepListener implements SelectedStepListe
    * This builds the profileUrl from the current step.
    */
   public String buildUrl( StepMeta currentStep ) {
-    String profileUrl = "";
+    String profileUrl = NO_PROFILE_VIEW_URL;
     if ( currentStep != null ) {
       String profileUid = currentStep.getAttribute( ATTR_GROUP_NAME, ATTR_KEY );
 
       if ( profileUid != null ) {
-        profileUrl = BASE_URL + profileUid;
+        profileUrl = PROFILE_VIEW_URL + profileUid;
       }
     }
     return profileUrl;

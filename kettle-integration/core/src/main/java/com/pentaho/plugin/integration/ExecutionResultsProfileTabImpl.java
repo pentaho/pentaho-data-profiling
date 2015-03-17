@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.osgi.framework.BundleContext;
 import org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface;
 import org.pentaho.di.ui.spoon.trans.TransGraph;
 import org.pentaho.osgi.i18n.LocalizationService;
@@ -42,17 +43,20 @@ import java.util.Set;
  * Created by saslan on 12/15/2014.
  */
 public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInterface {
-  protected LocalizationService localizationService;
-  protected ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
+  private final LocalizationService localizationService;
+  private final ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
+  private final BundleContext bundleContext;
   protected static final String PROJECT_NAME = "kettle-integration-core";
   protected static final String PACKAGE_NAME = "com/pentaho/plugin/integration/messages";
   protected static final String KEY_NAME = "Spoon.TransGraph.ProfileTab.Name";
   protected static final String RESPONDS_TO_NAME = "loadTab";
 
   public ExecutionResultsProfileTabImpl( LocalizationService localizationService,
-                                         ExecutionResultsProfileTabIcon executionResultsProfileTabIcon ) {
+                                         ExecutionResultsProfileTabIcon executionResultsProfileTabIcon,
+                                         BundleContext bundleContext ) {
     this.localizationService = localizationService;
     this.executionResultsProfileTabIcon = executionResultsProfileTabIcon;
+    this.bundleContext = bundleContext;
   }
 
   @Override
@@ -99,6 +103,6 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
   //For unit testing purposes
   protected ExecutionResultsProfileTabStepListener createExecutionResultsProfileTabStepListener(
       Browser transProfileBrowser, TransGraph transGraph ) {
-    return new ExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
+    return new ExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph, bundleContext );
   }
 }
