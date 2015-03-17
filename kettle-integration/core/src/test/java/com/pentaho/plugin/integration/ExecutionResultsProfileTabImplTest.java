@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Image;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.framework.BundleContext;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.ui.spoon.trans.TransGraph;
 import org.pentaho.osgi.i18n.LocalizationService;
@@ -45,14 +46,19 @@ import static org.mockito.Mockito.*;
 public class ExecutionResultsProfileTabImplTest {
   private ExecutionResultsProfileTabImpl executionResultsProfileTabImpl;
   private Image tabIcon;
+  private BundleContext bundleContext;
+  private LocalizationService localizationServiceMock;
+  private ExecutionResultsProfileTabIcon executionResultsProfileTabIconMock;
 
   @Before
   public void setUp() throws Exception {
-    LocalizationService localizationServiceMock = mock( LocalizationService.class );
-    ExecutionResultsProfileTabIcon executionResultsProfileTabIconMock = new ExecutionResultsProfileTabIcon();
+    localizationServiceMock = mock( LocalizationService.class );
+    executionResultsProfileTabIconMock = new ExecutionResultsProfileTabIcon();
     executionResultsProfileTabIconMock.setInitialized( true );
+    bundleContext = mock( BundleContext.class );
     executionResultsProfileTabImpl =
-      spy( new ExecutionResultsProfileTabImpl( localizationServiceMock, executionResultsProfileTabIconMock ) );
+      spy( new ExecutionResultsProfileTabImpl( localizationServiceMock, executionResultsProfileTabIconMock,
+        bundleContext ) );
   }
 
   @After
@@ -80,7 +86,7 @@ public class ExecutionResultsProfileTabImplTest {
       .createBrowser( mockTransGraph.extraViewTabFolder, SWT.NONE );
 
     ExecutionResultsProfileTabStepListener stepListener =
-      new ExecutionResultsProfileTabStepListener( mockTransProfileBrowser, mockTransGraph );
+      new ExecutionResultsProfileTabStepListener( mockTransProfileBrowser, mockTransGraph, bundleContext );
 
     StepMeta mockStepMeta = mock( StepMeta.class );
     doReturn( mockStepMeta ).when( mockTransGraph ).getCurrentStep();
@@ -94,16 +100,16 @@ public class ExecutionResultsProfileTabImplTest {
         };
       }
     };
-    doReturn( resourceBundle ).when( executionResultsProfileTabImpl.localizationService )
+    doReturn( resourceBundle ).when( localizationServiceMock )
       .getResourceBundle( executionResultsProfileTabImpl.PROJECT_NAME, executionResultsProfileTabImpl.PACKAGE_NAME,
         Locale.getDefault() );
 
     executionResultsProfileTabImpl.uiEvent( mockTransGraph, "" );
 
     verify( mockTransProfileBrowser )
-      .setUrl( stepListener.BASE_URL + "12345" );
+      .setUrl( stepListener.PROFILE_VIEW_URL + "12345" );
     verify( mockTransProfileTab )
-      .setImage( executionResultsProfileTabImpl.executionResultsProfileTabIcon.getTabIcon() );
+      .setImage( executionResultsProfileTabIconMock.getTabIcon() );
     verify( mockTransProfileTab )
       .setText( resourceBundle.getString( executionResultsProfileTabImpl.KEY_NAME ) );
   }
