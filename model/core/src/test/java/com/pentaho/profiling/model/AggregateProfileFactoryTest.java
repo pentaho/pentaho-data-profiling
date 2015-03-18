@@ -62,14 +62,14 @@ public class AggregateProfileFactoryTest {
   @Test
   public void testAccepts() {
     assertTrue( aggregateProfileFactory
-      .accepts( new DataSourceReference( "test-id", AggregateProfileFactory.AGGREGATE_PROFILE ) ) );
+      .accepts( new DataSourceReference( "test-id", AggregateProfile.AGGREGATE_PROFILE ) ) );
     assertFalse( aggregateProfileFactory.accepts( new DataSourceReference( "test-id", "test-type" ) ) );
   }
 
   @Test
   public void testCreate() {
     DataSourceReference dataSourceReference =
-      new DataSourceReference( "test-id", AggregateProfileFactory.AGGREGATE_PROFILE );
+      new DataSourceReference( "test-id", AggregateProfile.AGGREGATE_PROFILE );
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
     Profile profile = aggregateProfileFactory
       .create( dataSourceReference, profileStatusManager, new MetricContributors( metricContributors, null ) );

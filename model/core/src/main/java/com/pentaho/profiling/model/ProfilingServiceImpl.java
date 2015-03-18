@@ -84,7 +84,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     return profileStatusManagerMap;
   }
 
-  private ProfileFactory getProfileOperationProviderFactory(
+  @Override public ProfileFactory getProfileFactory(
     DataSourceReference dataSourceReference ) {
     synchronized ( factories ) {
       for ( Pair<Integer, ProfileFactory> factoryPair : factories ) {
@@ -98,13 +98,13 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return getProfileOperationProviderFactory( dataSourceReference ) != null;
+    return getProfileFactory( dataSourceReference ) != null;
   }
 
   @Override
   public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
     ProfileFactory profileOperationProviderFactory =
-      getProfileOperationProviderFactory( profileCreateRequest.getDataSourceReference() );
+      getProfileFactory( profileCreateRequest.getDataSourceReference() );
     if ( profileOperationProviderFactory != null ) {
       String profileId = UUID.randomUUID().toString();
       ProfileStatusManager profileStatusManager =
@@ -210,7 +210,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     }
   }
 
-  public Profile getProfile( String profileId ) {
+  @Override public Profile getProfile( String profileId ) {
     return profileMap.get( profileId );
   }
 }

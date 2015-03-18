@@ -30,11 +30,15 @@ import java.util.List;
  * Created by bryan on 7/31/14.
  */
 public interface ProfilingService {
+  public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference );
+
   public boolean accepts( DataSourceReference dataSourceReference );
 
   public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException;
 
   public List<ProfileStatusReader> getActiveProfiles();
+
+  public Profile getProfile( String profileId );
 
   public ProfileStatusReader getProfileUpdate( String profileId );
 
