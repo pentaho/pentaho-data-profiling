@@ -50,10 +50,6 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
 
-  <bean id="metricContributorBundleClassLoader" class="com.pentaho.profiling.services.metrics.bundle.MetricContributorBundleClassLoader">
-    <argument ref="metricContributorBundles"/>
-  </bean>
-
   <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl" scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
     <argument ref="metricContributorsObjectMapperFactory"/>
