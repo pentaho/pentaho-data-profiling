@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.api.metrics.bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,10 @@ import java.util.List;
 public class MetricContributorBundleImpl implements MetricContributorBundle {
   private String name;
   private List<Class> metricContributorClasses;
+
+  public MetricContributorBundleImpl() {
+    metricContributorClasses = new ArrayList<Class>();
+  }
 
   @Override public List<Class> getMetricContributorClasses() {
     return metricContributorClasses;

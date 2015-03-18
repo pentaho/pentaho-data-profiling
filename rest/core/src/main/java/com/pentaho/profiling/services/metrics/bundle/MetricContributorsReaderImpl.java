@@ -52,7 +52,7 @@ public class MetricContributorsReaderImpl {
     resolveObjectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
   }
 
-  public Class<?> getClass( String name ) throws ClassNotFoundException {
+  public Class<?> getClass( String name ) {
     for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
       for ( Class<?> metricClass : metricContributorBundle.getMetricContributorClasses() ) {
         String canonicalName = metricClass.getCanonicalName();
