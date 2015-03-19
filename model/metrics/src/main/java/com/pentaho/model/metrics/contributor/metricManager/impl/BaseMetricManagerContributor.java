@@ -31,7 +31,6 @@ import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
  */
 public abstract class BaseMetricManagerContributor implements MetricManagerContributor {
   private final String name = getClass().getSimpleName();
-  ;
 
   @Override public String getName() {
     return name;
