@@ -20,20 +20,22 @@
  * explicitly covering such access.
  */
 
-define(['./controllers'], function (appControllers) {
-  appControllers.controller('profileAppController', [
-    '$scope',
-    'ProfileService',
-    'DataSourceService',
-    'AggregateProfileService',
-    'NotificationService',
-    'ProfileAppService',
-    'TabularService',
-    'TreeViewService',
-    function ($scope, profileService, dataSourceService, aggregateProfileService, notificationService, profileAppService, tabularService, treeViewService) {
+define(["require", './services'], function (require, appServices) {
+  appServices.factory('AggregateProfileService', ['$http', 'ProfileAppService',
+    function ($http, profileAppService) {
+      function AggregateProfileService() {
+      }
 
-      profileAppService.init(tabularService, treeViewService, profileService, dataSourceService, aggregateProfileService, notificationService, $scope);
-      $scope.profileAppService = profileAppService;
-    }
-  ])
+      AggregateProfileService.prototype = {
+        constructor: AggregateProfileService,
+        getAggregates: function () {
+          var promise = $http.get('../cxf/aggregate/' + profileAppService.profileId).then(function (response) {
+            return response.data;
+          });
+          return promise;
+        }
+      };
+      var aggregateProfileService = new AggregateProfileService();
+      return aggregateProfileService;
+    }])
 });

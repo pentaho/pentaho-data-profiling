@@ -29,7 +29,7 @@ define(['./controllers'], function (appControllers) {
       $scope.profileAppService = profileAppService;
 
       // Register to receive profile status updates.
-      $scope.profileAppService.notificationService.register(
+      profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
           /* notifType */
           "com.pentaho.profiling.model.ProfilingServiceImpl",
           /* ids */

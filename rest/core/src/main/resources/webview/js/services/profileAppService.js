@@ -29,23 +29,30 @@ define(["require", './services'], function (require, appServices) {
         this.dataSourceReference;
         this.statusMessages;
         this.operationError;
+        this.treeViewService;
         this.tabularService;
         this.profileService;
+        this.treedata;
         this.dataSourceService;
+        this.aggregateProfileService;
         this.notificationService;
+        this.notificationServiceRegNumber;
         this.leftNavSelection;
       }
 
       ProfileAppService.prototype = {
         constructor: ProfileAppService,
-        init: function (aTabularService, aProfileService, aDataSourceService, aNotificationService, scope) {
+        init: function (aTabularService, aTreeViewService, aProfileService, aDataSourceService, anAggregateProfileService, aNotificationService, scope) {
           profileAppService.leftNavSelection = "stats";
           //Because of the way we are using services as singleton instances of objects that are injectable, yet leverage the
           //dual binding that angular provides, we need to initialize the TabularService and set it on the ProfileAppService
           aTabularService.init(JSON.stringify(["name"]), false);
+
           profileAppService.tabularService = aTabularService;
+          profileAppService.treeViewService = aTreeViewService;
           profileAppService.profileService = aProfileService;
           profileAppService.dataSourceService = aDataSourceService;
+          profileAppService.aggregateProfileService = anAggregateProfileService;
           profileAppService.notificationService = aNotificationService;
           profileAppService.scope = scope;
         },
@@ -67,6 +74,11 @@ define(["require", './services'], function (require, appServices) {
         updateProfile: function (profileStatus) {
           if (profileStatus && profileStatus.profileState != 'DISCARDED') {
             profileAppService.profileId = profileStatus.id;
+
+            //Get the aggregate Profiles
+            profileAppService.aggregateProfileService.getAggregates().then(function(aggregateProfiles) {
+              profileAppService.treeViewService.buildTreeViewSchema(aggregateProfiles);
+            })
 
             // Update datasource.
             profileAppService.updateDataSource(profileStatus.dataSourceReference);

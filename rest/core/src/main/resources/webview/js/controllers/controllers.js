@@ -27,12 +27,14 @@ define([
   "common-ui/angular-route",
   "common-ui/angular-translate",
   "../services/services",
-  "com.pentaho.profiling.notification.service"
+  "com.pentaho.profiling.notification.service",
+  "com.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function(angular) {
 
   return angular.module('appControllers', [
     'NotificationServiceModule',
     'ngRoute',
-    'pascalprecht.translate'
+    'pascalprecht.translate',
+    'angularTreeview'
   ]);
 });

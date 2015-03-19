@@ -46,11 +46,15 @@ define([
   "com.pentaho.profiling.services.webview/controllers/controllers",
   "com.pentaho.profiling.services.webview/controllers/profileAppController",
   "com.pentaho.profiling.services.webview/controllers/tabularViewController",
+  "com.pentaho.profiling.services.webview/controllers/treeViewController",
   "com.pentaho.profiling.services.webview/services/services",
   "com.pentaho.profiling.services.webview/services/profileService",
   "com.pentaho.profiling.services.webview/services/dataSourceService",
   "com.pentaho.profiling.services.webview/services/profileAppService",
-  "com.pentaho.profiling.services.webview/services/tabularService"
+  "com.pentaho.profiling.services.webview/services/aggregateProfileService",
+  "com.pentaho.profiling.services.webview/services/treeViewService",
+  "com.pentaho.profiling.services.webview/services/tabularService",
+  "com.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function (require, angular) {
   var provide = null,
       controllerProvider = null,
@@ -59,7 +63,8 @@ define([
         'ngSanitize', // for ngBindHtml
         'appServices',
         'appControllers',
-        'pascalprecht.translate'
+        'pascalprecht.translate',
+        'angularTreeview'
       ]);
 
   profileApp.filter('interpolateMessage', function () {
