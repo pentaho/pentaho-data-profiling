@@ -44,14 +44,18 @@ define([
   'controllers/controllers',
   'controllers/profileAppController',
   'controllers/tabularViewController',
+  'controllers/treeViewController',
   'services/services',
   'services/profileService',
   'services/dataSourceService',
   'services/profileAppService',
-  'services/tabularService'
+  'services/tabularService',
+  'services/treeViewService',
+  'services/aggregateProfileService'
 ], function(angular) {
 
   var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.model.ProfilingServiceImpl";
+  var PROFILE_GETAGGPROF_URL = "../cxf/aggregate/";
   var PROFILE_GETOPERS_URL = "../cxf/profile/operations/";
   var DATASOURCE_GETINCLUDE_URL = "../cxf/data-profiling-service/dataSource/include/";
 
@@ -177,6 +181,7 @@ define([
           }
         });
 
+        $httpBackend.expectGET(PROFILE_GETAGGPROF_URL + 'ABCD').respond([]);
         $httpBackend.whenGET(PROFILE_GETOPERS_URL + 'ABCD').respond("");
         $httpBackend.expectGET(DATASOURCE_GETINCLUDE_URL + 'abc/cde').respond("");
 
@@ -523,6 +528,7 @@ define([
               url: 'foo'
             }
           });
+          $httpBackend.expectGET(PROFILE_GETAGGPROF_URL + 'ABCD').respond([]);
 
           notificationService.flush();
           $httpBackend.flush();
@@ -557,6 +563,7 @@ define([
                 url: 'foo'
               }
             });
+            $httpBackend.expectGET(PROFILE_GETAGGPROF_URL + 'ABCD').respond([]);
 
             notificationService.flush();
             $httpBackend.flush();

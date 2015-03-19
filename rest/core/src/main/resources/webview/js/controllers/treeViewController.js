@@ -21,19 +21,29 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('profileAppController', [
+  appControllers.controller('TreeViewController', [
     '$scope',
-    'ProfileService',
-    'DataSourceService',
-    'AggregateProfileService',
-    'NotificationService',
     'ProfileAppService',
-    'TabularService',
-    'TreeViewService',
-    function ($scope, profileService, dataSourceService, aggregateProfileService, notificationService, profileAppService, tabularService, treeViewService) {
+    function ($scope, profileAppService) {
+      $scope.$watch('uniqueTreeId.currentNode', function (newObj, oldObj) {
+        var oldNotificationServiceRegNumber = profileAppService.notificationService.notificationServiceRegNumber;
 
-      profileAppService.init(tabularService, treeViewService, profileService, dataSourceService, aggregateProfileService, notificationService, $scope);
-      $scope.profileAppService = profileAppService;
+        // Register to receive profile status updates of the new id.
+        if (typeof $scope.uniqueTreeId.currentNode.id !== undefined) {
+          profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
+              /* notifType */
+              "com.pentaho.profiling.model.ProfilingServiceImpl",
+              /* ids */
+              [$scope.uniqueTreeId.currentNode.id],
+              /* cb */
+              function (profileStatus) {
+                profileAppService.updateProfile(profileStatus);
+
+                // Unregister to not receive profile status updates.
+                profileAppService.notificationService.unregister(oldNotificationServiceRegNumber);
+              });
+        }
+      }, false);
     }
   ])
 });
