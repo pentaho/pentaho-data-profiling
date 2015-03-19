@@ -22,6 +22,7 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
+import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceField;
@@ -48,7 +49,11 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mhall on 28/01/15.
  */
-public class CategoricalMetricContributorTest {
+public class CategoricalMetricContributorTest extends MetricContributorBeanTester {
+
+  public CategoricalMetricContributorTest() {
+    super( CategoricalMetricContributor.class );
+  }
 
   @Test public void testProcessFieldCategorical() throws ProfileActionException {
     DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager( new HashMap<String, Object>() );
