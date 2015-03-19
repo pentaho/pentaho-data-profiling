@@ -20,24 +20,15 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package com.pentaho.model.metrics.contributor.metricManager.impl.percentile;
 
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
+import com.pentaho.profiling.api.core.test.BeanTester;
 
 /**
- * Created by bryan on 3/10/15.
+ * Created by bryan on 3/19/15.
  */
-public abstract class BaseMetricManagerContributor implements MetricManagerContributor {
-  private final String name = getClass().getSimpleName();
-  ;
-
-  @Override public String getName() {
-    return name;
-  }
-
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-
+public class PercentileDefinitionTest extends BeanTester {
+  public PercentileDefinitionTest() {
+    super( PercentileDefinition.class );
   }
 }

@@ -22,6 +22,7 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
+import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
@@ -30,15 +31,21 @@ import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.stats.Statistic;
 import org.junit.Test;
 
+import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEqualsExcluding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
  * Created by mhall on 27/01/15.
  */
-public class PercentileMetricContributorTest {
+public class PercentileMetricContributorTest extends MetricContributorBeanTester {
+
+  public PercentileMetricContributorTest() {
+    super( PercentileMetricContributor.class );
+  }
 
   @Test public void testProcessField() throws ProfileActionException {
     DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager();

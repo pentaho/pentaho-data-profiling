@@ -22,6 +22,7 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
+import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
@@ -36,7 +37,11 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by mhall on 28/01/15.
  */
-public class RegexAddressMetricContributorTest {
+public class RegexAddressMetricContributorTest extends MetricContributorBeanTester {
+
+  public RegexAddressMetricContributorTest() {
+    super( RegexAddressMetricContributor.class );
+  }
 
   @Test public void testProcessField() throws ProfileActionException {
     DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager();

@@ -24,6 +24,7 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.ICardinality;
+import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
 import com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
@@ -45,7 +46,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CardinalityMetricContributorTest {
+public class CardinalityMetricContributorTest extends MetricContributorBeanTester {
+
+  public CardinalityMetricContributorTest() {
+    super( CardinalityMetricContributor.class );
+  }
 
   @Test public void testProcess() throws ProfileActionException {
     DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager( new HashMap<String, Object>() );
