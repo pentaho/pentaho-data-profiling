@@ -20,39 +20,38 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.util;
+package com.pentaho.profiling.api.performance;
 
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by bryan on 2/18/15.
+ * Created by bryan on 3/19/15.
  */
-public class PairTest {
-
+public class CollectorTest {
   @Test
-  public void testCreate() {
-    String test1 = "test1";
-    Integer test2 = 2442;
-    Pair pair = Pair.of( test1, test2 );
-    assertEquals( test1, pair.getFirst() );
-    assertEquals( test2, pair.getSecond() );
-    assertTrue( pair.toString().contains( test1 ) );
-    assertTrue( pair.toString().contains( test2.toString() ) );
-  }
-
-  @Test
-  public void testSet() {
-    String test1 = "test";
-    Integer test2 = new Integer( 2442 );
-    Set<Pair<String, Integer>> pairs = new HashSet<Pair<String, Integer>>();
-    pairs.add( Pair.of( test1, test2 ) );
-    assertFalse( pairs.add( Pair.of( test1.substring( 0 ), new Integer( test2 ) ) ) );
+  public void testCollector() throws InterruptedException {
+    Thread worker = new Thread( new Runnable() {
+      @Override public void run() {
+        try {
+          Thread.sleep( 65 );
+        } catch ( InterruptedException e ) {
+          e.printStackTrace();
+        }
+      }
+    } );
+    worker.setName( "worker" );
+    Collector collector = new Collector( worker );
+    worker.start();
+    collector.start();
+    worker.join();
+    collector.stop();
+    Node rootNode = collector.getRootNode();
+    assertNotNull( rootNode.getChildren() );
+    assertEquals( 0, rootNode.getCount() );
+    assertTrue( collector.getName().startsWith( worker.getName() ) );
   }
 }

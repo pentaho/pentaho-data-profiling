@@ -47,7 +47,7 @@ public class ProfileStatusMessage {
   }
 
   public ProfileStatusMessage() {
-    this( null, null, null );
+    this( null, null );
   }
 
   public ProfileStatusMessage( String messagePath, String messageKey ) {

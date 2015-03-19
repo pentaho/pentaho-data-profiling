@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 8/14/14.
@@ -65,12 +66,17 @@ public class ProfilingFieldTest {
   public void testCopyConstructor() {
     String nestedMapKey = "nestedMap";
     String nestedListKey = "nestedKey";
+    PublicCloneable publicCloneable = mock( PublicCloneable.class );
+    PublicCloneable publicCloneable2 = mock( PublicCloneable.class );
+    when( publicCloneable.clone() ).thenReturn( publicCloneable2 );
+    when( publicCloneable2.clone() ).thenReturn( publicCloneable2 );
 
     Map<String, Object> topMap = new HashMap<String, Object>();
     Map<String, Object> nestedMap = new HashMap<String, Object>();
     List<Object> nestedList = new ArrayList<Object>();
     nestedList.add( 1L );
     nestedList.add( null );
+    nestedList.add( publicCloneable2 );
     topMap.put( nestedMapKey, nestedMap );
     nestedMap.put( nestedListKey, nestedList );
     ProfilingField profilingField = new ProfilingField( topMap );
@@ -86,9 +92,10 @@ public class ProfilingFieldTest {
     assertTrue( nestedMapCopy.containsKey( nestedListKey ) );
     List<Object> nestedListCopy = (List<Object>) nestedMapCopy.get( nestedListKey );
 
-    assertEquals( 2, nestedListCopy.size() );
+    assertEquals( 3, nestedListCopy.size() );
     assertEquals( 1L, nestedListCopy.get( 0 ) );
     assertNull( nestedListCopy.get( 1 ) );
+    assertEquals( publicCloneable2, nestedListCopy.get( 2 ) );
   }
 
   @Test( expected = RuntimeException.class )
