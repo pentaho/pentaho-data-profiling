@@ -30,5 +30,7 @@ import java.util.List;
 public interface AggregateProfileService {
   public List<AggregateProfile> getAggregateProfiles();
 
+  public AggregateProfile getAggregateProfile( String profileId );
+
   public void addChild( String profileId, String childProfileId );
 }

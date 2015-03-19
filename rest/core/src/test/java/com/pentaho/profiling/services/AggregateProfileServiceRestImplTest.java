@@ -61,4 +61,11 @@ public class AggregateProfileServiceRestImplTest {
     verify( delegate )
       .addChild( aggregateAddChildWrapper.getProfileId(), aggregateAddChildWrapper.getChildProfileId() );
   }
+
+  @Test
+  public void testGetProfile() {
+    AggregateProfile aggregateProfile = mock( AggregateProfile.class );
+    when( delegate.getAggregateProfile( "test" ) ).thenReturn( aggregateProfile );
+    assertEquals( aggregateProfile, aggregateProfileService.getAggregateProfile( "test" ) );
+  }
 }
