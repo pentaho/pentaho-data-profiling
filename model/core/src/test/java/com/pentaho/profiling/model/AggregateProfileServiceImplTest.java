@@ -30,6 +30,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,5 +66,7 @@ public class AggregateProfileServiceImplTest {
     aggregateProfileService.registerAggregateProfile( aggregateProfile );
     aggregateProfileService.addChild( value, childId );
     verify( aggregateProfile ).addChildProfile( childId );
+    assertEquals( aggregateProfile, aggregateProfileService.getAggregateProfile( childId ) );
+    assertNull( aggregateProfileService.getAggregateProfile( "fake" ) );
   }
 }

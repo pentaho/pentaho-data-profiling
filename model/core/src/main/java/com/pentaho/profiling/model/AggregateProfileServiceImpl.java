@@ -24,6 +24,7 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
+import com.pentaho.profiling.api.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +35,45 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by bryan on 3/5/15.
  */
 public class AggregateProfileServiceImpl implements AggregateProfileService {
-  private final Map<String, AggregateProfile> aggregateProfileMap =
-    new ConcurrentHashMap<String, AggregateProfile>();
+  private final Map<String, AggregateProfile> aggregateProfileMap = new ConcurrentHashMap<String, AggregateProfile>();
+  private final Map<String, String> aggregateProfileTopLevelMap = new ConcurrentHashMap<String, String>();
 
   public void registerAggregateProfile( AggregateProfile aggregateProfile ) {
-    aggregateProfileMap.put( aggregateProfile.getId(), aggregateProfile );
+    String id = aggregateProfile.getId();
+    aggregateProfileMap.put( id, aggregateProfile );
+    aggregateProfileTopLevelMap.put( id, id );
   }
 
   @Override public List<AggregateProfile> getAggregateProfiles() {
     return new ArrayList<AggregateProfile>( aggregateProfileMap.values() );
   }
 
+  @Override public AggregateProfile getAggregateProfile( String profileId ) {
+    String aggregateId = aggregateProfileTopLevelMap.get( profileId );
+    if ( aggregateId != null ) {
+      return aggregateProfileMap.get( aggregateId );
+    }
+    return null;
+  }
+
   @Override public void addChild( String profileId, String childProfileId ) {
-    aggregateProfileMap.get( profileId ).addChildProfile( childProfileId );
+    AggregateProfile aggregateProfile = aggregateProfileMap.get( profileId );
+    aggregateProfile.addChildProfile( childProfileId );
+    String topLevel = profileId;
+    String next;
+    while ( ( next = aggregateProfileTopLevelMap.get( topLevel ) ) != null && !next.equals( topLevel ) ) {
+      topLevel = next;
+    }
+    aggregateProfileTopLevelMap.put( childProfileId, topLevel );
+    updateChildren( topLevel, aggregateProfile );
+  }
+
+  private void updateChildren( String topLevel, AggregateProfile aggregateProfile ) {
+    for ( Profile child : aggregateProfile.getChildProfiles() ) {
+      aggregateProfileTopLevelMap.put( child.getId(), topLevel );
+      if ( child instanceof AggregateProfile ) {
+        updateChildren( topLevel, (AggregateProfile) child );
+      }
+    }
   }
 }
