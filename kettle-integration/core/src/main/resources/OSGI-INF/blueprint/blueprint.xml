@@ -24,6 +24,29 @@
     </property>
   </bean>
 
+  <bean id="previewProfileStreamer" class="com.pentaho.profiling.kettle.integration.core.preview.PreviewProfileStreamer"
+        scope="singleton">
+    <argument ref="localizationService"/>
+    <argument ref="profilingService"/>
+    <argument ref="aggregateProfileService"/>
+    <argument ref="streamingProfileService"/>
+  </bean>
+
+  <bean id="previewProfileStreamerPlugin" class="org.pentaho.di.osgi.OSGIPlugin" scope="prototype">
+    <property name="mainType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface"/>
+    <property name="name" value="PreviewProfileStreamer"/>
+    <property name="ID" value="PreviewProfileStreamer"/>
+    <property name="imageFile" value=""/>
+    <property name="description" value="Creates a streaming profile from the preview"/>
+    <property name="pluginTypeInterface" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
+    <property name="category" value=""/>
+    <property name="classToBeanMap">
+      <map>
+        <entry key="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface" value="previewProfileStreamer"/>
+      </map>
+    </property>
+  </bean>
+
 
   <bean id="resourceMapping"
         class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
@@ -33,10 +56,19 @@
   <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
 
   <reference id="localizationService" interface="org.pentaho.osgi.i18n.LocalizationService"/>
+  <reference id="profilingService" interface="com.pentaho.profiling.api.ProfilingService"/>
+  <reference id="aggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
 
   <!-- Register the plugin as a service so Kettle can find it -->
   <service id="executionResultsProfileTabService" interface="org.pentaho.di.core.plugins.PluginInterface"
            ref="executionResultsProfileTab">
+    <service-properties>
+      <entry key="PluginType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
+    </service-properties>
+  </service>
+  <service id="previewProfileStreamerPluginService" interface="org.pentaho.di.core.plugins.PluginInterface"
+           ref="previewProfileStreamerPlugin">
     <service-properties>
       <entry key="PluginType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
     </service-properties>
