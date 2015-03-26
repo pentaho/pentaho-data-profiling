@@ -33,6 +33,7 @@ import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
@@ -190,6 +191,13 @@ public class AggregateProfileImpl implements AggregateProfile {
       try {
         metricContributor.merge( dataSourceFieldManagerInto, dataSourceFieldManagerFrom );
       } catch ( MetricMergeException e ) {
+        LOGGER.error( e.getMessage(), e );
+      }
+    }
+    for ( MetricContributor metricContributor : metricContributorList ) {
+      try {
+        metricContributor.setDerived( dataSourceFieldManagerInto );
+      } catch ( ProfileActionException e ) {
         LOGGER.error( e.getMessage(), e );
       }
     }

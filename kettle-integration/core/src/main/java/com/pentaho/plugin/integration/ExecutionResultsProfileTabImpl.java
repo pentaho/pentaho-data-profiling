@@ -43,13 +43,12 @@ import java.util.Set;
  * Created by saslan on 12/15/2014.
  */
 public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInterface {
-  private final LocalizationService localizationService;
-  private final ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
-  private final BundleContext bundleContext;
   protected static final String PROJECT_NAME = "kettle-integration-core";
   protected static final String PACKAGE_NAME = "com/pentaho/plugin/integration/messages";
   protected static final String KEY_NAME = "Spoon.TransGraph.ProfileTab.Name";
-  protected static final String RESPONDS_TO_NAME = "loadTab";
+  private final LocalizationService localizationService;
+  private final ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
+  private final BundleContext bundleContext;
 
   public ExecutionResultsProfileTabImpl( LocalizationService localizationService,
                                          ExecutionResultsProfileTabIcon executionResultsProfileTabIcon,
@@ -62,7 +61,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
   @Override
   public Map<Class<?>, Set<String>> respondsTo() {
     Map<Class<?>, Set<String>> result = new HashMap<Class<?>, Set<String>>();
-    result.put( TransGraph.class, new HashSet<String>( Arrays.asList( RESPONDS_TO_NAME ) ) );
+    result.put( TransGraph.class, new HashSet<String>( Arrays.asList( TransGraph.LOAD_TAB ) ) );
     return result;
   }
 
@@ -74,7 +73,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
       transGraph.addExtraView();
     }
     ResourceBundle resourceBundle =
-        localizationService.getResourceBundle( PROJECT_NAME, PACKAGE_NAME, Locale.getDefault() );
+      localizationService.getResourceBundle( PROJECT_NAME, PACKAGE_NAME, Locale.getDefault() );
     String tabText = resourceBundle.getString( KEY_NAME );
 
     CTabItem transProfileTab = createCTabItem( transGraph.extraViewTabFolder, SWT.NONE );
@@ -85,7 +84,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
     transProfileTab.setControl( transProfileBrowser );
 
     ExecutionResultsProfileTabStepListener selectedStepListener =
-        createExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
+      createExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph );
     transGraph.addSelectedStepListener( selectedStepListener );
     selectedStepListener.onSelect( transGraph.getCurrentStep() );
   }
@@ -102,7 +101,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
 
   //For unit testing purposes
   protected ExecutionResultsProfileTabStepListener createExecutionResultsProfileTabStepListener(
-      Browser transProfileBrowser, TransGraph transGraph ) {
+    Browser transProfileBrowser, TransGraph transGraph ) {
     return new ExecutionResultsProfileTabStepListener( transProfileBrowser, transGraph, bundleContext );
   }
 }
