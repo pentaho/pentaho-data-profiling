@@ -62,6 +62,7 @@ public class DataSourceFieldValue {
    * Constructor for a null-valued DataSourceField
    */
   public DataSourceFieldValue() {
+    this( null );
   }
 
   /**
@@ -162,7 +163,7 @@ public class DataSourceFieldValue {
    *
    * @return the number of metadata elements associated with this field value
    */
-  public int getNumMetadataElements() {
+  public int numMetadataElements() {
     return fieldMetadata.size();
   }
 

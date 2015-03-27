@@ -39,7 +39,7 @@ public class DataSourceFieldValueTest {
   public void testNullField() {
     DataSourceFieldValue val = new DataSourceFieldValue();
     assertNull( val.getFieldValue() );
-    assertEquals( 0, val.getNumMetadataElements() );
+    assertEquals( 0, val.numMetadataElements() );
   }
 
   @Test
