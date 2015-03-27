@@ -25,12 +25,30 @@ package com.pentaho.profiling.api;
 import java.util.List;
 
 /**
- * Created by bryan on 3/5/15.
+ * Service for interacting with aggregate profiles
  */
 public interface AggregateProfileService {
+
+  /**
+   * Returns a list of all aggregate profiles
+   *
+   * @return a list of all aggregate profiles
+   */
   public List<AggregateProfile> getAggregateProfiles();
 
+  /**
+   * Will return the highest level aggregate profile that contains the profile with the given id
+   *
+   * @param profileId the profileId
+   * @return the highest level aggregate profile that contains the profile with the given id
+   */
   public AggregateProfile getAggregateProfile( String profileId );
 
+  /**
+   * Adds the profile with id of childProfileId as a child of the profile with the id profileId
+   *
+   * @param profileId      the parent profile id
+   * @param childProfileId the child profile id
+   */
   public void addChild( String profileId, String childProfileId );
 }
