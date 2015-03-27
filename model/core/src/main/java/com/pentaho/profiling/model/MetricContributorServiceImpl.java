@@ -22,12 +22,12 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.json.ObjectMapperFactory;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +45,14 @@ import java.util.List;
 public class MetricContributorServiceImpl implements MetricContributorService {
   private static final Logger LOGGER = LoggerFactory.getLogger( MetricContributorServiceImpl.class );
   private final List<MetricContributorBundle> metricContributorBundles;
-  private final MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
   private final String jsonFile;
   private final ObjectMapper objectMapper;
   private MetricContributors metricContributors;
 
   public MetricContributorServiceImpl( List<MetricContributorBundle> metricContributorBundles,
-                                       MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory ) {
+                                       ObjectMapperFactory objectMapperFactory ) {
     this.metricContributorBundles = metricContributorBundles;
-    this.metricContributorsObjectMapperFactory = metricContributorsObjectMapperFactory;
-    this.objectMapper = new ObjectMapper();
-    this.objectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
+    this.objectMapper = objectMapperFactory.createMapper();
     String karafHome = System.getProperty( "karaf.home" );
     if ( karafHome != null ) {
       jsonFile = new File( karafHome + "/etc/metricContributors.json" ).getAbsolutePath();
@@ -75,8 +72,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
         FileInputStream fileInputStream = null;
         try {
           fileInputStream = new FileInputStream( metricContributorsJson );
-          this.metricContributors = metricContributorsObjectMapperFactory.createObjectMapper()
-            .readValue( fileInputStream, MetricContributors.class );
+          this.metricContributors = objectMapper.readValue( fileInputStream, MetricContributors.class );
           return this.metricContributors;
         } catch ( Exception e ) {
           LOGGER.error( "Unable to read saved metric contributor json, falling back to default", e );

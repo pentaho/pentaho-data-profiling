@@ -20,11 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.model;
+package com.pentaho.profiling.api.json;
 
-import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
+import com.pentaho.profiling.api.classes.HasClasses;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.MapperConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.jsontype.NamedType;
@@ -33,55 +33,103 @@ import org.codehaus.jackson.map.jsontype.impl.ClassNameIdResolver;
 import org.codehaus.jackson.map.jsontype.impl.StdTypeResolverBuilder;
 import org.codehaus.jackson.type.JavaType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by bryan on 3/12/15.
+ * Created by bryan on 3/27/15.
  */
-public class MetricContributorsObjectMapperFactoryImpl implements MetricContributorsObjectMapperFactory {
-  private final List<MetricContributorBundle> metricContributorBundles;
+public class ObjectMapperFactory {
+  private final List<HasClasses> hasClassesList = new ArrayList<HasClasses>();
+  private final ClassLoader defaultClassLoader;
+  private volatile Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
 
-  public MetricContributorsObjectMapperFactoryImpl( List<MetricContributorBundle> metricContributorBundles ) {
-    this.metricContributorBundles = metricContributorBundles;
+  public ObjectMapperFactory( ClassLoader defaultClassLoader ) {
+    this.defaultClassLoader = defaultClassLoader;
   }
 
-  @Override public ObjectMapper createObjectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
+  public ObjectMapperFactory( Class defaultClassLoaderClass ) {
+    this( defaultClassLoaderClass.getClassLoader() );
+  }
+
+  public void hasClassesAdded( HasClasses hasClasses, Map properties ) {
+    synchronized ( hasClassesList ) {
+      hasClassesList.add( hasClasses );
+      updateClassMap();
+    }
+  }
+
+  public void hasClassesRemoved( HasClasses hasClasses, Map properties ) {
+    synchronized ( hasClassesList ) {
+      while ( hasClassesList.remove( hasClasses ) ) {
+      }
+      updateClassMap();
+    }
+  }
+
+  private void updateClassMap() {
     final Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
-    for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
-      for ( final Class clazz : metricContributorBundle.getMetricContributorClasses() ) {
+    for ( HasClasses hasClasses : hasClassesList ) {
+      for ( Class clazz : hasClasses.getClasses() ) {
         classMap.put( clazz.getCanonicalName(), clazz );
       }
     }
+    this.classMap = classMap;
+  }
+
+  public ObjectMapper createMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
     StdTypeResolverBuilder typer =
       new ObjectMapper.DefaultTypeResolverBuilder( ObjectMapper.DefaultTyping.NON_FINAL ) {
+
         @Override
         protected TypeIdResolver idResolver( MapperConfig<?> config, JavaType baseType,
                                              Collection<NamedType> subtypes,
                                              boolean forSer, boolean forDeser ) {
           return new ClassNameIdResolver( baseType, config.getTypeFactory() ) {
-            @Override public JavaType typeFromId( String id ) {
-              Class<?> clazz = classMap.get( id );
-              if ( clazz == null ) {
-                clazz = _baseType.getRawClass();
-              }
+
+            private JavaType loadWithClassLoader( String id, ClassLoader classLoader, boolean suppressException ) {
               ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
               try {
-                Thread.currentThread().setContextClassLoader( clazz.getClassLoader() );
+                Thread.currentThread().setContextClassLoader( classLoader );
                 return super.typeFromId( id );
+              } catch ( RuntimeException ex ) {
+                if ( suppressException ) {
+                  return null;
+                } else {
+                  throw ex;
+                }
               } finally {
                 Thread.currentThread().setContextClassLoader( contextClassLoader );
               }
+            }
+
+            @Override public JavaType typeFromId( String id ) {
+              JavaType result = loadWithClassLoader( id, defaultClassLoader, true );
+              if ( result == null ) {
+                Class<?> clazz = classMap.get( id );
+                if ( clazz != null ) {
+                  result = loadWithClassLoader( id, clazz.getClassLoader(), true );
+                }
+              }
+              if ( result == null ) {
+                result = loadWithClassLoader( id, _baseType.getRawClass().getClassLoader(), false );
+              }
+              return result;
             }
           };
         }
       };
     typer = typer.init( JsonTypeInfo.Id.CLASS, null );
-    typer = typer.inclusion( JsonTypeInfo.As.WRAPPER_ARRAY );
-    objectMapper.setDefaultTyping( typer );
-    return objectMapper;
+    typer = typer.inclusion( JsonTypeInfo.As.PROPERTY );
+    typer = typer.typeProperty( "javaClass" );
+    return objectMapper.setDefaultTyping( typer );
+  }
+
+  public JacksonJaxbJsonProvider createProvider() {
+    return new JacksonJaxbJsonProvider( createMapper(), JacksonJaxbJsonProvider.DEFAULT_ANNOTATIONS );
   }
 }

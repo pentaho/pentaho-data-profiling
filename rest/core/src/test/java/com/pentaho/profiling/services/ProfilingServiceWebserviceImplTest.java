@@ -32,14 +32,11 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +45,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,13 +55,11 @@ import static org.mockito.Mockito.when;
 public class ProfilingServiceWebserviceImplTest {
   private ProfilingService delegate;
   private ProfilingServiceWebserviceImpl webservice;
-  private MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
 
   @Before
   public void setup() {
     delegate = mock( ProfilingService.class );
-    metricContributorsObjectMapperFactory = mock( MetricContributorsObjectMapperFactory.class );
-    webservice = new ProfilingServiceWebserviceImpl( delegate, metricContributorsObjectMapperFactory );
+    webservice = new ProfilingServiceWebserviceImpl( delegate );
   }
 
   @Test
@@ -161,40 +155,5 @@ public class ProfilingServiceWebserviceImplTest {
     String test = "test";
     when( delegate.getProfile( test ) ).thenReturn( profile );
     assertEquals( profile, webservice.getProfile( test ) );
-  }
-
-  @Test
-  public void testCreateWebservice() throws IOException, ProfileCreationException {
-    String requestString = "test";
-    ObjectMapper objectMapper = mock( ObjectMapper.class );
-    ProfileCreateRequest profileCreateRequest = mock( ProfileCreateRequest.class );
-    ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
-    final ProfileStatus profileStatus = mock( ProfileStatus.class );
-    when( profileStatusManager.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
-      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
-        return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
-      }
-    } );
-    when( delegate.create( profileCreateRequest ) ).thenReturn( profileStatusManager );
-    when( metricContributorsObjectMapperFactory.createObjectMapper() ).thenReturn( objectMapper );
-    when( objectMapper.readValue( requestString, ProfileCreateRequest.class ) ).thenReturn( profileCreateRequest );
-    assertEquals( profileStatus, webservice.createWebservice( requestString ) );
-  }
-
-  @Test( expected = ProfileCreationException.class )
-  public void testCreateWebserviceRuntimeException() throws ProfileCreationException {
-    doThrow( new RuntimeException() ).when( metricContributorsObjectMapperFactory ).createObjectMapper();
-    webservice.createWebservice( "test" );
-  }
-
-  @Test( expected = ProfileCreationException.class )
-  public void testCreateWebserviceProfileCreationException() throws IOException, ProfileCreationException {
-    String requestString = "test";
-    ObjectMapper objectMapper = mock( ObjectMapper.class );
-    ProfileCreateRequest profileCreateRequest = mock( ProfileCreateRequest.class );
-    when( metricContributorsObjectMapperFactory.createObjectMapper() ).thenReturn( objectMapper );
-    when( objectMapper.readValue( requestString, ProfileCreateRequest.class ) ).thenReturn( profileCreateRequest );
-    when( delegate.create( profileCreateRequest ) ).thenThrow( new ProfileCreationException( new RuntimeException() ) );
-    webservice.createWebservice( requestString );
   }
 }

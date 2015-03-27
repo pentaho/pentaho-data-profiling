@@ -22,13 +22,15 @@
 
 package com.pentaho.profiling.api.metrics.bundle;
 
+import com.pentaho.profiling.api.classes.HasClasses;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by bryan on 3/9/15.
  */
-public class MetricContributorBundleImpl implements MetricContributorBundle {
+public class MetricContributorBundleImpl implements MetricContributorBundle, HasClasses {
   private String name;
   private List<Class> metricContributorClasses;
 
@@ -89,6 +91,10 @@ public class MetricContributorBundleImpl implements MetricContributorBundle {
       "name='" + name + '\'' +
       ", metricContributorClasses=" + metricContributorClasses +
       '}';
+  }
+
+  @Override public List<Class> getClasses() {
+    return metricContributorClasses;
   }
   //CHECKSTYLE:OperatorWrap:ON
 }

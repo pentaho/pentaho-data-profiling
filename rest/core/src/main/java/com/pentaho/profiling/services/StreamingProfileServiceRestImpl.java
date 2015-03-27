@@ -25,6 +25,7 @@ package com.pentaho.profiling.services;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.StreamingProfileService;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.json.ObjectMapperFactory;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
@@ -56,9 +57,11 @@ import java.util.List;
 public class StreamingProfileServiceRestImpl implements StreamingProfileService {
   private static final Logger LOGGER = LoggerFactory.getLogger( StreamingProfileServiceRestImpl.class );
   private final StreamingProfileService delegate;
+  private final ObjectMapper objectMapper;
 
-  public StreamingProfileServiceRestImpl( StreamingProfileService delegate ) {
+  public StreamingProfileServiceRestImpl( StreamingProfileService delegate, ObjectMapperFactory objectMapperFactory ) {
     this.delegate = delegate;
+    this.objectMapper = objectMapperFactory.createMapper();
   }
 
   @GET
@@ -87,7 +90,6 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
     if ( streamingProfile == null ) {
       LOGGER.warn( "Attempted to process records for nonexistent profile: " + profileId );
     }
-    ObjectMapper objectMapper = new ObjectMapper();
     JsonFactory jsonFactory = objectMapper.getJsonFactory();
     JsonParser jsonParser = jsonFactory.createJsonParser( httpServletRequest.getInputStream() );
     if ( jsonParser.nextToken() != JsonToken.START_ARRAY ) {
