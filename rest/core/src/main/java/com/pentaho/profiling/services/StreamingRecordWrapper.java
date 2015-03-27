@@ -20,32 +20,42 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
 
 /**
- * Service for interacting with StreamingProfile
+ * Created by bryan on 3/26/15.
  */
-public interface StreamingProfileService {
-  /**
-   * Returns the StreamingProfile for a given profileId or null if it doesn't exist or isn't a StreamingProfile
-   *
-   * @param profileId the profileId
-   * @return the StreamingProfile for a given profileId or null if it doesn't exist or isn't a StreamingProfile
-   */
-  public StreamingProfile getStreamingProfile( String profileId );
+public class StreamingRecordWrapper {
+  private String profileId;
+  private List<DataSourceFieldValue> dataSourceFieldValues;
 
-  /**
-   * Sends a list of DataSourceFieldValues (corresponding to a single record or row) into the streaming profile
-   *
-   * @param profileId             the profileId
-   * @param dataSourceFieldValues the DataSourceFieldValue objects making up the record
-   * @throws ProfileActionException if there is a problem processing the values
-   */
-  public void processRecord( String profileId, List<DataSourceFieldValue> dataSourceFieldValues )
-    throws ProfileActionException;
+  public StreamingRecordWrapper() {
+    this( null, null );
+  }
+
+  public StreamingRecordWrapper( String profileId,
+                                 List<DataSourceFieldValue> dataSourceFieldValues ) {
+    this.profileId = profileId;
+    this.dataSourceFieldValues = dataSourceFieldValues;
+  }
+
+  public String getProfileId() {
+    return profileId;
+  }
+
+  public void setProfileId( String profileId ) {
+    this.profileId = profileId;
+  }
+
+  public List<DataSourceFieldValue> getDataSourceFieldValues() {
+    return dataSourceFieldValues;
+  }
+
+  public void setDataSourceFieldValues( List<DataSourceFieldValue> dataSourceFieldValues ) {
+    this.dataSourceFieldValues = dataSourceFieldValues;
+  }
 }

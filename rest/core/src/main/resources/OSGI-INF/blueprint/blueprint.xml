@@ -44,13 +44,23 @@
     </jaxrs:providers>
   </jaxrs:server>
 
+  <jaxrs:server address="/streaming" id="streamingProfileServiceRestImplWebservice">
+    <jaxrs:serviceBeans>
+      <ref component-id="streamingProfileServiceRestImpl"/>
+    </jaxrs:serviceBeans>
+    <jaxrs:providers>
+      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+    </jaxrs:providers>
+  </jaxrs:server>
+
   <jaxrs:server address="/data-profiling-service/dataSource" id="profileDsService">
     <jaxrs:serviceBeans>
       <ref component-id="profileDataSourceIncludeWebserviceImpl"/>
     </jaxrs:serviceBeans>
   </jaxrs:server>
 
-  <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl" scope="singleton">
+  <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl"
+        scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
     <argument ref="metricContributorsObjectMapperFactory"/>
   </bean>
@@ -70,6 +80,11 @@
     <argument ref="delegateAggregateProfileService"/>
   </bean>
 
+  <bean id="streamingProfileServiceRestImpl" class="com.pentaho.profiling.services.StreamingProfileServiceRestImpl"
+        scope="singleton">
+    <argument ref="streamingProfileService"/>
+  </bean>
+
   <bean id="resourceMapping"
         class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
     <property name="alias" value="/profileWebView"/>
@@ -79,8 +94,11 @@
 
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
-  <reference id="metricContributorServiceDelegate" interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
-  <reference id="metricContributorsObjectMapperFactory" interface="com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory"/>
+  <reference id="metricContributorServiceDelegate"
+             interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
+  <reference id="metricContributorsObjectMapperFactory"
+             interface="com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory"/>
+  <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
   <reference-list id="dsServiceList" interface="com.pentaho.profiling.services.api.ProfileDataSourceIncludeService"
                   availability="optional"/>
   <reference-list id="metricContributorBundles"

@@ -27,24 +27,76 @@ import com.pentaho.profiling.api.datasource.DataSourceReference;
 import java.util.List;
 
 /**
- * Created by bryan on 7/31/14.
+ * Service for creation and manipulation of profiles
  */
 public interface ProfilingService {
+  /**
+   * Get the profile factory for a given DataSourceReference
+   *
+   * @param dataSourceReference the DataSourceReference
+   * @return a ProfileFactory that accepts the reference (or null if it doesn't exist)
+   */
   public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference );
 
+  /**
+   * Return a boolean indicating whether a ProfileFactory exists for the given DataSourceReference
+   *
+   * @param dataSourceReference the DataSourceReference
+   * @return true if there is a ProfileFactory that accepts the reference, false otherwise
+   */
   public boolean accepts( DataSourceReference dataSourceReference );
 
+  /**
+   * Creates a profile from the ProfileCreateRequest and returns its initial status
+   *
+   * @param profileCreateRequest the ProfileCreateRequest
+   * @return a ProfileStatusManager for the created profile
+   * @throws ProfileCreationException if there is an error during profile creation
+   */
   public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException;
 
+  /**
+   * Returns a list of the currently active profiles
+   *
+   * @return a list of the currently active profiles
+   */
   public List<ProfileStatusReader> getActiveProfiles();
 
+  /**
+   * Returns the profile for a given profileId
+   *
+   * @param profileId the profileId
+   * @return the Profile
+   */
   public Profile getProfile( String profileId );
 
+  /**
+   * Returns the a ProfileStatusReader for the given profileId
+   *
+   * @param profileId the profileId
+   * @return the ProfileStatusReader
+   */
   public ProfileStatusReader getProfileUpdate( String profileId );
 
+  /**
+   * Stops the profile with the given id
+   *
+   * @param profileId the profileId to stop
+   */
   public void stop( String profileId );
 
+  /**
+   * Returns a boolean indicating whether a profile is running
+   *
+   * @param profileId the profileId to check
+   * @return a boolean indicating whether a profile is running
+   */
   public boolean isRunning( String profileId );
 
+  /**
+   * Discards the profile with the given id
+   *
+   * @param profileId the profileId to discard
+   */
   public void discardProfile( String profileId );
 }
