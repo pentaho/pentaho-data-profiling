@@ -30,6 +30,7 @@ define(['./controllers'], function (appControllers) {
 
         // Register to receive profile status updates of the new id.
         if (typeof $scope.uniqueTreeId.currentNode.id !== undefined) {
+          profileAppService.notificationService.unregister(oldNotificationServiceRegNumber);
           profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
               /* notifType */
               "com.pentaho.profiling.model.ProfilingServiceImpl",
@@ -38,9 +39,6 @@ define(['./controllers'], function (appControllers) {
               /* cb */
               function (profileStatus) {
                 profileAppService.updateProfile(profileStatus);
-
-                // Unregister to not receive profile status updates.
-                profileAppService.notificationService.unregister(oldNotificationServiceRegNumber);
               });
         }
       }, false);
