@@ -40,6 +40,7 @@ import java.util.List;
  */
 public class ProfileStatusImpl implements ProfileStatus {
   protected ProfileState state;
+  protected String name;
   protected List<ProfilingField> fields;
   protected Long totalEntities;
   protected List<ProfileStatusMessage> statusMessages;
@@ -49,26 +50,26 @@ public class ProfileStatusImpl implements ProfileStatus {
   protected DataSourceReference dataSourceReference;
   protected long sequenceNumber;
 
-  public ProfileStatusImpl( String id, DataSourceReference dataSourceReference ) {
-    this( id, dataSourceReference, 0L );
+  public ProfileStatusImpl( String id, String name, DataSourceReference dataSourceReference ) {
+    this( id, name, dataSourceReference, 0L );
   }
 
-  public ProfileStatusImpl( String id, DataSourceReference dataSourceReference, long sequenceNumber ) {
-    this( ProfileState.ACTIVE, null, null, null, null, null, id, dataSourceReference, sequenceNumber );
+  public ProfileStatusImpl( String id, String name, DataSourceReference dataSourceReference, long sequenceNumber ) {
+    this( ProfileState.ACTIVE, null, null, null, null, null, id, dataSourceReference, sequenceNumber, name );
   }
 
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
       profileStatus.getStatusMessages(),
       profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(), profileStatus.getId(),
-      profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1 );
+      profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1, profileStatus.getName() );
   }
 
   public ProfileStatusImpl( ProfileState profileState, List<ProfilingField> fields, Long totalEntities,
                             List<ProfileStatusMessage> statusMessages,
                             ProfileActionExceptionWrapper operationError,
                             List<ProfileFieldProperty> profileFieldProperties, String id,
-                            DataSourceReference dataSourceReference, long sequenceNumber ) {
+                            DataSourceReference dataSourceReference, long sequenceNumber, String name ) {
     this.state = profileState;
     if ( fields == null ) {
       fields = new ArrayList<ProfilingField>();
@@ -85,11 +86,16 @@ public class ProfileStatusImpl implements ProfileStatus {
     this.id = id;
     this.dataSourceReference = dataSourceReference;
     this.sequenceNumber = sequenceNumber;
+    this.name = name;
   }
 
   @Override @XmlElement
   public String getId() {
     return id;
+  }
+
+  @Override public String getName() {
+    return this.name;
   }
 
   @Override @XmlElement

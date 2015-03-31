@@ -35,6 +35,8 @@ public interface ProfileStatus {
 
   String getId();
 
+  String getName();
+
   DataSourceReference getDataSourceReference();
 
   List<ProfilingField> getFields();

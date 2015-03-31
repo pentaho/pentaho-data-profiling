@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 public interface Profile {
   public String getId();
 
+  public String getName();
+
   void start( ExecutorService executorService );
 
   void stop();

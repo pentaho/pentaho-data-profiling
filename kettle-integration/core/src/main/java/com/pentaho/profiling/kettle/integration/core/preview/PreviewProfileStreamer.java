@@ -24,8 +24,11 @@ package com.pentaho.profiling.kettle.integration.core.preview;
 
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfileService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
@@ -97,18 +100,19 @@ public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
     return result;
   }
 
-  @Override public void uiEvent( Object o, String s ) {
+  @Override public void uiEvent( Object o, final String s ) {
     if ( TransGraph.PREVIEW_TRANS.equals( s ) ) {
       TransDebugMetaWrapper transDebugMetaWrapper = (TransDebugMetaWrapper) o;
-      Trans trans = transDebugMetaWrapper.getTrans();
+      final Trans trans = transDebugMetaWrapper.getTrans();
       TransDebugMeta transDebugMeta = transDebugMetaWrapper.getTransDebugMeta();
       Map<StepMeta, StepDebugMeta> stepDebugMetaMap = transDebugMeta.getStepDebugMetaMap();
       for ( final StepMeta stepMeta : stepDebugMetaMap.keySet() ) {
         final StepDebugMeta stepDebugMeta = stepDebugMetaMap.get( stepMeta );
         try {
-          String profileId = profilingService.create(
+          ProfileStatusManager profileStatusManager = profilingService.create(
             new ProfileCreateRequest( new DataSourceReference( UUID.randomUUID().toString(),
-              AggregateProfile.AGGREGATE_PROFILE ), null ) ).getId();
+              AggregateProfile.AGGREGATE_PROFILE ), null ) );
+          String profileId = profileStatusManager.getId();
           stepDebugMetaProfileIdMap.put( stepDebugMeta, profileId );
           AggregateProfile aggregateProfile = aggregateProfileService.getAggregateProfile( profileId );
           PreviewProfileStreamerListener previewProfileStreamerListener =
@@ -118,6 +122,12 @@ public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
           for ( StepInterface baseStep : trans.findBaseSteps( stepMeta.getName() ) ) {
             baseStep.addRowListener( previewProfileStreamerListener );
           }
+          profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+            @Override public Void write( MutableProfileStatus profileStatus ) {
+              profileStatus.setName( trans.getName() + "." + stepMeta.getName() );
+              return null;
+            }
+          } );
         } catch ( ProfileCreationException e ) {
           e.printStackTrace();
         }

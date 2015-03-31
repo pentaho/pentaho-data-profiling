@@ -56,6 +56,7 @@ import static org.mockito.Mockito.when;
  */
 public class AggregateProfileImplTest {
   private String id;
+  private String name;
   private DataSourceReference dataSourceReference;
   private ProfileStatusManager profileStatusManager;
   private ProfilingServiceImpl profilingService;
@@ -70,6 +71,7 @@ public class AggregateProfileImplTest {
   @Before
   public void setup() {
     id = "test-id";
+    name = "test-name";
     dataSourceReference = mock( DataSourceReference.class );
     profilingService = mock( ProfilingServiceImpl.class );
     metricContributors = new ArrayList<MetricContributor>();
@@ -78,7 +80,7 @@ public class AggregateProfileImplTest {
     when( metricContributor.getProfileFieldProperties() ).thenReturn( Arrays.asList( profileFieldProperty ) );
     metricContributors.add( metricContributor );
     metricContributorsFactory = mock( MetricContributorsFactory.class );
-    profileStatusManager = new ProfileStatusManagerImpl( id, dataSourceReference, profilingService );
+    profileStatusManager = new ProfileStatusManagerImpl( id, name, dataSourceReference, profilingService );
     executorService = mock( ExecutorService.class );
     when( executorService.submit( any( Runnable.class ) ) ).thenAnswer( new Answer<Future>() {
       @Override public Future answer( InvocationOnMock invocation ) throws Throwable {

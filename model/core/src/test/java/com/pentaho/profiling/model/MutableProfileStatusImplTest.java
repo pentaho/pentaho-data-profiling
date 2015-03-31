@@ -64,6 +64,7 @@ public class MutableProfileStatusImplTest {
     ProfileFieldProperty profileFieldProperty = mock( ProfileFieldProperty.class );
     profileFieldProperties.add( profileFieldProperty );
     String id = "test-id";
+    String name = "test-name";
     long sequence = 99L;
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     when( constructorArg.getFields() ).thenReturn( fieldList );
@@ -72,6 +73,7 @@ public class MutableProfileStatusImplTest {
     when( constructorArg.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( constructorArg.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( constructorArg.getId() ).thenReturn( id );
+    when( constructorArg.getName() ).thenReturn( name );
     when( constructorArg.getDataSourceReference() ).thenReturn( dataSourceReference );
     when( constructorArg.getSequenceNumber() ).thenReturn( sequence );
     MutableProfileStatusImpl profileStatus =
@@ -83,6 +85,7 @@ public class MutableProfileStatusImplTest {
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
+    assertEquals( name, profileStatus.getName() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( sequence + 1, profileStatus.getSequenceNumber() );
   }
@@ -96,6 +99,14 @@ public class MutableProfileStatusImplTest {
     profileStatus.setFields( fieldList );
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
+  }
+
+  @Test
+  public void testSetName() {
+    MutableProfileStatusImpl profileStatus = new MutableProfileStatusImpl( constructorArg );
+    String name = "test-name";
+    profileStatus.setName( name );
+    assertEquals( name, profileStatus.getName() );
   }
 
   @Test

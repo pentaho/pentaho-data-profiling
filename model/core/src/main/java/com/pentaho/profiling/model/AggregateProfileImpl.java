@@ -128,6 +128,10 @@ public class AggregateProfileImpl implements AggregateProfile {
     return profileStatusManager.getId();
   }
 
+  @Override public String getName() {
+    return profileStatusManager.getName();
+  }
+
   @Override public void start( ExecutorService executorService ) {
     if ( !running.getAndSet( true ) ) {
       this.executorService = executorService;

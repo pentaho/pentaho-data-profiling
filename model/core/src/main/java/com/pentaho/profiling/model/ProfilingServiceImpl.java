@@ -108,7 +108,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     if ( profileOperationProviderFactory != null ) {
       String profileId = UUID.randomUUID().toString();
       ProfileStatusManager profileStatusManager =
-        new ProfileStatusManagerImpl( profileId, profileCreateRequest.getDataSourceReference(), this );
+        new ProfileStatusManagerImpl( profileId, null, profileCreateRequest.getDataSourceReference(), this );
       Profile profile = profileOperationProviderFactory.create( profileCreateRequest.getDataSourceReference(),
         profileStatusManager, profileCreateRequest.getMetricContributors() );
       profile.start( executorService );

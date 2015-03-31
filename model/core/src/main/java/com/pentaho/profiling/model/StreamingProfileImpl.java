@@ -145,6 +145,10 @@ public class StreamingProfileImpl implements StreamingProfile {
     return profileStatusManager.getId();
   }
 
+  @Override public String getName() {
+    return profileStatusManager.getName();
+  }
+
   @Override public void start( ExecutorService executorService ) {
     this.executorService = executorService;
     isRunning.set( true );

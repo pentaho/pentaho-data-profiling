@@ -48,6 +48,10 @@ public class MutableProfileStatusImpl extends ProfileStatusImpl implements Mutab
     this.fields = fields;
   }
 
+  @Override public void setName( String name ) {
+    this.name = name;
+  }
+
   @Override public void setTotalEntities( Long totalEntities ) {
     this.totalEntities = totalEntities;
   }
