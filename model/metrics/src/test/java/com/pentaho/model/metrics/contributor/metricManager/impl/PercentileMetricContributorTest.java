@@ -101,6 +101,15 @@ public class PercentileMetricContributorTest extends MetricContributorBeanTester
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" ) );
     assertEquals( Double.valueOf( 3 ),
       dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_75" ) );
+
+    DataSourceMetricManager dataSourceMetricManager3 = new DataSourceMetricManager(  );
+    dataSourceMetricManager3.setValue( 5L, MetricContributorUtils.COUNT );
+    percentileMetricContributor.merge( dataSourceMetricManager3, dataSourceMetricManager );
+    percentileMetricContributor.setDerived( dataSourceMetricManager3 );
+    assertEquals( Double.valueOf( 2.625 ), dataSourceMetricManager3.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
+
+    DataSourceMetricManager dataSourceMetricManager4 = new DataSourceMetricManager(  );
+    percentileMetricContributor.merge( dataSourceMetricManager, dataSourceMetricManager4 );
   }
 
   @Test
