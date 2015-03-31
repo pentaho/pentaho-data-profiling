@@ -46,9 +46,11 @@ public class ProfileStatusImplTest {
   @Test
   public void testIdDatasourceReferenceConstructor() {
     String id = "test-id";
+    String name = "test-name";
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
-    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, dataSourceReference );
+    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, dataSourceReference );
     assertEquals( id, profileStatus.getId() );
+    assertEquals( name, profileStatus.getName() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( 0L, profileStatus.getSequenceNumber() );
   }
@@ -56,10 +58,12 @@ public class ProfileStatusImplTest {
   @Test
   public void testIdDatasourceReferenceSequenceConstructor() {
     String id = "test-id";
+    String name = "test-name";
     long sequence = 99L;
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
-    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, dataSourceReference, sequence );
+    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, dataSourceReference, sequence );
     assertEquals( id, profileStatus.getId() );
+    assertEquals( name, profileStatus.getName() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( sequence, profileStatus.getSequenceNumber() );
   }
@@ -76,12 +80,13 @@ public class ProfileStatusImplTest {
     ProfileFieldProperty profileFieldProperty = mock( ProfileFieldProperty.class );
     profileFieldProperties.add( profileFieldProperty );
     String id = "test-id";
+    String name = "test-name";
     long sequence = 99L;
     DataSourceReference dataSourceReference = mock( DataSourceReference.class );
     ProfileStatusImpl profileStatus =
       new ProfileStatusImpl( ProfileState.ACTIVE, fieldList, totalEntities, profileStatusMessage,
         profileActionExceptionWrapper,
-        profileFieldProperties, id, dataSourceReference, sequence );
+        profileFieldProperties, id, dataSourceReference, sequence, name );
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
@@ -89,6 +94,7 @@ public class ProfileStatusImplTest {
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
+    assertEquals( name, profileStatus.getName() );
     assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
     assertEquals( sequence, profileStatus.getSequenceNumber() );
     assertEquals( ProfileState.ACTIVE, profileStatus.getProfileState() );

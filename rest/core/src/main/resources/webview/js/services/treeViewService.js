@@ -21,32 +21,32 @@
  */
 
 define(['./services'], function (appServices) {
-  appServices.factory('TreeViewService', ['ProfileAppService',
-    function (profileAppService) {
+  appServices.factory('TreeViewService', [
+    function () {
       function TreeViewService() {
         // treedata format
         // [
-        //  { "label" : "User", "id" : "role1", "children" : [
-        //    { "label" : "subUser1", "id" : "role11", "children" : [] },
-        //    { "label" : "subUser2", "id" : "role12", "children" : [
-        //      { "label" : "subUser2-1", "id" : "role121", "children" : [
-        //        { "label" : "subUser2-1-1", "id" : "role1211", "children" : [] },
-        //        { "label" : "subUser2-1-2", "id" : "role1212", "children" : [] }
+        //  { "name" : "User", "id" : "role1", "children" : [
+        //    { "name" : "subUser1", "id" : "role11", "children" : [] },
+        //    { "name" : "subUser2", "id" : "role12", "children" : [
+        //      { "name" : "subUser2-1", "id" : "role121", "children" : [
+        //        { "name" : "subUser2-1-1", "id" : "role1211", "children" : [] },
+        //        { "name" : "subUser2-1-2", "id" : "role1212", "children" : [] }
         //      ]}
         //    ]}
         //  ]},
-        //  { "label" : "Admin", "id" : "role2", "children" : [] },
-        //  { "label" : "Guest", "id" : "role3", "children" : [] }
+        //  { "name" : "Admin", "id" : "role2", "children" : [] },
+        //  { "name" : "Guest", "id" : "role3", "children" : [] }
         //];
-        this.treedata = [{"label" : "", "id" : "", "childProfile" : []}];
+        this.treedata = [{"name" : "", "id" : "", "childProfile" : []}];
       }
 
       TreeViewService.prototype = {
         constructor: TreeViewService,
-        buildTreeViewSchema: function (aggregateProfiles) {
+        buildTreeViewSchema: function (aggregateProfiles, profileStatus) {
           treeViewService.treedata = [];
           if (aggregateProfiles === ""){
-            treeViewService.treedata.push({"label" : "Collection", "id" : profileAppService.profileId, "childProfile" : []});
+            treeViewService.treedata.push({"name" : profileStatus.name, "id" : profileStatus.id, "childProfile" : []});
           } else {
             treeViewService.treedata.push(aggregateProfiles);
           }

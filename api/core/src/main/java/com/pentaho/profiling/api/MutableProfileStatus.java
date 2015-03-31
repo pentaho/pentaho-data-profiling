@@ -34,6 +34,8 @@ public interface MutableProfileStatus extends ProfileStatus {
 
   void setFields( List<ProfilingField> fields );
 
+  void setName( String name );
+
   void setTotalEntities( Long totalEntities );
 
   void setStatusMessages( List<ProfileStatusMessage> messages );

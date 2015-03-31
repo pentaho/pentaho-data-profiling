@@ -44,10 +44,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
   private ProfileStatusImpl profileStatus;
 
-  public ProfileStatusManagerImpl( String id, DataSourceReference dataSourceReference,
+  public ProfileStatusManagerImpl( String id, String name, DataSourceReference dataSourceReference,
                                    ProfilingServiceImpl profilingService ) {
     this.profilingService = profilingService;
-    profileStatus = new ProfileStatusImpl( id, dataSourceReference );
+    profileStatus = new ProfileStatusImpl( id, name, dataSourceReference );
   }
 
   @Override public <T> T read( ProfileStatusReadOperation<T> profileStatusReadOperation ) {
@@ -88,6 +88,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
     } finally {
       readWriteLock.readLock().unlock();
     }
+  }
+
+  @Override public String getName() {
+    return profileStatus.getName();
   }
 
   @Override public DataSourceReference getDataSourceReference() {

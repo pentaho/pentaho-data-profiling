@@ -29,7 +29,7 @@ define(['./controllers'], function (appControllers) {
         var oldNotificationServiceRegNumber = profileAppService.notificationService.notificationServiceRegNumber;
 
         // Register to receive profile status updates of the new id.
-        if (typeof $scope.uniqueTreeId.currentNode.id !== undefined) {
+        if (typeof $scope.uniqueTreeId.currentNode !== 'undefined') {
           profileAppService.notificationService.unregister(oldNotificationServiceRegNumber);
           profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
               /* notifType */

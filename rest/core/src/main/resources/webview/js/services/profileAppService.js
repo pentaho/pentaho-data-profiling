@@ -76,8 +76,8 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.profileId = profileStatus.id;
 
             //Get the aggregate Profiles
-            profileAppService.aggregateProfileService.getAggregates().then(function(aggregateProfiles) {
-              profileAppService.treeViewService.buildTreeViewSchema(aggregateProfiles);
+            profileAppService.aggregateProfileService.getAggregates().then(function (aggregateProfiles) {
+              profileAppService.treeViewService.buildTreeViewSchema(aggregateProfiles, profileStatus);
             })
 
             // Update datasource.
@@ -121,10 +121,13 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.dataSourceReference = dataSourceReference;
 
             if (!oldDsr || oldDsr.dataSourceProvider != newDsProv) {
-              profileAppService.dataSourceService.getInclude({id: newDsId, dataSourceProvider: newDsProv}, function (dsIncludeWrapper) {
+              profileAppService.dataSourceService.getInclude({
+                id: newDsId,
+                dataSourceProvider: newDsProv
+              }, function (dsIncludeWrapper) {
 
                 var dsInclude = dsIncludeWrapper.profileDataSourceInclude;
-                if (dsInclude ) {
+                if (dsInclude) {
                   if (dsInclude.require) {
                     require([dsInclude.require], function () {
                       profileAppService.dataSourceUrl = dsInclude.url;

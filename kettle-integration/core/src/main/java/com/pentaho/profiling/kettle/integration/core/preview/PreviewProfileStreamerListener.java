@@ -23,8 +23,11 @@
 package com.pentaho.profiling.kettle.integration.core.preview;
 
 import com.pentaho.profiling.api.AggregateProfileService;
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
+import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.StreamingProfileService;
@@ -52,6 +55,7 @@ import java.util.UUID;
 public class PreviewProfileStreamerListener implements RowListener, BreakPointListener {
   private static final Logger LOGGER = LoggerFactory.getLogger( PreviewProfileStreamerListener.class );
   private final ProfilingService profilingService;
+  private ProfileStatusManager streamingProfileStatusManager;
   private final StreamingProfileService streamingProfileService;
   private final String aggregateProfileId;
   private final AggregateProfileService aggregateProfileService;
@@ -64,15 +68,22 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     this.streamingProfileService = streamingProfileService;
     this.aggregateProfileId = aggregateProfileId;
     this.aggregateProfileService = aggregateProfileService;
-    this.streamingProfile = createStreamingProfile();
+    this.streamingProfile = createStreamingProfile( 0 );
   }
 
-  private StreamingProfile createStreamingProfile() {
+  private StreamingProfile createStreamingProfile( final int rowCount ) {
     try {
-      String streamingProfileId = profilingService.create(
+      streamingProfileStatusManager = profilingService.create(
         new ProfileCreateRequest( new DataSourceReference( UUID.randomUUID().toString(),
-          StreamingProfile.STREAMING_PROFILE ), null ) ).getId();
+          StreamingProfile.STREAMING_PROFILE ), null ) );
+      String streamingProfileId = streamingProfileStatusManager.getId();
       aggregateProfileService.addChild( aggregateProfileId, streamingProfileId );
+      streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+        @Override public Void write( MutableProfileStatus profileStatus ) {
+          profileStatus.setName( ( rowCount + 1 ) + " - " );
+          return null;
+        }
+      } );
       return streamingProfileService.getStreamingProfile( streamingProfileId );
     } catch ( ProfileCreationException e ) {
       LOGGER.error( "Unable to create streaming profile.", e );
@@ -80,10 +91,16 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     }
   }
 
-  @Override public synchronized void breakPointHit( TransDebugMeta transDebugMeta, StepDebugMeta stepDebugMeta,
+  @Override public synchronized void breakPointHit( TransDebugMeta transDebugMeta, final StepDebugMeta stepDebugMeta,
                                                     RowMetaInterface rowMetaInterface, List<Object[]> list ) {
+    streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+      @Override public Void write( MutableProfileStatus profileStatus ) {
+        profileStatus.setName( profileStatus.getName() + stepDebugMeta.getRowCount() );
+        return null;
+      }
+    } );
     streamingProfile.stop();
-    streamingProfile = createStreamingProfile();
+    streamingProfile = createStreamingProfile( stepDebugMeta.getRowCount() );
   }
 
   @Override public void rowReadEvent( RowMetaInterface rowMetaInterface, Object[] objects ) throws KettleStepException {
