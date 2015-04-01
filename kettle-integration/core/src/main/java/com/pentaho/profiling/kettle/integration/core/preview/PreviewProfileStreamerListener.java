@@ -55,11 +55,12 @@ import java.util.UUID;
 public class PreviewProfileStreamerListener implements RowListener, BreakPointListener {
   private static final Logger LOGGER = LoggerFactory.getLogger( PreviewProfileStreamerListener.class );
   private final ProfilingService profilingService;
-  private ProfileStatusManager streamingProfileStatusManager;
   private final StreamingProfileService streamingProfileService;
   private final String aggregateProfileId;
   private final AggregateProfileService aggregateProfileService;
+  private ProfileStatusManager streamingProfileStatusManager;
   private StreamingProfile streamingProfile;
+  private int rowCount = 0;
 
   public PreviewProfileStreamerListener( ProfilingService profilingService,
                                          StreamingProfileService streamingProfileService, String aggregateProfileId,
@@ -68,10 +69,19 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     this.streamingProfileService = streamingProfileService;
     this.aggregateProfileId = aggregateProfileId;
     this.aggregateProfileService = aggregateProfileService;
-    this.streamingProfile = createStreamingProfile( 0 );
+    createStreamingProfile();
   }
 
-  private StreamingProfile createStreamingProfile( final int rowCount ) {
+  private void createStreamingProfile() {
+    if ( streamingProfile != null ) {
+      streamingProfile.stop();
+      streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+        @Override public Void write( MutableProfileStatus profileStatus ) {
+          profileStatus.setName( profileStatus.getName() + rowCount );
+          return null;
+        }
+      } );
+    }
     try {
       streamingProfileStatusManager = profilingService.create(
         new ProfileCreateRequest( new DataSourceReference( UUID.randomUUID().toString(),
@@ -84,23 +94,15 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
           return null;
         }
       } );
-      return streamingProfileService.getStreamingProfile( streamingProfileId );
+      this.streamingProfile = streamingProfileService.getStreamingProfile( streamingProfileId );
     } catch ( ProfileCreationException e ) {
       LOGGER.error( "Unable to create streaming profile.", e );
-      return null;
     }
   }
 
   @Override public synchronized void breakPointHit( TransDebugMeta transDebugMeta, final StepDebugMeta stepDebugMeta,
                                                     RowMetaInterface rowMetaInterface, List<Object[]> list ) {
-    streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
-      @Override public Void write( MutableProfileStatus profileStatus ) {
-        profileStatus.setName( profileStatus.getName() + stepDebugMeta.getRowCount() );
-        return null;
-      }
-    } );
-    streamingProfile.stop();
-    streamingProfile = createStreamingProfile( stepDebugMeta.getRowCount() );
+    createStreamingProfile();
   }
 
   @Override public void rowReadEvent( RowMetaInterface rowMetaInterface, Object[] objects ) throws KettleStepException {
@@ -125,6 +127,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     }
     try {
       streamingProfile.processRecord( dataSourceFieldValues );
+      rowCount++;
     } catch ( ProfileActionException e ) {
       LOGGER.error( "Unable to process record: " + dataSourceFieldValues, e );
     }
