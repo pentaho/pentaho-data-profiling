@@ -51,7 +51,6 @@ define([
   "com.pentaho.profiling.services.webview/services/profileService",
   "com.pentaho.profiling.services.webview/services/dataSourceService",
   "com.pentaho.profiling.services.webview/services/profileAppService",
-  "com.pentaho.profiling.services.webview/services/aggregateProfileService",
   "com.pentaho.profiling.services.webview/services/treeViewService",
   "com.pentaho.profiling.services.webview/services/tabularService",
   "com.pentaho.profiling.services.webview/lib/angular.treeview"

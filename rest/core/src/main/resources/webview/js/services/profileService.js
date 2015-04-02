@@ -24,9 +24,11 @@ define(['./services'], function (appServices) {
   appServices.factory('ProfileService', ['$resource',
     function ($resource) {
       return $resource('../cxf/profile/:profileId', {}, {
-        query: {method: 'GET', params: {profileId: 'profileId'}},
-        stop: {method: 'PUT', url: '../cxf/profile/stop' },
-        start: {method: 'PUT', url: '../cxf/profile/start' }
+        getActive: {method: 'GET', url: '../cxf/profile', isArray: true},
+        getAggregates: {method: 'GET', url: '../cxf/aggregate', isArray: true},
+        getProfile: {method: 'GET', params: {profileId: 'profileId'}},
+        stopProfile: {method: 'PUT', url: '../cxf/profile/stop' },
+        startProfile: {method: 'PUT', url: '../cxf/profile/start' }
       });
     }])
 });

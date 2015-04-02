@@ -24,7 +24,7 @@
     <ul>
       <li><a ng-click="profileAppService.leftNavSelection = 'stats';" ng-class="{'active': profileAppService.leftNavSelection == 'stats'}">S</a></li>
       <li><a ng-click="profileAppService.leftNavSelection = 'tree';" ng-class="{'active': profileAppService.leftNavSelection == 'tree'}">T</a></li>
-      <li><a ng-click="profileAppService.leftNavSelection = 'config';" ng-class="{'active': profileAppService.leftNavSelection == 'config'}">C</a></li>
+      <li><a ng-click="profileAppService.leftNavSelection = 'admin';" ng-class="{'active': profileAppService.leftNavSelection == 'admin'}">A</a></li>
     </ul>
   </div>
 
@@ -45,8 +45,11 @@
           data-node-children="childProfiles" >
       </div>
     </div>
-    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'config'}" ng-switch-when="config">
-      Configuration view
+    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'admin'}" ng-switch-when="admin">
+      <div ng-repeat="profile in profileAppService.activeProfiles">
+        <a href="#/{{profile.id}}">{{profile.id}}</a>
+        <br>
+      </div>
     </div>
   </div>
 </div>

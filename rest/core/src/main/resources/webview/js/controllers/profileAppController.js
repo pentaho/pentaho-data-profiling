@@ -25,14 +25,13 @@ define(['./controllers'], function (appControllers) {
     '$scope',
     'ProfileService',
     'DataSourceService',
-    'AggregateProfileService',
     'NotificationService',
     'ProfileAppService',
     'TabularService',
     'TreeViewService',
-    function ($scope, profileService, dataSourceService, aggregateProfileService, notificationService, profileAppService, tabularService, treeViewService) {
+    function ($scope, profileService, dataSourceService, notificationService, profileAppService, tabularService, treeViewService) {
 
-      profileAppService.init(tabularService, treeViewService, profileService, dataSourceService, aggregateProfileService, notificationService, $scope);
+      profileAppService.init(tabularService, treeViewService, profileService, dataSourceService, notificationService, $scope);
       $scope.profileAppService = profileAppService;
     }
   ])

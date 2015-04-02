@@ -26,20 +26,11 @@ define(['./controllers'], function (appControllers) {
     'ProfileAppService',
     function ($scope, profileAppService) {
       $scope.$watch('uniqueTreeId.currentNode', function (newObj, oldObj) {
-        var oldNotificationServiceRegNumber = profileAppService.notificationService.notificationServiceRegNumber;
-
         // Register to receive profile status updates of the new id.
         if (typeof $scope.uniqueTreeId.currentNode !== 'undefined') {
-          profileAppService.notificationService.unregister(oldNotificationServiceRegNumber);
-          profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
-              /* notifType */
-              "com.pentaho.profiling.model.ProfilingServiceImpl",
-              /* ids */
-              [$scope.uniqueTreeId.currentNode.id],
-              /* cb */
-              function (profileStatus) {
-                profileAppService.updateProfile(profileStatus);
-              });
+          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.uniqueTreeId.currentNode.id], function (profileStatus) {
+            profileAppService.updateProfile(profileStatus);
+          });
         }
       }, false);
     }

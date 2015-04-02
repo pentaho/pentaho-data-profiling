@@ -45,7 +45,7 @@ define(['./services'], function (appServices) {
         constructor: TreeViewService,
         buildTreeViewSchema: function (aggregateProfiles, profileStatus) {
           treeViewService.treedata = [];
-          if (aggregateProfiles === ""){
+          if (aggregateProfiles.length === 0){
             treeViewService.treedata.push({"name" : profileStatus.name, "id" : profileStatus.id, "childProfile" : []});
           } else {
             treeViewService.treedata.push(aggregateProfiles);
