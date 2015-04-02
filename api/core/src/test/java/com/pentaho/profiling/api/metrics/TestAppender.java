@@ -50,8 +50,8 @@ public class TestAppender implements Appender {
     instance = testAppender;
   }
 
-  public static void clearInstance() {
-    instance = null;
+  public static TestAppender getInstance() {
+    return instance;
   }
 
   @Override public void addFilter( Filter newFilter ) {

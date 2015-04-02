@@ -53,6 +53,9 @@ import java.util.UUID;
  * Created by bryan on 3/24/15.
  */
 public class PreviewProfileStreamerListener implements RowListener, BreakPointListener {
+  public static final String UNABLE_TO_CREATE_STREAMING_PROFILE = "Unable to create streaming profile.";
+  public static final String UNABLE_TO_ADD_FIELD = "Unable to add field ";
+  public static final String UNABLE_TO_PROCESS_RECORD = "Unable to process record: ";
   private static final Logger LOGGER = LoggerFactory.getLogger( PreviewProfileStreamerListener.class );
   private final ProfilingService profilingService;
   private final StreamingProfileService streamingProfileService;
@@ -96,7 +99,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
       } );
       this.streamingProfile = streamingProfileService.getStreamingProfile( streamingProfileId );
     } catch ( ProfileCreationException e ) {
-      LOGGER.error( "Unable to create streaming profile.", e );
+      LOGGER.error( UNABLE_TO_CREATE_STREAMING_PROFILE, e );
     }
   }
 
@@ -122,14 +125,14 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
         dataSourceFieldValue.setPhysicalName( name );
         dataSourceFieldValues.add( dataSourceFieldValue );
       } catch ( KettleValueException e ) {
-        LOGGER.error( "Unable to add field " + valueMetaInterface.getName(), e );
+        LOGGER.error( UNABLE_TO_ADD_FIELD + valueMetaInterface.getName(), e );
       }
     }
     try {
       streamingProfile.processRecord( dataSourceFieldValues );
       rowCount++;
     } catch ( ProfileActionException e ) {
-      LOGGER.error( "Unable to process record: " + dataSourceFieldValues, e );
+      LOGGER.error( UNABLE_TO_PROCESS_RECORD + dataSourceFieldValues, e );
     }
   }
 

@@ -68,6 +68,7 @@ import java.util.UUID;
  * Created by bryan on 3/23/15.
  */
 public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
+  public static final String UNABLE_TO_CREATE_PROFILE = "Unable to create profile";
   protected static final String PROJECT_NAME = "kettle-integration-core";
   protected static final String PACKAGE_NAME = "com/pentaho/profiling/kettle/integration/core/preview/messages";
   protected static final String KEY_NAME = "PreviewProfileStreamer.Profile";
@@ -129,7 +130,7 @@ public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
             }
           } );
         } catch ( ProfileCreationException e ) {
-          e.printStackTrace();
+          LOGGER.error( UNABLE_TO_CREATE_PROFILE, e );
         }
       }
     } else if ( TransPreviewDialog.TRANS_PREVIEW_DIALOG.equals( s ) ) {
