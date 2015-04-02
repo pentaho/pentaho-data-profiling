@@ -54,7 +54,7 @@ public class MetricContributorsFactoryImpl implements MetricContributorsFactory 
       metricContributors = new ArrayList<MetricContributor>( metricContributors );
     }
     List<MetricManagerContributor> metricManagerContributors = contributors.getMetricManagerContributors();
-    if ( metricManagerContributors != null ) {
+    if ( metricManagerContributors != null && metricManagerContributors.size() > 0 ) {
       metricContributors.add( new MetricManagerBasedMetricContributor( metricManagerContributors ) );
     }
     return metricContributors;
