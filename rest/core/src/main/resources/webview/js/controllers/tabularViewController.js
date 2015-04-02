@@ -29,15 +29,9 @@ define(['./controllers'], function (appControllers) {
       $scope.profileAppService = profileAppService;
 
       // Register to receive profile status updates.
-      profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
-          /* notifType */
-          "com.pentaho.profiling.model.ProfilingServiceImpl",
-          /* ids */
-          [$routeParams.profileId],
-          /* cb */
-          function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
+      profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$routeParams.profileId], function (profileStatus) {
+        profileAppService.updateProfile(profileStatus);
+      });
     }
   ])
 });

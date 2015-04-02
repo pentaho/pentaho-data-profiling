@@ -34,7 +34,7 @@ define(["require", './services'], function (require, appServices) {
         this.profileService;
         this.treedata;
         this.dataSourceService;
-        this.aggregateProfileService;
+        this.activeProfiles;
         this.notificationService;
         this.notificationServiceRegNumber;
         this.leftNavSelection;
@@ -42,7 +42,7 @@ define(["require", './services'], function (require, appServices) {
 
       ProfileAppService.prototype = {
         constructor: ProfileAppService,
-        init: function (aTabularService, aTreeViewService, aProfileService, aDataSourceService, anAggregateProfileService, aNotificationService, scope) {
+        init: function (aTabularService, aTreeViewService, aProfileService, aDataSourceService, aNotificationService, scope) {
           profileAppService.leftNavSelection = "stats";
           //Because of the way we are using services as singleton instances of objects that are injectable, yet leverage the
           //dual binding that angular provides, we need to initialize the TabularService and set it on the ProfileAppService
@@ -52,7 +52,7 @@ define(["require", './services'], function (require, appServices) {
           profileAppService.treeViewService = aTreeViewService;
           profileAppService.profileService = aProfileService;
           profileAppService.dataSourceService = aDataSourceService;
-          profileAppService.aggregateProfileService = anAggregateProfileService;
+          profileAppService.activeProfiles = [];
           profileAppService.notificationService = aNotificationService;
           profileAppService.scope = scope;
         },
@@ -76,9 +76,14 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.profileId = profileStatus.id;
 
             //Get the aggregate Profiles
-            profileAppService.aggregateProfileService.getAggregates().then(function (aggregateProfiles) {
+            profileAppService.profileService.getAggregates({profileId: profileAppService.profileId}, function (aggregateProfiles) {
               profileAppService.treeViewService.buildTreeViewSchema(aggregateProfiles, profileStatus);
-            })
+            });
+
+            //Get the active Profiles
+            profileAppService.profileService.getActive({profileId: profileAppService.profileId}, function (activeProfiles) {
+              profileAppService.activeProfiles = activeProfiles;
+            });
 
             // Update datasource.
             profileAppService.updateDataSource(profileStatus.dataSourceReference);
@@ -148,6 +153,19 @@ define(["require", './services'], function (require, appServices) {
          */
         stopCurrentOperation: function () {
           profileAppService.profileService.stop({profileId: profileAppService.profileId});
+        },
+        /**
+         * Register the profile id with the notification service.
+         */
+        register: function (notifType, ids, callback) {
+          profileAppService.notificationService.unregister(profileAppService.notificationService.notificationServiceRegNumber);
+          profileAppService.notificationService.notificationServiceRegNumber = profileAppService.notificationService.register(
+              /* notifType */
+              notifType,
+              /* ids */
+              ids,
+              /* cb */
+              callback);
         }
       };
       var profileAppService = new ProfileAppService();
