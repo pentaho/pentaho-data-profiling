@@ -20,13 +20,13 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.metrics.mapper;
+package com.pentaho.profiling.api.classes;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import java.util.List;
 
 /**
- * Created by bryan on 3/12/15.
+ * Created by bryan on 3/27/15.
  */
-public interface MetricContributorsObjectMapperFactory {
-  public ObjectMapper createObjectMapper();
+public interface HasClasses {
+  public List<Class> getClasses();
 }

@@ -28,6 +28,7 @@ import com.pentaho.model.metrics.contributor.metricManager.impl.PercentileMetric
 import com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor;
 import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.json.ObjectMapperFactory;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
@@ -50,8 +51,7 @@ public class NVLOperationsTest {
 
   @Test
   public void testOUt() throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
+    ObjectMapper objectMapper = new ObjectMapperFactory( NVLOperationsTest.class.getClassLoader() ).createMapper();
     System.out.println( objectMapper.writeValueAsString( new ProfileCreateRequest(
       new DataSourceReference( "test", "com.pentaho.profiling.mongo.api.MongoProfilingConnectionMetadataService" ), new MetricContributors(
       new ArrayList<MetricContributor>( Arrays.<MetricContributor>asList() ),

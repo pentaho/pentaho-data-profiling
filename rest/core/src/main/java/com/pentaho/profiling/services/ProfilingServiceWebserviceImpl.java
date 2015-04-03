@@ -32,7 +32,6 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,33 +56,9 @@ import java.util.List;
 public class ProfilingServiceWebserviceImpl implements ProfilingService {
   private static final Logger LOGGER = LoggerFactory.getLogger( ProfilingServiceWebserviceImpl.class );
   private final ProfilingService delegate;
-  private final MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
 
-  public ProfilingServiceWebserviceImpl( ProfilingService delegate,
-                                         MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory ) {
+  public ProfilingServiceWebserviceImpl( ProfilingService delegate ) {
     this.delegate = delegate;
-    this.metricContributorsObjectMapperFactory = metricContributorsObjectMapperFactory;
-  }
-
-  @POST
-  @Path( "/" )
-  public ProfileStatus createWebservice( String profileCreateRequestString ) throws ProfileCreationException {
-    try {
-      ProfileCreateRequest profileCreateRequest =
-        metricContributorsObjectMapperFactory.createObjectMapper()
-          .readValue( profileCreateRequestString, ProfileCreateRequest.class );
-      return create( profileCreateRequest ).read( new ProfileStatusReadOperation<ProfileStatus>() {
-        @Override public ProfileStatus read( ProfileStatus profileStatus ) {
-          return profileStatus;
-        }
-      } );
-    } catch ( Exception e ) {
-      LOGGER.error( e.getMessage(), e );
-      if ( e instanceof ProfileCreationException ) {
-        throw (ProfileCreationException) e;
-      }
-      throw new ProfileCreationException( e );
-    }
   }
 
   @Override public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference ) {
@@ -96,6 +71,8 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     return delegate.accepts( dataSourceReference );
   }
 
+  @POST
+  @Path( "/" )
   @Override
   public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
     return delegate.create( profileCreateRequest );

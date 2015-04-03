@@ -24,21 +24,14 @@ package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.jws.WebService;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * Created by bryan on 3/11/15.
@@ -48,41 +41,20 @@ import java.io.OutputStream;
 @WebService
 public class MetricContributorServiceImpl implements MetricContributorService {
   private final MetricContributorService delegate;
-  private final MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
 
-  public MetricContributorServiceImpl( MetricContributorService delegate,
-                                       MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory ) {
+  public MetricContributorServiceImpl( MetricContributorService delegate ) {
     this.delegate = delegate;
-    this.metricContributorsObjectMapperFactory = metricContributorsObjectMapperFactory;
   }
 
+  @GET
+  @Path( "/" )
   @Override public MetricContributors getDefaultMetricContributors() {
     return delegate.getDefaultMetricContributors();
   }
 
   @POST
   @Path( "/" )
-  public void setDefaultMetricContributors( @Context HttpServletRequest request )
-    throws IOException {
-    setDefaultMetricContributors( metricContributorsObjectMapperFactory.createObjectMapper().readValue(
-      request.getInputStream(), MetricContributors.class ) );
-  }
-
   @Override public void setDefaultMetricContributors( MetricContributors metricContributors ) {
     delegate.setDefaultMetricContributors( metricContributors );
-  }
-
-  @GET
-  @Path( "/" )
-  public void getDefaultMetricContributorsWs( @Context HttpServletResponse response ) throws IOException {
-    response.setContentType( MediaType.APPLICATION_JSON );
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
-    OutputStream outputStream = response.getOutputStream();
-    try {
-      objectMapper.writeValue( outputStream, getDefaultMetricContributors() );
-    } finally {
-      outputStream.close();
-    }
   }
 }

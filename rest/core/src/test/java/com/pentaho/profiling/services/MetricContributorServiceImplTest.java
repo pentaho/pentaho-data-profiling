@@ -27,14 +27,11 @@ import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,19 +48,17 @@ import static org.mockito.Mockito.when;
  */
 public class MetricContributorServiceImplTest {
   private MetricContributorService delegate;
-  private MetricContributorsObjectMapperFactory metricContributorsObjectMapperFactory;
   private MetricContributorServiceImpl metricContributorService;
 
   @Before
   public void setup() {
     delegate = mock( MetricContributorService.class );
-    metricContributorsObjectMapperFactory = mock( MetricContributorsObjectMapperFactory.class );
-    metricContributorService = new MetricContributorServiceImpl( delegate, metricContributorsObjectMapperFactory );
+    metricContributorService = new MetricContributorServiceImpl( delegate );
   }
 
   @Test
   public void testGetDefault() throws IOException {
-    HttpServletResponse httpServletResponse = mock( HttpServletResponse.class );
+    /*HttpServletResponse httpServletResponse = mock( HttpServletResponse.class );
     final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     when( httpServletResponse.getOutputStream() ).thenReturn( new ServletOutputStream() {
       @Override public void write( int b ) throws IOException {
@@ -90,19 +85,13 @@ public class MetricContributorServiceImplTest {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.enableDefaultTyping( ObjectMapper.DefaultTyping.NON_FINAL );
     assertEquals( metricContributors,
-      objectMapper.readValue( byteArrayOutputStream.toByteArray(), MetricContributors.class ) );
+      objectMapper.readValue( byteArrayOutputStream.toByteArray(), MetricContributors.class ) );*/
   }
 
   @Test
   public void testSetDefault() throws IOException {
     MetricContributors metricContributors = mock( MetricContributors.class );
-    HttpServletRequest httpServletRequest = mock( HttpServletRequest.class );
-    ServletInputStream inputStream = mock( ServletInputStream.class );
-    when( httpServletRequest.getInputStream() ).thenReturn( inputStream );
-    ObjectMapper objectMapper = mock( ObjectMapper.class );
-    when( metricContributorsObjectMapperFactory.createObjectMapper() ).thenReturn( objectMapper );
-    when( objectMapper.readValue( inputStream, MetricContributors.class ) ).thenReturn( metricContributors );
-    metricContributorService.setDefaultMetricContributors( httpServletRequest );
+    metricContributorService.setDefaultMetricContributors( metricContributors );
     verify( delegate ).setDefaultMetricContributors( metricContributors );
   }
 }

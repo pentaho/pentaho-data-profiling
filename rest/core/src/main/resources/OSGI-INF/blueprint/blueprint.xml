@@ -22,7 +22,7 @@
       <ref component-id="profilingServiceWebserviceImpl"/>
     </jaxrs:serviceBeans>
     <jaxrs:providers>
-      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+      <ref component-id="jsonProvider"/>
     </jaxrs:providers>
   </jaxrs:server>
 
@@ -31,7 +31,7 @@
       <ref component-id="aggregateProfileServiceRestImpl"/>
     </jaxrs:serviceBeans>
     <jaxrs:providers>
-      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+      <ref component-id="jsonProvider"/>
     </jaxrs:providers>
   </jaxrs:server>
 
@@ -40,7 +40,7 @@
       <ref component-id="metricContributorServiceImpl"/>
     </jaxrs:serviceBeans>
     <jaxrs:providers>
-      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+      <ref component-id="jsonProvider"/>
     </jaxrs:providers>
   </jaxrs:server>
 
@@ -49,7 +49,7 @@
       <ref component-id="streamingProfileServiceRestImpl"/>
     </jaxrs:serviceBeans>
     <jaxrs:providers>
-      <bean class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+      <ref component-id="jsonProvider"/>
     </jaxrs:providers>
   </jaxrs:server>
 
@@ -57,18 +57,19 @@
     <jaxrs:serviceBeans>
       <ref component-id="profileDataSourceIncludeWebserviceImpl"/>
     </jaxrs:serviceBeans>
+    <jaxrs:providers>
+      <ref component-id="jsonProvider"/>
+    </jaxrs:providers>
   </jaxrs:server>
 
   <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl"
         scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
-    <argument ref="metricContributorsObjectMapperFactory"/>
   </bean>
 
   <bean id="profilingServiceWebserviceImpl" class="com.pentaho.profiling.services.ProfilingServiceWebserviceImpl"
         scope="singleton">
     <argument ref="delegateRef"/>
-    <argument ref="metricContributorsObjectMapperFactory"/>
   </bean>
 
   <bean id="profileDataSourceIncludeWebserviceImpl"
@@ -83,6 +84,7 @@
   <bean id="streamingProfileServiceRestImpl" class="com.pentaho.profiling.services.StreamingProfileServiceRestImpl"
         scope="singleton">
     <argument ref="streamingProfileService"/>
+    <argument ref="metricObjectMapperFactory"/>
   </bean>
 
   <bean id="resourceMapping"
@@ -92,16 +94,23 @@
   </bean>
   <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
 
+
+  <bean id="defaultClassLoaderClass" factory-ref="aggregateProfileServiceRestImpl" factory-method="getClass"/>
+  <bean id="metricObjectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
+    <argument ref="defaultClassLoaderClass"/>
+  </bean>
+
+  <bean id="jsonProvider" factory-ref="metricObjectMapperFactory" factory-method="createProvider"/>
+  <reference-list id="metricContributorBundles"
+                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional">
+    <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded" unbind-method="hasClassesRemoved"/>
+  </reference-list>
+
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
   <reference id="metricContributorServiceDelegate"
              interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
-  <reference id="metricContributorsObjectMapperFactory"
-             interface="com.pentaho.profiling.api.metrics.mapper.MetricContributorsObjectMapperFactory"/>
   <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
   <reference-list id="dsServiceList" interface="com.pentaho.profiling.services.api.ProfileDataSourceIncludeService"
-                  availability="optional"/>
-  <reference-list id="metricContributorBundles"
-                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle"
                   availability="optional"/>
 </blueprint>
