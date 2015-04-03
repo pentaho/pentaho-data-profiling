@@ -64,7 +64,9 @@ public class ObjectMapperFactory {
 
   public void hasClassesRemoved( HasClasses hasClasses, Map properties ) {
     synchronized ( hasClassesList ) {
+      int numFound = 0;
       while ( hasClassesList.remove( hasClasses ) ) {
+        numFound++;
       }
       updateClassMap();
     }

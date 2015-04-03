@@ -90,7 +90,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
       List<MetricContributor> metricContributorList = new ArrayList<MetricContributor>();
       List<MetricManagerContributor> metricManagerContributorList = new ArrayList<MetricManagerContributor>();
       for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
-        for ( Class<?> clazz : metricContributorBundle.getMetricContributorClasses() ) {
+        for ( Class<?> clazz : metricContributorBundle.getClasses() ) {
           try {
             if ( MetricContributor.class.isAssignableFrom( clazz ) ) {
               metricContributorList.add( (MetricContributor) clazz.newInstance() );

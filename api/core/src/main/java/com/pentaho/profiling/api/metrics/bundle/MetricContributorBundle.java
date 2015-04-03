@@ -24,13 +24,9 @@ package com.pentaho.profiling.api.metrics.bundle;
 
 import com.pentaho.profiling.api.classes.HasClasses;
 
-import java.util.List;
-
 /**
  * Created by bryan on 3/9/15.
  */
 public interface MetricContributorBundle extends HasClasses {
   public String getName();
-
-  public List<Class> getMetricContributorClasses();
 }
