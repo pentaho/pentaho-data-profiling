@@ -32,8 +32,11 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.pentaho.profiling.api.doc.rest.ErrorCode;
+import com.pentaho.profiling.api.doc.rest.Example;
+import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import com.pentaho.profiling.api.metrics.MetricContributorService;
+import com.pentaho.profiling.api.sample.SampleProviderManager;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;
@@ -46,6 +49,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by bryan on 7/31/14.
@@ -54,30 +58,86 @@ import java.util.List;
 @Consumes( { MediaType.APPLICATION_JSON } )
 @WebService
 public class ProfilingServiceWebserviceImpl implements ProfilingService {
-  private static final Logger LOGGER = LoggerFactory.getLogger( ProfilingServiceWebserviceImpl.class );
+  public static final String PROFILE_ID = "profileId";
+  private final SampleProviderManager sampleProviderManager;
   private final ProfilingService delegate;
+  private final MetricContributorService metricContributorService;
 
-  public ProfilingServiceWebserviceImpl( ProfilingService delegate ) {
+  public ProfilingServiceWebserviceImpl( SampleProviderManager sampleProviderManager, ProfilingService delegate,
+                                         MetricContributorService metricContributorService ) {
+    this.sampleProviderManager = sampleProviderManager;
     this.delegate = delegate;
+    this.metricContributorService = metricContributorService;
   }
 
   @Override public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference ) {
     return delegate.getProfileFactory( dataSourceReference );
   }
 
+  /**
+   * Returns a boolean indicating whether a given DataSourceReference's provider can be used to create a profile.
+   * (Returns true iff there is a registered ProfileFactory that accepts the DataSourceReference)
+   *
+   * @param dataSourceReference the DataSourceReference
+   * @return a boolean indicating whether a given DataSourceReference's provider can be used to create a profile.
+   */
   @POST
   @Path( "/accepts" )
+  @SuccessResponseCode( 200 )
   @Override public boolean accepts( DataSourceReference dataSourceReference ) {
     return delegate.accepts( dataSourceReference );
   }
 
+  /**
+   * Creates examples for accepts call
+   *
+   * @return examples for accepts call
+   */
+  public List<Example> acceptsExample() {
+    List<Example> examples = new ArrayList<Example>();
+    for ( DataSourceReference dataSourceReference : sampleProviderManager.provide( DataSourceReference.class ) ) {
+      examples.add( new Example( null, null, dataSourceReference, delegate.accepts( dataSourceReference ) ) );
+    }
+    return examples;
+  }
+
+  /**
+   * Creates a profile from the given ProfileCreateRequest. If no metric contributors are specified, the profile will be
+   * created with the current defaults
+   *
+   * @param profileCreateRequest the ProfileCreateRequest
+   * @return the initial profile status
+   * @throws ProfileCreationException
+   */
   @POST
   @Path( "/" )
+  @SuccessResponseCode( 200 )
+  @ErrorCode( code = 500, reason = "Unable to create profile" )
   @Override
   public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
     return delegate.create( profileCreateRequest );
   }
 
+  /**
+   * Example generation code for create call
+   *
+   * @return the list of examples
+   */
+  public List<Example> createExample() {
+    List<Example> result = new ArrayList<Example>();
+    for ( ProfileStatusManager profileStatusManager : sampleProviderManager.provide( ProfileStatusManager.class ) ) {
+      result.add( new Example( null, null,
+        new ProfileCreateRequest( profileStatusManager.getDataSourceReference(),
+          metricContributorService.getDefaultMetricContributors() ), profileStatusManager ) );
+    }
+    return result;
+  }
+
+  /**
+   * Returns current status for all active profiles
+   *
+   * @return current status for all active profiles
+   */
   @GET
   @Path( "/" )
   public List<ProfileStatus> getActiveProfilesWebservice() {
@@ -93,6 +153,16 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     return result;
   }
 
+  /**
+   * Example generation for getActiveProfilesWebservice
+   *
+   * @return the list of examples
+   */
+  public Example getActiveProfilesWebserviceExample() {
+    return new Example( null, null, null,
+      new ArrayList<ProfileStatus>( sampleProviderManager.provide( ProfileStatus.class ) ) );
+  }
+
   @Override
   public List<ProfileStatusReader> getActiveProfiles() {
     return delegate.getActiveProfiles();
@@ -102,8 +172,15 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     return delegate.getProfile( profileId );
   }
 
+  /**
+   * Gets the current status of the profile with the given id
+   *
+   * @param profileId the profile id
+   * @return the current status of the corresponding profile
+   */
   @GET
   @Path( "/{profileId}" )
+  @SuccessResponseCode( 200 )
   public ProfileStatus getProfileUpdateWebservice( @PathParam( "profileId" ) String profileId ) {
     return getProfileUpdate( profileId ).read( new ProfileStatusReadOperation<ProfileStatus>() {
       @Override public ProfileStatus read( ProfileStatus profileStatus ) {
@@ -112,31 +189,87 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     } );
   }
 
+  public List<Example> getProfileUpdateWebserviceExample() {
+    List<Example> result = new ArrayList<Example>();
+    for ( ProfileStatus profileStatus : sampleProviderManager.provide( ProfileStatus.class ) ) {
+      Example example = new Example();
+      example.getPathParameters().put( PROFILE_ID, profileStatus.getId() );
+      example.setResponse( profileStatus );
+      result.add( example );
+    }
+    return result;
+  }
+
   @Override
   public ProfileStatusReader getProfileUpdate( String profileId ) {
     return delegate.getProfileUpdate( profileId );
   }
 
+  /**
+   * Stops the profile with the given id
+   *
+   * @param profileIdWrapper a wrapper containing the profile id
+   */
   @PUT
   @Path( "/stop" )
+  @SuccessResponseCode( 204 )
   public void stopCurrentOperation( ProfileIdWrapper profileIdWrapper ) {
     stop( profileIdWrapper.getProfileId() );
+  }
+
+  public Example stopCurrentOperationExample() {
+    return new Example( null, null, new ProfileIdWrapper( UUID.randomUUID().toString() ), null );
   }
 
   @Override public void stop( String profileId ) {
     delegate.stop( profileId );
   }
 
+  /**
+   * Checks to see if the given profile is currently running
+   *
+   * @param profileId the profileId to check
+   * @return a boolean indicating whether the profile is running
+   */
   @GET
   @Path( "/isRunning/{profileId}" )
-  @Override public boolean isRunning( String profileId ) {
+  @SuccessResponseCode( 200 )
+  @Override public boolean isRunning( @PathParam( PROFILE_ID ) String profileId ) {
     return delegate.isRunning( profileId );
   }
 
+  public List<Example> isRunningExample() {
+    List<Example> result = new ArrayList<Example>();
+    Example example = new Example();
+    example.getPathParameters().put( PROFILE_ID, UUID.randomUUID().toString() );
+    example.setResponse( true );
+    result.add( example );
+    example = new Example();
+    example.getPathParameters().put( PROFILE_ID, UUID.randomUUID().toString() );
+    example.setResponse( false );
+    result.add( example );
+    return result;
+  }
+
+  /**
+   * Discards the profile, removing it from memory
+   *
+   * @param profileIdWrapper a wrapper for the profile id
+   */
   @PUT
   @Path( "/discard" )
+  @SuccessResponseCode( 204 )
   public void discardProfile( ProfileIdWrapper profileIdWrapper ) {
     discardProfile( profileIdWrapper.getProfileId() );
+  }
+
+  /**
+   * Generates example for discardProfile
+   *
+   * @return example for discardProfile
+   */
+  public Example discardProfileExample() {
+    return new Example( null, null, new ProfileIdWrapper( UUID.randomUUID().toString() ), null );
   }
 
 

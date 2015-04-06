@@ -22,6 +22,8 @@
 
 package com.pentaho.profiling.services;
 
+import com.pentaho.profiling.api.doc.rest.Example;
+import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 
@@ -46,15 +48,37 @@ public class MetricContributorServiceImpl implements MetricContributorService {
     this.delegate = delegate;
   }
 
+  /**
+   * Gets the system's current default metric contributors.  These metric contributors will be used if none are
+   * specified in the CreateProfileRequest
+   *
+   * @return the system's current default metric contributors
+   */
   @GET
   @Path( "/" )
+  @SuccessResponseCode( 200 )
   @Override public MetricContributors getDefaultMetricContributors() {
     return delegate.getDefaultMetricContributors();
   }
 
+  public Example getDefaultMetricContributorsExample() {
+    return new Example( null, null, null, getDefaultMetricContributors() );
+  }
+
+  /**
+   * Sets the system's current default metric contributors.  These metric contributors will be used if none are
+   * specified in the CreateProfileRequest
+   *
+   * @return the system's current default metric contributors
+   */
   @POST
   @Path( "/" )
+  @SuccessResponseCode( 204 )
   @Override public void setDefaultMetricContributors( MetricContributors metricContributors ) {
     delegate.setDefaultMetricContributors( metricContributors );
+  }
+
+  public Example setDefaultMetricContributorsExample() {
+    return new Example( null, null, delegate.getDefaultMetricContributors(), null );
   }
 }

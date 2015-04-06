@@ -47,7 +47,6 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   private final List<MetricContributorBundle> metricContributorBundles;
   private final String jsonFile;
   private final ObjectMapper objectMapper;
-  private MetricContributors metricContributors;
 
   public MetricContributorServiceImpl( List<MetricContributorBundle> metricContributorBundles,
                                        ObjectMapperFactory objectMapperFactory ) {
@@ -62,58 +61,54 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   @Override public synchronized MetricContributors getDefaultMetricContributors() {
-    if ( metricContributors == null ) {
-      // First try to read from file
-      File metricContributorsJson = null;
-      if ( jsonFile != null ) {
-        metricContributorsJson = new File( jsonFile );
-      }
-      if ( metricContributorsJson.exists() ) {
-        FileInputStream fileInputStream = null;
-        try {
-          fileInputStream = new FileInputStream( metricContributorsJson );
-          this.metricContributors = objectMapper.readValue( fileInputStream, MetricContributors.class );
-          return this.metricContributors;
-        } catch ( Exception e ) {
-          LOGGER.error( "Unable to read saved metric contributor json, falling back to default", e );
-        } finally {
-          if ( fileInputStream != null ) {
-            try {
-              fileInputStream.close();
-            } catch ( IOException e ) {
-              //Ignore
-            }
-          }
-        }
-      }
-      // Fallback to defaults for all registered bundles
-      List<MetricContributor> metricContributorList = new ArrayList<MetricContributor>();
-      List<MetricManagerContributor> metricManagerContributorList = new ArrayList<MetricManagerContributor>();
-      for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
-        for ( Class<?> clazz : metricContributorBundle.getClasses() ) {
-          try {
-            if ( MetricContributor.class.isAssignableFrom( clazz ) ) {
-              metricContributorList.add( (MetricContributor) clazz.newInstance() );
-            } else if ( MetricManagerContributor.class.isAssignableFrom( clazz ) ) {
-              metricManagerContributorList.add( (MetricManagerContributor) clazz.newInstance() );
-            } else {
-              LOGGER.warn( "Unable to add metric contributor " + clazz.getCanonicalName() + ": not a subtype of "
-                + MetricContributor.class.getCanonicalName() + " or " + MetricManagerContributor.class
-                .getCanonicalName() );
-            }
-          } catch ( Exception e ) {
-            LOGGER.warn( "Unable to add metric contributor " + clazz.getCanonicalName(), e );
-          }
-        }
-      }
-
-      this.metricContributors = new MetricContributors( metricContributorList, metricManagerContributorList );
+    // First try to read from file
+    File metricContributorsJson = null;
+    if ( jsonFile != null ) {
+      metricContributorsJson = new File( jsonFile );
     }
-    return metricContributors;
+    if ( metricContributorsJson.exists() ) {
+      FileInputStream fileInputStream = null;
+      try {
+        fileInputStream = new FileInputStream( metricContributorsJson );
+        return objectMapper.readValue( fileInputStream, MetricContributors.class );
+      } catch ( Exception e ) {
+        LOGGER.error( "Unable to read saved metric contributor json, falling back to default", e );
+      } finally {
+        if ( fileInputStream != null ) {
+          try {
+            fileInputStream.close();
+          } catch ( IOException e ) {
+            //Ignore
+          }
+        }
+      }
+    }
+
+    // Fallback to defaults for all registered bundles
+    List<MetricContributor> metricContributorList = new ArrayList<MetricContributor>();
+    List<MetricManagerContributor> metricManagerContributorList = new ArrayList<MetricManagerContributor>();
+    for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
+      for ( Class<?> clazz : metricContributorBundle.getClasses() ) {
+        try {
+          if ( MetricContributor.class.isAssignableFrom( clazz ) ) {
+            metricContributorList.add( (MetricContributor) clazz.newInstance() );
+          } else if ( MetricManagerContributor.class.isAssignableFrom( clazz ) ) {
+            metricManagerContributorList.add( (MetricManagerContributor) clazz.newInstance() );
+          } else {
+            LOGGER.warn( "Unable to add metric contributor " + clazz.getCanonicalName() + ": not a subtype of "
+              + MetricContributor.class.getCanonicalName() + " or " + MetricManagerContributor.class
+              .getCanonicalName() );
+          }
+        } catch ( Exception e ) {
+          LOGGER.warn( "Unable to add metric contributor " + clazz.getCanonicalName(), e );
+        }
+      }
+    }
+
+    return new MetricContributors( metricContributorList, metricManagerContributorList );
   }
 
   @Override public synchronized void setDefaultMetricContributors( MetricContributors metricContributors ) {
-    this.metricContributors = metricContributors;
     File metricContributorsJson = null;
     if ( jsonFile != null ) {
       metricContributorsJson = new File( jsonFile );
@@ -122,7 +117,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
         FileOutputStream fileOutputStream = null;
         try {
           fileOutputStream = new FileOutputStream( metricContributorsJson );
-          objectMapper.writerWithDefaultPrettyPrinter().writeValue( fileOutputStream, this.metricContributors );
+          objectMapper.writerWithDefaultPrettyPrinter().writeValue( fileOutputStream, metricContributors );
         } catch ( Exception e ) {
           LOGGER.error( "Error while persisting metric contributor defaults", e );
         } finally {

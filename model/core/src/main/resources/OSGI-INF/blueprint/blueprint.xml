@@ -3,7 +3,6 @@
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   <bean id="profilingServiceImpl" class="com.pentaho.profiling.model.ProfilingServiceImpl">
     <argument ref="executorService"/>
-    <argument ref="metricContributorServiceImpl"/>
   </bean>
 
   <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"
@@ -41,6 +40,13 @@
     <argument ref="defaultClassLoaderClass"/>
   </bean>
 
+  <bean id="sampleProviderImpl" class="com.pentaho.profiling.model.SampleProviderImpl">
+    <argument ref="metricContributorsFactoryImpl"/>
+    <argument ref="metricContributorServiceImpl"/>
+    <argument ref="executorService"/>
+  </bean>
+  <service ref="sampleProviderImpl" interface="com.pentaho.profiling.api.sample.SampleProvider"/>
+
   <service id="profilingServiceImplService" ref="profilingServiceImpl"
            interface="com.pentaho.profiling.api.ProfilingService"/>
   <service id="streamingProfileServiceImplService" ref="streamingProfileServiceImpl"
@@ -65,6 +71,7 @@
   </reference-list>
   <reference-list id="metricContributorBundles"
                   interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional">
-    <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded" unbind-method="hasClassesRemoved"/>
+    <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded"
+                        unbind-method="hasClassesRemoved"/>
   </reference-list>
 </blueprint>

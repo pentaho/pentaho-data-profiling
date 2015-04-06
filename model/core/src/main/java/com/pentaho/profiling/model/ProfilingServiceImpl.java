@@ -34,7 +34,6 @@ import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.util.Pair;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
 import org.pentaho.osgi.notification.api.NotificationListener;
@@ -66,12 +65,10 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
       this );
   private final ExecutorService executorService;
-  private final MetricContributorService metricContributorService;
   private List<Pair<Integer, ProfileFactory>> factories = new ArrayList<Pair<Integer, ProfileFactory>>();
 
-  public ProfilingServiceImpl( ExecutorService executorService, MetricContributorService metricContributorService ) {
+  public ProfilingServiceImpl( ExecutorService executorService ) {
     this.executorService = executorService;
-    this.metricContributorService = metricContributorService;
   }
 
   // FOR UNIT TEST ONLY
@@ -212,5 +209,10 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
 
   @Override public Profile getProfile( String profileId ) {
     return profileMap.get( profileId );
+  }
+
+  public void registerProfile( Profile profile, ProfileStatusManager profileStatusManager ) {
+    profileMap.put( profile.getId(), profile );
+    profileStatusManagerMap.put( profileStatusManager.getId(), profileStatusManager );
   }
 }

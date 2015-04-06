@@ -24,6 +24,7 @@ package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
+import com.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,11 +41,13 @@ import static org.mockito.Mockito.when;
 public class AggregateProfileServiceRestImplTest {
   private AggregateProfileService delegate;
   private AggregateProfileServiceRestImpl aggregateProfileService;
+  private SampleProviderManager sampleProviderManager;
 
   @Before
   public void setup() {
     delegate = mock( AggregateProfileService.class );
-    aggregateProfileService = new AggregateProfileServiceRestImpl( delegate );
+    sampleProviderManager = mock( SampleProviderManager.class );
+    aggregateProfileService = new AggregateProfileServiceRestImpl( delegate, sampleProviderManager );
   }
 
   @Test
