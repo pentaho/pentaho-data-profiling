@@ -144,6 +144,9 @@ public class AggregateProfileImpl implements AggregateProfile {
 
   @Override public void stop() {
     running.set( false );
+    for ( Profile profile : getChildProfiles() ) {
+      profile.stop();
+    }
     profilingService.unregister( notificationListener );
   }
 
