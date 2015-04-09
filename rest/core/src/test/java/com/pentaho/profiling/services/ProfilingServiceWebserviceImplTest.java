@@ -115,7 +115,7 @@ public class ProfilingServiceWebserviceImplTest {
   @Test
   public void testStopWrapper() {
     String id = "test-profile-id";
-    webservice.stopCurrentOperation( new ProfileIdWrapper( id ) );
+    webservice.stop( id );
     verify( delegate ).stop( id );
   }
 
@@ -128,7 +128,7 @@ public class ProfilingServiceWebserviceImplTest {
 
   @Test
   public void testDiscardProfile() {
-    webservice.discardProfile( new ProfileIdWrapper( "test-id" ) );
+    webservice.discardProfile( "test-id" );
     verify( delegate ).discardProfile( "test-id" );
   }
 

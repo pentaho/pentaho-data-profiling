@@ -208,21 +208,18 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   /**
    * Stops the profile with the given id
    *
-   * @param profileIdWrapper a wrapper containing the profile id
+   * @param profileId the profile id
    */
   @PUT
-  @Path( "/stop" )
-  @SuccessResponseCode( 204 )
-  public void stopCurrentOperation( ProfileIdWrapper profileIdWrapper ) {
-    stop( profileIdWrapper.getProfileId() );
-  }
-
-  public Example stopCurrentOperationExample() {
-    return new Example( null, null, new ProfileIdWrapper( UUID.randomUUID().toString() ), null );
-  }
-
-  @Override public void stop( String profileId ) {
+  @Path( "/stop/{profileId}" )
+  @Override public void stop( @PathParam( "profileId" ) String profileId ) {
     delegate.stop( profileId );
+  }
+
+  public Example stopExample() {
+    Example example = new Example();
+    example.getPathParameters().put( "profileId", UUID.randomUUID().toString() );
+    return example;
   }
 
   /**
@@ -254,26 +251,18 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   /**
    * Discards the profile, removing it from memory
    *
-   * @param profileIdWrapper a wrapper for the profile id
+   * @param profileId the profileId to discard
    */
   @PUT
-  @Path( "/discard" )
+  @Path( "/discard/{profileId}" )
   @SuccessResponseCode( 204 )
-  public void discardProfile( ProfileIdWrapper profileIdWrapper ) {
-    discardProfile( profileIdWrapper.getProfileId() );
-  }
-
-  /**
-   * Generates example for discardProfile
-   *
-   * @return example for discardProfile
-   */
-  public Example discardProfileExample() {
-    return new Example( null, null, new ProfileIdWrapper( UUID.randomUUID().toString() ), null );
-  }
-
-
-  @Override public void discardProfile( String profileId ) {
+  @Override public void discardProfile( @PathParam( "profileId" ) String profileId ) {
     delegate.discardProfile( profileId );
+  }
+
+  public Example discardProfileExample() {
+    Example example = new Example();
+    example.getPathParameters().put( "profileId", UUID.randomUUID().toString() );
+    return example;
   }
 }
