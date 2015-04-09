@@ -23,16 +23,7 @@
           com.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor
         </value>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.PercentileMetricContributor
-        </value>
-        <value type="java.lang.Class">
           com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor
-        </value>
-        <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.percentile.TDigestHolder
-        </value>
-        <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.percentile.PercentileDefinition
         </value>
         <value type="java.lang.Class">
           com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder

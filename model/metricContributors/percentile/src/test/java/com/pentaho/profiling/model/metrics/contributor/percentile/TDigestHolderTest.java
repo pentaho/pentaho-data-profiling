@@ -20,7 +20,7 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.model.metrics.contributor.metricManager.impl.percentile;
+package com.pentaho.profiling.model.metrics.contributor.percentile;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
 import org.junit.Test;

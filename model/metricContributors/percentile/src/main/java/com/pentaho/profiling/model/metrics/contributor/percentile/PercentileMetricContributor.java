@@ -20,12 +20,9 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package com.pentaho.profiling.model.metrics.contributor.percentile;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
-import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.model.metrics.contributor.metricManager.impl.percentile.PercentileDefinition;
-import com.pentaho.model.metrics.contributor.metricManager.impl.percentile.TDigestHolder;
 import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
@@ -43,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,10 +48,10 @@ import java.util.Set;
 /**
  * Created by mhall on 27/01/15.
  */
-public class PercentileMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
-
+public class PercentileMetricContributor implements MetricManagerContributor {
+  public static final String KEY = "profiling-metrics-contributors-percentile";
   public static final String KEY_PATH =
-    MessageUtils.getId( Constants.KEY, PercentileMetricContributor.class );
+    MessageUtils.getId( KEY, PercentileMetricContributor.class );
 
   public static final String PERCENTILE_FIRSTQUARTILE_LABEL = "PercentileMetricContributor.25thPercentile";
   public static final String PERCENTILE_MEDIAN_LABEL = "PercentileMetricContributor.Median";
@@ -85,7 +83,7 @@ public class PercentileMetricContributor extends BaseMetricManagerContributor im
   private final NVL nvl;
 
   private double compression = 50.0;
-
+  private String name = PercentileMetricContributor.class.getSimpleName();
   private List<PercentileDefinition> percentileDefinitions = initPercentileDefinitions();
 
   public PercentileMetricContributor() {
@@ -132,8 +130,18 @@ public class PercentileMetricContributor extends BaseMetricManagerContributor im
     }
   }
 
+  @Override public String getName() {
+    return name;
+  }
+
+  @Override public void setName( String name ) {
+    this.name = name;
+  }
+
   @Override public Set<String> supportedTypes() {
-    return NumericMetricContributor.getTypesStatic();
+    return new HashSet<String>( Arrays
+      .asList( Integer.class.getCanonicalName(), Long.class.getCanonicalName(), Float.class.getCanonicalName(),
+        Double.class.getCanonicalName() ) );
   }
 
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
