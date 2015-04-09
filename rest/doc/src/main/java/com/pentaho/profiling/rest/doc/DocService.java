@@ -70,9 +70,6 @@ public class DocService {
   public static final String GET = "GET";
   public static final String PUT = "PUT";
   public static final String DELETE = "DELETE";
-  public static final String EXAMPLE_BODY = "ExampleBody";
-  public static final String EXAMPLE_PATH_PARAMETER = "ExamplePathParameter";
-  public static final String EXAMPLE_RESPONSE = "ExampleResponse";
   public static final String EXAMPLE = "Example";
   private final List<DocEndpoint> docEndpoints;
 
