@@ -34,7 +34,6 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,15 +71,13 @@ public class ProfilingServiceImplTest {
   private ProfileStatus profileStatus;
   private ProfileStatusManager profileStatusManager;
   private String profileId;
-  private MetricContributorService metricContributorService;
   private ExecutorService executorService;
 
   @Before
   public void setup() {
     profileFactory = mock( ProfileFactory.class );
     executorService = mock( ExecutorService.class );
-    metricContributorService = mock( MetricContributorService.class );
-    profilingService = new ProfilingServiceImpl( executorService, metricContributorService );
+    profilingService = new ProfilingServiceImpl( executorService );
     profilingService.profileFactoryAdded( profileFactory, new HashMap() );
     profile = mock( Profile.class );
     profileId = "test-id";

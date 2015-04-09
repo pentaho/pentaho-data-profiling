@@ -12,12 +12,19 @@
   http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
   <cm:property-placeholder persistent-id="com.pentaho.profiling.services"
                            update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="profileAddress" value="/profile"/>
+      <cm:property name="aggregateAddress" value="/aggregate"/>
+      <cm:property name="metricsAddress" value="/metrics"/>
+      <cm:property name="streamingAddress" value="/streaming"/>
+      <cm:property name="dataSourceIncludeAddress" value="/data-profiling-service/dataSource"/>
+    </cm:default-properties>
   </cm:property-placeholder>
 
   <cxf:bus id="profilingServiceWebserviceImplBus">
   </cxf:bus>
 
-  <jaxrs:server address="/profile" id="profileService">
+  <jaxrs:server address="${profileAddress}" id="profileService">
     <jaxrs:serviceBeans>
       <ref component-id="profilingServiceWebserviceImpl"/>
     </jaxrs:serviceBeans>
@@ -26,7 +33,7 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <jaxrs:server address="/aggregate" id="aggregateProfileService">
+  <jaxrs:server address="${aggregateAddress}" id="aggregateProfileService">
     <jaxrs:serviceBeans>
       <ref component-id="aggregateProfileServiceRestImpl"/>
     </jaxrs:serviceBeans>
@@ -35,7 +42,7 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <jaxrs:server address="/metrics" id="metricContributorService">
+  <jaxrs:server address="${metricsAddress}" id="metricContributorService">
     <jaxrs:serviceBeans>
       <ref component-id="metricContributorServiceImpl"/>
     </jaxrs:serviceBeans>
@@ -44,7 +51,7 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <jaxrs:server address="/streaming" id="streamingProfileServiceRestImplWebservice">
+  <jaxrs:server address="${streamingAddress}" id="streamingProfileServiceRestImplWebservice">
     <jaxrs:serviceBeans>
       <ref component-id="streamingProfileServiceRestImpl"/>
     </jaxrs:serviceBeans>
@@ -53,7 +60,7 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <jaxrs:server address="/data-profiling-service/dataSource" id="profileDsService">
+  <jaxrs:server address="${dataSourceIncludeAddress}" id="profileDsService">
     <jaxrs:serviceBeans>
       <ref component-id="profileDataSourceIncludeWebserviceImpl"/>
     </jaxrs:serviceBeans>
@@ -66,11 +73,27 @@
         scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
   </bean>
+  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+      <argument value="${metricsAddress}"/>
+      <argument ref="metricContributorServiceImpl"/>
+      <argument ref="objectMapper"/>
+    </bean>
+  </service>
 
   <bean id="profilingServiceWebserviceImpl" class="com.pentaho.profiling.services.ProfilingServiceWebserviceImpl"
         scope="singleton">
+    <argument ref="sampleProviderManager"/>
     <argument ref="delegateRef"/>
+    <argument ref="metricContributorServiceDelegate"/>
   </bean>
+  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+      <argument value="${profileAddress}"/>
+      <argument ref="profilingServiceWebserviceImpl"/>
+      <argument ref="objectMapper"/>
+    </bean>
+  </service>
 
   <bean id="profileDataSourceIncludeWebserviceImpl"
         class="com.pentaho.profiling.services.ProfileDataSourceIncludeWebserviceImpl">
@@ -79,13 +102,29 @@
 
   <bean id="aggregateProfileServiceRestImpl" class="com.pentaho.profiling.services.AggregateProfileServiceRestImpl">
     <argument ref="delegateAggregateProfileService"/>
+    <argument ref="sampleProviderManager"/>
   </bean>
+  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+      <argument value="${aggregateAddress}"/>
+      <argument ref="aggregateProfileServiceRestImpl"/>
+      <argument ref="objectMapper"/>
+    </bean>
+  </service>
 
   <bean id="streamingProfileServiceRestImpl" class="com.pentaho.profiling.services.StreamingProfileServiceRestImpl"
         scope="singleton">
     <argument ref="streamingProfileService"/>
     <argument ref="metricObjectMapperFactory"/>
+    <argument ref="sampleProviderManager"/>
   </bean>
+  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+      <argument value="${streamingAddress}"/>
+      <argument ref="streamingProfileServiceRestImpl"/>
+      <argument ref="objectMapper"/>
+    </bean>
+  </service>
 
   <bean id="resourceMapping"
         class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
@@ -101,6 +140,7 @@
   </bean>
 
   <bean id="jsonProvider" factory-ref="metricObjectMapperFactory" factory-method="createProvider"/>
+  <bean id="objectMapper" factory-ref="metricObjectMapperFactory" factory-method="createMapper"/>
   <reference-list id="metricContributorBundles"
                   interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional">
     <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded" unbind-method="hasClassesRemoved"/>
@@ -111,6 +151,7 @@
   <reference id="metricContributorServiceDelegate"
              interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
   <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
+  <reference id="sampleProviderManager" interface="com.pentaho.profiling.api.sample.SampleProviderManager"/>
   <reference-list id="dsServiceList" interface="com.pentaho.profiling.services.api.ProfileDataSourceIncludeService"
                   availability="optional"/>
 </blueprint>

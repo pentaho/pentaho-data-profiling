@@ -32,6 +32,8 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.metrics.MetricContributorService;
+import com.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -55,11 +57,15 @@ import static org.mockito.Mockito.when;
 public class ProfilingServiceWebserviceImplTest {
   private ProfilingService delegate;
   private ProfilingServiceWebserviceImpl webservice;
+  private MetricContributorService metricContributorService;
+  private SampleProviderManager sampleProviderManager;
 
   @Before
   public void setup() {
     delegate = mock( ProfilingService.class );
-    webservice = new ProfilingServiceWebserviceImpl( delegate );
+    metricContributorService = mock( MetricContributorService.class );
+    sampleProviderManager = mock( SampleProviderManager.class );
+    webservice = new ProfilingServiceWebserviceImpl( sampleProviderManager, delegate, metricContributorService );
   }
 
   @Test
