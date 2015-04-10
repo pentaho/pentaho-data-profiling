@@ -22,12 +22,16 @@
 
 package com.pentaho.profiling.api.metrics;
 
+import java.util.Map;
+
 /**
  * Created by bryan on 3/11/15.
  */
 public interface MetricContributorService {
   public static final String DEFAULT_CONFIGURATION = "default";
   public static final String FULL_CONFIGURATION = "full";
+
+  public Map<String, MetricContributors> getAllConfigurations();
 
   public MetricContributors getDefaultMetricContributors( String configuration );
 

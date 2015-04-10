@@ -86,7 +86,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
     return new MetricContributors( metricContributorList, metricManagerContributorList );
   }
 
-  private Map<String, MetricContributors> getMetricContributorMap() {
+  @Override public Map<String, MetricContributors> getAllConfigurations() {
     // First try to read from file
     File metricContributorsJson = null;
     if ( jsonFile != null ) {
@@ -119,7 +119,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   @Override public synchronized MetricContributors getDefaultMetricContributors( String configuration ) {
-    Map<String, MetricContributors> metricContributorMap = getMetricContributorMap();
+    Map<String, MetricContributors> metricContributorMap = getAllConfigurations();
     MetricContributors metricContributors = metricContributorMap.get( configuration );
     if ( metricContributors == null ) {
       metricContributors = metricContributorMap.get( MetricContributorService.DEFAULT_CONFIGURATION );
@@ -129,7 +129,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
 
   @Override
   public synchronized void setDefaultMetricContributors( String configuration, MetricContributors metricContributors ) {
-    Map<String, MetricContributors> metricContributorMap = getMetricContributorMap();
+    Map<String, MetricContributors> metricContributorMap = getAllConfigurations();
     metricContributorMap.put( configuration, metricContributors );
     metricContributorMap.remove( MetricContributorService.FULL_CONFIGURATION );
     File metricContributorsJson = null;
