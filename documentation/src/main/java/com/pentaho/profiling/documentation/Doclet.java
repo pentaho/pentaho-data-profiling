@@ -20,7 +20,7 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.rest.doc;
+package com.pentaho.profiling.documentation;
 
 import com.pentaho.profiling.api.doc.rest.DocEntry;
 import com.pentaho.profiling.api.doc.rest.DocParameter;
@@ -59,7 +59,7 @@ public class Doclet extends Standard {
     return true;
   }
 
-  private static Map<String, DocEntry> getCommentMap( RootDoc rootDoc ) {
+  public static Map<String, DocEntry> getCommentMap( RootDoc rootDoc ) {
     Map<String, DocEntry> commentMap = new HashMap<String, DocEntry>();
     for ( Map.Entry<ClassDoc, List<MethodDoc>> classDocListEntry : getRelevantMethods( rootDoc ).entrySet() ) {
       for ( MethodDoc methodDoc : classDocListEntry.getValue() ) {
