@@ -72,13 +72,14 @@ public class SampleProviderImpl implements SampleProvider {
         new DataSourceReference( UUID.randomUUID().toString(),
           StreamingProfile.STREAMING_PROFILE ) ) );
     StreamingProfileImpl streamingProfile = new StreamingProfileImpl( sampleStreaming, metricContributorsFactory,
-      metricContributorService.getDefaultMetricContributors() );
+      metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
     samples.put( StreamingProfile.class, Arrays.<Object>asList(
       streamingProfile ) );
     profilingService.registerProfile( streamingProfile, sampleStreaming );
     AggregateProfileImpl aggregateProfile =
       new AggregateProfileImpl( sampleAggregate.getDataSourceReference(), sampleAggregate, profilingService,
-        metricContributorsFactory, metricContributorService.getDefaultMetricContributors() );
+        metricContributorsFactory,
+        metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
     aggregateProfile.addChildProfile( sampleStreaming.getId() );
     samples.put( AggregateProfile.class, Arrays.<Object>asList(
       aggregateProfile ) );

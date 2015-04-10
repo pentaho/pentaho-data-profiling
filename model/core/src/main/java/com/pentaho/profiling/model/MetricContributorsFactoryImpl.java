@@ -45,7 +45,8 @@ public class MetricContributorsFactoryImpl implements MetricContributorsFactory 
   @Override public List<MetricContributor> construct( MetricContributors contributors ) {
     List<MetricContributor> metricContributors = null;
     if ( contributors == null ) {
-      contributors = metricContributorService.getDefaultMetricContributors();
+      contributors =
+        metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION );
     }
     metricContributors = contributors.getMetricContributors();
     if ( metricContributors == null ) {

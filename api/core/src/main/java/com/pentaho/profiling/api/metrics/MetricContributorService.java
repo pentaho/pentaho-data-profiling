@@ -26,7 +26,10 @@ package com.pentaho.profiling.api.metrics;
  * Created by bryan on 3/11/15.
  */
 public interface MetricContributorService {
-  public MetricContributors getDefaultMetricContributors();
+  public static final String DEFAULT_CONFIGURATION = "default";
+  public static final String FULL_CONFIGURATION = "full";
 
-  public void setDefaultMetricContributors( MetricContributors metricContributors );
+  public MetricContributors getDefaultMetricContributors( String configuration );
+
+  public void setDefaultMetricContributors( String configuration, MetricContributors metricContributors );
 }

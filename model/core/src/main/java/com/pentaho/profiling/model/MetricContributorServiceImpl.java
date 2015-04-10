@@ -37,7 +37,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bryan on 3/11/15.
@@ -60,31 +62,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
     }
   }
 
-  @Override public synchronized MetricContributors getDefaultMetricContributors() {
-    // First try to read from file
-    File metricContributorsJson = null;
-    if ( jsonFile != null ) {
-      metricContributorsJson = new File( jsonFile );
-    }
-    if ( metricContributorsJson.exists() ) {
-      FileInputStream fileInputStream = null;
-      try {
-        fileInputStream = new FileInputStream( metricContributorsJson );
-        return objectMapper.readValue( fileInputStream, MetricContributors.class );
-      } catch ( Exception e ) {
-        LOGGER.error( "Unable to read saved metric contributor json, falling back to default", e );
-      } finally {
-        if ( fileInputStream != null ) {
-          try {
-            fileInputStream.close();
-          } catch ( IOException e ) {
-            //Ignore
-          }
-        }
-      }
-    }
-
-    // Fallback to defaults for all registered bundles
+  private MetricContributors getFullMetricContributors() {
     List<MetricContributor> metricContributorList = new ArrayList<MetricContributor>();
     List<MetricManagerContributor> metricManagerContributorList = new ArrayList<MetricManagerContributor>();
     for ( MetricContributorBundle metricContributorBundle : metricContributorBundles ) {
@@ -108,7 +86,52 @@ public class MetricContributorServiceImpl implements MetricContributorService {
     return new MetricContributors( metricContributorList, metricManagerContributorList );
   }
 
-  @Override public synchronized void setDefaultMetricContributors( MetricContributors metricContributors ) {
+  private Map<String, MetricContributors> getMetricContributorMap() {
+    // First try to read from file
+    File metricContributorsJson = null;
+    if ( jsonFile != null ) {
+      metricContributorsJson = new File( jsonFile );
+    }
+    MetricContributors fullMetricContributors = getFullMetricContributors();
+    if ( metricContributorsJson.exists() ) {
+      FileInputStream fileInputStream = null;
+      try {
+        fileInputStream = new FileInputStream( metricContributorsJson );
+        Map<String, MetricContributors> metricContributorMap = objectMapper.readValue( fileInputStream, Map.class );
+        metricContributorMap.put( MetricContributorService.FULL_CONFIGURATION, fullMetricContributors );
+        return metricContributorMap;
+      } catch ( Exception e ) {
+        LOGGER.error( "Unable to read saved metric contributor json, falling back to default", e );
+      } finally {
+        if ( fileInputStream != null ) {
+          try {
+            fileInputStream.close();
+          } catch ( IOException e ) {
+            //Ignore
+          }
+        }
+      }
+    }
+    Map<String, MetricContributors> result = new HashMap<String, MetricContributors>();
+    result.put( MetricContributorService.FULL_CONFIGURATION, fullMetricContributors );
+    result.put( MetricContributorService.DEFAULT_CONFIGURATION, fullMetricContributors );
+    return result;
+  }
+
+  @Override public synchronized MetricContributors getDefaultMetricContributors( String configuration ) {
+    Map<String, MetricContributors> metricContributorMap = getMetricContributorMap();
+    MetricContributors metricContributors = metricContributorMap.get( configuration );
+    if ( metricContributors == null ) {
+      metricContributors = metricContributorMap.get( MetricContributorService.DEFAULT_CONFIGURATION );
+    }
+    return metricContributors;
+  }
+
+  @Override
+  public synchronized void setDefaultMetricContributors( String configuration, MetricContributors metricContributors ) {
+    Map<String, MetricContributors> metricContributorMap = getMetricContributorMap();
+    metricContributorMap.put( configuration, metricContributors );
+    metricContributorMap.remove( MetricContributorService.FULL_CONFIGURATION );
     File metricContributorsJson = null;
     if ( jsonFile != null ) {
       metricContributorsJson = new File( jsonFile );
@@ -117,7 +140,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
         FileOutputStream fileOutputStream = null;
         try {
           fileOutputStream = new FileOutputStream( metricContributorsJson );
-          objectMapper.writerWithDefaultPrettyPrinter().writeValue( fileOutputStream, metricContributors );
+          objectMapper.writerWithDefaultPrettyPrinter().writeValue( fileOutputStream, metricContributorMap );
         } catch ( Exception e ) {
           LOGGER.error( "Error while persisting metric contributor defaults", e );
         } finally {
