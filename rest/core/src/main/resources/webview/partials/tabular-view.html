@@ -19,41 +19,48 @@
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
  */ -->
-<div id="state-form">
-  <div class="nav left">
-    <ul>
-      <li><a ng-click="profileAppService.leftNavSelection = 'stats';" ng-class="{'active': profileAppService.leftNavSelection == 'stats'}">S</a></li>
-      <li><a ng-click="profileAppService.leftNavSelection = 'tree';" ng-class="{'active': profileAppService.leftNavSelection == 'tree'}">T</a></li>
-      <li><a ng-click="profileAppService.leftNavSelection = 'admin';" ng-class="{'active': profileAppService.leftNavSelection == 'admin'}">A</a></li>
-    </ul>
+<div id="state-form" ng-class="{stateFormHidden: profileAppService.tabularViewService.stateFormDisplay==false}">
+  <div id="toggleStateForm" ng-click="profileAppService.tabularViewService.stateFormDisplay = !profileAppService.tabularViewService.stateFormDisplay" ng-class="{stateFormHidden: profileAppService.tabularViewService.stateFormDisplay==false}">&lrhar;</div>
+  <div class="tabs">
+    <div class="pad">
+      <ul>
+        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='aggregate'}" ng-click="profileAppService.tabularViewService.selectedTab = 'aggregate';">Aggregate</a></li>
+        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='col_config'}" ng-click="profileAppService.tabularViewService.selectedTab = 'col_config';">Column Config</a></li>
+        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='avail_profiles'}" ng-click="profileAppService.tabularViewService.selectedTab = 'avail_profiles';">Profiles</a></li>
+      </ul>
+    </div>
   </div>
-
-  <div class="state-form-wrap" ng-switch on="profileAppService.leftNavSelection">
-    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'stats'}" ng-switch-default>
-      <div ng-repeat="fieldCol in profileAppService.tabularService.fieldCols">
-        <input type="checkbox" ng-click="profileAppService.tabularService.toggleColDisplay(fieldCol)" ng-checked="fieldCol.display === true">{{ fieldCol.nameKey | translate }}
+  <div class="state-form-wrap" ng-switch on="profileAppService.tabularViewService.selectedTab">
+    <div class="state-form-view" ng-class="{'active': profileAppService.tabularViewService.selectedTab == 'col_config'}" ng-switch-when="col_config">
+      <div ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols">
+        <input type="checkbox" ng-click="profileAppService.tabularViewService.toggleColDisplay(fieldCol)" ng-checked="fieldCol.display === true">{{ fieldCol.nameKey | translate }}
         <br>
       </div>
     </div>
-    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'tree'}" ng-switch-when="tree" ng-controller="TreeViewController">
+    <div class="state-form-view" ng-class="{'active': profileAppService.tabularViewService.selectedTab == 'avail_profiles'}" ng-switch-when="avail_profiles">
       <div
           data-angular-treeview="true"
-          data-tree-id="uniqueTreeId"
-          data-tree-model="profileAppService.treeViewService.treedata"
+          data-tree-id="availProfilesTreeViewId"
+          data-tree-model="profileAppService.profileManagementViewService.availableProfiles"
+          data-node-id="id"
+          data-node-label="name"
+          data-node-children="childProfiles" >
+      </div>
+      <button class="pentaho-button" ng-click="profileAppService.stopAllOperation();" translate="profiling.fields.stopAll">Stop All Profilers</button>
+    </div>
+    <div class="state-form-view" ng-class="{'active': profileAppService.tabularViewService.selectedTab == 'aggregate'}" ng-controller="TreeViewController" ng-switch-default>
+      <div
+          data-angular-treeview="true"
+          data-tree-id="currentProfileTreeViewId"
+          data-tree-model="profileAppService.profileManagementViewService.currentProfileTreeViewData"
           data-node-id="id"
           data-node-label="name"
           data-node-children="childProfiles" >
       </div>
     </div>
-    <div class="state-form-view" ng-class="{'active': profileAppService.leftNavSelection == 'admin'}" ng-switch-when="admin">
-      <div ng-repeat="profile in profileAppService.activeProfiles">
-        <a href="#/{{profile.id}}">{{profile.id}}</a>
-        <br>
-      </div>
-    </div>
   </div>
 </div>
-<div id="profileTabularView">
+<div id="profileTabularView" ng-class="{stateFormHidden: profileAppService.tabularViewService.stateFormDisplay==false}">
     <div class="profile-section profile-message"
          ng-class="profileAppService.operationError ? 'profile-error-message' : ''"
          ng-if="profileAppService.operationError">
@@ -77,7 +84,7 @@
         <div ng-repeat="operationMessage in profileAppService.statusMessages">{{operationMessage.messageKey | translate | interpolateMessage:operationMessage.messageVariables}}</div>
       </div>
       <div class="profile-message-action">
-        <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopCurrentOperation();" translate="profiling.fields.stop"></button>
+        <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopOperation(profileAppService.profileId);" translate="profiling.fields.stop"></button>
       </div>
     </div>
     <div class="profile-section profile-fields-container">
@@ -88,9 +95,9 @@
                 <thead>
                     <tr>
                         <th ng-show="fieldCol.display === true" class="cellTableCol cellTableSortableHeader"
-                            ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
-                            ng-class="profileAppService.tabularService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                            ng-click="profileAppService.tabularService.onOrderByCol(fieldCol)">
+                            ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
+                            ng-class="profileAppService.tabularViewService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularViewService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+                            ng-click="profileAppService.tabularViewService.onOrderByCol(fieldCol)">
                             <div class="cellTableHeaderContent">
                                 <div translate="{{fieldCol.nameKey}}"></div>
                                 <div class="cellTableHeaderOrderIndicator"></div>
@@ -101,14 +108,15 @@
                 <tbody>
                     <tr ng-class-odd="'cellTableOddRow'"
                         ng-class-even="'cellTableEvenRow'"
-                        ng-repeat="fieldRow in profileAppService.tabularService.fieldRows | orderBy:profileAppService.tabularService.orderByKey:profileAppService.tabularService.isOrderReversed">
+                        ng-repeat="fieldRow in profileAppService.tabularViewService.fieldRows | orderBy:profileAppService.tabularViewService.orderByKey:profileAppService.tabularViewService.isOrderReversed">
                         <td ng-show="fieldCol.display === true" class="cellTableCell"
-                            ng-repeat="fieldCol in profileAppService.tabularService.fieldCols"
+                            ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
                             ng-class-odd="'cellTableOddRowCell'"
-                            ng-class-even="'cellTableEvenRowCell'">{{fieldRow[fieldCol.stringifiedPath]}}</td>
+                            ng-class-even="'cellTableEvenRowCell'"><a ng-href='view.html#/fieldOverview/{{profileAppService.profileId}}/{{fieldRow[profileAppService.tabularViewService.fieldCols[1].stringifiedPath]}}'>{{fieldRow[fieldCol.stringifiedPath]}}</a></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<div class="clear"></div>

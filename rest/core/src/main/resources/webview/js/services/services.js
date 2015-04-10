@@ -27,5 +27,5 @@ define([
   "common-ui/angular-resource"
 ], function(angular) {
 
-  return angular.module('appServices', ['ngResource']);
+  return angular.module('AppServices', ['ngResource']);
 });

@@ -21,19 +21,18 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('TreeViewController', [
+  appControllers.controller('FieldOverviewViewController', [
     '$scope',
     'ProfileAppService',
-    function ($scope, profileAppService) {
+    '$routeParams',
+    function ($scope, profileAppService, $routeParams) {
       $scope.profileAppService = profileAppService;
-      $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
-        // Register to receive profile status updates of the new id.
-        if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
-        }
-      }, false);
+      $scope.physicalName = $routeParams.physicalName;
+      $scope.profileId = $routeParams.profileId;
+
+      profileAppService.leftNavSelection = "overview";
+
+      profileAppService.leftNavDisplay = true;
     }
   ])
 });

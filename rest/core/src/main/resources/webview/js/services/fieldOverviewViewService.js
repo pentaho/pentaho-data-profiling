@@ -20,20 +20,16 @@
  * explicitly covering such access.
  */
 
-define(['./controllers'], function (appControllers) {
-  appControllers.controller('TreeViewController', [
-    '$scope',
-    'ProfileAppService',
-    function ($scope, profileAppService) {
-      $scope.profileAppService = profileAppService;
-      $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
-        // Register to receive profile status updates of the new id.
-        if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
-        }
-      }, false);
-    }
-  ])
+define(['./services'], function (appServices) {
+  appServices.factory('FieldOverviewViewService', [
+    function () {
+      function FieldOverviewViewService() {
+      }
+
+      FieldOverviewViewService.prototype = {
+        constructor: FieldOverviewViewService
+      };
+      var fieldOverviewViewService = new FieldOverviewViewService();
+      return fieldOverviewViewService;
+    }])
 });

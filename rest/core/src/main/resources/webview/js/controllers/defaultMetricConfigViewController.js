@@ -21,19 +21,20 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('TreeViewController', [
+  appControllers.controller('DefaultMetricConfigViewController', [
     '$scope',
     'ProfileAppService',
     function ($scope, profileAppService) {
       $scope.profileAppService = profileAppService;
-      $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
-        // Register to receive profile status updates of the new id.
-        if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
-        }
-      }, false);
+
+      profileAppService.leftNavSelection = "metricConfig";
+
+      profileAppService.leftNavDisplay = false;
+
+      profileAppService.profileService.metricContributorResource.getDefaultMetricContributorConfig({}, function (metricContributorConfig) {
+        profileAppService.defaultMetricConfigViewService.metricManagerContributors = metricContributorConfig.metricManagerContributors[1];
+        profileAppService.defaultMetricConfigViewService.metricContributors = metricContributorConfig.metricContributors[1];
+      });
     }
   ])
 });

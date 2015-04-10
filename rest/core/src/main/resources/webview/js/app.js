@@ -46,13 +46,29 @@ define([
   "com.pentaho.profiling.services.webview/controllers/controllers",
   "com.pentaho.profiling.services.webview/controllers/profileAppController",
   "com.pentaho.profiling.services.webview/controllers/tabularViewController",
+  "com.pentaho.profiling.services.webview/controllers/profileManagementViewController",
+  "com.pentaho.profiling.services.webview/controllers/fieldOverviewViewController",
+  "com.pentaho.profiling.services.webview/controllers/metricConfigViewController",
+  "com.pentaho.profiling.services.webview/controllers/defaultMetricConfigViewController",
   "com.pentaho.profiling.services.webview/controllers/treeViewController",
+  "com.pentaho.profiling.services.webview/controllers/mongoHostViewController",
+  "com.pentaho.profiling.services.webview/controllers/hdfsTextHostViewController",
+  "com.pentaho.profiling.services.webview/controllers/streamingProfilerViewController",
+  "com.pentaho.profiling.services.webview/controllers/createProfilerViewController",
   "com.pentaho.profiling.services.webview/services/services",
   "com.pentaho.profiling.services.webview/services/profileService",
   "com.pentaho.profiling.services.webview/services/dataSourceService",
   "com.pentaho.profiling.services.webview/services/profileAppService",
   "com.pentaho.profiling.services.webview/services/treeViewService",
-  "com.pentaho.profiling.services.webview/services/tabularService",
+  "com.pentaho.profiling.services.webview/services/profileManagementViewService",
+  "com.pentaho.profiling.services.webview/services/metricConfigViewService",
+  "com.pentaho.profiling.services.webview/services/defaultMetricConfigViewService",
+  "com.pentaho.profiling.services.webview/services/fieldOverviewViewService",
+  "com.pentaho.profiling.services.webview/services/tabularViewService",
+  "com.pentaho.profiling.services.webview/services/mongoHostViewService",
+  "com.pentaho.profiling.services.webview/services/hdfsTextHostViewService",
+  "com.pentaho.profiling.services.webview/services/streamingProfilerViewService",
+  "com.pentaho.profiling.services.webview/services/createProfilerViewService",
   "com.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function (require, angular) {
   var provide = null,
@@ -60,8 +76,8 @@ define([
       profileApp = angular.module('profileApp', [
         'ngRoute',
         'ngSanitize', // for ngBindHtml
-        'appServices',
-        'appControllers',
+        'AppServices',
+        'AppControllers',
         'pascalprecht.translate',
         'angularTreeview'
       ]);
@@ -114,9 +130,41 @@ define([
       controllerProvider = $controllerProvider;
 
       $routeProvider
-          .when('/:profileId', {
-            templateUrl: 'partials/default-view.html',
-            controller: 'tabularViewController'
+          .when('/tabular/:profileId', {
+            templateUrl: 'partials/tabular-view.html',
+            controller: 'TabularViewController'
+          })
+          .when('/profileManagement', {
+            templateUrl: 'partials/profile-management-view.html',
+            controller: 'ProfileManagementViewController'
+          })
+          .when('/fieldOverview/:profileId/:physicalName', {
+            templateUrl: 'partials/field-overview-view.html',
+            controller: 'FieldOverviewViewController'
+          })
+          .when('/metricConfig', {
+            templateUrl: 'partials/metric-config-view.html',
+            controller: 'MetricConfigViewController'
+          })
+          .when('/defaultMetricConfig', {
+            templateUrl: 'partials/default-metric-config-view.html',
+            controller: 'DefaultMetricConfigViewController'
+          })
+          .when('/pentahoMongoProfiler', {
+            templateUrl: 'partials/mongo-host-view.html',
+            controller: 'MongoHostViewController'
+          })
+          .when('/pentahoHdfsTextProfiler', {
+            templateUrl: 'partials/hdfs-text-host-view.html',
+            controller: 'HdfsTextHostViewController'
+          })
+          .when('/pentahoStreamingProfiler', {
+            templateUrl: 'partials/streaming-profiler-view.html',
+            controller: 'StreamingProfilerViewController'
+          })
+          .when('/create', {
+            templateUrl: 'partials/create-profiler-view.html',
+            controller: 'CreateProfilerViewController'
           })
           .otherwise({
             redirectTo: '/'

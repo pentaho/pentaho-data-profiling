@@ -31,7 +31,7 @@ define([
   "com.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function(angular) {
 
-  return angular.module('appControllers', [
+  return angular.module('AppControllers', [
     'NotificationServiceModule',
     'ngRoute',
     'pascalprecht.translate',

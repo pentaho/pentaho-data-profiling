@@ -21,17 +21,33 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('profileAppController', [
+  appControllers.controller('ProfileAppController', [
     '$scope',
     'ProfileService',
     'DataSourceService',
     'NotificationService',
     'ProfileAppService',
-    'TabularService',
+    'TabularViewService',
     'TreeViewService',
-    function ($scope, profileService, dataSourceService, notificationService, profileAppService, tabularService, treeViewService) {
+    'ProfileManagementViewService',
+    'FieldOverviewViewService',
+    'MetricConfigViewService',
+    'DefaultMetricConfigViewService',
+    'MongoHostViewService',
+    'HdfsTextHostViewService',
+    'StreamingProfilerViewService',
+    'CreateProfilerViewService',
+    function ($scope, profileService, dataSourceService, notificationService,
+              profileAppService, tabularViewService, treeViewService, profileManagementViewService,
+              fieldOverviewViewService, metricConfigViewService, defaultMetricConfigViewService, mongoHostViewService, hdfsTextHostViewService,
+              streamingProfilerViewService, createProfilerViewService) {
 
-      profileAppService.init(tabularService, treeViewService, profileService, dataSourceService, notificationService, $scope);
+      //Initialize the ProfileAppService...this service is the single point of truth for the entire app
+      profileAppService.init(tabularViewService, treeViewService, profileManagementViewService,
+          fieldOverviewViewService, metricConfigViewService, defaultMetricConfigViewService, profileService, dataSourceService,
+          notificationService, mongoHostViewService, hdfsTextHostViewService, streamingProfilerViewService,
+          createProfilerViewService, $scope);
+
       $scope.profileAppService = profileAppService;
     }
   ])

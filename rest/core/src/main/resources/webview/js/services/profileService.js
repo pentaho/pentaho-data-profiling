@@ -1,7 +1,7 @@
 /*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
- * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
+ * Copyright 2002  2015 Pentaho Corporation (Pentaho). All rights reserved.
  *
  * NOTICE: All information including source code contained herein is, and
  * remains the sole property of Pentaho and its licensors. The intellectual
@@ -16,19 +16,39 @@
  * from Pentaho is strictly prohibited and in violation of applicable laws and
  * international treaties. Access to the source code contained herein is strictly
  * prohibited to anyone except those individuals and entities who have executed
- * confidentiality and non-disclosure agreements or other agreements with Pentaho,
+ * confidentiality and nondisclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
  */
 
 define(['./services'], function (appServices) {
   appServices.factory('ProfileService', ['$resource',
     function ($resource) {
-      return $resource('../cxf/profile/:profileId', {}, {
-        getActive: {method: 'GET', url: '../cxf/profile', isArray: true},
-        getAggregates: {method: 'GET', url: '../cxf/aggregate', isArray: true},
-        getProfile: {method: 'GET', params: {profileId: 'profileId'}},
-        stopProfile: {method: 'PUT', url: '../cxf/profile/stop' },
-        startProfile: {method: 'PUT', url: '../cxf/profile/start' }
+      var profileResource = $resource('../cxf/profile/:profileId', {}, {
+        getActiveProfiles: {method: 'GET', url: '../cxf/profile', isArray: true},
+        getProfile: {method: 'GET'},
+        stopProfile: {method: 'GET', url: '../cxf/profile/stop/:profileId'},
+        startProfile: {method: 'PUT', url: '../cxf/profile/start'}
       });
+      var aggregateProfileResource = $resource('../cxf/aggregate/:profileId', {}, {
+        getAggregates: {method: 'GET', url: '../cxf/aggregate', isArray: true},
+        getAggregate: {method: 'GET', params: {profileId: 'profileId'}, isArray: true}
+      });
+      var metricContributorResource = $resource('../cxf/metrics', {}, {
+        getDefaultMetricContributorConfig: {method: 'GET', url: '../cxf/metrics/default'},
+        setDefaultMetricContributorConfig: {method: 'POST', url: '../cxf/metrics/default'},
+        getAllAvailableMetricContributorConfig: {method: 'GET', url: '../cxf/metrics/full'}
+      });
+
+      function ProfileService() {
+      }
+
+      ProfileService.prototype = {
+        constructor: ProfileService,
+        aggregateProfileResource: aggregateProfileResource,
+        profileResource: profileResource,
+        metricContributorResource: metricContributorResource
+      };
+      var profileService = new ProfileService();
+      return profileService;
     }])
 });

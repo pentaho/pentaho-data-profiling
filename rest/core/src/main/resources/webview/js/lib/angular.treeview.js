@@ -25,7 +25,7 @@ define([
     function (angular) {
       'use strict';
 
-      angular.module('angularTreeview', []).directive('treeModel', ['$compile', function ($compile) {
+      angular.module('angularTreeview', []).directive('treeModel', ['$compile', 'ProfileAppService', function ($compile, profileAppService) {
         return {
           restrict: 'A',
           link: function (scope, element, attrs) {
@@ -52,7 +52,8 @@ define([
                 '<i class="expanded" data-ng-show="node.' + nodeChildren + '.length && !node.collapsed" data-ng-click="' + treeId + '.selectNodeHead(node)"></i>' +
                 '<i class="normal" data-ng-hide="node.' + nodeChildren + '.length"></i> ' +
                 '<span data-ng-class="node.selected" data-ng-click="' + treeId + '.selectNodeLabel(node)">' +
-                '<a href="#/{{node.' + nodeId + '}}">{{node.' + nodeLabel + '}}</a>' +
+                '<a ng-href="view.html#/tabular/{{node.' + nodeId + '}}">{{node.' + nodeLabel + '}}</a>' +
+                '&Tab;<a  style="color: #6F0101;" ng-click="profileAppService.stopOperation(node.' + nodeId + ');" >&cross;</a>' +
                 '</span>' +
                 '<div data-ng-hide="node.collapsed" data-tree-id="' + treeId + '" data-tree-model="node.' + nodeChildren + '" data-node-id=' + nodeId + ' data-node-label=' + nodeLabel + ' data-node-children=' + nodeChildren + '></div>' +
                 '</li>' +

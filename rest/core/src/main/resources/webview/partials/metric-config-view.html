@@ -1,4 +1,4 @@
-/*!
+<!-- /*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
  * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
@@ -18,22 +18,23 @@
  * prohibited to anyone except those individuals and entities who have executed
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
- */
-
-define(['./controllers'], function (appControllers) {
-  appControllers.controller('TreeViewController', [
-    '$scope',
-    'ProfileAppService',
-    function ($scope, profileAppService) {
-      $scope.profileAppService = profileAppService;
-      $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
-        // Register to receive profile status updates of the new id.
-        if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
-        }
-      }, false);
-    }
-  ])
-});
+ */ -->
+<div id="metricConfigView">
+  <div class="pentaho-fieldgroup-major" translate="profiling.fields.set.default"></div>
+  <div ng-repeat="metricManagerContributor in profileAppService.metricConfigViewService.metricManagerContributors">
+    <input type="checkbox" ng-model="metricManagerContributor.checked"/>
+    <label>{{metricManagerContributor.name}}</label>
+    <br>
+  </div>
+  <div ng-repeat="metricContributor in profileAppService.metricConfigViewService.metricContributors">
+    <input type="checkbox" ng-model="metricManagerContributor.checked"/>
+    <label>{{metricContributor.name}}</label>
+    <br>
+  </div>
+  <br>
+  <button class="pentaho-button" ng-click='profileAppService.metricConfigViewService.setConfig(); profileAppService.submitDefaultMetricContributorConfig();' translate="profiling.fields.set.default.button"></button>
+  <br>
+  <button class="pentaho-button" ng-click='profileAppService.redirectRoute("view.html#/defaultMetricConfig")' translate="profiling.fields.view.default"></button>
+  <button class="pentaho-button" ng-click='profileAppService.redirectRoute("view.html#/create")' translate="profiling.fields.create"></button>
+</div>
+</div>
