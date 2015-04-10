@@ -37,6 +37,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bryan on 3/11/15.
@@ -53,20 +54,19 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   /**
-   * Gets the metric contributors for the "default" configuration.
+   * Returns all metric contributor configurations
    *
-   * @return the confguration's metric contributors
+   * @return all metric contributor configurations
    */
   @GET
   @Path( "/" )
   @SuccessResponseCode( 200 )
-  public MetricContributors getDefaultMetricContributorsNoArg() {
-    return delegate.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION );
+  @Override public Map<String, MetricContributors> getAllConfigurations() {
+    return delegate.getAllConfigurations();
   }
 
-  public Example getDefaultMetricContributorsNoArgExample() {
-    return new Example( null, null, null,
-      getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
+  public Example getAllConfigurationsExample() {
+    return new Example( null, null, null, delegate.getAllConfigurations() );
   }
 
   /**
