@@ -25,9 +25,9 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 
 /**
@@ -43,14 +43,15 @@ public class StreamingProfileFactory implements ProfileFactory {
     this.metricContributorsFactory = metricContributorsFactory;
   }
 
-  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return StreamingProfile.STREAMING_PROFILE.equals( dataSourceReference.getDataSourceProvider() );
+  @Override public boolean accepts( DataSourceMetadata dataSourceMetadata ) {
+    return StreamingProfileMetadata.class.isInstance( dataSourceMetadata );
   }
 
-  @Override public Profile create( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager,
-                                   MetricContributors metricContributors ) {
+  @Override
+  public Profile create( ProfileConfiguration profileConfiguration, ProfileStatusManager profileStatusManager ) {
     StreamingProfileImpl streamingProfile =
-      new StreamingProfileImpl( profileStatusManager, metricContributorsFactory, metricContributors );
+      new StreamingProfileImpl( profileStatusManager, metricContributorsFactory,
+        profileConfiguration.getMetricContributors() );
     streamingProfileService.registerStreamingProfile( streamingProfile );
     return streamingProfile;
   }

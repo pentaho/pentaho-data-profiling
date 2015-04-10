@@ -20,15 +20,16 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.configuration.core;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import com.pentaho.profiling.api.StreamingProfile;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 
 /**
- * Created by bryan on 3/19/15.
+ * Created by bryan on 4/10/15.
  */
-public class ProfileCreateRequestTest extends BeanTester {
-  public ProfileCreateRequestTest() {
-    super( ProfileCreateRequest.class );
+public class StreamingProfileMetadata implements DataSourceMetadata {
+  @Override public String getLabel() {
+    return StreamingProfile.STREAMING_PROFILE;
   }
 }

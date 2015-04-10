@@ -20,34 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
-
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-
-import java.util.List;
+package com.pentaho.profiling.api.configuration;
 
 /**
- * Created by bryan on 9/29/14.
+ * Created by bryan on 4/10/15.
  */
-public interface ProfileStatus {
-  ProfileState getProfileState();
-
-  String getId();
-
-  String getName();
-
-  ProfileConfiguration getProfileConfiguration();
-
-  List<ProfilingField> getFields();
-
-  Long getTotalEntities();
-
-  List<ProfileStatusMessage> getStatusMessages();
-
-  ProfileActionExceptionWrapper getOperationError();
-
-  List<ProfileFieldProperty> getProfileFieldProperties();
-
-  long getSequenceNumber();
+public interface DataSourceMetadata {
+  String getLabel();
 }

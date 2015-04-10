@@ -27,8 +27,12 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
+import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import com.pentaho.profiling.api.sample.SampleProvider;
 
@@ -47,16 +51,19 @@ public class SampleProviderImpl implements SampleProvider {
 
   public SampleProviderImpl( MetricContributorsFactory metricContributorsFactory,
                              MetricContributorService metricContributorService, ExecutorService executorService ) {
-    ProfilingServiceImpl profilingService = new ProfilingServiceImpl( executorService );
+    ProfilingServiceImpl profilingService = new ProfilingServiceImpl( executorService, metricContributorService );
     samples = new HashMap<Class<?>, List<Object>>();
+    MetricContributors defaultMetricContributors =
+      metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION );
+    AggregateProfileMetadata aggregateProfileMetadata = new AggregateProfileMetadata();
     ProfileStatusManagerImpl sampleAggregate =
       new ProfileStatusManagerImpl( UUID.randomUUID().toString(), "sampleAggregate",
-        new DataSourceReference( UUID.randomUUID().toString(),
-          AggregateProfile.AGGREGATE_PROFILE ), profilingService );
+        new ProfileConfiguration( aggregateProfileMetadata, null, defaultMetricContributors ), profilingService );
+    StreamingProfileMetadata streamingProfileMetadata = new StreamingProfileMetadata();
     ProfileStatusManagerImpl sampleStreaming =
       new ProfileStatusManagerImpl( UUID.randomUUID().toString(), "sampleStreaming",
-        new DataSourceReference( UUID.randomUUID().toString(),
-          StreamingProfile.STREAMING_PROFILE ), profilingService );
+        new ProfileConfiguration( streamingProfileMetadata, MetricContributorService.DEFAULT_CONFIGURATION,
+          null ), profilingService );
     samples.put( ProfileStatusManager.class, Arrays.<Object>asList( sampleAggregate, sampleStreaming ) );
     ProfileStatusReadOperation<ProfileStatus> profileStatusReadOperation =
       new ProfileStatusReadOperation<ProfileStatus>() {
@@ -67,18 +74,15 @@ public class SampleProviderImpl implements SampleProvider {
     samples.put( ProfileStatus.class,
       Arrays.<Object>asList( sampleAggregate.read( profileStatusReadOperation ),
         sampleStreaming.read( profileStatusReadOperation ) ) );
-    samples.put( DataSourceReference.class, Arrays
-      .<Object>asList( new DataSourceReference( UUID.randomUUID().toString(), AggregateProfile.AGGREGATE_PROFILE ),
-        new DataSourceReference( UUID.randomUUID().toString(),
-          StreamingProfile.STREAMING_PROFILE ) ) );
+    samples
+      .put( DataSourceMetadata.class, Arrays.<Object>asList( aggregateProfileMetadata, streamingProfileMetadata ) );
     StreamingProfileImpl streamingProfile = new StreamingProfileImpl( sampleStreaming, metricContributorsFactory,
       metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
     samples.put( StreamingProfile.class, Arrays.<Object>asList(
       streamingProfile ) );
     profilingService.registerProfile( streamingProfile, sampleStreaming );
     AggregateProfileImpl aggregateProfile =
-      new AggregateProfileImpl( sampleAggregate.getDataSourceReference(), sampleAggregate, profilingService,
-        metricContributorsFactory,
+      new AggregateProfileImpl( sampleAggregate, profilingService, metricContributorsFactory,
         metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
     aggregateProfile.addChildProfile( sampleStreaming.getId() );
     samples.put( AggregateProfile.class, Arrays.<Object>asList(

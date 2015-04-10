@@ -28,7 +28,7 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
@@ -47,29 +47,29 @@ public class ProfileStatusImpl implements ProfileStatus {
   protected ProfileActionExceptionWrapper operationError;
   protected List<ProfileFieldProperty> profileFieldProperties;
   protected String id;
-  protected DataSourceReference dataSourceReference;
+  protected ProfileConfiguration profileConfiguration;
   protected long sequenceNumber;
 
-  public ProfileStatusImpl( String id, String name, DataSourceReference dataSourceReference ) {
-    this( id, name, dataSourceReference, 0L );
+  public ProfileStatusImpl( String id, String name, ProfileConfiguration profileConfiguration ) {
+    this( id, name, profileConfiguration, 0L );
   }
 
-  public ProfileStatusImpl( String id, String name, DataSourceReference dataSourceReference, long sequenceNumber ) {
-    this( ProfileState.ACTIVE, null, null, null, null, null, id, dataSourceReference, sequenceNumber, name );
+  public ProfileStatusImpl( String id, String name, ProfileConfiguration profileConfiguration, long sequenceNumber ) {
+    this( ProfileState.ACTIVE, null, null, null, null, null, id, profileConfiguration, sequenceNumber, name );
   }
 
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
       profileStatus.getStatusMessages(),
       profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(), profileStatus.getId(),
-      profileStatus.getDataSourceReference(), profileStatus.getSequenceNumber() + 1, profileStatus.getName() );
+      profileStatus.getProfileConfiguration(), profileStatus.getSequenceNumber() + 1, profileStatus.getName() );
   }
 
   public ProfileStatusImpl( ProfileState profileState, List<ProfilingField> fields, Long totalEntities,
                             List<ProfileStatusMessage> statusMessages,
                             ProfileActionExceptionWrapper operationError,
                             List<ProfileFieldProperty> profileFieldProperties, String id,
-                            DataSourceReference dataSourceReference, long sequenceNumber, String name ) {
+                            ProfileConfiguration profileConfiguration, long sequenceNumber, String name ) {
     this.state = profileState;
     if ( fields == null ) {
       fields = new ArrayList<ProfilingField>();
@@ -84,7 +84,7 @@ public class ProfileStatusImpl implements ProfileStatus {
     this.profileFieldProperties =
       Collections.unmodifiableList( new ArrayList<ProfileFieldProperty>( profileFieldProperties ) );
     this.id = id;
-    this.dataSourceReference = dataSourceReference;
+    this.profileConfiguration = profileConfiguration;
     this.sequenceNumber = sequenceNumber;
     this.name = name;
   }
@@ -99,8 +99,8 @@ public class ProfileStatusImpl implements ProfileStatus {
   }
 
   @Override @XmlElement
-  public DataSourceReference getDataSourceReference() {
-    return dataSourceReference;
+  public ProfileConfiguration getProfileConfiguration() {
+    return profileConfiguration;
   }
 
   @Override @XmlElement

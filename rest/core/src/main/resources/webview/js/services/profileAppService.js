@@ -98,7 +98,11 @@ define(["require", './services'], function (require, appServices) {
             profileAppService.profileId = profileStatus.id;
 
             // Update datasource.
-            profileAppService.updateDataSource(profileStatus.dataSourceReference);
+            if (profileStatus.profileConfiguration) {
+              if (profileStatus.profileConfiguration.dataSourceMetadata) {
+                profileAppService.tabularViewService.dsLabel = profileStatus.profileConfiguration.dataSourceMetadata.label;
+              }
+            }
 
             var cols = Pentaho.utilities.toArray(profileStatus.profileFieldProperties),
                 colCount = cols && cols.length,
@@ -147,44 +151,6 @@ define(["require", './services'], function (require, appServices) {
               profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileId);
             });
           });
-        },
-        /**
-         * Shows the "info" view of the given data source reference.
-         *
-         * When the given data source reference is different from the current data source reference,
-         * the data source <i>getInclude</i> service is called to obtain
-         * the new data source's requireJS module and view url.
-         *
-         * @param {DataSourceReference} dataSourceReference The data source reference.
-         */
-        updateDataSource: function (dataSourceReference) {
-          var oldDsr = profileAppService.dataSourceReference,
-              newDsId = dataSourceReference.id,
-              newDsProv = dataSourceReference.dataSourceProvider;
-
-          if (!oldDsr || oldDsr.id != newDsId) {
-            profileAppService.dataSourceReference = dataSourceReference;
-
-            if (!oldDsr || oldDsr.dataSourceProvider != newDsProv) {
-              profileAppService.dataSourceService.getInclude({
-                id: newDsId,
-                dataSourceProvider: newDsProv
-              }, function (dsIncludeWrapper) {
-
-                var dsInclude = dsIncludeWrapper.profileDataSourceInclude;
-                if (dsInclude) {
-                  if (dsInclude.require) {
-                    require([dsInclude.require], function () {
-                      profileAppService.dataSourceUrl = dsInclude.url;
-                      profileAppService.scope.$apply();
-                    });
-                  } else {
-                    profileAppService.dataSourceUrl = dsInclude.url;
-                  }
-                }
-              });
-            }
-          }
         },
         /**
          * Orders to stop the operation on the profile id.

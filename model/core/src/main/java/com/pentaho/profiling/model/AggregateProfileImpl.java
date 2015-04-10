@@ -34,7 +34,6 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
@@ -67,7 +66,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class AggregateProfileImpl implements AggregateProfile {
   private static final Logger LOGGER = LoggerFactory.getLogger( AggregateProfileImpl.class );
   private static String KEY_PATH = MessageUtils.getId( "data-profiling-model", AggregateProfileImpl.class );
-  private final DataSourceReference dataSourceReference;
   private final ProfileStatusManager profileStatusManager;
   private final ProfilingServiceImpl profilingService;
   private final ReadWriteLock readWriteLock;
@@ -80,11 +78,10 @@ public class AggregateProfileImpl implements AggregateProfile {
   private final AtomicLong lastRefresh;
   private ExecutorService executorService;
 
-  public AggregateProfileImpl( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager,
+  public AggregateProfileImpl( ProfileStatusManager profileStatusManager,
                                ProfilingServiceImpl profilingService,
                                MetricContributorsFactory metricContributorsFactory,
                                MetricContributors metricContributors ) {
-    this.dataSourceReference = dataSourceReference;
     this.profileStatusManager = profileStatusManager;
     this.profilingService = profilingService;
     this.metricContributorList = metricContributorsFactory.construct( metricContributors );

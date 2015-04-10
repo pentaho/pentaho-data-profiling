@@ -29,10 +29,14 @@
   <bean id="docService" class="com.pentaho.profiling.rest.doc.DocService" scope="singleton">
     <argument ref="docEndpoints"/>
   </bean>
-
-  <bean id="defaultClassLoaderClass" factory-ref="docService" factory-method="getClass"/>
+  <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
+    <argument ref="blueprintBundleContext"/>
+    <argument>
+      <list/>
+    </argument>
+  </bean>
   <bean id="objectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
-    <argument ref="defaultClassLoaderClass"/>
+    <argument ref="metricBundleListClassloader"/>
   </bean>
 
   <bean id="jsonProvider" factory-ref="objectMapperFactory" factory-method="createProvider"/>

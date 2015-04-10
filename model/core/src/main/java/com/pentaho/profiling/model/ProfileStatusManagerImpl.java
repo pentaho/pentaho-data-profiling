@@ -30,7 +30,7 @@ import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -44,10 +44,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
   private ProfileStatusImpl profileStatus;
 
-  public ProfileStatusManagerImpl( String id, String name, DataSourceReference dataSourceReference,
+  public ProfileStatusManagerImpl( String id, String name, ProfileConfiguration profileConfiguration,
                                    ProfilingServiceImpl profilingService ) {
     this.profilingService = profilingService;
-    profileStatus = new ProfileStatusImpl( id, name, dataSourceReference );
+    profileStatus = new ProfileStatusImpl( id, name, profileConfiguration );
   }
 
   @Override public <T> T read( ProfileStatusReadOperation<T> profileStatusReadOperation ) {
@@ -94,10 +94,10 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
     return profileStatus.getName();
   }
 
-  @Override public DataSourceReference getDataSourceReference() {
+  @Override public ProfileConfiguration getProfileConfiguration() {
     readWriteLock.readLock().lock();
     try {
-      return profileStatus.getDataSourceReference();
+      return profileStatus.getProfileConfiguration();
     } finally {
       readWriteLock.readLock().unlock();
     }

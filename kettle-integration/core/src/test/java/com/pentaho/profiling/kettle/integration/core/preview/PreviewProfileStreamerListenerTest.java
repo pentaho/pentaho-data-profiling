@@ -24,7 +24,6 @@ package com.pentaho.profiling.kettle.integration.core.preview;
 
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
@@ -32,6 +31,7 @@ import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.StreamingProfileService;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.LoggingEventUtil;
 import com.pentaho.profiling.api.metrics.TestAppender;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
@@ -121,7 +121,7 @@ public class PreviewProfileStreamerListenerTest {
         return ( (ProfileStatusWriteOperation) invocation.getArguments()[ 0 ] ).write( mutableProfileStatus2 );
       }
     } );
-    when( profilingService.create( any( ProfileCreateRequest.class ) ) ).thenReturn( profileStatusManager1 )
+    when( profilingService.create( any( ProfileConfiguration.class ) ) ).thenReturn( profileStatusManager1 )
       .thenReturn( profileStatusManager2 ).thenThrow( new ProfileCreationException( null, null ) );
     when( profileStatusManager1.getId() ).thenReturn( profileStatusManager1Id );
     when( profileStatusManager2.getId() ).thenReturn( profileStatusManager2Id );
@@ -162,7 +162,7 @@ public class PreviewProfileStreamerListenerTest {
   public void testRowReadAndErrorEvents() throws KettleStepException, ProfileCreationException {
     //Testing fields we had to implement but have no code, thanks cobertura
     ProfileStatusManager profileStatusManager1 = mock( ProfileStatusManager.class );
-    when( profilingService.create( any( ProfileCreateRequest.class ) ) ).thenReturn( profileStatusManager1 );
+    when( profilingService.create( any( ProfileConfiguration.class ) ) ).thenReturn( profileStatusManager1 );
     PreviewProfileStreamerListener previewProfileStreamerListener =
       new PreviewProfileStreamerListener( profilingService, streamingProfileService, aggregateProfileId,
         aggregateProfileService );

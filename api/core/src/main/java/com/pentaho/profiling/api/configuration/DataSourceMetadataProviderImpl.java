@@ -20,35 +20,10 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.datasource;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+package com.pentaho.profiling.api.configuration;
 
 /**
- * Created by bryan on 7/31/14.
+ * Created by bryan on 4/13/15.
  */
-@XmlRootElement
-public class DataSourceReference {
-  private String id;
-  private String dataSourceProvider;
-
-  public DataSourceReference() {
-    this( null, null );
-  }
-
-  public DataSourceReference( String id, String dataSourceProvider ) {
-    this.id = id;
-    this.dataSourceProvider = dataSourceProvider;
-  }
-
-  @XmlElement
-  public String getDataSourceProvider() {
-    return dataSourceProvider;
-  }
-
-  @XmlElement
-  public String getId() {
-    return id;
-  }
+public class DataSourceMetadataProviderImpl implements DataSourceMetadataProvider {
 }

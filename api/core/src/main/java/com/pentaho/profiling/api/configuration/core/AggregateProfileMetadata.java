@@ -20,29 +20,16 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.datasource;
+package com.pentaho.profiling.api.configuration.core;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import com.pentaho.profiling.api.AggregateProfile;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 
 /**
- * Created by bryan on 8/11/14.
+ * Created by bryan on 4/10/15.
  */
-public class DataSourceReferenceTest {
-  @Test
-  public void testNoArgConstructorSetsNullValues() {
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    assertEquals( null, dataSourceReference.getId() );
-    assertEquals( null, dataSourceReference.getDataSourceProvider() );
-  }
-
-  @Test
-  public void testTwoArgConstructorSetsValues() {
-    String id = "VALUE_1";
-    String dataSourceProvider = "VALUE_2";
-    DataSourceReference dataSourceReference = new DataSourceReference( id, dataSourceProvider );
-    assertEquals( id, dataSourceReference.getId() );
-    assertEquals( dataSourceProvider, dataSourceReference.getDataSourceProvider() );
+public class AggregateProfileMetadata implements DataSourceMetadata {
+  @Override public String getLabel() {
+    return AggregateProfile.AGGREGATE_PROFILE;
   }
 }

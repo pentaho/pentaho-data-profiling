@@ -25,12 +25,12 @@ package com.pentaho.profiling.kettle.integration.core.preview;
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfileService;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.LoggingEventUtil;
 import com.pentaho.profiling.api.metrics.TestAppender;
 import org.apache.log4j.spi.LoggingEvent;
@@ -126,7 +126,7 @@ public class PreviewProfileStreamerTest {
     when( transDebugMetaWrapper.getTrans() ).thenReturn( trans );
     when( transDebugMetaWrapper.getTransDebugMeta() ).thenReturn( transDebugMeta );
     when( transDebugMeta.getStepDebugMetaMap() ).thenReturn( stepDebugMetaMap );
-    when( profilingService.create( any( ProfileCreateRequest.class ) ) ).thenReturn( profileStatusManager );
+    when( profilingService.create( any( ProfileConfiguration.class ) ) ).thenReturn( profileStatusManager );
     when( profileStatusManager.getId() ).thenReturn( profileId );
     when( aggregateProfileService.getAggregateProfile( profileId ) ).thenReturn( aggregateProfile );
     when( aggregateProfile.getId() ).thenReturn( aggregateId );
@@ -155,7 +155,7 @@ public class PreviewProfileStreamerTest {
     when( transDebugMetaWrapper.getTrans() ).thenReturn( trans );
     when( transDebugMetaWrapper.getTransDebugMeta() ).thenReturn( transDebugMeta );
     when( transDebugMeta.getStepDebugMetaMap() ).thenReturn( stepDebugMetaMap );
-    when( profilingService.create( any( ProfileCreateRequest.class ) ) )
+    when( profilingService.create( any( ProfileConfiguration.class ) ) )
       .thenThrow( new ProfileCreationException( null, null ) );
     stepDebugMetaMap.put( stepMeta, stepDebugMeta );
     previewProfileStreamer.uiEvent( transDebugMetaWrapper, TransGraph.PREVIEW_TRANS );

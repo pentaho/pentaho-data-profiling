@@ -25,9 +25,10 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,17 +63,15 @@ public class AggregateProfileFactoryTest {
   @Test
   public void testAccepts() {
     assertTrue( aggregateProfileFactory
-      .accepts( new DataSourceReference( "test-id", AggregateProfile.AGGREGATE_PROFILE ) ) );
-    assertFalse( aggregateProfileFactory.accepts( new DataSourceReference( "test-id", "test-type" ) ) );
+      .accepts( new AggregateProfileMetadata() ) );
+    assertFalse( aggregateProfileFactory.accepts( new StreamingProfileMetadata() ) );
   }
 
   @Test
   public void testCreate() {
-    DataSourceReference dataSourceReference =
-      new DataSourceReference( "test-id", AggregateProfile.AGGREGATE_PROFILE );
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
     Profile profile = aggregateProfileFactory
-      .create( dataSourceReference, profileStatusManager, new MetricContributors( metricContributors, null ) );
+      .create( new ProfileConfiguration( new AggregateProfileMetadata(), null, null ), profileStatusManager );
     assertTrue( profile instanceof AggregateProfile );
     verify( aggregateProfileService ).registerAggregateProfile( (AggregateProfile) profile );
   }

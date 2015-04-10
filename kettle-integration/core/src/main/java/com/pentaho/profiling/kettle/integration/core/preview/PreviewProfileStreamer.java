@@ -25,13 +25,13 @@ package com.pentaho.profiling.kettle.integration.core.preview;
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
@@ -62,7 +62,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Created by bryan on 3/23/15.
@@ -111,8 +110,7 @@ public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
         final StepDebugMeta stepDebugMeta = stepDebugMetaMap.get( stepMeta );
         try {
           ProfileStatusManager profileStatusManager = profilingService.create(
-            new ProfileCreateRequest( new DataSourceReference( UUID.randomUUID().toString(),
-              AggregateProfile.AGGREGATE_PROFILE ), null ) );
+            new ProfileConfiguration( new AggregateProfileMetadata(), null, null ) );
           String profileId = profileStatusManager.getId();
           stepDebugMetaProfileIdMap.put( stepDebugMeta, profileId );
           AggregateProfile aggregateProfile = aggregateProfileService.getAggregateProfile( profileId );

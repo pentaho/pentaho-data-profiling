@@ -20,14 +20,10 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.services.api;
-
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+package com.pentaho.profiling.api.configuration;
 
 /**
- * Created by bryan on 8/5/14.
+ * Created by bryan on 4/13/15.
  */
-public interface ProfileDataSourceIncludeService {
-  public ProfileDataSourceInclude getInclude( DataSourceReference dataSourceReference );
-  public String getCreateUrl( DataSourceReference dataSourceReference );
+public interface DataSourceMetadataProvider {
 }

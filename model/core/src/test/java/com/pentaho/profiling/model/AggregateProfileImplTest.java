@@ -25,7 +25,7 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.when;
 public class AggregateProfileImplTest {
   private String id;
   private String name;
-  private DataSourceReference dataSourceReference;
+  private ProfileConfiguration profileConfiguration;
   private ProfileStatusManager profileStatusManager;
   private ProfilingServiceImpl profilingService;
   private List<MetricContributor> metricContributors;
@@ -72,7 +72,7 @@ public class AggregateProfileImplTest {
   public void setup() {
     id = "test-id";
     name = "test-name";
-    dataSourceReference = mock( DataSourceReference.class );
+    profileConfiguration = mock( ProfileConfiguration.class );
     profilingService = mock( ProfilingServiceImpl.class );
     metricContributors = new ArrayList<MetricContributor>();
     metricContributor = mock( MetricContributor.class );
@@ -80,7 +80,7 @@ public class AggregateProfileImplTest {
     when( metricContributor.getProfileFieldProperties() ).thenReturn( Arrays.asList( profileFieldProperty ) );
     metricContributors.add( metricContributor );
     metricContributorsFactory = mock( MetricContributorsFactory.class );
-    profileStatusManager = new ProfileStatusManagerImpl( id, name, dataSourceReference, profilingService );
+    profileStatusManager = new ProfileStatusManagerImpl( id, name, profileConfiguration, profilingService );
     executorService = mock( ExecutorService.class );
     when( executorService.submit( any( Runnable.class ) ) ).thenAnswer( new Answer<Future>() {
       @Override public Future answer( InvocationOnMock invocation ) throws Throwable {
@@ -89,7 +89,7 @@ public class AggregateProfileImplTest {
       }
     } );
     aggregateProfile =
-      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributorsFactory,
+      new AggregateProfileImpl( profileStatusManager, profilingService, metricContributorsFactory,
         new MetricContributors( metricContributors, new ArrayList<MetricManagerContributor>() ) );
   }
 

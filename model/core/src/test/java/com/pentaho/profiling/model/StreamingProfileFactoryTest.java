@@ -25,7 +25,9 @@ package com.pentaho.profiling.model;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import org.junit.Before;
@@ -53,9 +55,8 @@ public class StreamingProfileFactoryTest {
 
   @Test
   public void testAccepts() {
-    assertTrue(
-      streamingProfileFactory.accepts( new DataSourceReference( null, StreamingProfile.STREAMING_PROFILE ) ) );
-    assertFalse( streamingProfileFactory.accepts( new DataSourceReference( null, "other" ) ) );
+    assertTrue( streamingProfileFactory.accepts( new StreamingProfileMetadata() ) );
+    assertFalse( streamingProfileFactory.accepts( new AggregateProfileMetadata() ) );
   }
 
   @Test
@@ -63,8 +64,7 @@ public class StreamingProfileFactoryTest {
     ProfileStatusManager profileStatusManager = mock( ProfileStatusManager.class );
     MetricContributors metricContributors = mock( MetricContributors.class );
     Profile profile = streamingProfileFactory
-      .create( new DataSourceReference( null, StreamingProfile.STREAMING_PROFILE ), profileStatusManager,
-        metricContributors );
+      .create( new ProfileConfiguration( new StreamingProfileMetadata(), null, null ), profileStatusManager );
     assertTrue( profile instanceof StreamingProfile );
     verify( streamingProfileService ).registerStreamingProfile( (StreamingProfile) profile );
   }

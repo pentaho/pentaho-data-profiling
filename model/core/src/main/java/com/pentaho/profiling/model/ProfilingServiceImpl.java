@@ -24,7 +24,6 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
@@ -33,7 +32,9 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.util.Pair;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
 import org.pentaho.osgi.notification.api.NotificationListener;
@@ -65,10 +66,12 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
       this );
   private final ExecutorService executorService;
+  private final MetricContributorService metricContributorService;
   private List<Pair<Integer, ProfileFactory>> factories = new ArrayList<Pair<Integer, ProfileFactory>>();
 
-  public ProfilingServiceImpl( ExecutorService executorService ) {
+  public ProfilingServiceImpl( ExecutorService executorService, MetricContributorService metricContributorService ) {
     this.executorService = executorService;
+    this.metricContributorService = metricContributorService;
   }
 
   // FOR UNIT TEST ONLY
@@ -82,11 +85,11 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override public ProfileFactory getProfileFactory(
-    DataSourceReference dataSourceReference ) {
+    DataSourceMetadata dataSourceMetadata ) {
     synchronized ( factories ) {
       for ( Pair<Integer, ProfileFactory> factoryPair : factories ) {
         ProfileFactory factory = factoryPair.getSecond();
-        if ( factory.accepts( dataSourceReference ) ) {
+        if ( factory.accepts( dataSourceMetadata ) ) {
           return factory;
         }
       }
@@ -94,20 +97,26 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
     return null;
   }
 
-  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return getProfileFactory( dataSourceReference ) != null;
+  @Override public boolean accepts( DataSourceMetadata dataSourceMetadata ) {
+    return getProfileFactory( dataSourceMetadata ) != null;
   }
 
   @Override
-  public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
+  public ProfileStatusManager create( ProfileConfiguration profileConfiguration ) throws ProfileCreationException {
     ProfileFactory profileOperationProviderFactory =
-      getProfileFactory( profileCreateRequest.getDataSourceReference() );
+      getProfileFactory( profileConfiguration.getDataSourceMetadata() );
+    String configName = profileConfiguration.getConfigName();
+    if ( configName != null ) {
+      profileConfiguration.setMetricContributors( metricContributorService.getDefaultMetricContributors( configName ) );
+    } else if ( profileConfiguration.getMetricContributors() == null ) {
+      profileConfiguration.setMetricContributors(
+        metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
+    }
     if ( profileOperationProviderFactory != null ) {
       String profileId = UUID.randomUUID().toString();
       ProfileStatusManager profileStatusManager =
-        new ProfileStatusManagerImpl( profileId, null, profileCreateRequest.getDataSourceReference(), this );
-      Profile profile = profileOperationProviderFactory.create( profileCreateRequest.getDataSourceReference(),
-        profileStatusManager, profileCreateRequest.getMetricContributors() );
+        new ProfileStatusManagerImpl( profileId, null, profileConfiguration, this );
+      Profile profile = profileOperationProviderFactory.create( profileConfiguration, profileStatusManager );
       profile.start( executorService );
       profileMap.put( profile.getId(), profile );
       profileStatusManagerMap.put( profile.getId(), profileStatusManager );

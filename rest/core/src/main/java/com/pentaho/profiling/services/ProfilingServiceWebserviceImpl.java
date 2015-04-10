@@ -23,7 +23,6 @@
 package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
@@ -31,7 +30,8 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.doc.rest.ErrorCode;
 import com.pentaho.profiling.api.doc.rest.Example;
 import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
@@ -70,22 +70,22 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     this.metricContributorService = metricContributorService;
   }
 
-  @Override public ProfileFactory getProfileFactory( DataSourceReference dataSourceReference ) {
-    return delegate.getProfileFactory( dataSourceReference );
+  @Override public ProfileFactory getProfileFactory( DataSourceMetadata dataSourceMetadata ) {
+    return delegate.getProfileFactory( dataSourceMetadata );
   }
 
   /**
-   * Returns a boolean indicating whether a given DataSourceReference's provider can be used to create a profile.
-   * (Returns true iff there is a registered ProfileFactory that accepts the DataSourceReference)
+   * Returns a boolean indicating whether a given DataSourceMetadata's provider can be used to create a profile.
+   * (Returns true iff there is a registered ProfileFactory that accepts the DataSourceMetadata)
    *
-   * @param dataSourceReference the DataSourceReference
-   * @return a boolean indicating whether a given DataSourceReference's provider can be used to create a profile.
+   * @param dataSourceMetadata the DataSourceMetadata
+   * @return a boolean indicating whether a given DataSourceMetadata's provider can be used to create a profile.
    */
   @POST
   @Path( "/accepts" )
   @SuccessResponseCode( 200 )
-  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return delegate.accepts( dataSourceReference );
+  @Override public boolean accepts( DataSourceMetadata dataSourceMetadata ) {
+    return delegate.accepts( dataSourceMetadata );
   }
 
   /**
@@ -95,17 +95,17 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
    */
   public List<Example> acceptsExample() {
     List<Example> examples = new ArrayList<Example>();
-    for ( DataSourceReference dataSourceReference : sampleProviderManager.provide( DataSourceReference.class ) ) {
+    for ( DataSourceMetadata dataSourceReference : sampleProviderManager.provide( DataSourceMetadata.class ) ) {
       examples.add( new Example( null, null, dataSourceReference, delegate.accepts( dataSourceReference ) ) );
     }
     return examples;
   }
 
   /**
-   * Creates a profile from the given ProfileCreateRequest. If no metric contributors are specified, the profile will be
+   * Creates a profile from the given ProfileConfiguration. If no metric contributors are specified, the profile will be
    * created with the current defaults
    *
-   * @param profileCreateRequest the ProfileCreateRequest
+   * @param profileConfiguration the profile configuration
    * @return the initial profile status
    * @throws ProfileCreationException
    */
@@ -114,8 +114,8 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @SuccessResponseCode( 200 )
   @ErrorCode( code = 500, reason = "Unable to create profile" )
   @Override
-  public ProfileStatusManager create( ProfileCreateRequest profileCreateRequest ) throws ProfileCreationException {
-    return delegate.create( profileCreateRequest );
+  public ProfileStatusManager create( ProfileConfiguration profileConfiguration ) throws ProfileCreationException {
+    return delegate.create( profileConfiguration );
   }
 
   /**
@@ -126,10 +126,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   public List<Example> createExample() {
     List<Example> result = new ArrayList<Example>();
     for ( ProfileStatusManager profileStatusManager : sampleProviderManager.provide( ProfileStatusManager.class ) ) {
-      result.add( new Example( null, null,
-        new ProfileCreateRequest( profileStatusManager.getDataSourceReference(),
-          metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) ),
-        profileStatusManager ) );
+      result.add( new Example( null, null, profileStatusManager.getProfileConfiguration(), profileStatusManager ) );
     }
     return result;
   }

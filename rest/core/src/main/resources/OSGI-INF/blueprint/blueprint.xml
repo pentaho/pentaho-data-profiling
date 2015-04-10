@@ -17,7 +17,6 @@
       <cm:property name="aggregateAddress" value="/aggregate"/>
       <cm:property name="metricsAddress" value="/metrics"/>
       <cm:property name="streamingAddress" value="/streaming"/>
-      <cm:property name="dataSourceIncludeAddress" value="/data-profiling-service/dataSource"/>
     </cm:default-properties>
   </cm:property-placeholder>
 
@@ -60,15 +59,6 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <jaxrs:server address="${dataSourceIncludeAddress}" id="profileDsService">
-    <jaxrs:serviceBeans>
-      <ref component-id="profileDataSourceIncludeWebserviceImpl"/>
-    </jaxrs:serviceBeans>
-    <jaxrs:providers>
-      <ref component-id="jsonProvider"/>
-    </jaxrs:providers>
-  </jaxrs:server>
-
   <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl"
         scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
@@ -94,11 +84,6 @@
       <argument ref="objectMapper"/>
     </bean>
   </service>
-
-  <bean id="profileDataSourceIncludeWebserviceImpl"
-        class="com.pentaho.profiling.services.ProfileDataSourceIncludeWebserviceImpl">
-    <property name="includeServices" ref="dsServiceList"/>
-  </bean>
 
   <bean id="aggregateProfileServiceRestImpl" class="com.pentaho.profiling.services.AggregateProfileServiceRestImpl">
     <argument ref="delegateAggregateProfileService"/>
@@ -134,17 +119,25 @@
   <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
 
 
-  <bean id="defaultClassLoaderClass" factory-ref="aggregateProfileServiceRestImpl" factory-method="getClass"/>
+  <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
+    <argument ref="blueprintBundleContext"/>
+    <argument>
+      <list>
+        <value type="java.lang.Class">
+          com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle
+        </value>
+        <value type="java.lang.Class">
+          com.pentaho.profiling.api.ProfileFactory
+        </value>
+      </list>
+    </argument>
+  </bean>
   <bean id="metricObjectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
-    <argument ref="defaultClassLoaderClass"/>
+    <argument ref="metricBundleListClassloader"/>
   </bean>
 
   <bean id="jsonProvider" factory-ref="metricObjectMapperFactory" factory-method="createProvider"/>
   <bean id="objectMapper" factory-ref="metricObjectMapperFactory" factory-method="createMapper"/>
-  <reference-list id="metricContributorBundles"
-                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional">
-    <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded" unbind-method="hasClassesRemoved"/>
-  </reference-list>
 
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
@@ -152,6 +145,6 @@
              interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
   <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
   <reference id="sampleProviderManager" interface="com.pentaho.profiling.api.sample.SampleProviderManager"/>
-  <reference-list id="dsServiceList" interface="com.pentaho.profiling.services.api.ProfileDataSourceIncludeService"
-                  availability="optional"/>
+  <reference-list id="metricContributorBundles"
+                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
 </blueprint>
