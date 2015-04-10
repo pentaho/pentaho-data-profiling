@@ -22,26 +22,15 @@
 
 package com.pentaho.profiling.services;
 
-import com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 3/18/15.
@@ -91,7 +80,9 @@ public class MetricContributorServiceImplTest {
   @Test
   public void testSetDefault() throws IOException {
     MetricContributors metricContributors = mock( MetricContributors.class );
-    metricContributorService.setDefaultMetricContributors( metricContributors );
-    verify( delegate ).setDefaultMetricContributors( metricContributors );
+    metricContributorService
+      .setDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION, metricContributors );
+    verify( delegate )
+      .setDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION, metricContributors );
   }
 }

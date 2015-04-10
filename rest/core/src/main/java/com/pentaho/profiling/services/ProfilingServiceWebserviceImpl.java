@@ -128,7 +128,8 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     for ( ProfileStatusManager profileStatusManager : sampleProviderManager.provide( ProfileStatusManager.class ) ) {
       result.add( new Example( null, null,
         new ProfileCreateRequest( profileStatusManager.getDataSourceReference(),
-          metricContributorService.getDefaultMetricContributors() ), profileStatusManager ) );
+          metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) ),
+        profileStatusManager ) );
     }
     return result;
   }

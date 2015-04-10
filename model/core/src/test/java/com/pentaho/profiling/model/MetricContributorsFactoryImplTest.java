@@ -57,7 +57,8 @@ public class MetricContributorsFactoryImplTest {
     MetricContributors metricContributors = mock( MetricContributors.class );
     MetricContributor metricContributor = mock( MetricContributor.class );
     MetricManagerContributor metricManagerContributor = mock( MetricManagerContributor.class );
-    when( metricContributorService.getDefaultMetricContributors() ).thenReturn( metricContributors );
+    when( metricContributorService.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) )
+      .thenReturn( metricContributors );
     when( metricContributors.getMetricContributors() ).thenReturn( Arrays.asList( metricContributor ) );
     when( metricContributors.getMetricManagerContributors() ).thenReturn( Arrays.asList( metricManagerContributor ) );
     List<MetricContributor> metricContributorList = metricContributorsFactory.construct( null );

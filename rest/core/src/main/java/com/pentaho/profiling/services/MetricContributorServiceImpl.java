@@ -32,8 +32,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bryan on 3/11/15.
@@ -42,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 @Consumes( { MediaType.APPLICATION_JSON } )
 @WebService
 public class MetricContributorServiceImpl implements MetricContributorService {
+  public static final String CONFIGURATION = "configuration";
   private final MetricContributorService delegate;
 
   public MetricContributorServiceImpl( MetricContributorService delegate ) {
@@ -49,20 +53,49 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   /**
-   * Gets the system's current default metric contributors.  These metric contributors will be used if none are
-   * specified in the CreateProfileRequest
+   * Gets the metric contributors for the "default" configuration.
    *
-   * @return the system's current default metric contributors
+   * @return the confguration's metric contributors
    */
   @GET
   @Path( "/" )
   @SuccessResponseCode( 200 )
-  @Override public MetricContributors getDefaultMetricContributors() {
-    return delegate.getDefaultMetricContributors();
+  public MetricContributors getDefaultMetricContributorsNoArg() {
+    return delegate.getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION );
   }
 
-  public Example getDefaultMetricContributorsExample() {
-    return new Example( null, null, null, getDefaultMetricContributors() );
+  public Example getDefaultMetricContributorsNoArgExample() {
+    return new Example( null, null, null,
+      getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
+  }
+
+  /**
+   * Gets the metric contributors for the given configuration.  The "default" configuration will be returned if none is
+   * specified or the specified configuration doesn't exist.  The "full" configuration consists of all known metric
+   * contributors.
+   *
+   * @param configuration the configuration to return
+   * @return the confguration's metric contributors
+   */
+  @GET
+  @Path( "/{configuration}" )
+  @SuccessResponseCode( 200 )
+  @Override public MetricContributors getDefaultMetricContributors(
+    @PathParam( CONFIGURATION ) String configuration ) {
+    return delegate.getDefaultMetricContributors( configuration );
+  }
+
+  public List<Example> getDefaultMetricContributorsExample() {
+    List<Example> result = new ArrayList<Example>();
+    Example example = new Example();
+    example.getPathParameters().put( CONFIGURATION, MetricContributorService.DEFAULT_CONFIGURATION );
+    example.setResponse( getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
+    result.add( example );
+    example = new Example();
+    example.getPathParameters().put( CONFIGURATION, MetricContributorService.FULL_CONFIGURATION );
+    example.setResponse( getDefaultMetricContributors( MetricContributorService.FULL_CONFIGURATION ) );
+    result.add( example );
+    return result;
   }
 
   /**
@@ -72,13 +105,19 @@ public class MetricContributorServiceImpl implements MetricContributorService {
    * @return the system's current default metric contributors
    */
   @POST
-  @Path( "/" )
+  @Path( "/{configuration}" )
   @SuccessResponseCode( 204 )
-  @Override public void setDefaultMetricContributors( MetricContributors metricContributors ) {
-    delegate.setDefaultMetricContributors( metricContributors );
+  @Override public void setDefaultMetricContributors( @PathParam( CONFIGURATION ) String configuration,
+                                                      MetricContributors metricContributors ) {
+    delegate.setDefaultMetricContributors( configuration, metricContributors );
   }
 
-  public Example setDefaultMetricContributorsExample() {
-    return new Example( null, null, delegate.getDefaultMetricContributors(), null );
+  public List<Example> setDefaultMetricContributorsExample() {
+    List<Example> result = new ArrayList<Example>();
+    Example example = new Example();
+    example.getPathParameters().put( CONFIGURATION, MetricContributorService.DEFAULT_CONFIGURATION );
+    example.setBody( getDefaultMetricContributors( MetricContributorService.DEFAULT_CONFIGURATION ) );
+    result.add( example );
+    return result;
   }
 }
