@@ -23,7 +23,6 @@
 package com.pentaho.profiling.api.doc.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
