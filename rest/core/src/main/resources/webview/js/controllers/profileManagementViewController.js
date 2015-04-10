@@ -21,19 +21,17 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('TreeViewController', [
+  appControllers.controller('ProfileManagementViewController', [
     '$scope',
     'ProfileAppService',
     function ($scope, profileAppService) {
       $scope.profileAppService = profileAppService;
-      $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
-        // Register to receive profile status updates of the new id.
-        if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
-            profileAppService.updateProfile(profileStatus);
-          });
-        }
-      }, false);
+
+      profileAppService.leftNavSelection = "manage";
+
+      profileAppService.leftNavDisplay = true;
+
+      profileAppService.buildAvailableProfiles(profileAppService.profileId);
     }
   ])
 });

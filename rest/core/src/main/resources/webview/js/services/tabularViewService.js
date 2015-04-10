@@ -21,22 +21,25 @@
  */
 
 define(['./services'], function (appServices) {
-  appServices.factory('TabularService', [
+  appServices.factory('TabularViewService', [
     function () {
-      function TabularService() {
+      function TabularViewService() {
         this.fieldCols;
         this.fieldRows;
         this.orderByCol;
         this.isOrderReversed;
+        this.selectedTab;
+        this.stateFormDisplay = true;
       }
 
-      TabularService.prototype = {
-        constructor: TabularService,
+      TabularViewService.prototype = {
+        constructor: TabularViewService,
         init: function (col, order) {
-          tabularService.fieldCols = [];
-          tabularService.fieldRows = [];
-          tabularService.orderByCol = col;
-          tabularService.isOrderReversed = order;
+          tabularViewService.fieldCols = [];
+          tabularViewService.fieldRows = [];
+          tabularViewService.orderByCol = col;
+          tabularViewService.isOrderReversed = order;
+          tabularViewService.selectedTab = 'aggregate';
         },
         buildItemSchemaRecursive: function (itemSchema, propPath, col) {
           var propName;
@@ -96,7 +99,7 @@ define(['./services'], function (appServices) {
               col.stringifiedPath = JSON.stringify(propPath);
 
               // Index the col by its colPropPath steps.
-              tabularService.buildItemSchemaRecursive(valuesItemSchema, propPath, col);
+              tabularViewService.buildItemSchemaRecursive(valuesItemSchema, propPath, col);
             });
           }
 
@@ -138,7 +141,7 @@ define(['./services'], function (appServices) {
                   if (childSchema.isColumn) {
                     if (!seenCols[childSchema.index]) {
                       seenCols[childSchema.index] = 1;
-                      var oldFieldColArray = $.grep(tabularService.fieldCols, function(e){ return e.nameKey == childSchema.nameKey; });
+                      var oldFieldColArray = $.grep(tabularViewService.fieldCols, function(e){ return e.nameKey == childSchema.nameKey; });
                       if(oldFieldColArray.length === 1) {
                         if(oldFieldColArray[0].display !== undefined) {
                           childSchema.display = oldFieldColArray[0].display;
@@ -230,11 +233,11 @@ define(['./services'], function (appServices) {
         onOrderByCol: function (col) {
           // Cycles through: Ascending -> Descending
 
-          if (tabularService.orderByCol === col.stringifiedPath) {
-            tabularService.isOrderReversed = !tabularService.isOrderReversed;
+          if (tabularViewService.orderByCol === col.stringifiedPath) {
+            tabularViewService.isOrderReversed = !tabularViewService.isOrderReversed;
           } else {
-            tabularService.orderByCol = col.stringifiedPath;
-            tabularService.isOrderReversed = false;
+            tabularViewService.orderByCol = col.stringifiedPath;
+            tabularViewService.isOrderReversed = false;
           }
         },
         /**
@@ -256,10 +259,10 @@ define(['./services'], function (appServices) {
          * @return {Object} The order by value.
          */
         orderByKey: function (row) {
-          return row[tabularService.orderByCol];
+          return row[tabularViewService.orderByCol];
         }
       };
-      var tabularService = new TabularService();
-      return tabularService;
+      var tabularViewService = new TabularViewService();
+      return tabularViewService;
     }])
 });

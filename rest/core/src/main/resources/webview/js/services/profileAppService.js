@@ -22,38 +22,60 @@
 
 define(["require", './services'], function (require, appServices) {
   appServices.factory('ProfileAppService', [
-    function () {
+    '$q',
+    '$window',
+    function ($q, $window) {
       function ProfileAppService() {
         this.profileId;
+        this.lastViewedField;
         this.dataSourceUrl;
         this.dataSourceReference;
         this.statusMessages;
         this.operationError;
         this.treeViewService;
-        this.tabularService;
+        this.profileManagementViewService;
+        this.fieldOverviewViewService;
+        this.metricConfigViewService;
+        this.defaultMetricConfigViewService;
+        this.mongoHostViewService;
+        this.hdfsTextHostViewService;
+        this.streamingProfilerViewService;
+        this.createProfilerViewService;
+        this.tabularViewService;
         this.profileService;
-        this.treedata;
         this.dataSourceService;
-        this.activeProfiles;
         this.notificationService;
         this.notificationServiceRegNumber;
         this.leftNavSelection;
+        this.leftNavDisplay;
       }
 
       ProfileAppService.prototype = {
         constructor: ProfileAppService,
-        init: function (aTabularService, aTreeViewService, aProfileService, aDataSourceService, aNotificationService, scope) {
-          profileAppService.leftNavSelection = "stats";
-          //Because of the way we are using services as singleton instances of objects that are injectable, yet leverage the
-          //dual binding that angular provides, we need to initialize the TabularService and set it on the ProfileAppService
-          aTabularService.init(JSON.stringify(["name"]), false);
+        init: function (aTabularViewService, aTreeViewService, aProfileManagementViewService,
+                        aFieldOverviewViewService, aMetricConfigViewService, aDefaultMetricConfigViewService,
+                        aProfileService, aDataSourceService, aNotificationService, aMongoHostViewService,
+                        aHdfsTextHostViewService, aStreamingProfilerViewService,
+                        aCreateProfilerViewService, scope) {
+          //Because of the way we are using services as singleton instances of objects (to share a single truth
+          //throughout the app) that are injectable, yet leverage the dual binding that angular provides, we need
+          //to initialize the TabularViewService and set it on the ProfileAppService
+          aTabularViewService.init(JSON.stringify(["name"]), false);
 
-          profileAppService.tabularService = aTabularService;
+          profileAppService.tabularViewService = aTabularViewService;
           profileAppService.treeViewService = aTreeViewService;
+          profileAppService.profileManagementViewService = aProfileManagementViewService;
+          profileAppService.fieldOverviewViewService = aFieldOverviewViewService;
+          profileAppService.metricConfigViewService = aMetricConfigViewService;
+          profileAppService.defaultMetricConfigViewService = aDefaultMetricConfigViewService;
           profileAppService.profileService = aProfileService;
           profileAppService.dataSourceService = aDataSourceService;
-          profileAppService.activeProfiles = [];
           profileAppService.notificationService = aNotificationService;
+          profileAppService.lastViewedField = "";
+          profileAppService.mongoHostViewService = aMongoHostViewService;
+          profileAppService.hdfsTextHostViewService = aHdfsTextHostViewService;
+          profileAppService.streamingProfilerViewService = aStreamingProfilerViewService;
+          profileAppService.createProfilerViewService = aCreateProfilerViewService;
           profileAppService.scope = scope;
         },
         /**
@@ -75,26 +97,23 @@ define(["require", './services'], function (require, appServices) {
           if (profileStatus && profileStatus.profileState != 'DISCARDED') {
             profileAppService.profileId = profileStatus.id;
 
-            //Get the aggregate Profiles
-            profileAppService.profileService.getAggregates({profileId: profileAppService.profileId}, function (aggregateProfiles) {
-              profileAppService.treeViewService.buildTreeViewSchema(aggregateProfiles, profileStatus);
-            });
-
-            //Get the active Profiles
-            profileAppService.profileService.getActive({profileId: profileAppService.profileId}, function (activeProfiles) {
-              profileAppService.activeProfiles = activeProfiles;
-            });
-
             // Update datasource.
             profileAppService.updateDataSource(profileStatus.dataSourceReference);
 
             var cols = Pentaho.utilities.toArray(profileStatus.profileFieldProperties),
                 colCount = cols && cols.length,
-                itemSchema = profileAppService.tabularService.buildItemSchema(cols),
+                itemSchema = profileAppService.tabularViewService.buildItemSchema(cols),
                 items = Pentaho.utilities.toArray(profileStatus.fields);
 
-            profileAppService.tabularService.fieldCols = profileAppService.tabularService.getCols(itemSchema, items, colCount);
-            profileAppService.tabularService.fieldRows = profileAppService.tabularService.getRows(itemSchema, items);
+            profileAppService.tabularViewService.fieldCols = profileAppService.tabularViewService.getCols(itemSchema, items, colCount);
+            profileAppService.tabularViewService.fieldRows = profileAppService.tabularViewService.getRows(itemSchema, items);
+
+            if (profileAppService.lastViewedField === "") {
+              //Defualt to the first row/field
+              if (profileAppService.tabularViewService.fieldRows.length > 0 && profileAppService.tabularViewService.fieldCols.length > 0) {
+                profileAppService.setLastViewedField(profileAppService.tabularViewService.fieldRows[0][profileAppService.tabularViewService.fieldCols[0].stringifiedPath]);
+              }
+            }
 
             profileAppService.statusMessages = profileStatus.statusMessages;
 
@@ -107,6 +126,27 @@ define(["require", './services'], function (require, appServices) {
               window.location.href = createWrapper.profileDataSourceInclude.url;
             });
           }
+        },
+        setLastViewedField: function (path) {
+          profileAppService.lastViewedField = path;
+        },
+        buildAvailableProfiles: function (profileId) {
+          //Get all active Profiles
+          profileAppService.profileService.profileResource.getActiveProfiles({}, function (activeProfiles) {
+            profileAppService.profileManagementViewService.activeProfiles = [];
+            angular.forEach(activeProfiles[1], function (value, key) {
+              profileAppService.profileManagementViewService.activeProfiles.push(value);
+            });
+            //Get all aggregate Profiles
+            profileAppService.profileService.aggregateProfileResource.getAggregates({}, function (aggregateProfiles) {
+              profileAppService.profileManagementViewService.aggregateProfiles = [];
+              angular.forEach(aggregateProfiles[1], function (value, key) {
+                profileAppService.profileManagementViewService.aggregateProfiles.push(value);
+              });
+              profileAppService.profileManagementViewService.buildProfileManagementViewServiceTreeViewSchemas();
+              profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileId);
+            });
+          });
         },
         /**
          * Shows the "info" view of the given data source reference.
@@ -147,12 +187,77 @@ define(["require", './services'], function (require, appServices) {
           }
         },
         /**
-         * Orders to stop the current operation on the scope object's profile.
-         *
-         * This method is published in the scope object and can thus be called by the view.
+         * Orders to stop the operation on the profile id.
          */
-        stopCurrentOperation: function () {
-          profileAppService.profileService.stop({profileId: profileAppService.profileId});
+        stopOperation: function (profileId) {
+          profileAppService.profileService.profileResource.stopProfile({profileId: profileId});
+        },
+        /**
+         * Orders to stop the operation for all active profile ids.
+         */
+        stopAllOperation: function () {
+          var availableProfileIdsArray = [];
+          availableProfileIdsArray = profileAppService.profileManagementViewService.getAvailableProfileIdsRecursively(availableProfileIdsArray);
+          var promises = availableProfileIdsArray.map(function (id) {
+            var deferred = $q.defer();
+
+            profileAppService.profileService.profileResource.stopProfile({profileId: id}).$promise.then(
+                //success
+                function (value) {
+                  deferred.resolve(value);
+                },
+                //error
+                function (error) {
+                  deferred.reject();
+                }
+            );
+
+            return deferred.promise;
+          });
+          $q.all(promises).error(function (data, status, headers, config) {
+            // called asynchronously if an error occurs
+          });
+        },
+        /**
+         * Sets the default metric contributor configuration.
+         */
+        submitDefaultMetricContributorConfig: function () {
+          profileAppService.profileService.metricContributorResource.setDefaultMetricContributorConfig(
+              profileAppService.metricConfigViewService.metricContributorConfig,
+              function () {
+                profileAppService.redirectRoute("view.html#/defaultMetricConfig");
+              });
+        },
+        redirectRoute: function (path) {
+          $window.location.href = path;
+        },
+        submitDistProfileHostAndPort: function (type) {
+          switch (type) {
+            case "hdfsText":
+              if (profileAppService.hdfsTextHostViewService.pentahoHdfsTextProfilingHost !== "" &&
+                  profileAppService.hdfsTextHostViewService.pentahoHdfsTextProfilingPort !== "") {
+                profileAppService.redirectRoute("http://" +
+                profileAppService.hdfsTextHostViewService.pentahoHdfsTextProfilingHost + ":" +
+                profileAppService.hdfsTextHostViewService.pentahoHdfsTextProfilingPort + "/hdfsText/create.html");
+              } else {
+                alert('Please enter Host and Port Information.');
+              }
+              break;
+            case "mongo":
+              if (profileAppService.mongoHostViewService.pentahoMongoProfilingHost !== "" &&
+                  profileAppService.mongoHostViewService.pentahoMongoProfilingPort !== "") {
+                profileAppService.redirectRoute("http://" +
+                profileAppService.mongoHostViewService.pentahoMongoProfilingHost + ":" +
+                profileAppService.mongoHostViewService.pentahoMongoProfilingPort + "/mongoProfileWebView/create.html");
+              } else {
+                alert('Please enter Host and Port Information.');
+              }
+              break;
+            default:
+              alert('Default case');
+              break;
+          }
+
         },
         /**
          * Register the profile id with the notification service.

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!-- /*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
@@ -33,18 +34,17 @@
           });
         </script>
     </head>
-    <body id="profileApp" ng-controller="profileAppController" class="pentaho-page-background">
-      <div id="pucHeader">
-        Pentaho Data Exploration
-        <div class="hud">
-          <a ng-href="view.html#/{{profileAppService.profileId}}"><i class="fa fa-dashboard">Profiling</i></a>
-          <a href="#"><i class="fa fa-dashboard">Report</i></a>
-          <a href="#"><i class="fa fa-dashboard">Analysis</i></a>
-          <a href="#"><i class="fa fa-dashboard">Viz</i></a>
-        </div>
+    <body id="profileApp" ng-controller="ProfileAppController" class="pentaho-page-background">
+      <div class="nav left" ng-class="{on: profileAppService.leftNavDisplay==true}">
+        <ul>
+          <li><a ng-href="view.html#/tabular/{{profileAppService.profileId}}" ng-click="profileAppService.leftNavSelection = 'tabular';" ng-class="{'active': profileAppService.leftNavSelection == 'tabular'}">Table</a></li>
+          <li id="filedOverviewId" ng-class="{off: profileAppService.lastViewedField === ''}"><a ng-href="view.html#/fieldOverview/{{profileAppService.profileId}}/{{profileAppService.lastViewedField}}" ng-click="profileAppService.leftNavSelection = 'overview';" ng-class="{'active': profileAppService.leftNavSelection == 'overview'}">Field</a></li>
+          <li><a ng-href="view.html#/profileManagement" ng-click="profileAppService.leftNavSelection = 'manage';" ng-class="{'active': profileAppService.leftNavSelection == 'manage'}">Profiles</a></li>
+          <li><a ng-href="view.html#/create" ng-click="profileAppService.leftNavSelection = 'create';" ng-class="{'active': profileAppService.leftNavSelection == 'create'}">Create</a></li>
+        </ul>
       </div>
-        <div id="profileView" class="view-container">
-            <div ng-view class="view-frame"></div>
-        </div>
+      <div id="profileView" class="view-container">
+          <div ng-view class="view-frame"></div>
+      </div>
     </body>
 </html>

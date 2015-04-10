@@ -21,16 +21,21 @@
  */
 
 define(['./controllers'], function (appControllers) {
-  appControllers.controller('tabularViewController', [
+  appControllers.controller('TabularViewController', [
     '$scope',
     'ProfileAppService',
     '$routeParams',
     function ($scope, profileAppService, $routeParams) {
       $scope.profileAppService = profileAppService;
 
+      profileAppService.leftNavSelection = "tabular";
+
+      profileAppService.leftNavDisplay = true;
+
       // Register to receive profile status updates.
       profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$routeParams.profileId], function (profileStatus) {
         profileAppService.updateProfile(profileStatus);
+        profileAppService.buildAvailableProfiles(profileAppService.profileId);
       });
     }
   ])

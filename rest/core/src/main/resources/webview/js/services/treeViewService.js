@@ -24,33 +24,10 @@ define(['./services'], function (appServices) {
   appServices.factory('TreeViewService', [
     function () {
       function TreeViewService() {
-        // treedata format
-        // [
-        //  { "name" : "User", "id" : "role1", "children" : [
-        //    { "name" : "subUser1", "id" : "role11", "children" : [] },
-        //    { "name" : "subUser2", "id" : "role12", "children" : [
-        //      { "name" : "subUser2-1", "id" : "role121", "children" : [
-        //        { "name" : "subUser2-1-1", "id" : "role1211", "children" : [] },
-        //        { "name" : "subUser2-1-2", "id" : "role1212", "children" : [] }
-        //      ]}
-        //    ]}
-        //  ]},
-        //  { "name" : "Admin", "id" : "role2", "children" : [] },
-        //  { "name" : "Guest", "id" : "role3", "children" : [] }
-        //];
-        this.treedata = [{"name" : "", "id" : "", "childProfile" : []}];
       }
 
       TreeViewService.prototype = {
-        constructor: TreeViewService,
-        buildTreeViewSchema: function (aggregateProfiles, profileStatus) {
-          treeViewService.treedata = [];
-          if (aggregateProfiles.length === 0){
-            treeViewService.treedata.push({"name" : profileStatus.name, "id" : profileStatus.id, "childProfile" : []});
-          } else {
-            treeViewService.treedata.push(aggregateProfiles);
-          }
-        }
+        constructor: TreeViewService
       };
       var treeViewService = new TreeViewService();
       return treeViewService;
