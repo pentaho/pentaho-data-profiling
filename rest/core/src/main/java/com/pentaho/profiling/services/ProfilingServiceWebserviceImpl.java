@@ -113,6 +113,11 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   @Path( "/" )
   @SuccessResponseCode( 200 )
   @ErrorCode( code = 500, reason = "Unable to create profile" )
+  public ProfileStatusDTO createWebservice( ProfileConfiguration profileConfiguration )
+    throws ProfileCreationException {
+    return new ProfileStatusDTO( delegate.create( profileConfiguration ) );
+  }
+
   @Override
   public ProfileStatusManager create( ProfileConfiguration profileConfiguration ) throws ProfileCreationException {
     return delegate.create( profileConfiguration );
@@ -123,10 +128,11 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
    *
    * @return the list of examples
    */
-  public List<Example> createExample() {
+  public List<Example> createWebserviceExample() {
     List<Example> result = new ArrayList<Example>();
     for ( ProfileStatusManager profileStatusManager : sampleProviderManager.provide( ProfileStatusManager.class ) ) {
-      result.add( new Example( null, null, profileStatusManager.getProfileConfiguration(), profileStatusManager ) );
+      result.add( new Example( null, null, profileStatusManager.getProfileConfiguration(),
+        new ProfileStatusDTO( profileStatusManager ) ) );
     }
     return result;
   }
@@ -144,7 +150,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     for ( ProfileStatusReader profileStatusManager : profileStatusReaders ) {
       result.add( profileStatusManager.read( new ProfileStatusReadOperation<ProfileStatus>() {
         @Override public ProfileStatus read( ProfileStatus profileStatus ) {
-          return profileStatus;
+          return new ProfileStatusDTO( profileStatus );
         }
       } ) );
     }
@@ -157,8 +163,12 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
    * @return the list of examples
    */
   public Example getActiveProfilesWebserviceExample() {
-    return new Example( null, null, null,
-      new ArrayList<ProfileStatus>( sampleProviderManager.provide( ProfileStatus.class ) ) );
+    List<ProfileStatus> provide = sampleProviderManager.provide( ProfileStatus.class );
+    ArrayList<ProfileStatus> response = new ArrayList<ProfileStatus>( provide.size() );
+    for ( ProfileStatus profileStatus : provide ) {
+      response.add( new ProfileStatusDTO( profileStatus ) );
+    }
+    return new Example( null, null, null, response );
   }
 
   @Override
@@ -182,7 +192,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   public ProfileStatus getProfileUpdateWebservice( @PathParam( "profileId" ) String profileId ) {
     return getProfileUpdate( profileId ).read( new ProfileStatusReadOperation<ProfileStatus>() {
       @Override public ProfileStatus read( ProfileStatus profileStatus ) {
-        return profileStatus;
+        return new ProfileStatusDTO( profileStatus );
       }
     } );
   }
@@ -192,7 +202,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
     for ( ProfileStatus profileStatus : sampleProviderManager.provide( ProfileStatus.class ) ) {
       Example example = new Example();
       example.getPathParameters().put( PROFILE_ID, profileStatus.getId() );
-      example.setResponse( profileStatus );
+      example.setResponse( new ProfileStatusDTO( profileStatus ) );
       result.add( example );
     }
     return result;
