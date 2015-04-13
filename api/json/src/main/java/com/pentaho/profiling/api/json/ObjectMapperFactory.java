@@ -24,6 +24,7 @@ package com.pentaho.profiling.api.json;
 
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.MapperConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
@@ -80,6 +81,7 @@ public class ObjectMapperFactory {
     typer = typer.inclusion( JsonTypeInfo.As.PROPERTY );
     typer = typer.typeProperty( "javaClass" );
     objectMapper.configure( SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false );
+    objectMapper.configure( DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false );
     return objectMapper.setDefaultTyping( typer );
   }
 
