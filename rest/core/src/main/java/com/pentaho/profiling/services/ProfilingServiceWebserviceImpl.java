@@ -128,7 +128,7 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
    *
    * @return the list of examples
    */
-  public List<Example> createExample() {
+  public List<Example> createWebserviceExample() {
     List<Example> result = new ArrayList<Example>();
     for ( ProfileStatusManager profileStatusManager : sampleProviderManager.provide( ProfileStatusManager.class ) ) {
       result.add( new Example( null, null, profileStatusManager.getProfileConfiguration(),
