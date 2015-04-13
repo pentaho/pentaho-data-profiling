@@ -29,7 +29,7 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,7 +66,7 @@ public class MutableProfileStatusImplTest {
     String id = "test-id";
     String name = "test-name";
     long sequence = 99L;
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
     when( constructorArg.getFields() ).thenReturn( fieldList );
     when( constructorArg.getTotalEntities() ).thenReturn( totalEntities );
     when( constructorArg.getStatusMessages() ).thenReturn( Arrays.asList( profileStatusMessage ) );
@@ -74,7 +74,7 @@ public class MutableProfileStatusImplTest {
     when( constructorArg.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( constructorArg.getId() ).thenReturn( id );
     when( constructorArg.getName() ).thenReturn( name );
-    when( constructorArg.getDataSourceReference() ).thenReturn( dataSourceReference );
+    when( constructorArg.getProfileConfiguration() ).thenReturn( profileConfiguration );
     when( constructorArg.getSequenceNumber() ).thenReturn( sequence );
     MutableProfileStatusImpl profileStatus =
       new MutableProfileStatusImpl( constructorArg );
@@ -86,7 +86,7 @@ public class MutableProfileStatusImplTest {
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
     assertEquals( name, profileStatus.getName() );
-    assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
+    assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( sequence + 1, profileStatus.getSequenceNumber() );
   }
 

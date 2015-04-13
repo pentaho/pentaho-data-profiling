@@ -28,7 +28,7 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -47,11 +47,11 @@ public class ProfileStatusImplTest {
   public void testIdDatasourceReferenceConstructor() {
     String id = "test-id";
     String name = "test-name";
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
-    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, dataSourceReference );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
+    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, profileConfiguration );
     assertEquals( id, profileStatus.getId() );
     assertEquals( name, profileStatus.getName() );
-    assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
+    assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( 0L, profileStatus.getSequenceNumber() );
   }
 
@@ -60,11 +60,11 @@ public class ProfileStatusImplTest {
     String id = "test-id";
     String name = "test-name";
     long sequence = 99L;
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
-    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, dataSourceReference, sequence );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
+    ProfileStatusImpl profileStatus = new ProfileStatusImpl( id, name, profileConfiguration, sequence );
     assertEquals( id, profileStatus.getId() );
     assertEquals( name, profileStatus.getName() );
-    assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
+    assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( sequence, profileStatus.getSequenceNumber() );
   }
 
@@ -82,11 +82,11 @@ public class ProfileStatusImplTest {
     String id = "test-id";
     String name = "test-name";
     long sequence = 99L;
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
     ProfileStatusImpl profileStatus =
       new ProfileStatusImpl( ProfileState.ACTIVE, fieldList, totalEntities, profileStatusMessage,
         profileActionExceptionWrapper,
-        profileFieldProperties, id, dataSourceReference, sequence, name );
+        profileFieldProperties, id, profileConfiguration, sequence, name );
     assertEquals( 1, profileStatus.getFields().size() );
     assertEquals( mockField, profileStatus.getFields().get( 0 ) );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
@@ -95,7 +95,7 @@ public class ProfileStatusImplTest {
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
     assertEquals( name, profileStatus.getName() );
-    assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
+    assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( sequence, profileStatus.getSequenceNumber() );
     assertEquals( ProfileState.ACTIVE, profileStatus.getProfileState() );
   }
@@ -114,7 +114,7 @@ public class ProfileStatusImplTest {
     profileFieldProperties.add( profileFieldProperty );
     String id = "test-id";
     long sequence = 99L;
-    DataSourceReference dataSourceReference = mock( DataSourceReference.class );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
     ProfileStatus profileStatusToCopy = mock( ProfileStatus.class );
     when( profileStatusToCopy.getFields() ).thenReturn( fieldList );
     when( profileStatusToCopy.getTotalEntities() ).thenReturn( totalEntities );
@@ -122,7 +122,7 @@ public class ProfileStatusImplTest {
     when( profileStatusToCopy.getOperationError() ).thenReturn( profileActionExceptionWrapper );
     when( profileStatusToCopy.getProfileFieldProperties() ).thenReturn( profileFieldProperties );
     when( profileStatusToCopy.getId() ).thenReturn( id );
-    when( profileStatusToCopy.getDataSourceReference() ).thenReturn( dataSourceReference );
+    when( profileStatusToCopy.getProfileConfiguration() ).thenReturn( profileConfiguration );
     when( profileStatusToCopy.getSequenceNumber() ).thenReturn( sequence );
     when( profileStatusToCopy.getProfileState() ).thenReturn( profileState );
     ProfileStatusImpl profileStatus =
@@ -135,7 +135,7 @@ public class ProfileStatusImplTest {
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
     assertEquals( profileFieldProperties, profileStatus.getProfileFieldProperties() );
     assertEquals( id, profileStatus.getId() );
-    assertEquals( dataSourceReference, profileStatus.getDataSourceReference() );
+    assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( sequence + 1, profileStatus.getSequenceNumber() );
     assertEquals( profileState, profileStatus.getProfileState() );
   }

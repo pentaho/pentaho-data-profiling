@@ -24,7 +24,6 @@ package com.pentaho.profiling.kettle.integration.core.preview;
 
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
@@ -32,7 +31,8 @@ import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.StreamingProfileService;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleValueException;
@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by bryan on 3/24/15.
@@ -87,8 +86,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     }
     try {
       streamingProfileStatusManager = profilingService.create(
-        new ProfileCreateRequest( new DataSourceReference( UUID.randomUUID().toString(),
-          StreamingProfile.STREAMING_PROFILE ), null ) );
+        new ProfileConfiguration( new StreamingProfileMetadata(), null, null ) );
       String streamingProfileId = streamingProfileStatusManager.getId();
       aggregateProfileService.addChild( aggregateProfileId, streamingProfileId );
       streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {

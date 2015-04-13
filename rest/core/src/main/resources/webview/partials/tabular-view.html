@@ -89,7 +89,7 @@
     </div>
     <div class="profile-section profile-fields-container">
         <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
-        <div class="profile-dsi-container" ng-include="profileAppService.dataSourceUrl"></div>
+        <div class="profile-dsi-container">{{profileAppService.tabularViewService.dsLabel}}</div>
         <div class="profile-fields-list-wrapper">
             <table class="pentaho-table profile-fields-list" cellspacing="0">
                 <thead>

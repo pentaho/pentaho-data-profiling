@@ -22,64 +22,32 @@
 
 package com.pentaho.profiling.api.json;
 
-import com.pentaho.profiling.api.classes.HasClasses;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.MapperConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.jsontype.NamedType;
 import org.codehaus.jackson.map.jsontype.TypeIdResolver;
 import org.codehaus.jackson.map.jsontype.impl.ClassNameIdResolver;
 import org.codehaus.jackson.map.jsontype.impl.StdTypeResolverBuilder;
 import org.codehaus.jackson.type.JavaType;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by bryan on 3/27/15.
  */
 public class ObjectMapperFactory {
-  private final List<HasClasses> hasClassesList = new ArrayList<HasClasses>();
-  private final ClassLoader defaultClassLoader;
-  private volatile Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+  private volatile ClassLoader classLoader;
 
-  public ObjectMapperFactory( ClassLoader defaultClassLoader ) {
-    this.defaultClassLoader = defaultClassLoader;
-  }
-
-  public ObjectMapperFactory( Class defaultClassLoaderClass ) {
-    this( defaultClassLoaderClass.getClassLoader() );
-  }
-
-  public void hasClassesAdded( HasClasses hasClasses, Map properties ) {
-    synchronized ( hasClassesList ) {
-      hasClassesList.add( hasClasses );
-      updateClassMap();
-    }
-  }
-
-  public void hasClassesRemoved( HasClasses hasClasses, Map properties ) {
-    synchronized ( hasClassesList ) {
-      int numFound = 0;
-      while ( hasClassesList.remove( hasClasses ) ) {
-        numFound++;
-      }
-      updateClassMap();
-    }
-  }
-
-  private void updateClassMap() {
-    final Map<String, Class<?>> classMap = new HashMap<String, Class<?>>();
-    for ( HasClasses hasClasses : hasClassesList ) {
-      for ( Class clazz : hasClasses.getClasses() ) {
-        classMap.put( clazz.getCanonicalName(), clazz );
-      }
-    }
-    this.classMap = classMap;
+  /**
+   * Facilitate unit testing
+   *
+   * @param classLoader
+   */
+  public ObjectMapperFactory( ClassLoader classLoader ) {
+    this.classLoader = classLoader;
   }
 
   public ObjectMapper createMapper() {
@@ -93,34 +61,17 @@ public class ObjectMapperFactory {
                                              boolean forSer, boolean forDeser ) {
           return new ClassNameIdResolver( baseType, config.getTypeFactory() ) {
 
-            private JavaType loadWithClassLoader( String id, ClassLoader classLoader, boolean suppressException ) {
+            @Override public JavaType typeFromId( String id ) {
               ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
               try {
                 Thread.currentThread().setContextClassLoader( classLoader );
                 return super.typeFromId( id );
               } catch ( RuntimeException ex ) {
-                if ( suppressException ) {
-                  return null;
-                } else {
-                  throw ex;
-                }
+                throw new RuntimeException(
+                  "Unable to find classloader for baseType: " + _baseType + " and id: " + id, ex );
               } finally {
                 Thread.currentThread().setContextClassLoader( contextClassLoader );
               }
-            }
-
-            @Override public JavaType typeFromId( String id ) {
-              JavaType result = loadWithClassLoader( id, defaultClassLoader, true );
-              if ( result == null ) {
-                Class<?> clazz = classMap.get( id );
-                if ( clazz != null ) {
-                  result = loadWithClassLoader( id, clazz.getClassLoader(), true );
-                }
-              }
-              if ( result == null ) {
-                result = loadWithClassLoader( id, _baseType.getRawClass().getClassLoader(), false );
-              }
-              return result;
             }
           };
         }
@@ -128,6 +79,7 @@ public class ObjectMapperFactory {
     typer = typer.init( JsonTypeInfo.Id.CLASS, null );
     typer = typer.inclusion( JsonTypeInfo.As.PROPERTY );
     typer = typer.typeProperty( "javaClass" );
+    objectMapper.configure( SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false );
     return objectMapper.setDefaultTyping( typer );
   }
 

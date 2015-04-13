@@ -3,6 +3,7 @@
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
   <bean id="profilingServiceImpl" class="com.pentaho.profiling.model.ProfilingServiceImpl">
     <argument ref="executorService"/>
+    <argument ref="metricContributorServiceImpl"/>
   </bean>
 
   <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"
@@ -35,9 +36,18 @@
     <argument ref="metricContributorsFactoryImpl"/>
   </bean>
 
-  <bean id="defaultClassLoaderClass" factory-ref="streamingProfileServiceImpl" factory-method="getClass"/>
+  <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
+    <argument ref="blueprintBundleContext"/>
+    <argument>
+      <list>
+        <value type="java.lang.Class">
+          com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle
+        </value>
+      </list>
+    </argument>
+  </bean>
   <bean id="metricObjectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
-    <argument ref="defaultClassLoaderClass"/>
+    <argument ref="metricBundleListClassloader"/>
   </bean>
 
   <bean id="sampleProviderImpl" class="com.pentaho.profiling.model.SampleProviderImpl">
@@ -70,8 +80,5 @@
                         unbind-method="profileFactoryRemoved"/>
   </reference-list>
   <reference-list id="metricContributorBundles"
-                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional">
-    <reference-listener ref="metricObjectMapperFactory" bind-method="hasClassesAdded"
-                        unbind-method="hasClassesRemoved"/>
-  </reference-list>
+                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
 </blueprint>

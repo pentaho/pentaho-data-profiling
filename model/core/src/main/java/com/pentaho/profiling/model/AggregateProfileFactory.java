@@ -22,12 +22,12 @@
 
 package com.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 
 /**
@@ -46,16 +46,15 @@ public class AggregateProfileFactory implements ProfileFactory {
     this.metricContributorsFactory = metricContributorsFactory;
   }
 
-  @Override public boolean accepts( DataSourceReference dataSourceReference ) {
-    return AggregateProfile.AGGREGATE_PROFILE.equals( dataSourceReference.getDataSourceProvider() );
+  @Override public boolean accepts( DataSourceMetadata dataSourceMetadata ) {
+    return AggregateProfileMetadata.class.isInstance( dataSourceMetadata );
   }
 
   @Override
-  public Profile create( DataSourceReference dataSourceReference, ProfileStatusManager profileStatusManager,
-                         MetricContributors metricContributors ) {
+  public Profile create( ProfileConfiguration profileConfiguration, ProfileStatusManager profileStatusManager ) {
     AggregateProfileImpl aggregateProfile =
-      new AggregateProfileImpl( dataSourceReference, profileStatusManager, profilingService, metricContributorsFactory,
-        metricContributors );
+      new AggregateProfileImpl( profileStatusManager, profilingService, metricContributorsFactory,
+        profileConfiguration.getMetricContributors() );
     aggregateProfileService.registerAggregateProfile( aggregateProfile );
     return aggregateProfile;
   }

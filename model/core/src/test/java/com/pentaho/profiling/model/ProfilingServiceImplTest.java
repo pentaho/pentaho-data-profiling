@@ -24,7 +24,6 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileState;
@@ -33,8 +32,9 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.metrics.MetricContributorService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -72,12 +72,14 @@ public class ProfilingServiceImplTest {
   private ProfileStatusManager profileStatusManager;
   private String profileId;
   private ExecutorService executorService;
+  private MetricContributorService metricContributorService;
 
   @Before
   public void setup() {
     profileFactory = mock( ProfileFactory.class );
     executorService = mock( ExecutorService.class );
-    profilingService = new ProfilingServiceImpl( executorService );
+    metricContributorService = mock( MetricContributorService.class );
+    profilingService = new ProfilingServiceImpl( executorService, metricContributorService );
     profilingService.profileFactoryAdded( profileFactory, new HashMap() );
     profile = mock( Profile.class );
     profileId = "test-id";
@@ -90,32 +92,33 @@ public class ProfilingServiceImplTest {
   @Test
   public void testCreateNoFactories() throws ProfileCreationException {
     profilingService.profileFactoryRemoved( profileFactory, new HashMap() );
+    DataSourceMetadata dataSourceMetadata = mock( DataSourceMetadata.class );
     assertNull(
-      profilingService.create( new ProfileCreateRequest( new DataSourceReference( "Test", "Test" ), null ) ) );
+      profilingService.create( new ProfileConfiguration( dataSourceMetadata, null, null ) ) );
   }
 
   @Test
   public void testCreateNoMatchingFactories() throws ProfileCreationException {
-    DataSourceReference dataSourceReference = new DataSourceReference();
-    when( profileFactory.accepts( dataSourceReference ) ).thenReturn( false );
-    assertNull( profilingService.create( new ProfileCreateRequest( dataSourceReference, null ) ) );
-    assertFalse( profilingService.accepts( dataSourceReference ) );
+    DataSourceMetadata dataSourceMetadata = mock( DataSourceMetadata.class );
+    when( profileFactory.accepts( dataSourceMetadata ) ).thenReturn( false );
+    assertNull( profilingService.create( new ProfileConfiguration( dataSourceMetadata, null, null ) ) );
+    assertFalse( profilingService.accepts( dataSourceMetadata ) );
   }
 
   @Test
   public void testCreateMatchingFactory() throws ProfileCreationException, IOException {
-    DataSourceReference dataSourceReference = new DataSourceReference();
+    DataSourceMetadata dataSourceMetadata = mock( DataSourceMetadata.class );
+    ProfileConfiguration profileConfiguration = mock( ProfileConfiguration.class );
+    when( profileConfiguration.getDataSourceMetadata() ).thenReturn( dataSourceMetadata );
     Profile profile = mock( Profile.class );
     String value = "test-id";
     when( profile.getId() ).thenReturn( value );
-    when( profileFactory.accepts( dataSourceReference ) ).thenReturn( true );
-    when( profileFactory
-      .create( eq( dataSourceReference ), any( ProfileStatusManager.class ), any( MetricContributors.class ) ) )
+    when( profileFactory.accepts( dataSourceMetadata ) ).thenReturn( true );
+    when( profileFactory.create( eq( profileConfiguration ), any( ProfileStatusManager.class ) ) )
       .thenReturn( profile );
-    ProfileStatusManager profileStatusManager =
-      profilingService.create( new ProfileCreateRequest( dataSourceReference, null ) );
-    assertEquals( dataSourceReference, profileStatusManager.getDataSourceReference() );
-    assertTrue( profilingService.accepts( dataSourceReference ) );
+    ProfileStatusManager profileStatusManager = profilingService.create( profileConfiguration );
+    assertEquals( profileConfiguration, profileStatusManager.getProfileConfiguration() );
+    assertTrue( profilingService.accepts( dataSourceMetadata ) );
   }
 
   @Test

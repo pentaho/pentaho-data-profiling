@@ -22,15 +22,14 @@
 
 package com.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.datasource.DataSourceReference;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 /**
  * Created by bryan on 2/9/15.
  */
 public interface ProfileFactory {
-  public boolean accepts( DataSourceReference dataSourceReference );
+  boolean accepts( DataSourceMetadata dataSourceMetadata );
 
-  public Profile create( DataSourceReference dataSourceReference,
-                         ProfileStatusManager profileStatusManager, MetricContributors metricContributors );
+  Profile create( ProfileConfiguration profileConfiguration, ProfileStatusManager profileStatusManager );
 }

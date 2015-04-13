@@ -23,7 +23,6 @@
 package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreateRequest;
 import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatus;
@@ -31,7 +30,8 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.datasource.DataSourceReference;
+import com.pentaho.profiling.api.configuration.DataSourceMetadata;
+import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
@@ -77,7 +77,7 @@ public class ProfilingServiceWebserviceImplTest {
         return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
-    ProfileCreateRequest profileCreateRequest = mock( ProfileCreateRequest.class );
+    ProfileConfiguration profileCreateRequest = mock( ProfileConfiguration.class );
     when( delegate.create( profileCreateRequest ) ).thenReturn( result );
     assertEquals( result, webservice.create( profileCreateRequest ) );
   }
@@ -134,9 +134,9 @@ public class ProfilingServiceWebserviceImplTest {
 
   @Test
   public void testAccepts() {
-    when( delegate.accepts( any( DataSourceReference.class ) ) ).thenReturn( true );
+    when( delegate.accepts( any( DataSourceMetadata.class ) ) ).thenReturn( true );
     assertTrue( webservice.accepts( null ) );
-    when( delegate.accepts( any( DataSourceReference.class ) ) ).thenReturn( false );
+    when( delegate.accepts( any( DataSourceMetadata.class ) ) ).thenReturn( false );
     assertFalse( webservice.accepts( null ) );
   }
 
@@ -150,9 +150,10 @@ public class ProfilingServiceWebserviceImplTest {
 
   @Test
   public void testGetProfileFactory() {
+    DataSourceMetadata dataSourceMetadata = mock( DataSourceMetadata.class );
     ProfileFactory profileFactory = mock( ProfileFactory.class );
-    when( delegate.getProfileFactory( any( DataSourceReference.class ) ) ).thenReturn( profileFactory );
-    assertEquals( profileFactory, webservice.getProfileFactory( new DataSourceReference() ) );
+    when( delegate.getProfileFactory( any( DataSourceMetadata.class ) ) ).thenReturn( profileFactory );
+    assertEquals( profileFactory, webservice.getProfileFactory( dataSourceMetadata ) );
   }
 
   @Test
