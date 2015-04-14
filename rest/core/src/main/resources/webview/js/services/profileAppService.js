@@ -135,7 +135,7 @@ define(["require", './services'], function (require, appServices) {
         setLastViewedField: function (path) {
           profileAppService.lastViewedField = path;
         },
-        buildAvailableProfiles: function (profileId) {
+        buildAvailableProfiles: function () {
           //Get all active Profiles
           profileAppService.profileService.profileResource.getActiveProfiles({}, function (activeProfiles) {
             profileAppService.profileManagementViewService.activeProfiles = [];
@@ -149,7 +149,7 @@ define(["require", './services'], function (require, appServices) {
                 profileAppService.profileManagementViewService.aggregateProfiles.push(value);
               });
               profileAppService.profileManagementViewService.buildProfileManagementViewServiceTreeViewSchemas();
-              profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileId);
+              profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileAppService.profileId);
             });
           });
         },

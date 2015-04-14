@@ -31,7 +31,7 @@
           <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='col_config'}" ng-click="profileAppService.tabularViewService.selectedTab = 'col_config';" translate="profiling.tabular.tab.column.config"></a>
         </li>
         <li>
-          <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='avail_profiles'}" ng-click="profileAppService.tabularViewService.selectedTab = 'avail_profiles';" translate="profiling.tabular.tab.profiles"></a>
+          <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='avail_profiles'}" ng-click="profileAppService.buildAvailableProfiles(); profileAppService.tabularViewService.selectedTab = 'avail_profiles';" translate="profiling.tabular.tab.profiles"></a>
         </li>
       </ul>
     </div>
