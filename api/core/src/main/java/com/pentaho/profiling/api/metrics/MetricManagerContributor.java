@@ -22,10 +22,10 @@
 
 package com.pentaho.profiling.api.metrics;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,20 @@ import java.util.Set;
  * time
  */
 public interface MetricManagerContributor {
+  /**
+   * Gets the name that will be shown to the user for the metric contributor
+   *
+   * @return the name that will be shown to the user for the metric contributor
+   */
   public String getName();
+
+  /**
+   * Sets the name that will be shown to the user for the metric contributor
+   *
+   * @param name the name that will be shown to the user for the metric contributor
+   */
+  public void setName( String name );
+
   /**
    * Get the types that this contributor can process
    *
@@ -80,6 +93,7 @@ public interface MetricManagerContributor {
 
   /**
    * Gets the ProfileFieldProperty objects that describe what the contributor is contributing
+   *
    * @return the ProfileFieldProperty objects that describe what the contributor is contributing
    */
   public List<ProfileFieldProperty> profileFieldProperties();
