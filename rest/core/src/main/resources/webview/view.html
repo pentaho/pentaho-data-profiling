@@ -37,10 +37,10 @@
     <body id="profileApp" ng-controller="ProfileAppController" class="pentaho-page-background">
       <div class="nav left" ng-class="{on: profileAppService.leftNavDisplay === true}">
         <ul>
-          <li><a ng-href="view.html#/tabular/{{profileAppService.profileId}}" ng-click="profileAppService.leftNavSelection = 'tabular';" ng-class="{'active': profileAppService.leftNavSelection == 'tabular'}" translate="profiling.tabular.tab..table"></a></li>
-          <li ng-class="{off: profileAppService.lastViewedField === ''}"><a ng-href="view.html#/fieldOverview/{{profileAppService.profileId}}/{{profileAppService.lastViewedField}}" ng-click="profileAppService.leftNavSelection = 'overview';" ng-class="{'active': profileAppService.leftNavSelection == 'overview'}" translate="profiling.tabular.tab..fields"></a></li>
-          <li><a ng-href="view.html#/profileManagement" ng-click="profileAppService.leftNavSelection = 'manage';" ng-class="{'active': profileAppService.leftNavSelection == 'manage'}" translate="profiling.tabular.tab..profiles">Profiles</a></li>
-          <li><a ng-href="view.html#/create" ng-click="profileAppService.leftNavSelection = 'create';" ng-class="{'active': profileAppService.leftNavSelection == 'create'}" translate="profiling.tabular.tab..create">Create</a></li>
+          <li><a ng-href="view.html#/tabular/{{profileAppService.profileId}}" ng-click="profileAppService.leftNavSelection = 'tabular';" ng-class="{'active': profileAppService.leftNavSelection == 'tabular'}" translate="profiling.tabular.tab.table"></a></li>
+          <li ng-class="{off: profileAppService.lastViewedField === ''}"><a ng-href="view.html#/fieldOverview/{{profileAppService.profileId}}/{{profileAppService.lastViewedField}}" ng-click="profileAppService.leftNavSelection = 'overview';" ng-class="{'active': profileAppService.leftNavSelection == 'overview'}" translate="profiling.tabular.tab.fields"></a></li>
+          <li><a ng-href="view.html#/profileManagement" ng-click="profileAppService.leftNavSelection = 'manage';" ng-class="{'active': profileAppService.leftNavSelection == 'manage'}" translate="profiling.tabular.tab.profiles"></a></li>
+          <li><a ng-href="view.html#/create" ng-click="profileAppService.leftNavSelection = 'create';" ng-class="{'active': profileAppService.leftNavSelection == 'create'}" translate="profiling.fields.create"></a></li>
         </ul>
       </div>
       <div id="profileView" class="view-container">
