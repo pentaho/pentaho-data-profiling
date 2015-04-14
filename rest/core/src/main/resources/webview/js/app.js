@@ -166,8 +166,9 @@ define([
             templateUrl: 'partials/create-profiler-view.html',
             controller: 'CreateProfilerViewController'
           })
-          .otherwise({
-            redirectTo: '/'
+          .otherwise('/create', {
+            templateUrl: 'partials/create-profiler-view.html',
+            controller: 'CreateProfilerViewController'
           });
 
       $translateProvider

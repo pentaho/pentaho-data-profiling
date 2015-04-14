@@ -24,7 +24,8 @@ define(["require", './services'], function (require, appServices) {
   appServices.factory('ProfileAppService', [
     '$q',
     '$window',
-    function ($q, $window) {
+    '$http',
+    function ($q, $window, $http) {
       function ProfileAppService() {
         this.profileId;
         this.lastViewedField;
@@ -156,7 +157,7 @@ define(["require", './services'], function (require, appServices) {
          * Orders to stop the operation on the profile id.
          */
         stopOperation: function (profileId) {
-          profileAppService.profileService.profileResource.stopProfile({profileId: profileId});
+          profileAppService.profileService.profileResource.stopProfile(profileId, {});
         },
         /**
          * Orders to stop the operation for all active profile ids.
@@ -167,7 +168,7 @@ define(["require", './services'], function (require, appServices) {
           var promises = availableProfileIdsArray.map(function (id) {
             var deferred = $q.defer();
 
-            profileAppService.profileService.profileResource.stopProfile({profileId: id}).$promise.then(
+            profileAppService.profileService.profileResource.stopProfile(id, {}).$promise.then(
                 //success
                 function (value) {
                   deferred.resolve(value);
@@ -197,7 +198,7 @@ define(["require", './services'], function (require, appServices) {
         redirectRoute: function (path) {
           $window.location.href = path;
         },
-        submitDistProfileHostAndPort: function (type) {
+        createProfiler: function (type) {
           switch (type) {
             case "hdfsText":
               if (profileAppService.hdfsTextHostViewService.pentahoHdfsTextProfilingHost !== "" &&
@@ -215,6 +216,27 @@ define(["require", './services'], function (require, appServices) {
                 profileAppService.redirectRoute("http://" +
                 profileAppService.mongoHostViewService.pentahoMongoProfilingHost + ":" +
                 profileAppService.mongoHostViewService.pentahoMongoProfilingPort + "/mongoProfileWebView/create.html");
+              } else {
+                alert('Please enter Host and Port Information.');
+              }
+              break;
+            case "streaming":
+              if (profileAppService.streamingProfilerViewService.webServiceUrl !== "" &&
+                  profileAppService.streamingProfilerViewService.flattenFunction !== "") {
+                  $http.jsonp(profileAppService.streamingProfilerViewService.webServiceUrl).
+                      success(function (data, status, headers, config) {
+                        var flatten = new Function('data', profileAppService.streamingProfilerViewService.flattenFunction);
+                        var mappedData = flatten(data);
+                        profileAppService.profileService.createProfile(
+                            mappedData,
+                            function (profileStatus) {
+                              profileAppService.redirectRoute("view.html#/tabular/"+profileStatus.profileId);
+                            });
+                      }).
+                      error(function (data, status, headers, config) {
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                      });
               } else {
                 alert('Please enter Host and Port Information.');
               }

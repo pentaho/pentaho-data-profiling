@@ -20,5 +20,33 @@
  * explicitly covering such access.
  */ -->
 <div id="fieldOverviewView">
-  Field Overview for Profile ID: {{profileId}} and Path: {{physicalName}}
+  <div id="state-form" ng-class="{stateFormHidden: profileAppService.fieldOverviewViewService.stateFormDisplay==false}">
+    <div id="toggleStateForm" ng-click="profileAppService.fieldOverviewViewService.stateFormDisplay = !profileAppService.fieldOverviewViewService.stateFormDisplay" ng-class="{stateFormHidden: profileAppService.fieldOverviewViewService.stateFormDisplay==false}">&lrhar;</div>
+    <div class="tabs">
+      <div class="pad">
+        <ul>
+          <li><a ng-class="{on: profileAppService.fieldOverviewViewService.selectedTab=='fields'}" ng-click="profileAppService.fieldOverviewViewService.selectedTab = 'fields';" translate="profiling.tabular.tab.fields"></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="state-form-wrap" ng-switch on="profileAppService.fieldOverviewViewService.selectedTab">
+      <div class="state-form-view" ng-class="{'active': profileAppService.fieldOverviewViewService.selectedTab == 'fields'}" ng-switch-default>
+        <div ng-repeat="fieldRow in profileAppService.tabularViewService.fieldRows">
+          <a ng-href='view.html#/fieldOverview/{{profileAppService.profileId}}/{{fieldRow[profileAppService.tabularViewService.fieldCols[1].stringifiedPath]}}'>{{ fieldRow[profileAppService.tabularViewService.fieldCols[1].stringifiedPath] | translate }}</a>
+          <br>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="profileFieldOverview" ng-class="{stateFormHidden: profileAppService.fieldOverviewViewService.stateFormDisplay==false}">
+    <div class="profile-section profile-fields-container">
+      <div class="profile-fields-list-wrapper">
+          <div ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols">
+              {{fieldCol.nameKey}}: {{profileAppService.fieldOverviewViewService.currentFieldRow[fieldCol.stringifiedPath]}}
+          </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
 </div>

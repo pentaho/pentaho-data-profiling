@@ -103,7 +103,17 @@ body {
 }
 
 /* table */
-.profile-fields-list-wrapper {
+.profile-fields-tabular-wrapper {
+}
+
+#profileFieldOverview {
+  text-align: left;
+  margin: 35px 0px 0px 380px;
+}
+
+#profileFieldOverview.stateFormHidden {
+  text-align: left;
+  margin: 35px 0px 0px 71px;
 }
 
 /* Pentaho Table style
@@ -254,8 +264,13 @@ body {
   z-index: 9999;
 }
 
-#filedOverviewId.off {
+#newRegexCreator {
   display: none;
+}
+
+#newRegexCreator.on {
+  display: block;
+  padding-top: 10px;
 }
 
 .nav {
@@ -349,7 +364,10 @@ body {
 .tabs ul:first-child li {
   float: left;
   width: 32%;
-  list-style: none;
+}
+
+.tabs ul li {
+  list-style-type: none;
 }
 
 .tabs ul:first-child li:first-child a {
@@ -408,4 +426,30 @@ body {
   float: left;
   margin-left: 56px;
   text-align: left;
+}
+
+#metricConfigView ul li {
+  display: block;
+  float: left;
+  padding: 5px;
+  list-style-type: none;
+}
+
+#streamingProfilerView ul li {
+  display: block;
+  float: left;
+  padding: 5px;
+  list-style-type: none;
+}
+
+#streamingProfilerView ul {
+  margin-left: 42%;
+}
+
+.off {
+  display: none;
+}
+
+ul li {
+  list-style-type: none;
 }

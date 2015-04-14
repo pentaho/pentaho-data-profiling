@@ -21,14 +21,16 @@
  */
 
 define(['./services'], function (appServices) {
-  appServices.factory('ProfileService', ['$resource',
-    function ($resource) {
+  appServices.factory('ProfileService', ['$resource', '$http',
+    function ($resource, $http) {
       var profileResource = $resource('../cxf/profile/:profileId', {}, {
         getActiveProfiles: {method: 'GET', url: '../cxf/profile', isArray: true},
         getProfile: {method: 'GET'},
-        stopProfile: {method: 'GET', url: '../cxf/profile/stop/:profileId'},
-        startProfile: {method: 'PUT', url: '../cxf/profile/start'}
+        createProfile: {method: 'POST', url: '../cxf/profile'}
       });
+      profileResource.stopProfile = function (id, data) {
+        $http.put("../cxf/profile/stop/"+id, data)
+      }
       var aggregateProfileResource = $resource('../cxf/aggregate/:profileId', {}, {
         getAggregates: {method: 'GET', url: '../cxf/aggregate', isArray: true},
         getAggregate: {method: 'GET', params: {profileId: 'profileId'}, isArray: true}

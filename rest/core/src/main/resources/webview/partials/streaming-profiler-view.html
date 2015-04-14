@@ -22,5 +22,26 @@
 <div id="streamingProfilerView">
   <div id="profiling-mongo-create-container">
     <div class="pentaho-fieldgroup-major" translate="profiling.streaming.profiler.create.message"></div>
+    <div>
+      <label for="profiling-pentaho-web-service-url" translate="profiling.fields.web.service.url"></label>
+    </div>
+    <div>
+      <input id="profiling-pentaho-web-service-url" type="text" ng-model="profileAppService.streamingProfilerViewService.webServiceUrl">
+    </div>
+    <div>
+      <label for="profiling-pentaho-flatten-function" translate="profiling.fields.flatten.function"></label>
+    </div>
+    <div>
+      <textarea id="profiling-pentaho-flatten-function" type="text" ng-model="profileAppService.streamingProfilerViewService.flattenFunction"></textarea>
+    </div>
+    <br>
+    <ul>
+      <li>
+        <button class="pentaho-button" ng-click='profileAppService.createProfiler("streaming")' translate="profiling.streaming.action.submit"></button>
+      </li>
+      <li>
+        <button class="pentaho-button" ng-click='profileAppService.redirectRoute("view.html#/create");' translate="profiling.fields.cancel"></button>
+      </li>
+    </ul>
   </div>
 </div>

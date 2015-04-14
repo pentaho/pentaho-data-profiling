@@ -24,9 +24,15 @@
   <div class="tabs">
     <div class="pad">
       <ul>
-        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='aggregate'}" ng-click="profileAppService.tabularViewService.selectedTab = 'aggregate';">Aggregate</a></li>
-        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='col_config'}" ng-click="profileAppService.tabularViewService.selectedTab = 'col_config';">Column Config</a></li>
-        <li><a ng-class="{on: profileAppService.tabularViewService.selectedTab=='avail_profiles'}" ng-click="profileAppService.tabularViewService.selectedTab = 'avail_profiles';">Profiles</a></li>
+        <li>
+          <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='aggregate'}" ng-click="profileAppService.tabularViewService.selectedTab = 'aggregate';" translate="profiling.tabular.tab.aggregate"></a>
+        </li>
+        <li>
+          <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='col_config'}" ng-click="profileAppService.tabularViewService.selectedTab = 'col_config';" translate="profiling.tabular.tab.column.config"></a>
+        </li>
+        <li>
+          <a ng-class="{on: profileAppService.tabularViewService.selectedTab=='avail_profiles'}" ng-click="profileAppService.tabularViewService.selectedTab = 'avail_profiles';" translate="profiling.tabular.tab.profiles"></a>
+        </li>
       </ul>
     </div>
   </div>
@@ -44,9 +50,15 @@
           data-tree-model="profileAppService.profileManagementViewService.availableProfiles"
           data-node-id="id"
           data-node-label="name"
-          data-node-children="childProfiles" >
+          data-node-children="childProfiles">
       </div>
-      <button class="pentaho-button" ng-click="profileAppService.stopAllOperation();" translate="profiling.fields.stopAll">Stop All Profilers</button>
+      <div>
+        <ul>
+          <li>
+            <button class="pentaho-button" ng-click="profileAppService.stopAllOperation();" translate="profiling.fields.stopAll">Stop All Profilers</button>
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="state-form-view" ng-class="{'active': profileAppService.tabularViewService.selectedTab == 'aggregate'}" ng-controller="TreeViewController" ng-switch-default>
       <div
@@ -55,68 +67,70 @@
           data-tree-model="profileAppService.profileManagementViewService.currentProfileTreeViewData"
           data-node-id="id"
           data-node-label="name"
-          data-node-children="childProfiles" >
+          data-node-children="childProfiles">
       </div>
     </div>
   </div>
 </div>
 <div id="profileTabularView" ng-class="{stateFormHidden: profileAppService.tabularViewService.stateFormDisplay==false}">
-    <div class="profile-section profile-message"
-         ng-class="profileAppService.operationError ? 'profile-error-message' : ''"
-         ng-if="profileAppService.operationError">
-        <div class="profile-message-img-cell">
-            <div class="profile-message-img"></div>
-        </div>
-        <div class="profile-message-text">{{profileAppService.operationError.message.messageKey | translate | interpolateMessage:profileAppService.operationError.message.messageVariables}}</div>
-        <ul class="profile-button-list">
-          <li class="profile-button-list-element" ng-repeat="operation in profileAppService.operationError.recoveryOperations">
-            <button class="pentaho-button profile-button" ng-click="profileAppService.startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
-          </li>
-        </ul>
+  <div class="profile-section profile-message"
+      ng-class="profileAppService.operationError ? 'profile-error-message' : ''"
+      ng-if="profileAppService.operationError">
+    <div class="profile-message-img-cell">
+      <div class="profile-message-img"></div>
     </div>
-    <div class="profile-section profile-message"
-        ng-class="profileAppService.statusMessages ? 'profile-state-processing' : ''"
-        ng-if="profileAppService.statusMessages">
-      <div class="profile-message-img-cell">
-        <div class="profile-message-img"></div>
-      </div>
-      <div class="profile-message-text">
-        <div ng-repeat="operationMessage in profileAppService.statusMessages">{{operationMessage.messageKey | translate | interpolateMessage:operationMessage.messageVariables}}</div>
-      </div>
-      <div class="profile-message-action">
-        <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopOperation(profileAppService.profileId);" translate="profiling.fields.stop"></button>
-      </div>
+    <div class="profile-message-text">{{profileAppService.operationError.message.messageKey | translate | interpolateMessage:profileAppService.operationError.message.messageVariables}}</div>
+    <ul class="profile-button-list">
+      <li class="profile-button-list-element" ng-repeat="operation in profileAppService.operationError.recoveryOperations">
+        <button class="pentaho-button profile-button" ng-click="profileAppService.startOperation(operation.id)" translate="{{operation.nameKey}}"></button>
+      </li>
+    </ul>
+  </div>
+  <div class="profile-section profile-message"
+      ng-class="profileAppService.statusMessages ? 'profile-state-processing' : ''"
+      ng-if="profileAppService.statusMessages">
+    <div class="profile-message-img-cell">
+      <div class="profile-message-img"></div>
     </div>
-    <div class="profile-section profile-fields-container">
-        <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
-        <div class="profile-dsi-container">{{profileAppService.tabularViewService.dsLabel}}</div>
-        <div class="profile-fields-list-wrapper">
-            <table class="pentaho-table profile-fields-list" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th ng-show="fieldCol.display === true" class="cellTableCol cellTableSortableHeader"
-                            ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
-                            ng-class="profileAppService.tabularViewService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularViewService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
-                            ng-click="profileAppService.tabularViewService.onOrderByCol(fieldCol)">
-                            <div class="cellTableHeaderContent">
-                                <div translate="{{fieldCol.nameKey}}"></div>
-                                <div class="cellTableHeaderOrderIndicator"></div>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-class-odd="'cellTableOddRow'"
-                        ng-class-even="'cellTableEvenRow'"
-                        ng-repeat="fieldRow in profileAppService.tabularViewService.fieldRows | orderBy:profileAppService.tabularViewService.orderByKey:profileAppService.tabularViewService.isOrderReversed">
-                        <td ng-show="fieldCol.display === true" class="cellTableCell"
-                            ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
-                            ng-class-odd="'cellTableOddRowCell'"
-                            ng-class-even="'cellTableEvenRowCell'"><a ng-href='view.html#/fieldOverview/{{profileAppService.profileId}}/{{fieldRow[profileAppService.tabularViewService.fieldCols[1].stringifiedPath]}}'>{{fieldRow[fieldCol.stringifiedPath]}}</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="profile-message-text">
+      <div ng-repeat="operationMessage in profileAppService.statusMessages">{{operationMessage.messageKey | translate | interpolateMessage:operationMessage.messageVariables}}</div>
     </div>
+    <div class="profile-message-action">
+      <button class="pentaho-button profile-message-btn" ng-click="profileAppService.stopOperation(profileAppService.profileId);" translate="profiling.fields.stop"></button>
+    </div>
+  </div>
+  <div class="profile-section profile-fields-container">
+    <div class="pentaho-fieldgroup-major" translate="profiling.fields.title"></div>
+    <div class="profile-dsi-container">{{profileAppService.tabularViewService.dsLabel}}</div>
+    <div class="profile-fields-tabular-wrapper">
+      <table class="pentaho-table profile-fields-list" cellspacing="0">
+        <thead>
+        <tr>
+          <th ng-show="fieldCol.display === true" class="cellTableCol cellTableSortableHeader"
+              ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
+              ng-class="profileAppService.tabularViewService.orderByCol !== fieldCol.stringifiedPath ? '' : profileAppService.tabularViewService.isOrderReversed ? 'cellTableSortedHeaderDescending' : 'cellTableSortedHeaderAscending'"
+              ng-click="profileAppService.tabularViewService.onOrderByCol(fieldCol)">
+            <div class="cellTableHeaderContent">
+              <div translate="{{fieldCol.nameKey}}"></div>
+              <div class="cellTableHeaderOrderIndicator"></div>
+            </div>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-class-odd="'cellTableOddRow'"
+            ng-class-even="'cellTableEvenRow'"
+            ng-repeat="fieldRow in profileAppService.tabularViewService.fieldRows | orderBy:profileAppService.tabularViewService.orderByKey:profileAppService.tabularViewService.isOrderReversed">
+          <td ng-show="fieldCol.display === true" class="cellTableCell"
+              ng-repeat="fieldCol in profileAppService.tabularViewService.fieldCols"
+              ng-class-odd="'cellTableOddRowCell'"
+              ng-class-even="'cellTableEvenRowCell'">
+            <a ng-href='view.html#/fieldOverview/{{profileAppService.profileId}}/{{fieldRow[profileAppService.tabularViewService.fieldCols[1].stringifiedPath]}}'>{{fieldRow[fieldCol.stringifiedPath]}}</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 <div class="clear"></div>

@@ -31,6 +31,8 @@ define(['./controllers'], function (appControllers) {
 
       profileAppService.leftNavDisplay = false;
 
+      profileAppService.metricConfigViewService.createRegex = false;
+
       profileAppService.profileService.metricContributorResource.getAllAvailableMetricContributorConfig({}, function (metricContributorConfig) {
         profileAppService.metricConfigViewService.metricContributorConfig = metricContributorConfig;
         profileAppService.metricConfigViewService.metricManagerContributors = metricContributorConfig.metricManagerContributors[1];
