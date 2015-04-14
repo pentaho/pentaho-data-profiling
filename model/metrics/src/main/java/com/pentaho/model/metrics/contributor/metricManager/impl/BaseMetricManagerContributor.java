@@ -30,10 +30,14 @@ import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
  * Created by bryan on 3/10/15.
  */
 public abstract class BaseMetricManagerContributor implements MetricManagerContributor {
-  private final String name = getClass().getSimpleName();
+  private String name = getClass().getSimpleName();
 
   @Override public String getName() {
     return name;
+  }
+
+  @Override public void setName( String name ) {
+    this.name = name;
   }
 
   @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
