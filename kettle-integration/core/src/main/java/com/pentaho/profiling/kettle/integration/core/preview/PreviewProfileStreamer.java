@@ -163,7 +163,7 @@ public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
       if ( browser != null && !browser.isDisposed() ) {
         String profileId = stepDebugMetaProfileIdMap.get( transPreviewDialogSetDataWrapper.getStepDebugMeta() );
         if ( profileId != null ) {
-          String url = "http://localhost:8181/profileWebView/view.html#/" + profileId;
+          String url = "http://localhost:8181/profileWebView/view.html#/tabular/" + profileId;
           if ( !url.equals( browser.getUrl() ) ) {
             browser.setUrl( url );
           }

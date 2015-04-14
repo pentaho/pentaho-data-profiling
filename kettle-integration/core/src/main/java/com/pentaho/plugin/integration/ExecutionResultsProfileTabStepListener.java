@@ -57,7 +57,7 @@ public class ExecutionResultsProfileTabStepListener implements SelectedStepListe
     }
     BASE_URL = "http://localhost:" + port;
     NO_PROFILE_VIEW_URL = BASE_URL + "/noProfileWebView/noprofile.html";
-    PROFILE_VIEW_URL = BASE_URL + "/profileWebView/view.html#/";
+    PROFILE_VIEW_URL = BASE_URL + "/profileWebView/view.html#/tabular/";
   }
 
   @Override
