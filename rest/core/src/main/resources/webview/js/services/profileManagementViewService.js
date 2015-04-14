@@ -47,12 +47,24 @@ define(['./services'], function (appServices) {
       ProfileManagementViewService.prototype = {
         constructor: ProfileManagementViewService,
         buildProfileManagementViewServiceTreeViewSchemas: function () {
+          var inAggregate = {};
+          angular.forEach(profileManagementViewService.aggregateProfiles, function(aggregate) {
+            function addChildrenRecursive(aggregateChild) {
+              if(typeof aggregateChild.childProfiles !== "undefined") {
+                angular.forEach(aggregateChild.childProfiles[1], function(childProfile) {
+                  addChildrenRecursive(childProfile);
+                });
+                // ['java.util.ArrayList', [profiles]] -> [profiles]
+                aggregateChild.childProfiles = aggregateChild.childProfiles[1];
+              }
+              inAggregate[aggregateChild.id] = true;
+            }
+            addChildrenRecursive(aggregate);
+          });
           //Set the availableProfiles to the aggregateProfiles
-          profileManagementViewService.availableProfiles = profileManagementViewService.aggregateProfiles;
+          profileManagementViewService.availableProfiles = angular.copy(profileManagementViewService.aggregateProfiles);
           for (var i = 0, stopProfLoop = profileManagementViewService.activeProfiles.length; i < stopProfLoop; i++) {
-            var aggProf = profileManagementViewService.searchAggregateProfilesRecursively(profileManagementViewService.aggregateProfiles, profileManagementViewService.activeProfiles[i].id);
-            if (aggProf.length === 0) {
-              //Add any non-aggregate profiles (E.G. mongo profiles) to the availableProfiles
+            if (!inAggregate[profileManagementViewService.activeProfiles[i].id]) {
               profileManagementViewService.availableProfiles.push({
                 "name": profileManagementViewService.activeProfiles[i].name,
                 "id": profileManagementViewService.activeProfiles[i].id,
