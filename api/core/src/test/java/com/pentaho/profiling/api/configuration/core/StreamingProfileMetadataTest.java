@@ -20,50 +20,19 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api.metrics.field;
+package com.pentaho.profiling.api.configuration.core;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import com.pentaho.profiling.api.StreamingProfile;
 import org.junit.Test;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 
 /**
- * Created by mhall on 28/01/15.
+ * Created by bryan on 4/14/15.
  */
-public class DataSourceFieldValueTest extends BeanTester {
-
-  public DataSourceFieldValueTest() {
-    super( DataSourceFieldValue.class );
-  }
-
+public class StreamingProfileMetadataTest {
   @Test
-  public void testNullField() {
-    DataSourceFieldValue val = new DataSourceFieldValue();
-    assertNull( val.getFieldValue() );
-    assertEquals( 0, val.numMetadataElements() );
-  }
-
-  @Test
-  public void testNonNullField() {
-    DataSourceFieldValue val = new DataSourceFieldValue( "test" );
-    assertEquals( "test", val.getFieldValue() );
-    val.setFieldValue( 2L );
-    assertEquals( 2L, val.getFieldValue() );
-  }
-
-  @Test
-  public void testSetMetadata() {
-    DataSourceFieldValue val = new DataSourceFieldValue();
-    String metadataKey = "some.meta.data";
-    int metadataVal = 50;
-    val.setFieldMetatdata( metadataKey, metadataVal );
-    assertNotNull( val.getFieldMetadata( metadataKey ) );
-    assertEquals( metadataVal, val.getFieldMetadata( metadataKey ) );
-    val.clearFieldMetadata();
-    assertNull( val.getFieldMetadata( metadataKey ) );
+  public void testStreamingProfileMetadata() {
+    assertEquals( StreamingProfile.STREAMING_PROFILE, new StreamingProfileMetadata().getLabel() );
   }
 }

@@ -123,8 +123,7 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
   @ErrorCode( code = 500, reason = "Error processing the record" )
   public void processRecord( StreamingRecordWrapper streamingRecordWrapper ) {
     try {
-      delegate.processRecord(
-        streamingRecordWrapper.getProfileId(), streamingRecordWrapper.getDataSourceFieldValues() );
+      processRecord( streamingRecordWrapper.getProfileId(), streamingRecordWrapper.getDataSourceFieldValues() );
     } catch ( ProfileActionException e ) {
       throw new WebApplicationException( 500 );
     }
