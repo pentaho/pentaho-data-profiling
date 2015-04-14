@@ -85,8 +85,10 @@ public class ProfilingServiceWebserviceImplTest {
   @Test
   public void testGetActiveProfiles() {
     List<ProfileStatusReader> profiles = new ArrayList<ProfileStatusReader>();
+    String id = "test-id";
     final ProfileStatus profileStatus = mock( ProfileStatus.class );
     ProfileStatusManager result = mock( ProfileStatusManager.class );
+    when( profileStatus.getId() ).thenReturn( id );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
         return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
@@ -95,21 +97,26 @@ public class ProfilingServiceWebserviceImplTest {
     profiles.add( result );
     when( delegate.getActiveProfiles() ).thenReturn( profiles );
     assertEquals( 1, webservice.getActiveProfilesWebservice().size() );
-    assertEquals( profileStatus, webservice.getActiveProfilesWebservice().get( 0 ) );
+    ProfileStatus webserviceResult = webservice.getActiveProfilesWebservice().get( 0 );
+    assertTrue( webserviceResult instanceof ProfileStatusDTO );
+    assertEquals( id, webserviceResult.getId() );
   }
 
   @Test
   public void testGetProfileUpdate() {
     final ProfileStatus profileStatus = mock( ProfileStatus.class );
     ProfileStatusManager result = mock( ProfileStatusManager.class );
+    String id = "id";
+    when( profileStatus.getId() ).thenReturn( id );
     when( result.read( any( ProfileStatusReadOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
         return ( (ProfileStatusReadOperation) invocation.getArguments()[ 0 ] ).read( profileStatus );
       }
     } );
-    String id = "id";
     when( delegate.getProfileUpdate( id ) ).thenReturn( result );
-    assertEquals( profileStatus, webservice.getProfileUpdateWebservice( id ) );
+    ProfileStatus profileUpdateWebservice = webservice.getProfileUpdateWebservice( id );
+    assertEquals( id, profileUpdateWebservice.getId() );
+    assertTrue( profileUpdateWebservice instanceof ProfileStatusDTO );
   }
 
   @Test
