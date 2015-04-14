@@ -25,12 +25,40 @@ define(['./services'], function (appServices) {
     function () {
       function StreamingProfilerViewService() {
         this.webServiceUrl = "";
-        this.flattenFunction = "";
+        this.flattenFunction = "'use strict';" +
+        "angular.forEach(data, function (value, key) {" +
+        "var newPrefix = angular.copy(prefix);" +
+        "newPrefix.push(key);" +
+        "flatten(newPrefix, data[key], result)" +
+        "});" +
+        "var name = prefix.join('.');" +
+        "result.push({" +
+        "'javaClass': 'com.pentaho.profiling.api.metrics.field.DataSourceFieldValue'," +
+        "'logicalName': prefix[prefix.length-1]," +
+        "'physicalName': name," +
+        "'fieldValue': data" +
+        "});";
+        this.postData = "{}";
       }
 
       StreamingProfilerViewService.prototype = {
-        constructor: StreamingProfilerViewService
-      };
+        constructor: StreamingProfilerViewService,
+        flatten: function (prefix, data, result) {
+          angular.forEach(data, function (value, key) {
+            var newPrefix = angular.copy(prefix);
+            newPrefix.push(key);
+            flatten(newPrefix, data[key], result)
+          });
+          var name = prefix.join('.');
+
+          result.push({
+            'javaClass': 'com.pentaho.profiling.api.metrics.field.DataSourceFieldValue',
+            'logicalName': prefix[prefix.length - 1],
+            'physicalName': name,
+            'fieldValue': data
+          });
+        }
+      }
       var streamingProfilerViewService = new StreamingProfilerViewService();
       return streamingProfilerViewService;
     }])

@@ -221,22 +221,40 @@ define(["require", './services'], function (require, appServices) {
             case "streaming":
               if (profileAppService.streamingProfilerViewService.webServiceUrl !== "" &&
                   profileAppService.streamingProfilerViewService.flattenFunction !== "") {
-                  $http.jsonp(profileAppService.streamingProfilerViewService.webServiceUrl).
+                if (profileAppService.streamingProfilerViewService.postData !== "") {
+                  $http.get(profileAppService.streamingProfilerViewService.webServiceUrl).
                       success(function (data, status, headers, config) {
                         var flatten = new Function('data', profileAppService.streamingProfilerViewService.flattenFunction);
                         var mappedData = flatten(data);
                         profileAppService.profileService.createProfile(
                             mappedData,
-                            function (profileStatus) {
-                              profileAppService.redirectRoute("view.html#/tabular/"+profileStatus.profileId);
+                            function (profileResp) {
+                              profileAppService.redirectRoute("view.html#/tabular/" + profileResp.data.id);
                             });
                       }).
                       error(function (data, status, headers, config) {
                         // called asynchronously if an error occurs
                         // or server returns response with an error status.
                       });
+                } else {
+                  $http.post(profileAppService.streamingProfilerViewService.webServiceUrl,
+                      profileAppService.streamingProfilerViewService.postData).
+                      success(function (data, status, headers, config) {
+                        var flatten = new Function('data', profileAppService.streamingProfilerViewService.flattenFunction);
+                        var mappedData = flatten(data);
+                        profileAppService.profileService.createProfile(
+                            mappedData,
+                            function (profileResp) {
+                              profileAppService.redirectRoute("view.html#/tabular/" + profileResp.data.id);
+                            });
+                      }).
+                      error(function (data, status, headers, config) {
+                        // called asynchronously if an error occurs
+                        // or server returns response with an error status.
+                      });
+                }
               } else {
-                alert('Please enter Host and Port Information.');
+                alert('Please enter the Web Service URL, any POST data, and the Mapping function to format data for the Metric Contributors.');
               }
               break;
             default:
