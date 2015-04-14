@@ -63,11 +63,13 @@ define(['./services'], function (appServices) {
         },
         searchAggregateProfilesRecursively: function (aggregateProfileArray, id) {
           for (var j = 0, stopAggLoop = aggregateProfileArray.length; j < stopAggLoop; j++) {
-            if (aggregateProfileArray[j].childProfiles.length > 0) {
-              profileManagementViewService.searchAggregateProfilesRecursively(aggregateProfileArray[j].childProfiles, id);
-            }
-            if (aggregateProfileArray[j].id === id) {
-              return aggregateProfileArray[j];
+            if(typeof aggregateProfileArray[j].childProfiles !== "undefined") {
+              if (aggregateProfileArray[j].childProfiles.length > 0) {
+                profileManagementViewService.searchAggregateProfilesRecursively(aggregateProfileArray[j].childProfiles, id);
+              }
+              if (aggregateProfileArray[j].id === id) {
+                return aggregateProfileArray[j];
+              }
             }
           }
           return [];

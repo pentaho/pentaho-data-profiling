@@ -24,6 +24,8 @@ define(['./services'], function (appServices) {
   appServices.factory('StreamingProfilerViewService', [
     function () {
       function StreamingProfilerViewService() {
+        this.webServiceUrl = "";
+        this.flattenFunction = "";
       }
 
       StreamingProfilerViewService.prototype = {

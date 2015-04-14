@@ -27,8 +27,11 @@ define(['./controllers'], function (appControllers) {
     '$routeParams',
     function ($scope, profileAppService, $routeParams) {
       $scope.profileAppService = profileAppService;
-      $scope.physicalName = $routeParams.physicalName;
-      $scope.profileId = $routeParams.profileId;
+      profileAppService.fieldOverviewViewService.physicalName = $routeParams.physicalName;
+      //I don't know if this is what we want...but probably the alternative would be profileAppService.fieldOverviewViewService.profileId = $routeParams.profileId;
+      profileAppService.profileId = $routeParams.profileId;
+
+      profileAppService.fieldOverviewViewService.setCurrentFieldRow(profileAppService.tabularViewService.fieldRows, profileAppService.fieldOverviewViewService.physicalName);
 
       profileAppService.leftNavSelection = "overview";
 

@@ -20,13 +20,20 @@
  * explicitly covering such access.
  */ -->
 <div id="profileManagementView">
-    <div
-        data-angular-treeview="true"
-        data-tree-id="profileManagementViewServiceTreeViewId"
-        data-tree-model="profileAppService.profileManagementViewService.availableProfiles"
-        data-node-id="id"
-        data-node-label="name"
-        data-node-children="childProfiles" >
-    </div>
-  <button class="pentaho-button" ng-click="profileAppService.stopAllOperation();" translate="profiling.fields.stopAll">Stop All Profilers</button>
+  <div
+      data-angular-treeview="true"
+      data-tree-id="profileManagementViewServiceTreeViewId"
+      data-tree-model="profileAppService.profileManagementViewService.availableProfiles"
+      data-node-id="id"
+      data-node-label="name"
+      data-node-children="childProfiles">
+  </div>
+  <div>
+    <ul>
+      <li>
+        <button class="pentaho-button" ng-click="profileAppService.stopAllOperation();" translate="profiling.fields.stopAll">Stop All Profilers</button>
+      </li>
+    </ul>
+  </div>
+
 </div>

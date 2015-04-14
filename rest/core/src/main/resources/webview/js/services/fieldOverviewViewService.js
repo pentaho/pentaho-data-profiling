@@ -24,10 +24,21 @@ define(['./services'], function (appServices) {
   appServices.factory('FieldOverviewViewService', [
     function () {
       function FieldOverviewViewService() {
+        this.selectedTab;
+        this.stateFormDisplay = true;
+        this.physicalName;
+        this.currentFieldRow;
       }
 
       FieldOverviewViewService.prototype = {
-        constructor: FieldOverviewViewService
+        constructor: FieldOverviewViewService,
+        setCurrentFieldRow: function (fieldRows, physicalName) {
+          angular.forEach(fieldRows, function(fieldRow) {
+            if (fieldRow["[\"physicalName\"]"] === physicalName){
+              fieldOverviewViewService.currentFieldRow = fieldRow;
+            }
+          });
+        }
       };
       var fieldOverviewViewService = new FieldOverviewViewService();
       return fieldOverviewViewService;
