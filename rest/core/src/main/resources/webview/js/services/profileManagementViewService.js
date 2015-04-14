@@ -65,7 +65,7 @@ define(['./services'], function (appServices) {
           for (var j = 0, stopAggLoop = aggregateProfileArray.length; j < stopAggLoop; j++) {
             if(typeof aggregateProfileArray[j].childProfiles !== "undefined") {
               if (aggregateProfileArray[j].childProfiles.length > 0) {
-                profileManagementViewService.searchAggregateProfilesRecursively(aggregateProfileArray[j].childProfiles, id);
+                profileManagementViewService.searchAggregateProfilesRecursively(aggregateProfileArray[j].childProfiles[1], id);
               }
               if (aggregateProfileArray[j].id === id) {
                 return aggregateProfileArray[j];

@@ -168,16 +168,14 @@ define(["require", './services'], function (require, appServices) {
           var promises = availableProfileIdsArray.map(function (id) {
             var deferred = $q.defer();
 
-            profileAppService.profileService.profileResource.stopProfile(id, {}).$promise.then(
-                //success
-                function (value) {
-                  deferred.resolve(value);
-                },
-                //error
-                function (error) {
+            profileAppService.profileService.profileResource.stopProfile(id, {}).
+                success(function (data, status, headers, config) {
+                  deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                  // called asynchronously if an error occurs
                   deferred.reject();
-                }
-            );
+                });
 
             return deferred.promise;
           });
