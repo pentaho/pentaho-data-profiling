@@ -54,9 +54,9 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   /**
-   * Returns all metric contributor configurations
+   * Returns all metric contributor configurations.
    *
-   * @return all metric contributor configurations
+   * @return All metric contributor configurations.
    */
   @GET
   @Path( "/" )
@@ -74,8 +74,8 @@ public class MetricContributorServiceImpl implements MetricContributorService {
    * specified or the specified configuration doesn't exist.  The "full" configuration consists of all known metric
    * contributors.
    *
-   * @param configuration the configuration to return
-   * @return the confguration's metric contributors
+   * @param configuration The configuration to return.
+   * @return The configuration's metric contributors.
    */
   @GET
   @Path( "/{configuration}" )
@@ -99,10 +99,11 @@ public class MetricContributorServiceImpl implements MetricContributorService {
   }
 
   /**
-   * Sets the system's current default metric contributors.  These metric contributors will be used if none are
-   * specified in the CreateProfileRequest
+   * Sets the configuration's metric contributors.  These metric contributors will be used if specified in the
+   * ProfileConfiguration.
    *
-   * @return the system's current default metric contributors
+   * @param configuration      The configuration to set.
+   * @param metricContributors The metric contributors to set.
    */
   @POST
   @Path( "/{configuration}" )

@@ -78,7 +78,7 @@ define(["common-ui/angular"], function (angular) {
                 errorCodes = [];
               }
               if (endpoint.successResponseCode) {
-                errorCodes.unshift({status: endpoint.successResponseCode, reason: 'Request successfully processed'})
+                errorCodes.unshift({status: endpoint.successResponseCode, reason: 'Request successfully processed.'})
               }
               endpoint.errorCodesTable = turnIntoTable('Response Codes', ['Code', 'Reason'], ['status', 'reason'], endpoint.errorCodes[1]);
               if (endpoint.endpointExamples) {

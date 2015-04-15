@@ -78,15 +78,15 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
   }
 
   /**
-   * Returns the streaming profile for the given profile id
+   * Returns the streaming profile for the given profile id.
    *
-   * @param profileId the profileId
-   * @return the streaming profile for the given profile id
+   * @param profileId The profile id.
+   * @return The streaming profile for the given profile id.
    */
   @GET
   @Path( "/{profileId}" )
   @SuccessResponseCode( 200 )
-  @ErrorCode( code = 404, reason = "Streaming profile with given id doesn't exist" )
+  @ErrorCode( code = 404, reason = "Streaming profile with given id doesn't exist." )
   @Override public StreamingProfile getStreamingProfile( @PathParam( "profileId" ) String profileId ) {
     StreamingProfile streamingProfile = delegate.getStreamingProfile( profileId );
     if ( streamingProfile == null ) {
@@ -112,15 +112,15 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
   }
 
   /**
-   * Sends the record into the streaming profile to be processed
+   * Sends the record into the streaming profile to be processed.
    *
-   * @param streamingRecordWrapper the record
+   * @param streamingRecordWrapper The record.
    * @throws ProfileActionException
    */
   @POST
   @Path( "/processRecord" )
   @SuccessResponseCode( 204 )
-  @ErrorCode( code = 500, reason = "Error processing the record" )
+  @ErrorCode( code = 500, reason = "Error processing the record." )
   public void processRecord( StreamingRecordWrapper streamingRecordWrapper ) {
     try {
       processRecord( streamingRecordWrapper.getProfileId(), streamingRecordWrapper.getDataSourceFieldValues() );
@@ -145,9 +145,9 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
   }
 
   /**
-   * Processes a list of records
+   * Processes a list of records.
    *
-   * @param profileId          the profile id to send the records into
+   * @param profileId          The profile id to send the records into.
    * @param httpServletRequest
    * @throws ProfileActionException
    * @throws IOException
@@ -155,7 +155,7 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
   @POST
   @Path( "/processRecords/{profileId}" )
   @SuccessResponseCode( 204 )
-  @Body( name = "records", type = JAVA_UTIL_LIST, description = "The list of records" )
+  @Body( name = "records", type = JAVA_UTIL_LIST, description = "The list of records." )
   public void processRecords( @PathParam( "profileId" ) String profileId,
                               @Context HttpServletRequest httpServletRequest )
     throws ProfileActionException, IOException {

@@ -60,9 +60,9 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   }
 
   /**
-   * Returns a list of all top level aggregate profiles
+   * Returns a list of all top level aggregate profiles.
    *
-   * @return a list of all top level aggregate profiles
+   * @return A list of all top level aggregate profiles.
    */
   @GET
   @Path( "/" )
@@ -108,10 +108,10 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   }
 
   /**
-   * Returns the aggregate profile with the given id
+   * Returns the aggregate profile with the given id.
    *
-   * @param profileId the profileId
-   * @return the aggregate profile with the given id
+   * @param profileId The profile id.
+   * @return The aggregate profile with the given id.
    */
   @GET
   @Path( "/{profileId}" )
@@ -144,9 +144,9 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   }
 
   /**
-   * Adds a child profile to the aggregate
+   * Adds a child profile to the aggregate.
    *
-   * @param aggregateAddChildWrapper wrapper command arguments
+   * @param aggregateAddChildWrapper Wrapper command arguments.
    */
   @POST
   @Path( "/add" )
