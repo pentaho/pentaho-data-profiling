@@ -35,7 +35,7 @@ define(['./controllers'], function (appControllers) {
       // Register to receive profile status updates.
       profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$routeParams.profileId], function (profileStatus) {
         profileAppService.updateProfile(profileStatus);
-        profileAppService.buildAvailableProfiles(profileAppService.profileId);
+        profileAppService.buildAvailableProfiles();
       });
     }
   ])

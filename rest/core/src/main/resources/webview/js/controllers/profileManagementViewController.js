@@ -31,7 +31,7 @@ define(['./controllers'], function (appControllers) {
 
       profileAppService.leftNavDisplay = true;
 
-      profileAppService.buildAvailableProfiles(profileAppService.profileId);
+      profileAppService.buildAvailableProfiles();
     }
   ])
 });
