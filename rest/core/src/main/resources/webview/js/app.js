@@ -53,7 +53,6 @@ define([
   "com.pentaho.profiling.services.webview/controllers/treeViewController",
   "com.pentaho.profiling.services.webview/controllers/mongoHostViewController",
   "com.pentaho.profiling.services.webview/controllers/hdfsTextHostViewController",
-  "com.pentaho.profiling.services.webview/controllers/streamingProfilerViewController",
   "com.pentaho.profiling.services.webview/controllers/createProfilerViewController",
   "com.pentaho.profiling.services.webview/services/services",
   "com.pentaho.profiling.services.webview/services/profileService",
@@ -67,7 +66,6 @@ define([
   "com.pentaho.profiling.services.webview/services/tabularViewService",
   "com.pentaho.profiling.services.webview/services/mongoHostViewService",
   "com.pentaho.profiling.services.webview/services/hdfsTextHostViewService",
-  "com.pentaho.profiling.services.webview/services/streamingProfilerViewService",
   "com.pentaho.profiling.services.webview/services/createProfilerViewService",
   "com.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function (require, angular) {

@@ -40,7 +40,6 @@ define(["require", './services'], function (require, appServices) {
         this.defaultMetricConfigViewService;
         this.mongoHostViewService;
         this.hdfsTextHostViewService;
-        this.streamingProfilerViewService;
         this.createProfilerViewService;
         this.tabularViewService;
         this.profileService;
@@ -56,8 +55,7 @@ define(["require", './services'], function (require, appServices) {
         init: function (aTabularViewService, aTreeViewService, aProfileManagementViewService,
                         aFieldOverviewViewService, aMetricConfigViewService, aDefaultMetricConfigViewService,
                         aProfileService, aDataSourceService, aNotificationService, aMongoHostViewService,
-                        aHdfsTextHostViewService, aStreamingProfilerViewService,
-                        aCreateProfilerViewService, scope) {
+                        aHdfsTextHostViewService, aCreateProfilerViewService, scope) {
           //Because of the way we are using services as singleton instances of objects (to share a single truth
           //throughout the app) that are injectable, yet leverage the dual binding that angular provides, we need
           //to initialize the TabularViewService and set it on the ProfileAppService
@@ -75,7 +73,6 @@ define(["require", './services'], function (require, appServices) {
           profileAppService.lastViewedField = "";
           profileAppService.mongoHostViewService = aMongoHostViewService;
           profileAppService.hdfsTextHostViewService = aHdfsTextHostViewService;
-          profileAppService.streamingProfilerViewService = aStreamingProfilerViewService;
           profileAppService.createProfilerViewService = aCreateProfilerViewService;
           profileAppService.scope = scope;
         },
@@ -216,45 +213,6 @@ define(["require", './services'], function (require, appServices) {
                 profileAppService.mongoHostViewService.pentahoMongoProfilingPort + "/mongoProfileWebView/create.html");
               } else {
                 alert('Please enter Host and Port Information.');
-              }
-              break;
-            case "streaming":
-              if (profileAppService.streamingProfilerViewService.webServiceUrl !== "" &&
-                  profileAppService.streamingProfilerViewService.flattenFunction !== "") {
-                if (profileAppService.streamingProfilerViewService.postData !== "") {
-                  $http.get(profileAppService.streamingProfilerViewService.webServiceUrl).
-                      success(function (data, status, headers, config) {
-                        var flatten = new Function('data', profileAppService.streamingProfilerViewService.flattenFunction);
-                        var mappedData = flatten(data);
-                        profileAppService.profileService.createProfile(
-                            mappedData,
-                            function (profileResp) {
-                              profileAppService.redirectRoute("view.html#/tabular/" + profileResp.data.id);
-                            });
-                      }).
-                      error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
-                      });
-                } else {
-                  $http.post(profileAppService.streamingProfilerViewService.webServiceUrl,
-                      profileAppService.streamingProfilerViewService.postData).
-                      success(function (data, status, headers, config) {
-                        var flatten = new Function('data', profileAppService.streamingProfilerViewService.flattenFunction);
-                        var mappedData = flatten(data);
-                        profileAppService.profileService.createProfile(
-                            mappedData,
-                            function (profileResp) {
-                              profileAppService.redirectRoute("view.html#/tabular/" + profileResp.data.id);
-                            });
-                      }).
-                      error(function (data, status, headers, config) {
-                        // called asynchronously if an error occurs
-                        // or server returns response with an error status.
-                      });
-                }
-              } else {
-                alert('Please enter the Web Service URL, any POST data, and the Mapping function to format data for the Metric Contributors.');
               }
               break;
             default:

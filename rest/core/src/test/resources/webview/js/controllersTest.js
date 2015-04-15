@@ -51,7 +51,6 @@ define([
   'controllers/defaultMetricConfigViewController',
   'controllers/mongoHostViewController',
   'controllers/hdfsTextHostViewController',
-  'controllers/streamingProfilerViewController',
   'controllers/createProfilerViewController',
   'services/services',
   'services/profileService',
@@ -63,7 +62,6 @@ define([
   'services/fieldOverviewViewService',
   'services/mongoHostViewService',
   'services/hdfsTextHostViewService',
-  'services/streamingProfilerViewService',
   'services/createProfilerViewService',
   'services/metricConfigViewService',
   'services/defaultMetricConfigViewService'
