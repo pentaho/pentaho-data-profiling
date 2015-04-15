@@ -25,6 +25,7 @@ package com.pentaho.profiling.services;
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.Profile;
+import com.pentaho.profiling.api.doc.rest.ErrorCode;
 import com.pentaho.profiling.api.doc.rest.Example;
 import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
 import com.pentaho.profiling.api.sample.SampleProviderManager;
@@ -116,6 +117,7 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   @GET
   @Path( "/{profileId}" )
   @SuccessResponseCode( 200 )
+  @ErrorCode( code = 204, reason = "The given profile id is not part of an aggregate profile.")
   public AggregateProfileDTO getAggregateProfileDTO( @PathParam( "profileId" ) String profileId ) {
     AggregateProfile aggregateProfile = getAggregateProfile( profileId );
     if ( aggregateProfile == null ) {
@@ -152,7 +154,7 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   @Path( "/add" )
   @SuccessResponseCode( 204 )
   public void addChild( AggregateAddChildWrapper aggregateAddChildWrapper ) {
-    this.addChild( aggregateAddChildWrapper.getProfileId(), aggregateAddChildWrapper.getChildProfileId() );
+    addChild( aggregateAddChildWrapper.getProfileId(), aggregateAddChildWrapper.getChildProfileId() );
   }
 
   public Example addChildExample() {

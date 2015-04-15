@@ -29,7 +29,25 @@ import com.pentaho.profiling.api.configuration.DataSourceMetadata;
  * Created by bryan on 4/10/15.
  */
 public class StreamingProfileMetadata implements DataSourceMetadata {
+  private String name;
+
+  public StreamingProfileMetadata() {
+    this( null );
+  }
+
+  public StreamingProfileMetadata( String name ) {
+    this.name = name;
+  }
+
   @Override public String getLabel() {
     return StreamingProfile.STREAMING_PROFILE;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName( String name ) {
+    this.name = name;
   }
 }

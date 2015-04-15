@@ -22,9 +22,11 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
@@ -52,6 +54,17 @@ public class AggregateProfileFactory implements ProfileFactory {
 
   @Override
   public Profile create( ProfileConfiguration profileConfiguration, ProfileStatusManager profileStatusManager ) {
+    AggregateProfileMetadata aggregateProfileMetadata =
+      (AggregateProfileMetadata) profileConfiguration.getDataSourceMetadata();
+    final String name = aggregateProfileMetadata.getName();
+    if ( name != null ) {
+      profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+        @Override public Void write( MutableProfileStatus profileStatus ) {
+          profileStatus.setName( name );
+          return null;
+        }
+      } );
+    }
     AggregateProfileImpl aggregateProfile =
       new AggregateProfileImpl( profileStatusManager, profilingService, metricContributorsFactory,
         profileConfiguration.getMetricContributors() );
