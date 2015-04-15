@@ -76,7 +76,10 @@ define(['./services'], function (appServices) {
         searchAggregateProfilesRecursively: function (profiles, id) {
           function childrenContainsProfileId(child) {
             if (child.id == id) {
+              child.selected = 'selected';
               return true;
+            } else {
+              delete child['selected'];
             }
             if (typeof child.childProfiles !== "undefined") {
               for (var j = 0, stopChildLoop = child.childProfiles.length; j < stopChildLoop; j++) {
