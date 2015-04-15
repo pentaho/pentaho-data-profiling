@@ -46,6 +46,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,10 +77,10 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
 
   /**
    * Returns a boolean indicating whether a given DataSourceMetadata's provider can be used to create a profile.
-   * (Returns true iff there is a registered ProfileFactory that accepts the DataSourceMetadata)
+   * (Returns true iff there is a registered ProfileFactory that accepts the DataSourceMetadata.)
    *
-   * @param dataSourceMetadata the DataSourceMetadata
-   * @return a boolean indicating whether a given DataSourceMetadata's provider can be used to create a profile.
+   * @param dataSourceMetadata The DataSourceMetadata.
+   * @return A boolean indicating whether a given DataSourceMetadata's provider can be used to create a profile.
    */
   @POST
   @Path( "/accepts" )
@@ -103,19 +104,24 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
 
   /**
    * Creates a profile from the given ProfileConfiguration. If no metric contributors are specified, the profile will be
-   * created with the current defaults
+   * created with the current defaults.
    *
-   * @param profileConfiguration the profile configuration
-   * @return the initial profile status
+   * @param profileConfiguration The profile configuration.
+   * @return The initial profile status.
    * @throws ProfileCreationException
    */
   @POST
   @Path( "/" )
   @SuccessResponseCode( 200 )
-  @ErrorCode( code = 500, reason = "Unable to create profile" )
-  public ProfileStatusDTO createWebservice( ProfileConfiguration profileConfiguration )
-    throws ProfileCreationException {
-    return new ProfileStatusDTO( delegate.create( profileConfiguration ) );
+  @ErrorCode( code = 500, reason = "Unable to create profile." )
+  public ProfileStatusDTO createWebservice( ProfileConfiguration profileConfiguration ) {
+    ProfileStatusManager profileStatus;
+    try {
+      profileStatus = delegate.create( profileConfiguration );
+    } catch ( ProfileCreationException e ) {
+      throw new WebApplicationException( 500 );
+    }
+    return new ProfileStatusDTO( profileStatus );
   }
 
   @Override
@@ -138,12 +144,13 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
-   * Returns current status for all active profiles
+   * Returns current status for all active profiles.
    *
-   * @return current status for all active profiles
+   * @return Current status for all active profiles.
    */
   @GET
   @Path( "/" )
+  @SuccessResponseCode( 200 )
   public List<ProfileStatus> getActiveProfilesWebservice() {
     List<ProfileStatusReader> profileStatusReaders = getActiveProfiles();
     List<ProfileStatus> result = new ArrayList<ProfileStatus>( profileStatusReaders.size() );
@@ -181,10 +188,10 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
-   * Gets the current status of the profile with the given id
+   * Gets the current status of the profile with the given id.
    *
-   * @param profileId the profile id
-   * @return the current status of the corresponding profile
+   * @param profileId The profile id.
+   * @return The current status of the corresponding profile.
    */
   @GET
   @Path( "/{profileId}" )
@@ -214,9 +221,9 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
-   * Stops the profile with the given id
+   * Stops the profile with the given id.
    *
-   * @param profileId the profile id
+   * @param profileId The profile id.
    */
   @PUT
   @Path( "/stop/{profileId}" )
@@ -231,10 +238,10 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
-   * Checks to see if the given profile is currently running
+   * Checks to see if the given profile is currently running.
    *
-   * @param profileId the profileId to check
-   * @return a boolean indicating whether the profile is running
+   * @param profileId The profile id to check.
+   * @return A boolean indicating whether the profile is running.
    */
   @GET
   @Path( "/isRunning/{profileId}" )
@@ -257,9 +264,9 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
-   * Discards the profile, removing it from memory
+   * Discards the profile, removing it from memory.
    *
-   * @param profileId the profileId to discard
+   * @param profileId The profile id to discard.
    */
   @PUT
   @Path( "/discard/{profileId}" )
