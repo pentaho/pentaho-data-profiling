@@ -29,7 +29,25 @@ import com.pentaho.profiling.api.configuration.DataSourceMetadata;
  * Created by bryan on 4/10/15.
  */
 public class AggregateProfileMetadata implements DataSourceMetadata {
+  private String name;
+
+  public AggregateProfileMetadata() {
+    this( null );
+  }
+
+  public AggregateProfileMetadata( String name ) {
+    this.name = name;
+  }
+
   @Override public String getLabel() {
     return AggregateProfile.AGGREGATE_PROFILE;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName( String name ) {
+    this.name = name;
   }
 }

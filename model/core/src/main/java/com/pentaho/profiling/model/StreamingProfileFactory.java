@@ -22,9 +22,11 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFactory;
 import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
@@ -49,6 +51,17 @@ public class StreamingProfileFactory implements ProfileFactory {
 
   @Override
   public Profile create( ProfileConfiguration profileConfiguration, ProfileStatusManager profileStatusManager ) {
+    StreamingProfileMetadata dataSourceMetadata =
+      (StreamingProfileMetadata) profileConfiguration.getDataSourceMetadata();
+    final String name = dataSourceMetadata.getName();
+    if ( name != null ) {
+      profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+        @Override public Void write( MutableProfileStatus profileStatus ) {
+          profileStatus.setName( name );
+          return null;
+        }
+      } );
+    }
     StreamingProfileImpl streamingProfile =
       new StreamingProfileImpl( profileStatusManager, metricContributorsFactory,
         profileConfiguration.getMetricContributors() );
