@@ -73,15 +73,23 @@ define(['./services'], function (appServices) {
             }
           }
         },
-        searchAggregateProfilesRecursively: function (aggregateProfileArray, id) {
-          for (var j = 0, stopAggLoop = aggregateProfileArray.length; j < stopAggLoop; j++) {
-            if(typeof aggregateProfileArray[j].childProfiles !== "undefined") {
-              if (aggregateProfileArray[j].childProfiles.length > 0) {
-                profileManagementViewService.searchAggregateProfilesRecursively(aggregateProfileArray[j].childProfiles[1], id);
+        searchAggregateProfilesRecursively: function (profiles, id) {
+          function childrenContainsProfileId(child) {
+            if (child.id == id) {
+              return true;
+            }
+            if (typeof child.childProfiles !== "undefined") {
+              for (var j = 0, stopChildLoop = child.childProfiles.length; j < stopChildLoop; j++) {
+                if (childrenContainsProfileId(child.childProfiles[j])) {
+                  return true;
+                }
               }
-              if (aggregateProfileArray[j].id === id) {
-                return aggregateProfileArray[j];
-              }
+            }
+            return false;
+          }
+          for (var j = 0, stopLoop = profiles.length; j < stopLoop; j++) {
+            if (childrenContainsProfileId(profiles[j])) {
+              return profiles[j];
             }
           }
           return [];
