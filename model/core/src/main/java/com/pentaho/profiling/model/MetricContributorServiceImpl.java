@@ -86,7 +86,7 @@ public class MetricContributorServiceImpl implements MetricContributorService {
     return new MetricContributors( metricContributorList, metricManagerContributorList );
   }
 
-  @Override public Map<String, MetricContributors> getAllConfigurations() {
+  @Override public synchronized Map<String, MetricContributors> getAllConfigurations() {
     // First try to read from file
     File metricContributorsJson = null;
     if ( jsonFile != null ) {

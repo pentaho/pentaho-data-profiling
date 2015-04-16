@@ -80,4 +80,12 @@ public class NVL {
     into.setValue( result, path );
     return result;
   }
+
+  @Override public boolean equals( Object obj ) {
+    return obj != null && obj.getClass() == NVL.class;
+  }
+
+  @Override public int hashCode() {
+    return NVL.class.hashCode();
+  }
 }

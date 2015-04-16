@@ -233,7 +233,7 @@ public class PercentileMetricContributor implements MetricManagerContributor {
       return false;
     }
 
-    return nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null;
+    return !( nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null );
   }
 
   @Override

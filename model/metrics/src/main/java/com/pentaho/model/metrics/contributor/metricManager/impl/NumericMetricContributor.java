@@ -180,4 +180,26 @@ public class NumericMetricContributor extends BaseMetricManagerContributor imple
   public List<ProfileFieldProperty> profileFieldProperties() {
     return getProfileFieldPropertiesStatic();
   }
+
+  @Override public boolean equals( Object o ) {
+    if ( this == o ) {
+      return true;
+    }
+    if ( o == null || getClass() != o.getClass() ) {
+      return false;
+    }
+
+    NumericMetricContributor that = (NumericMetricContributor) o;
+
+    return !( nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null );
+
+  }
+
+  @Override public int hashCode() {
+    return nvl != null ? nvl.hashCode() : 0;
+  }
+
+  @Override public String toString() {
+    return "NumericMetricContributor{}";
+  }
 }

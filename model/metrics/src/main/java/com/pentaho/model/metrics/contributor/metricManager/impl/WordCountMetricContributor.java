@@ -114,4 +114,26 @@ public class WordCountMetricContributor extends BaseMetricManagerContributor imp
   @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
     dataSourceMetricManager.clear( CLEAR_LIST );
   }
+
+  @Override public boolean equals( Object o ) {
+    if ( this == o ) {
+      return true;
+    }
+    if ( o == null || getClass() != o.getClass() ) {
+      return false;
+    }
+
+    WordCountMetricContributor that = (WordCountMetricContributor) o;
+
+    return !( nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null );
+
+  }
+
+  @Override public int hashCode() {
+    return nvl != null ? nvl.hashCode() : 0;
+  }
+
+  @Override public String toString() {
+    return "WordCountMetricContributor{}";
+  }
 }
