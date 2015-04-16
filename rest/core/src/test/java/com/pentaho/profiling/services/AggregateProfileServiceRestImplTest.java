@@ -24,10 +24,12 @@ package com.pentaho.profiling.services;
 
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.AggregateProfileService;
+import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -51,10 +53,18 @@ public class AggregateProfileServiceRestImplTest {
   }
 
   @Test
-  public void testGetAggregateProfiles() {
-    List<AggregateProfile> profiles = mock( List.class );
+  public void testGetAggregateProfileDTOs() {
+    AggregateProfile aggregateProfile = mock( AggregateProfile.class );
+    AggregateProfile childProfile = mock( AggregateProfile.class );
+    String id = "aggregateProfile";
+    String childId = "childProfile";
+    when( aggregateProfile.getId() ).thenReturn( id );
+    when( childProfile.getId() ).thenReturn( childId );
+    when( aggregateProfile.getChildProfiles() ).thenReturn( Arrays.<Profile>asList( childProfile ) );
+    when( childProfile.getChildProfiles() ).thenReturn( null );
+    List<AggregateProfile> profiles = Arrays.asList( aggregateProfile, childProfile );
     when( delegate.getAggregateProfiles() ).thenReturn( profiles );
-    assertEquals( profiles, aggregateProfileService.getAggregateProfiles() );
+    assertEquals( 1, aggregateProfileService.getAggregateProfileDTOs().size() );
   }
 
   @Test
