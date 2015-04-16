@@ -117,7 +117,7 @@ public class AggregateProfileServiceRestImpl implements AggregateProfileService 
   @GET
   @Path( "/{profileId}" )
   @SuccessResponseCode( 200 )
-  @ErrorCode( code = 204, reason = "The given profile id is not part of an aggregate profile.")
+  @ErrorCode( code = 204, reason = "The given profile id is not part of an aggregate profile." )
   public AggregateProfileDTO getAggregateProfileDTO( @PathParam( "profileId" ) String profileId ) {
     AggregateProfile aggregateProfile = getAggregateProfile( profileId );
     if ( aggregateProfile == null ) {
