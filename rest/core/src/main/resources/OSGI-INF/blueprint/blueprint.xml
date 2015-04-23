@@ -129,6 +129,9 @@
         <value type="java.lang.Class">
           com.pentaho.profiling.api.ProfileFactory
         </value>
+        <value type="java.lang.Class">
+          com.pentaho.profiling.api.mapper.MapperDefinition
+        </value>
       </list>
     </argument>
   </bean>
@@ -147,4 +150,5 @@
   <reference id="sampleProviderManager" interface="com.pentaho.profiling.api.sample.SampleProviderManager"/>
   <reference-list id="metricContributorBundles"
                   interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
+  <reference-list id="mapperDefinitions" interface="com.pentaho.profiling.api.mapper.MapperDefinition" availability="optional"/>
 </blueprint>

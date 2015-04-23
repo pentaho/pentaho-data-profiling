@@ -26,5 +26,5 @@ package com.pentaho.profiling.api;
  * Created by bryan on 10/2/14.
  */
 public enum ProfileState {
-  ACTIVE, DISCARDED
+  ACTIVE, STOPPED, DISCARDED, FINISHED_SUCCESSFULLY
 }

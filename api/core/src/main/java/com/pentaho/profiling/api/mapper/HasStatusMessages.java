@@ -20,21 +20,20 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.mapper;
 
-import java.util.concurrent.ExecutorService;
+import com.pentaho.profiling.api.ProfileStatusMessage;
+
+import java.util.List;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface for exposing status messages to the streaming profile
  */
-public interface Profile {
-  String getId();
-
-  String getName();
-
-  void start( ExecutorService executorService );
-
-  void stop();
-
-  boolean isRunning();
+public interface HasStatusMessages {
+  /**
+   * Returns the status messages or an empty list if there are none
+   *
+   * @return the status messages or an empty list if there are none
+   */
+  List<ProfileStatusMessage> getStatusMessages();
 }
