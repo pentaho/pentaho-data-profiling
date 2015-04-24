@@ -33,7 +33,7 @@ public class MetricContributors {
   private List<MetricManagerContributor> metricManagerContributors;
 
   public MetricContributors() {
-    this( null, null );
+    this( new ArrayList<MetricContributor>(), new ArrayList<MetricManagerContributor>() );
   }
 
   public MetricContributors( List<MetricContributor> metricContributors,
