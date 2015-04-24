@@ -24,10 +24,13 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatusManager;
+import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.mapper.HasStatusMessages;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
@@ -59,6 +62,7 @@ public class StreamingProfileImpl implements StreamingProfile {
   private final List<MetricContributor> metricContributorList;
   private final DataSourceFieldManager dataSourceFieldManager;
   private ExecutorService executorService;
+  private HasStatusMessages hasStatusMessages;
 
   public StreamingProfileImpl( ProfileStatusManager profileStatusManager,
                                MetricContributorsFactory metricContributorsFactory,
@@ -104,6 +108,10 @@ public class StreamingProfileImpl implements StreamingProfile {
     queueRefresh();
   }
 
+  @Override public void setHasStatusMessages( HasStatusMessages hasStatusMessages ) {
+    this.hasStatusMessages = hasStatusMessages;
+  }
+
   private synchronized void doRefresh() {
     lastRefresh.set( System.currentTimeMillis() );
     refreshQueued.set( false );
@@ -116,6 +124,10 @@ public class StreamingProfileImpl implements StreamingProfile {
     }
     profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
       @Override public Void write( MutableProfileStatus profileStatus ) {
+        HasStatusMessages hasStatusMessages = StreamingProfileImpl.this.hasStatusMessages;
+        if ( hasStatusMessages != null ) {
+          profileStatus.setStatusMessages( hasStatusMessages.getStatusMessages() );
+        }
         profileStatus.setFields( dataSourceFieldManager.getProfilingFields() );
         return null;
       }
@@ -156,6 +168,13 @@ public class StreamingProfileImpl implements StreamingProfile {
 
   @Override public void stop() {
     isRunning.set( false );
+    profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+      @Override public Void write( MutableProfileStatus profileStatus ) {
+        profileStatus.setProfileState( ProfileState.STOPPED );
+        profileStatus.setStatusMessages( new ArrayList<ProfileStatusMessage>() );
+        return null;
+      }
+    } );
   }
 
   @Override public boolean isRunning() {

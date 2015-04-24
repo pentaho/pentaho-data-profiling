@@ -20,21 +20,30 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.api;
+package com.pentaho.profiling.api.mapper;
 
-import java.util.concurrent.ExecutorService;
+import com.pentaho.profiling.api.action.ProfileActionException;
 
 /**
- * Created by bryan on 7/31/14.
+ * Interface for easily supporting a new datasource in profiling
  */
-public interface Profile {
-  String getId();
+public interface Mapper extends HasStatusMessages {
+  /**
+   * Take data from the datasource and feed it into the StreamingProfile
+   *
+   * @throws ProfileActionException if an error occurs while processing data
+   */
+  void run() throws ProfileActionException;
 
-  String getName();
-
-  void start( ExecutorService executorService );
-
+  /**
+   * Stop running
+   */
   void stop();
 
+  /**
+   * Check the current status of the mapper
+   *
+   * @return a boolean indicating whether the mapper is running or not
+   */
   boolean isRunning();
 }

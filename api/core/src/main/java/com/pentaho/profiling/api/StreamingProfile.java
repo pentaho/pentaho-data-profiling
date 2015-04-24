@@ -23,6 +23,7 @@
 package com.pentaho.profiling.api;
 
 import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.mapper.HasStatusMessages;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
@@ -33,5 +34,7 @@ import java.util.List;
 public interface StreamingProfile extends Profile {
   public static final String STREAMING_PROFILE = "STREAMING_PROFILE";
 
-  public void processRecord( List<DataSourceFieldValue> dataSourceFieldValues ) throws ProfileActionException;
+  void processRecord( List<DataSourceFieldValue> dataSourceFieldValues ) throws ProfileActionException;
+
+  void setHasStatusMessages( HasStatusMessages hasStatusMessages );
 }

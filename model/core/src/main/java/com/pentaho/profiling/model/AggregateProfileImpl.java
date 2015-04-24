@@ -27,6 +27,7 @@ import com.pentaho.profiling.api.MessageUtils;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
@@ -144,6 +145,13 @@ public class AggregateProfileImpl implements AggregateProfile {
     for ( Profile profile : getChildProfiles() ) {
       profile.stop();
     }
+    profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+      @Override public Void write( MutableProfileStatus profileStatus ) {
+        profileStatus.setProfileState( ProfileState.STOPPED );
+        profileStatus.setStatusMessages( new ArrayList<ProfileStatusMessage>() );
+        return null;
+      }
+    } );
     profilingService.unregister( notificationListener );
   }
 
@@ -248,7 +256,11 @@ public class AggregateProfileImpl implements AggregateProfile {
                 profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
                   @Override public Void write( MutableProfileStatus profileStatus ) {
                     profileStatus.setFields( dataSourceFieldManager.getProfilingFields() );
-                    profileStatus.setStatusMessages( newStatusMessages );
+                    if ( profileStatus.getProfileState() == ProfileState.STOPPED ) {
+                      profileStatus.setStatusMessages( new ArrayList<ProfileStatusMessage>() );
+                    } else {
+                      profileStatus.setStatusMessages( newStatusMessages );
+                    }
                     return null;
                   }
                 } );
