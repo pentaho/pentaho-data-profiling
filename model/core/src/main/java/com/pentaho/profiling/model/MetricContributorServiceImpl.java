@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.Map;
  * Created by bryan on 3/11/15.
  */
 public class MetricContributorServiceImpl implements MetricContributorService {
+  public static final String ETC_METRIC_CONTRIBUTORS_JSON = "etc/metricContributors.json";
   private static final Logger LOGGER = LoggerFactory.getLogger( MetricContributorServiceImpl.class );
   private final List<MetricContributorBundle> metricContributorBundles;
   private final String jsonFile;
@@ -52,14 +54,30 @@ public class MetricContributorServiceImpl implements MetricContributorService {
 
   public MetricContributorServiceImpl( List<MetricContributorBundle> metricContributorBundles,
                                        ObjectMapperFactory objectMapperFactory ) {
+    this( metricContributorBundles, objectMapperFactory, System.getProperty( "karaf.home" ) );
+  }
+
+  public MetricContributorServiceImpl( List<MetricContributorBundle> metricContributorBundles,
+                                       ObjectMapperFactory objectMapperFactory, String karafHome ) {
     this.metricContributorBundles = metricContributorBundles;
     this.objectMapper = objectMapperFactory.createMapper();
-    String karafHome = System.getProperty( "karaf.home" );
+    this.jsonFile = findJsonFile( karafHome );
+  }
+
+  public static final String findJsonFile( String karafHome ) {
+    String jsonFile;
     if ( karafHome != null ) {
-      jsonFile = new File( karafHome + "/etc/metricContributors.json" ).getAbsolutePath();
+      jsonFile =
+        FileSystems.getDefault().getPath( karafHome ).resolve( ETC_METRIC_CONTRIBUTORS_JSON ).normalize().toFile()
+          .getAbsolutePath();
     } else {
       jsonFile = null;
     }
+    return jsonFile;
+  }
+
+  public String getJsonFile() {
+    return jsonFile;
   }
 
   private MetricContributors getFullMetricContributors() {
