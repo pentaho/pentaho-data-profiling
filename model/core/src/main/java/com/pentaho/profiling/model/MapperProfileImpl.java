@@ -79,11 +79,18 @@ public class MapperProfileImpl implements Profile {
         } catch ( final ProfileActionException e ) {
           profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
             @Override public Void write( MutableProfileStatus profileStatus ) {
+              profileStatus.setProfileState( ProfileState.FINISHED_ERRORS );
               profileStatus.setOperationError( new ProfileActionExceptionWrapper( e ) );
               return null;
             }
           } );
         } catch ( Exception e ) {
+          profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+            @Override public Void write( MutableProfileStatus profileStatus ) {
+              profileStatus.setProfileState( ProfileState.FINISHED_ERRORS );
+              return null;
+            }
+          } );
           LOGGER.error( e.getMessage(), e );
         }
       }
