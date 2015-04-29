@@ -22,90 +22,121 @@
 
 package com.pentaho.profiling.model.metrics.contributor.percentile;
 
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.ProfileFieldValueType;
+import com.pentaho.profiling.api.ValueTypeMetrics;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.core.test.BeanTester;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.util.ObjectHolder;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by mhall on 27/01/15.
  */
 public class PercentileMetricContributorTest {
+  private MutableProfileFieldValueType mutableProfileFieldValueType;
+  private PercentileMetricContributor percentileMetricContributor;
+
+  private MutableProfileFieldValueType createMockMutableProfileFieldValueType() {
+    final ObjectHolder<PercentileMetrics> objectHolder = new ObjectHolder<PercentileMetrics>();
+    MutableProfileFieldValueType mutableProfileFieldValueType = mock( MutableProfileFieldValueType.class );
+    when( mutableProfileFieldValueType.getValueTypeMetrics( PercentileMetricContributor.SIMPLE_NAME ) ).thenAnswer(
+      new Answer<Object>() {
+        @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+          return objectHolder.getObject();
+        }
+      } );
+    doAnswer( new Answer() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        if ( PercentileMetricContributor.SIMPLE_NAME.equals( invocation.getArguments()[ 0 ] ) ) {
+          objectHolder.setObject( (PercentileMetrics) invocation.getArguments()[ 1 ] );
+        }
+        return null;
+      }
+    } ).when( mutableProfileFieldValueType ).setValueTypeMetrics( eq( PercentileMetricContributor.SIMPLE_NAME ), any(
+      ValueTypeMetrics.class ) );
+    return mutableProfileFieldValueType;
+  }
+
+  @Before
+  public void setup() {
+    mutableProfileFieldValueType = createMockMutableProfileFieldValueType();
+    percentileMetricContributor = new PercentileMetricContributor();
+    percentileMetricContributor.setPercentileDefinitions( new ArrayList<PercentileDefinition>( Arrays
+      .asList( new PercentileDefinition( null, null, .25 ), new PercentileDefinition( null, null, .5 ),
+        new PercentileDefinition( null, null, .75 ) ) ) );
+  }
 
 
   @Test public void testProcessField() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager();
-
-    dataSourceMetricManager.setValue( 1L, MetricContributorUtils.COUNT );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
     dataSourceFieldValue.setFieldValue( 2.25d );
-
-    PercentileMetricContributor percentileMetricContributor = new PercentileMetricContributor();
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( 2.5d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( 2.75d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( 3.75d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    dataSourceMetricManager.setValue( 5L, MetricContributorUtils.COUNT );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( 4.75d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    percentileMetricContributor.setDerived( dataSourceMetricManager );
-    assertEquals( Double.valueOf( 2.625 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
-    assertEquals( Double.valueOf( 2.4375 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" ) );
-    assertEquals( Double.valueOf( 3 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_75" ) );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 5L );
+    percentileMetricContributor.setDerived( mutableProfileFieldValueType );
+    PercentileMetrics percentileMetrics =
+      (PercentileMetrics) mutableProfileFieldValueType.getValueTypeMetrics( PercentileMetricContributor.SIMPLE_NAME );
+    assertEquals( Double.valueOf( 2.625 ), percentileMetrics.getPercentiles().get( "0.5" ) );
+    assertEquals( Double.valueOf( 2.4375 ), percentileMetrics.getPercentiles().get( "0.25" ) );
+    assertEquals( Double.valueOf( 3 ), percentileMetrics.getPercentiles().get( "0.75" ) );
   }
 
   @Test public void testMerge() throws ProfileActionException, MetricMergeException {
-    PercentileMetricContributor percentileMetricContributor = new PercentileMetricContributor();
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager();
-    DataSourceMetricManager dataSourceMetricManager2 = new DataSourceMetricManager();
-
-    dataSourceMetricManager.setValue( 2L, MetricContributorUtils.COUNT );
-    dataSourceMetricManager2.setValue( 2L, MetricContributorUtils.COUNT );
-
+    MutableProfileFieldValueType mutableProfileFieldValueType2 = createMockMutableProfileFieldValueType();
+    when( mutableProfileFieldValueType2.getCount() ).thenReturn( 1L, 2L, 3L );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( 2.25d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue = new DataSourceFieldValue( 2.5d );
-    percentileMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue = new DataSourceFieldValue( 2.75d );
-    percentileMetricContributor.process( dataSourceMetricManager2, dataSourceFieldValue );
+    percentileMetricContributor.process( mutableProfileFieldValueType2, dataSourceFieldValue );
     dataSourceFieldValue = new DataSourceFieldValue( 3.75d );
-    percentileMetricContributor.process( dataSourceMetricManager2, dataSourceFieldValue );
-    dataSourceMetricManager.setValue( 5L, MetricContributorUtils.COUNT );
+    percentileMetricContributor.process( mutableProfileFieldValueType2, dataSourceFieldValue );
     dataSourceFieldValue = new DataSourceFieldValue( 4.75d );
-    percentileMetricContributor.process( dataSourceMetricManager2, dataSourceFieldValue );
-    percentileMetricContributor.merge( dataSourceMetricManager, dataSourceMetricManager2 );
-    percentileMetricContributor.setDerived( dataSourceMetricManager );
-    assertEquals( Double.valueOf( 2.625 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
-    assertEquals( Double.valueOf( 2.4375 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" ) );
-    assertEquals( Double.valueOf( 3 ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_75" ) );
+    percentileMetricContributor.process( mutableProfileFieldValueType2, dataSourceFieldValue );
+    percentileMetricContributor.merge( mutableProfileFieldValueType, mutableProfileFieldValueType2 );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 5L );
+    percentileMetricContributor.setDerived( mutableProfileFieldValueType );
 
-    DataSourceMetricManager dataSourceMetricManager3 = new DataSourceMetricManager();
-    dataSourceMetricManager3.setValue( 5L, MetricContributorUtils.COUNT );
-    percentileMetricContributor.merge( dataSourceMetricManager3, dataSourceMetricManager );
-    percentileMetricContributor.setDerived( dataSourceMetricManager3 );
-    assertEquals( Double.valueOf( 2.625 ),
-      dataSourceMetricManager3.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" ) );
+    PercentileMetrics percentileMetrics =
+      (PercentileMetrics) mutableProfileFieldValueType.getValueTypeMetrics( PercentileMetricContributor.SIMPLE_NAME );
+    assertEquals( Double.valueOf( 2.625 ), percentileMetrics.getPercentiles().get( "0.5" ) );
+    assertEquals( Double.valueOf( 2.4375 ), percentileMetrics.getPercentiles().get( "0.25" ) );
+    assertEquals( Double.valueOf( 3 ), percentileMetrics.getPercentiles().get( "0.75" ) );
 
-    DataSourceMetricManager dataSourceMetricManager4 = new DataSourceMetricManager();
-    percentileMetricContributor.merge( dataSourceMetricManager, dataSourceMetricManager4 );
+    MutableProfileFieldValueType mutableProfileFieldValueType3 = createMockMutableProfileFieldValueType();
+    when( mutableProfileFieldValueType3.getCount() ).thenReturn( 5L );
+    percentileMetricContributor.merge( mutableProfileFieldValueType3, mutableProfileFieldValueType );
+    percentileMetricContributor.setDerived( mutableProfileFieldValueType3 );
+    assertEquals( Double.valueOf( 2.625 ),
+      ( (PercentileMetrics) mutableProfileFieldValueType3
+        .getValueTypeMetrics( PercentileMetricContributor.SIMPLE_NAME ) ).getPercentiles().get( "0.5" ) );
+
+    ProfileFieldValueType emptyValueType = mock( ProfileFieldValueType.class );
+    percentileMetricContributor.merge( mutableProfileFieldValueType, emptyValueType );
   }
 
   @Test
@@ -114,70 +145,7 @@ public class PercentileMetricContributorTest {
   }
 
   @Test
-  public void testClear() {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    new PercentileMetricContributor().clear( dataSourceMetricManager );
-    verify( dataSourceMetricManager ).clear( PercentileMetricContributor.CLEAR_PATH );
-  }
-
-  @Test
   public void testGetProfileFieldProperties() {
     assertNotNull( new PercentileMetricContributor().profileFieldProperties() );
   }
-
-  /*Test public void processFieldNotLeaf() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.PATH, "a" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, false );
-    dataSourceFieldValue.setFieldValue( 2.25d );
-
-    new PercentileMetricContributor().processFields( dataSourceFieldManager, dataSourceFieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test public void testProcessNotNumber() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.PATH, "a" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    dataSourceFieldValue.setFieldValue( "fred" );
-
-    new PercentileMetricContributor().processFields( dataSourceFieldManager, dataSourceFieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test public void testProcessNull() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.PATH, "a" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-
-    new PercentileMetricContributor().processFields( dataSourceFieldManager, dataSourceFieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test( expected = ProfileActionException.class ) public void testNullDataSourceField() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceField dataSourceField = new DataSourceField( new HashMap<String, Object>() );
-    dataSourceField.setPhysicalName( "a" );
-    dataSourceFieldManager.addDataSourceField( dataSourceField );
-
-    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.PATH, "a" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    dataSourceFieldValue.setFieldValue( 2.3d );
-
-    new PercentileMetricContributor().processFields( dataSourceFieldManager, dataSourceFieldValue );
-  }
-
-  @Test
-  public void testGetProfileFieldProperties() {
-    assertNotNull(new NumericMetricContributor().profileFieldProperties());
-  }
-
-  @Test
-  public void testGetClearMap() {
-    assertNotNull(new NumericMetricContributor().getClearMap());
-  }*/
 }

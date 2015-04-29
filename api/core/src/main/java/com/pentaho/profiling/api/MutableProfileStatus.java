@@ -25,6 +25,7 @@ package com.pentaho.profiling.api;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bryan on 9/29/14.
@@ -32,7 +33,13 @@ import java.util.List;
 public interface MutableProfileStatus extends ProfileStatus {
   void setProfileState( ProfileState profileState );
 
-  void setFields( List<ProfilingField> fields );
+  MutableProfileField getOrCreateField( String physicalName, String logicalName );
+
+  Map<String, MutableProfileField> getMutableFieldMap();
+
+  void addField( ProfileField field );
+
+  void setField( ProfileField field );
 
   void setName( String name );
 

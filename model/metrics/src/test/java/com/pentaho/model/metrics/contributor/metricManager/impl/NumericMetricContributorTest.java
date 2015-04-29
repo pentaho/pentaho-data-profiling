@@ -22,20 +22,16 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.NumericHolder;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.stats.Statistic;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by mhall on 26/01/15.
@@ -43,77 +39,77 @@ import static org.mockito.Mockito.verify;
 public class NumericMetricContributorTest {
 
   @Test public void testUpdateTypeInitial() throws ProfileActionException {
-    DataSourceMetricManager manager = new DataSourceMetricManager( new HashMap<String, Object>() );
-    manager.setValue( 1L, MetricContributorUtils.COUNT );
-    double value = 1.235;
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( NumericMetricContributor.SIMPLE_NAME );
+    Double value = 1.235;
     NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value ) );
-    numericMetricContributor.setDerived( manager );
-    assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
-    assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
-    assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ) );
-    assertEquals( value * value,
-      manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM_OF_SQUARES ) );
-    assertEquals( value, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MEAN ) );
+    numericMetricContributor.process( mutableProfileFieldValueType, new DataSourceFieldValue( value ) );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 1L );
+    numericMetricContributor.setDerived( mutableProfileFieldValueType );
+    NumericHolder numericHolder =
+      (NumericHolder) mutableProfileFieldValueType.getValueTypeMetrics( NumericMetricContributor.SIMPLE_NAME );
+    assertEquals( value, numericHolder.getMin() );
+    assertEquals( value, numericHolder.getMax() );
+    assertEquals( value, numericHolder.getSum() );
+    assertEquals( Double.valueOf( value * value ), numericHolder.getSumOfSquares() );
+    assertEquals( value, numericHolder.getMean() );
   }
 
   @Test public void testUpdateTypeWithMultiple() throws ProfileActionException {
-    DataSourceMetricManager manager = new DataSourceMetricManager( new HashMap<String, Object>() );
-    manager.setValue( 3L, MetricContributorUtils.COUNT );
-    double value1 = 1.235;
-    double value2 = 1.335;
-    double value3 = 1.435;
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( NumericMetricContributor.SIMPLE_NAME );
+    Double value1 = 1.235;
+    Double value2 = 1.335;
+    Double value3 = 1.435;
     NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value1 ) );
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value2 ) );
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value3 ) );
-    numericMetricContributor.setDerived( manager );
-    assertEquals( value1, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
-    assertEquals( value3, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
-    double sum = value1 + value2 + value3;
-    assertEquals( sum, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ) );
-    double sumOfSquares = value1 * value1 + value2 * value2 + value3 * value3;
-    assertEquals( sumOfSquares,
-      manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM_OF_SQUARES ) );
-    assertEquals( sum / 3, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MEAN ) );
-    double variance = ( sumOfSquares - ( sum * sum ) / 3 ) / 2;
-    assertEquals( variance, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.VARIANCE ) );
-    assertEquals( Math.sqrt( variance ),
-      manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.STANDARD_DEVIATION ) );
+    numericMetricContributor.process( mutableProfileFieldValueType, new DataSourceFieldValue( value1 ) );
+    numericMetricContributor.process( mutableProfileFieldValueType, new DataSourceFieldValue( value2 ) );
+    numericMetricContributor.process( mutableProfileFieldValueType, new DataSourceFieldValue( value3 ) );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 3L );
+    numericMetricContributor.setDerived( mutableProfileFieldValueType );
+    NumericHolder numericHolder =
+      (NumericHolder) mutableProfileFieldValueType.getValueTypeMetrics( NumericMetricContributor.SIMPLE_NAME );
+    assertEquals( value1, numericHolder.getMin() );
+    assertEquals( value3, numericHolder.getMax() );
+    Double sum = value1 + value2 + value3;
+    assertEquals( sum, numericHolder.getSum() );
+    Double sumOfSquares = value1 * value1 + value2 * value2 + value3 * value3;
+    assertEquals( sumOfSquares, numericHolder.getSumOfSquares() );
+    assertEquals( Double.valueOf( sum / 3 ), numericHolder.getMean() );
+    Double variance = ( sumOfSquares - ( sum * sum ) / 3 ) / 2;
+    assertEquals( variance, numericHolder.getVariance() );
+    assertEquals( Double.valueOf( Math.sqrt( variance ) ), numericHolder.getStdDev() );
   }
 
   @Test
   public void testMerge() throws ProfileActionException, MetricMergeException {
-    DataSourceMetricManager manager = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager manager2 = new DataSourceMetricManager( new HashMap<String, Object>() );
-    manager.setValue( 2L, MetricContributorUtils.COUNT );
-    manager2.setValue( 2L, MetricContributorUtils.COUNT );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( NumericMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( NumericMetricContributor.SIMPLE_NAME );
     double value1 = 1.235;
     double value2 = 1.335;
     double value3 = 1.435;
     double value4 = 1.535;
     NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value1 ) );
-    numericMetricContributor.process( manager, new DataSourceFieldValue( value2 ) );
-    manager.setValue( 4L, MetricContributorUtils.COUNT );
-    numericMetricContributor.process( manager2, new DataSourceFieldValue( value3 ) );
-    numericMetricContributor.process( manager2, new DataSourceFieldValue( value4 ) );
-    numericMetricContributor.merge( manager, manager2 );
-    numericMetricContributor.setDerived( manager );
-    assertEquals( value1, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
-    assertEquals( value4, manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
+    numericMetricContributor.process( into, new DataSourceFieldValue( value1 ) );
+    numericMetricContributor.process( into, new DataSourceFieldValue( value2 ) );
+    numericMetricContributor.process( from, new DataSourceFieldValue( value3 ) );
+    numericMetricContributor.process( from, new DataSourceFieldValue( value4 ) );
+    numericMetricContributor.merge( into, from );
+    when( into.getCount() ).thenReturn( 4L );
+    numericMetricContributor.setDerived( into );
+    NumericHolder numericHolder = (NumericHolder) into.getValueTypeMetrics( NumericMetricContributor.SIMPLE_NAME );
+    assertEquals( Double.valueOf( value1 ), numericHolder.getMin() );
+    assertEquals( Double.valueOf( value4 ), numericHolder.getMax() );
     double sum = value1 + value2 + value3 + value4;
-    assertEquals( sum, (Double) manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ), .01 );
+    assertEquals( sum, numericHolder.getSum(), .01 );
     double sumOfSquares = value1 * value1 + value2 * value2 + value3 * value3 + value4 * value4;
-    assertEquals( sumOfSquares,
-      (Double) manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM_OF_SQUARES ), .01 );
-    assertEquals( sum / 4, (Double) manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MEAN ),
-      .01 );
+    assertEquals( sumOfSquares, numericHolder.getSumOfSquares(), .01 );
+    assertEquals( sum / 4, numericHolder.getMean(), .01 );
     double variance = ( sumOfSquares - ( sum * sum ) / 4 ) / 3;
-    assertEquals( variance, (Double) manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.VARIANCE ),
-      .01 );
-    assertEquals( Math.sqrt( variance ),
-      (Double) manager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.STANDARD_DEVIATION ), .01 );
+    assertEquals( variance, numericHolder.getVariance(), .01 );
+    assertEquals( Math.sqrt( variance ), numericHolder.getStdDev(), .01 );
   }
 
   @Test
@@ -125,83 +121,4 @@ public class NumericMetricContributorTest {
   public void testGetTypes() {
     assertNotNull( new NumericMetricContributor().supportedTypes() );
   }
-
-  @Test
-  public void testClear() {
-    NumericMetricContributor numericMetricContributor = new NumericMetricContributor();
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    numericMetricContributor.clear( dataSourceMetricManager );
-    verify( dataSourceMetricManager ).clear( NumericMetricContributor.CLEAR_PATHS );
-  }
-
-  /*
-
-  @Test public void testProcessFieldNotLeaf() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( 2.3d );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, false );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test public void testProcessNotNumber() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( new Object() );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test public void testProcessNull() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = mock( DataSourceFieldManager.class );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( null );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-    verifyNoMoreInteractions( dataSourceFieldManager );
-  }
-
-  @Test( expected = ProfileActionException.class )
-  public void testNullProfilingField() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( 2.3d );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-  }
-
-  @Test( expected = ProfileActionException.class ) public void testNoDoubleMongoProfilingField()
-      throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceField dataSourceField = new DataSourceField( new HashMap<String, Object>() );
-    dataSourceField.setPhysicalName( "a" );
-    dataSourceFieldManager.addDataSourceField( dataSourceField );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( 2.3d );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-  }
-
-  @Test public void testProcessField() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceField dataSourceField = new DataSourceField( new HashMap<String, Object>() );
-    dataSourceField.setPhysicalName( "a" );
-    dataSourceField.getMetricManagerForType( Double.class.getCanonicalName(), true )
-        .setValue( 1L, MetricContributorUtils.COUNT );
-    dataSourceFieldManager.addDataSourceField( dataSourceField );
-    DataSourceFieldValue fieldValue = new DataSourceFieldValue( 2.3d );
-    fieldValue.setFieldMetatdata( DataSourceFieldValue.LEAF, true );
-    fieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
-    new NumericMetricContributor().processFields( dataSourceFieldManager, fieldValue );
-  }
-
-  @Test public void testGetProfileFieldProperties() {
-    assertNotNull( new NumericMetricContributor().profileFieldProperties() );
-  }
-
-  @Test public void testGetClearMap() {
-    assertNotNull( new NumericMetricContributor().getClearMap() );
-  }*/
 }

@@ -22,9 +22,9 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
 /**
  * Created by bryan on 3/10/15.
@@ -40,7 +40,8 @@ public abstract class BaseMetricManagerContributor implements MetricManagerContr
     this.name = name;
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+  @Override public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType )
+    throws ProfileActionException {
 
   }
 }

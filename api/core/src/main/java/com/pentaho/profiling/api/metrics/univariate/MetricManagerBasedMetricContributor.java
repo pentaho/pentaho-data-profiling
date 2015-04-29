@@ -22,15 +22,18 @@
 
 package com.pentaho.profiling.api.metrics.univariate;
 
+import com.pentaho.profiling.api.MutableProfileField;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
+import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,35 +68,31 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
     }
   }
 
-  @Override public void processFields( DataSourceFieldManager manager, List<DataSourceFieldValue> value )
+  @Override public void processFields( MutableProfileStatus mutableProfileStatus, List<DataSourceFieldValue> value )
     throws ProfileActionException {
-    Map<String, List<Pair<DataSourceField, DataSourceFieldValue>>> valuesByType =
-      new HashMap<String, List<Pair<DataSourceField, DataSourceFieldValue>>>();
+    Map<String, List<Pair<MutableProfileField, DataSourceFieldValue>>> valuesByType =
+      new HashMap<String, List<Pair<MutableProfileField, DataSourceFieldValue>>>();
     for ( DataSourceFieldValue dataSourceFieldValue : value ) {
-      DataSourceField dataSourceField =
-        manager.getPathToDataSourceFieldMap().get( dataSourceFieldValue.getPhysicalName() );
-      if ( dataSourceField == null ) {
-        LOGGER.warn( "Got DataSourceFieldValue for nonexistent field " + dataSourceFieldValue.getPhysicalName() );
-      } else {
-        String typeName = dataSourceFieldValue.getFieldTypeName();
-        List<Pair<DataSourceField, DataSourceFieldValue>> values = valuesByType.get( typeName );
-        if ( values == null ) {
-          values = new ArrayList<Pair<DataSourceField, DataSourceFieldValue>>();
-          valuesByType.put( typeName, values );
-        }
-        values.add( Pair.of( dataSourceField, dataSourceFieldValue ) );
+      MutableProfileField mutableProfileField = mutableProfileStatus
+        .getOrCreateField( dataSourceFieldValue.getPhysicalName(), dataSourceFieldValue.getLogicalName() );
+      String typeName = dataSourceFieldValue.getFieldTypeName();
+      List<Pair<MutableProfileField, DataSourceFieldValue>> values = valuesByType.get( typeName );
+      if ( values == null ) {
+        values = new ArrayList<Pair<MutableProfileField, DataSourceFieldValue>>();
+        valuesByType.put( typeName, values );
       }
+      values.add( Pair.of( mutableProfileField, dataSourceFieldValue ) );
     }
-    for ( Map.Entry<String, List<Pair<DataSourceField, DataSourceFieldValue>>> entry : valuesByType.entrySet() ) {
+    for ( Map.Entry<String, List<Pair<MutableProfileField, DataSourceFieldValue>>> entry : valuesByType.entrySet() ) {
       String typeName = entry.getKey();
       List<MetricManagerContributor> metricManagerContributors = metricManagerContributorMap.get( typeName );
       if ( metricManagerContributors != null ) {
-        for ( Pair<DataSourceField, DataSourceFieldValue> dataSourceFieldAndValue : entry.getValue() ) {
-          for ( MetricManagerContributor metricManagerContributor : metricManagerContributors ) {
-            DataSourceMetricManager metricManagerForType = dataSourceFieldAndValue.getFirst().getMetricManagerForType(
-              typeName );
-            if ( metricManagerForType != null ) {
-              metricManagerContributor.process( metricManagerForType, dataSourceFieldAndValue.getSecond() );
+        for ( Pair<MutableProfileField, DataSourceFieldValue> dataSourceFieldAndValue : entry.getValue() ) {
+          MutableProfileFieldValueType valueTypeMetrics =
+            dataSourceFieldAndValue.getFirst().getValueTypeMetrics( typeName );
+          if ( valueTypeMetrics != null ) {
+            for ( MetricManagerContributor metricManagerContributor : metricManagerContributors ) {
+              metricManagerContributor.process( valueTypeMetrics, dataSourceFieldAndValue.getSecond() );
             }
           }
         }
@@ -101,55 +100,48 @@ public class MetricManagerBasedMetricContributor implements MetricContributor {
     }
   }
 
-  @Override public void setDerived( DataSourceFieldManager dataSourceFieldManager ) throws ProfileActionException {
+  @Override public void setDerived( MutableProfileStatus mutableProfileStatus ) throws ProfileActionException {
     for ( Map.Entry<String, List<MetricManagerContributor>> metricManagerContributorsForType
       : metricManagerContributorMap.entrySet() ) {
-      for ( DataSourceMetricManager dataSourceMetricManager : dataSourceFieldManager
-        .getPathToMetricManagerForTypeMap( metricManagerContributorsForType.getKey() ).values() ) {
-        for ( MetricManagerContributor metricManagerContributor : metricManagerContributorsForType.getValue() ) {
-          metricManagerContributor.setDerived( dataSourceMetricManager );
+      for ( MutableProfileField mutableProfileField : mutableProfileStatus
+        .getMutableFieldMap().values() ) {
+        MutableProfileFieldValueType valueTypeMetrics =
+          mutableProfileField.getValueTypeMetrics( metricManagerContributorsForType.getKey() );
+        if ( valueTypeMetrics != null ) {
+          for ( MetricManagerContributor metricManagerContributor : metricManagerContributorsForType.getValue() ) {
+            metricManagerContributor.setDerived( valueTypeMetrics );
+          }
         }
       }
     }
   }
 
-  @Override public void merge( DataSourceFieldManager existing, DataSourceFieldManager update )
+  @Override public void merge( MutableProfileStatus into, ProfileStatus from )
     throws MetricMergeException {
     Set<String> processedNames = new HashSet<String>();
-    for ( DataSourceField firstDataSourceField : existing.getDataSourceFields() ) {
-      String physicalName = firstDataSourceField.getPhysicalName();
+    for ( MutableProfileField mutableProfileField : into.getMutableFieldMap().values() ) {
+      String physicalName = mutableProfileField.getPhysicalName();
       processedNames.add( physicalName );
-      DataSourceField secondDataSourceField = update.getPathToDataSourceFieldMap().get( physicalName );
+      ProfileField secondDataSourceField = from.getField( physicalName );
       if ( secondDataSourceField != null ) {
         for ( MetricManagerContributor metricManagerContributor : metricManagerContributors ) {
           for ( String typeName : metricManagerContributor.supportedTypes() ) {
-            DataSourceMetricManager secondMetricManager = secondDataSourceField.getMetricManagerForType( typeName );
+            ProfileFieldValueType secondMetricManager = secondDataSourceField.getType( typeName );
             if ( secondMetricManager != null ) {
-              DataSourceMetricManager firstMetricManager = firstDataSourceField.getMetricManagerForType( typeName );
+              MutableProfileFieldValueType firstMetricManager = mutableProfileField.getValueTypeMetrics( typeName );
               if ( firstMetricManager != null ) {
                 metricManagerContributor.merge( firstMetricManager, secondMetricManager );
               } else {
-                firstDataSourceField.getMetricManagerForType( typeName, true ).update( secondMetricManager );
+                mutableProfileField.putValueTypeMetrics( typeName, secondMetricManager );
               }
             }
           }
         }
       }
     }
-    for ( DataSourceField dataSourceField : update.getDataSourceFields() ) {
-      if ( !processedNames.contains( dataSourceField.getPhysicalName() ) ) {
-        existing.addDataSourceField( dataSourceField );
-      }
-    }
-  }
-
-  @Override public void clear( DataSourceFieldManager dataSourceFieldManager ) {
-    for ( MetricManagerContributor metricManagerContributor : metricManagerContributors ) {
-      for ( String typeName : metricManagerContributor.supportedTypes() ) {
-        for ( DataSourceMetricManager dsf : dataSourceFieldManager.getPathToMetricManagerForTypeMap(
-          typeName ).values() ) {
-          metricManagerContributor.clear( dsf );
-        }
+    for ( ProfileField profileField : from.getFields() ) {
+      if ( !processedNames.contains( profileField.getPhysicalName() ) ) {
+        into.addField( profileField );
       }
     }
   }

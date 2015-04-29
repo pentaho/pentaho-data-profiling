@@ -26,5 +26,11 @@ package com.pentaho.profiling.api;
  * Created by bryan on 9/29/14.
  */
 public interface ProfileStatusManager extends ProfileStatusReader {
-  public <T> T write( ProfileStatusWriteOperation<T> profileStatusWriteOperation );
+  <T> T write( ProfileStatusWriteOperation<T> profileStatusWriteOperation );
+
+  MutableProfileStatus startTransaction() throws IllegalTransactionException;
+
+  void commit( MutableProfileStatus mutableProfileStatus ) throws IllegalTransactionException;
+
+  void abort( MutableProfileStatus mutableProfileStatus ) throws IllegalTransactionException;
 }

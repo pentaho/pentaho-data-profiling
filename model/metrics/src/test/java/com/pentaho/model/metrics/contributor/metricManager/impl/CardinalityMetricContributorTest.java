@@ -23,27 +23,20 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
-import com.clearspring.analytics.stream.cardinality.ICardinality;
 import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
-import com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.HyperLogLogPlusHolder;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CardinalityMetricContributorTest extends MetricContributorBeanTester {
@@ -53,40 +46,41 @@ public class CardinalityMetricContributorTest extends MetricContributorBeanTeste
   }
 
   @Test public void testProcess() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager( new HashMap<String, Object>() );
-
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( "one" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a" );
+    dataSourceFieldValue.setPhysicalName( "a" );
 
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
-    assertEquals( Long.valueOf( 1L ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    cardinalityMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    cardinalityMetricContributor.setDerived( mutableProfileFieldValueType );
+    HyperLogLogPlusHolder hyperLogLogPlusHolder =
+      (HyperLogLogPlusHolder) mutableProfileFieldValueType
+        .getValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME );
+    assertEquals( 1L, hyperLogLogPlusHolder.getCardinality() );
 
     for ( int i = 0; i < 10; i++ ) {
       dataSourceFieldValue.setFieldValue( "two" );
-      cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+      cardinalityMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     }
-    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
-    assertEquals( Long.valueOf( 2L ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
+    cardinalityMetricContributor.setDerived( mutableProfileFieldValueType );
+    assertEquals( 2L, hyperLogLogPlusHolder.getCardinality() );
     dataSourceFieldValue.setFieldValue( "three" );
-    cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    cardinalityMetricContributor.setDerived( dataSourceMetricManager );
-    assertEquals( Long.valueOf( 3L ),
-      dataSourceMetricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.CARDINALITY ) );
+    cardinalityMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    cardinalityMetricContributor.setDerived( mutableProfileFieldValueType );
+    assertEquals( 3L, hyperLogLogPlusHolder.getCardinality() );
 
   }
 
   @Test( expected = ProfileActionException.class )
   public void testProcessException() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager( new HashMap<String, Object>() );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
     MetricManagerContributor mock = mock( MetricManagerContributor.class );
     when( mock.toString() ).thenThrow( new RuntimeException() );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( mock );
-    cardinalityMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    cardinalityMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
   }
 
   @Test
@@ -97,78 +91,84 @@ public class CardinalityMetricContributorTest extends MetricContributorBeanTeste
   @Test
   public void testMergeNoFirstOrSecond() throws MetricMergeException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    cardinalityMetricContributor.merge( into, from );
-    assertNull( into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
-    assertNull( into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType mutableProfileFieldValueType2 =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    cardinalityMetricContributor.merge( mutableProfileFieldValueType, mutableProfileFieldValueType2 );
+    assertNull( mutableProfileFieldValueType.getValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME ) );
   }
 
   @Test
   public void testMergeNoFirst() throws MetricMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    HyperLogLogPlusHolder iCardinality = mock( HyperLogLogPlusHolder.class );
-    when( iCardinality.cardinality() ).thenReturn( 5L );
-    from.setValue( iCardinality, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
+    for ( int i = 0; i < 5; i++ ) {
+      dataSourceFieldValue.setFieldValue( "" + i );
+      cardinalityMetricContributor.process( from, dataSourceFieldValue );
+    }
     cardinalityMetricContributor.merge( into, from );
     cardinalityMetricContributor.setDerived( into );
-    assertEquals( iCardinality, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
-    assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
+    assertEquals( 5L, ( (HyperLogLogPlusHolder) into.getValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME ) )
+      .getCardinality() );
   }
 
   @Test
   public void testMergeNoSecond() throws MetricMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    HyperLogLogPlusHolder iCardinality = mock( HyperLogLogPlusHolder.class );
-    when( iCardinality.cardinality() ).thenReturn( 5L );
-    into.setValue( iCardinality, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
+    for ( int i = 0; i < 5; i++ ) {
+      dataSourceFieldValue.setFieldValue( "" + i );
+      cardinalityMetricContributor.process( into, dataSourceFieldValue );
+    }
     cardinalityMetricContributor.merge( into, from );
     cardinalityMetricContributor.setDerived( into );
-    assertEquals( iCardinality, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
-    assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
+    assertEquals( 5L, ( (HyperLogLogPlusHolder) into.getValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME ) )
+      .getCardinality() );
   }
 
   @Test
   public void testMergeBoth() throws MetricMergeException, CardinalityMergeException, ProfileActionException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    HyperLogLogPlusHolder originalEstimator = mock( HyperLogLogPlusHolder.class );
-    HyperLogLogPlusHolder secondEstimator = mock( HyperLogLogPlusHolder.class );
-    HyperLogLogPlusHolder mergedEstimator = mock( HyperLogLogPlusHolder.class );
-    when( originalEstimator.merge( secondEstimator ) ).thenReturn( mergedEstimator );
-    when( mergedEstimator.cardinality() ).thenReturn( 5L );
-    into.setValue( originalEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
-    from.setValue( secondEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
+    for ( int i = 0; i < 5; i++ ) {
+      dataSourceFieldValue.setFieldValue( "" + i );
+      cardinalityMetricContributor.process( into, dataSourceFieldValue );
+      cardinalityMetricContributor.process( from, dataSourceFieldValue );
+    }
+    dataSourceFieldValue.setFieldValue( "6" );
+    cardinalityMetricContributor.process( from, dataSourceFieldValue );
     cardinalityMetricContributor.merge( into, from );
     cardinalityMetricContributor.setDerived( into );
-    verify( originalEstimator ).merge( secondEstimator );
-    assertEquals( mergedEstimator, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR ) );
-    assertEquals( 5L, into.getValueNoDefault( CardinalityMetricContributor.CARDINALITY_PATH ) );
-  }
-
-  @Test
-  public void testClear() {
-    DataSourceMetricManager into = mock( DataSourceMetricManager.class );
-    new CardinalityMetricContributor().clear( into );
-    verify( into ).clear( CardinalityMetricContributor.CLEAR_PATHS );
+    assertEquals( 6L, ( (HyperLogLogPlusHolder) into.getValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME ) )
+      .getCardinality() );
   }
 
   @Test( expected = MetricMergeException.class )
   public void testMetricMergeException() throws CardinalityMergeException, MetricMergeException {
     CardinalityMetricContributor cardinalityMetricContributor = new CardinalityMetricContributor();
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CardinalityMetricContributor.SIMPLE_NAME );
     HyperLogLogPlusHolder originalEstimator = mock( HyperLogLogPlusHolder.class );
     HyperLogLogPlusHolder secondEstimator = mock( HyperLogLogPlusHolder.class );
     when( originalEstimator.merge( secondEstimator ) ).thenThrow( new CardinalityMergeException( "fake" ) {
     } );
-    into.setValue( originalEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
-    from.setValue( secondEstimator, CardinalityMetricContributor.CARDINALITY_PATH_ESTIMATOR );
+    into.setValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME, originalEstimator );
+    from.setValueTypeMetrics( CardinalityMetricContributor.SIMPLE_NAME, secondEstimator );
     cardinalityMetricContributor.merge( into, from );
   }
 

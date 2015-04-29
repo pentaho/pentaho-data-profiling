@@ -142,6 +142,15 @@
   <bean id="jsonProvider" factory-ref="metricObjectMapperFactory" factory-method="createProvider"/>
   <bean id="objectMapper" factory-ref="metricObjectMapperFactory" factory-method="createMapper"/>
 
+  <service interface="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapper">
+    <bean class="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapperImpl">
+      <argument>
+        <value>com.pentaho.profiling.model.ProfilingServiceImpl</value>
+      </argument>
+      <argument ref="objectMapper"/>
+    </bean>
+  </service>
+
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
   <reference id="metricContributorServiceDelegate"
@@ -150,5 +159,6 @@
   <reference id="sampleProviderManager" interface="com.pentaho.profiling.api.sample.SampleProviderManager"/>
   <reference-list id="metricContributorBundles"
                   interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
-  <reference-list id="mapperDefinitions" interface="com.pentaho.profiling.api.mapper.MapperDefinition" availability="optional"/>
+  <reference-list id="mapperDefinitions" interface="com.pentaho.profiling.api.mapper.MapperDefinition"
+                  availability="optional"/>
 </blueprint>

@@ -22,7 +22,9 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.json.ObjectMapperFactory;
 import com.pentaho.profiling.api.metrics.MetricContributor;
@@ -32,7 +34,6 @@ import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
 import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,21 +137,19 @@ public class MetricContributorServiceImplTest {
     }
 
     @Override
-    public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+    public void process( MutableProfileFieldValueType dataSourceMetricManager,
+                         DataSourceFieldValue dataSourceFieldValue )
       throws ProfileActionException {
 
     }
 
-    @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-
-    }
-
-    @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+    @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
       throws MetricMergeException {
 
     }
 
-    @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
+    @Override public void setDerived( MutableProfileFieldValueType dataSourceMetricManager )
+      throws ProfileActionException {
 
     }
 

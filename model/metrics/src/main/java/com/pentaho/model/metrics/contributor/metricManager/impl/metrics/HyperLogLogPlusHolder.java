@@ -20,10 +20,11 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.model.metrics.contributor.metricManager.impl.cardinality;
+package com.pentaho.model.metrics.contributor.metricManager.impl.metrics;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
+import com.pentaho.profiling.api.ValueTypeMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,9 @@ import java.io.IOException;
 /**
  * Created by bryan on 3/11/15.
  */
-public class HyperLogLogPlusHolder implements Cloneable {
+public class HyperLogLogPlusHolder implements ValueTypeMetrics {
   private static final Logger LOGGER = LoggerFactory.getLogger( HyperLogLogPlusHolder.class );
+  private long cardinality;
   private HyperLogLogPlus hyperLogLogPlus;
 
   public HyperLogLogPlusHolder() {
@@ -42,6 +44,18 @@ public class HyperLogLogPlusHolder implements Cloneable {
 
   public HyperLogLogPlusHolder( HyperLogLogPlus hyperLogLogPlus ) {
     this.hyperLogLogPlus = hyperLogLogPlus;
+  }
+
+  public long getCardinality() {
+    return cardinality;
+  }
+
+  public void setCardinality( long cardinality ) {
+    this.cardinality = cardinality;
+  }
+
+  public synchronized void calculateCardinality() {
+    setCardinality( hyperLogLogPlus.cardinality() );
   }
 
   public synchronized byte[] getBytes() {
@@ -62,7 +76,8 @@ public class HyperLogLogPlusHolder implements Cloneable {
     }
   }
 
-  public synchronized HyperLogLogPlusHolder merge( HyperLogLogPlusHolder hyperLogLogPlusHolder ) throws CardinalityMergeException {
+  public synchronized HyperLogLogPlusHolder merge( HyperLogLogPlusHolder hyperLogLogPlusHolder )
+    throws CardinalityMergeException {
     return new HyperLogLogPlusHolder(
       (HyperLogLogPlus) hyperLogLogPlus.merge( hyperLogLogPlusHolder.hyperLogLogPlus ) );
   }
@@ -71,15 +86,12 @@ public class HyperLogLogPlusHolder implements Cloneable {
     hyperLogLogPlus.offer( o );
   }
 
-  public synchronized long cardinality() {
-    return hyperLogLogPlus.cardinality();
-  }
-
-  @Override protected synchronized Object clone() throws CloneNotSupportedException {
-    HyperLogLogPlusHolder result = (HyperLogLogPlusHolder) super.clone();
+  @Override public synchronized Object clone() {
+    HyperLogLogPlusHolder result = new HyperLogLogPlusHolder();
     if ( hyperLogLogPlus != null ) {
       result.setBytes( getBytes() );
     }
+    result.cardinality = cardinality;
     return result;
   }
 }

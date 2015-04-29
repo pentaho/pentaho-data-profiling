@@ -22,6 +22,9 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.IllegalTransactionException;
+import com.pentaho.profiling.api.MutableProfileField;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileStatusManager;
@@ -31,7 +34,6 @@ import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import com.pentaho.profiling.api.metrics.ProfileFieldProperties;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,9 +67,10 @@ public class StreamingProfileImplTest {
   private ExecutorService executorService;
 
   @Before
-  public void setup() {
+  public void setup() throws IllegalTransactionException {
     profileStatusManager = mock( ProfileStatusManager.class );
     mutableProfileStatus = mock( MutableProfileStatus.class );
+    when( profileStatusManager.startTransaction() ).thenReturn( mutableProfileStatus );
     when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
       @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
         return ( (ProfileStatusWriteOperation) invocation.getArguments()[ 0 ] ).write( mutableProfileStatus );
@@ -132,9 +135,18 @@ public class StreamingProfileImplTest {
     dataSourceFieldValue.setPhysicalName( "test-physical-name" );
     dataSourceFieldValue.setLogicalName( "test-logical-name" );
     dataSourceFieldValues.add( dataSourceFieldValue );
+    MutableProfileField mutableProfileField = mock(
+      MutableProfileField.class );
+    when( mutableProfileStatus
+      .getOrCreateField( dataSourceFieldValue.getPhysicalName(), dataSourceFieldValue.getLogicalName() ) )
+      .thenReturn( mutableProfileField );
+    MutableProfileFieldValueType mutableProfileFieldValueType = mock( MutableProfileFieldValueType.class );
+    when( mutableProfileField.getOrCreateValueTypeMetrics( dataSourceFieldValue.getFieldTypeName() ) )
+      .thenReturn( mutableProfileFieldValueType );
     streamingProfile.start( executorService );
     streamingProfile.processRecord( dataSourceFieldValues );
-    verify( metricContributor ).processFields( isA( DataSourceFieldManager.class ), eq( dataSourceFieldValues ) );
-    verify( metricContributor ).setDerived( isA( DataSourceFieldManager.class ) );
+    verify( metricContributor ).processFields( isA( MutableProfileStatus.class ), eq( dataSourceFieldValues ) );
+    verify( metricContributor ).setDerived( isA( MutableProfileStatus.class ) );
+    verify( mutableProfileFieldValueType ).incrementCount();
   }
 }

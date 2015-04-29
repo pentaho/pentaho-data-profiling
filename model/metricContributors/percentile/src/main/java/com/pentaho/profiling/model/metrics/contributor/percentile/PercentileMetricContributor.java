@@ -24,25 +24,20 @@ package com.pentaho.profiling.model.metrics.contributor.percentile;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.NVL;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.stats.Statistic;
-import org.codehaus.jackson.node.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,48 +52,17 @@ public class PercentileMetricContributor implements MetricManagerContributor {
   public static final String PERCENTILE_MEDIAN_LABEL = "PercentileMetricContributor.Median";
   public static final String PERCENTILE_THIRDQUARTILE_LABEL = "PercentileMetricContributor.75thPercentile";
 
-  public static final String[] PERCENTILE_PATH_25 =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_25" };
-  public static final String[] PERCENTILE_PATH_50 =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_50" };
-  public static final String[] PERCENTILE_PATH_75 =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_75" };
-  public static final String[] PERCENTILE_PATH_ESTIMATOR =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" };
-
-  public static final List<String[]> CLEAR_PATH = new ArrayList<String[]>(
-    Arrays.asList( PERCENTILE_PATH_25, PERCENTILE_PATH_50, PERCENTILE_PATH_75, PERCENTILE_PATH_ESTIMATOR ) );
-
-  public static final ProfileFieldProperty PERCENTILE_FIRSTQUARTILE = MetricContributorUtils
-    .createMetricProperty( KEY_PATH, PERCENTILE_FIRSTQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
-      Statistic.PERCENTILE + "_25" );
-  public static final ProfileFieldProperty PERCENTILE_MEDIAN = MetricContributorUtils
-    .createMetricProperty( KEY_PATH, PERCENTILE_MEDIAN_LABEL, MetricContributorUtils.STATISTICS,
-      Statistic.PERCENTILE + "_50" );
-  public static final ProfileFieldProperty PERCENTILE_THIRDQUARTILE = MetricContributorUtils
-    .createMetricProperty( KEY_PATH, PERCENTILE_THIRDQUARTILE_LABEL, MetricContributorUtils.STATISTICS,
-      Statistic.PERCENTILE + "_75" );
+  public static final String SIMPLE_NAME = PercentileMetricContributor.class.getSimpleName();
   private static final Logger LOGGER = LoggerFactory.getLogger( PercentileMetricContributor.class );
-
-  private final NVL nvl;
-
   private double compression = 50.0;
   private String name = PercentileMetricContributor.class.getSimpleName();
   private List<PercentileDefinition> percentileDefinitions = initPercentileDefinitions();
 
-  public PercentileMetricContributor() {
-    this( new NVL() );
-  }
-
-  public PercentileMetricContributor( NVL nvl ) {
-    this.nvl = nvl;
-  }
-
   private List<PercentileDefinition> initPercentileDefinitions() {
     List<PercentileDefinition> result = new ArrayList<PercentileDefinition>();
-    result.add( new PercentileDefinition( 0.25, PERCENTILE_FIRSTQUARTILE ) );
-    result.add( new PercentileDefinition( 0.5, PERCENTILE_MEDIAN ) );
-    result.add( new PercentileDefinition( 0.75, PERCENTILE_THIRDQUARTILE ) );
+    result.add( new PercentileDefinition( KEY_PATH, PERCENTILE_FIRSTQUARTILE_LABEL, 0.25 ) );
+    result.add( new PercentileDefinition( KEY_PATH, PERCENTILE_MEDIAN_LABEL, 0.5 ) );
+    result.add( new PercentileDefinition( KEY_PATH, PERCENTILE_THIRDQUARTILE_LABEL, 0.75 ) );
     return result;
   }
 
@@ -118,14 +82,12 @@ public class PercentileMetricContributor implements MetricManagerContributor {
     this.compression = compression;
   }
 
-  @Override public void setDerived( DataSourceMetricManager metricsForFieldType ) {
-    Long count = metricsForFieldType.<Number>getValueNoDefault( MetricContributorUtils.COUNT ).longValue();
-    TDigestHolder tDigestHolder = getEstimator( metricsForFieldType );
-    if ( count >= 5 ) {
+  @Override public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    if ( mutableProfileFieldValueType.getCount() >= 5 ) {
+      PercentileMetrics percentileMetrics = getOrCreatePercentileMetrics( mutableProfileFieldValueType );
       for ( PercentileDefinition percentileDefinition : percentileDefinitions ) {
-        metricsForFieldType
-          .setValue( tDigestHolder.quantile( percentileDefinition.getPercentile() ),
-            percentileDefinition.pathToProperty() );
+        double percentile = percentileDefinition.getPercentile();
+        percentileMetrics.setPercentile( percentile );
       }
     }
   }
@@ -144,115 +106,39 @@ public class PercentileMetricContributor implements MetricManagerContributor {
         Double.class.getCanonicalName() ) );
   }
 
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    dataSourceMetricManager.clear( CLEAR_PATH );
-  }
-
-  private TDigestHolder getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
-    Object estimatorObject = dataSourceMetricManager
-      .getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
-    if ( estimatorObject instanceof TDigestHolder ) {
-      return (TDigestHolder) estimatorObject;
-    } else if ( estimatorObject instanceof Map ) {
-      Object byteObject = ( (Map) estimatorObject ).get( "bytes" );
-      if ( byteObject instanceof String ) {
-        try {
-          byteObject = new TextNode( (String) byteObject ).getBinaryValue();
-        } catch ( IOException e ) {
-          LOGGER.error( e.getMessage(), e );
-        }
-      }
-      TDigestHolder tDigestHolder = new TDigestHolder();
-      tDigestHolder.setBytes( (byte[]) byteObject );
-      return tDigestHolder;
-    } else {
-      String className = estimatorObject == null ? "null" : estimatorObject.getClass().getCanonicalName();
-      LOGGER.warn( Statistic.PERCENTILE + "_estimator" + " was of type " + className );
+  private PercentileMetrics getOrCreatePercentileMetrics( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    PercentileMetrics result = (PercentileMetrics) mutableProfileFieldValueType.getValueTypeMetrics( SIMPLE_NAME );
+    if ( result == null ) {
+      result = new PercentileMetrics( new TDigest( compression ) );
+      mutableProfileFieldValueType.setValueTypeMetrics( SIMPLE_NAME, result );
     }
-    return null;
+    return result;
   }
 
   @Override
-  public void process( DataSourceMetricManager metricsForFieldType, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
-    double value = ( (Number) dataSourceFieldValue.getFieldValue() ).doubleValue();
-
-    TDigestHolder tDigestHolder =
-      metricsForFieldType.<TDigestHolder>getValueNoDefault( MetricContributorUtils.STATISTICS,
-        Statistic.PERCENTILE + "_estimator" );
-
-    if ( tDigestHolder == null ) {
-      tDigestHolder = new TDigestHolder( new TDigest( compression ) );
-      metricsForFieldType
-        .setValue( tDigestHolder, MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
-    }
-
-    tDigestHolder.add( value );
+    getOrCreatePercentileMetrics( mutableProfileFieldValueType )
+      .add( ( (Number) dataSourceFieldValue.getFieldValue() ).doubleValue() );
   }
 
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
     throws MetricMergeException {
-    TDigestHolder originalHolder = getEstimator( into );
-    TDigestHolder secondHolder = getEstimator( from );
-    if ( originalHolder == null ) {
-      originalHolder = secondHolder;
-    } else if ( secondHolder == null ) {
-      LOGGER.debug( "First field had estimator but second field didn't." );
+    PercentileMetrics secondHolder = (PercentileMetrics) from.getValueTypeMetrics( SIMPLE_NAME );
+    if ( secondHolder == null ) {
+      LOGGER.debug( "Second field didn't have estimator." );
     } else {
-      originalHolder.add( secondHolder );
+      getOrCreatePercentileMetrics( into ).add( secondHolder );
     }
-    into.setValue( originalHolder, MetricContributorUtils.STATISTICS, Statistic.PERCENTILE + "_estimator" );
   }
 
   public List<ProfileFieldProperty> profileFieldProperties() {
     List<ProfileFieldProperty> result = new ArrayList<ProfileFieldProperty>( percentileDefinitions.size() );
     for ( PercentileDefinition percentileDefinition : percentileDefinitions ) {
-      result.add( percentileDefinition.getProfileFieldProperty() );
+      result.add( new ProfileFieldProperty( percentileDefinition.getNamePath(), percentileDefinition.getNameKey(),
+        Arrays.asList( "types", SIMPLE_NAME, "standard", String.valueOf( percentileDefinition.getPercentile() ) ) ) );
     }
     return result;
   }
-
-  //OperatorWrap isn't helpful for autogenerated methods
-  //CHECKSTYLE:OperatorWrap:OFF
-  @Override
-  public boolean equals( Object o ) {
-    if ( this == o ) {
-      return true;
-    }
-    if ( o == null || getClass() != o.getClass() ) {
-      return false;
-    }
-
-    PercentileMetricContributor that = (PercentileMetricContributor) o;
-
-    if ( Double.compare( that.compression, compression ) != 0 ) {
-      return false;
-    }
-    if ( percentileDefinitions != null ? !percentileDefinitions.equals( that.percentileDefinitions ) :
-      that.percentileDefinitions != null ) {
-      return false;
-    }
-
-    return !( nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null );
-  }
-
-  @Override
-  public int hashCode() {
-    int result;
-    long temp;
-    result = nvl != null ? nvl.hashCode() : 0;
-    temp = Double.doubleToLongBits( compression );
-    result = 31 * result + (int) ( temp ^ ( temp >>> 32 ) );
-    result = 31 * result + ( percentileDefinitions != null ? percentileDefinitions.hashCode() : 0 );
-    return result;
-  }
-
-  @Override public String toString() {
-    return "PercentileMetricContributor{" +
-      "nvl=" + nvl +
-      ", compression=" + compression +
-      ", percentileDefinitions=" + percentileDefinitions +
-      '}';
-  }
-  //CHECKSTYLE:OperatorWrap:ON
 }

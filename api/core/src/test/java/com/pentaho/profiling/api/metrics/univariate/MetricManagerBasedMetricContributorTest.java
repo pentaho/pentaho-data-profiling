@@ -22,20 +22,23 @@
 
 package com.pentaho.profiling.api.metrics.univariate;
 
+import com.pentaho.profiling.api.MutableProfileField;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
+import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -49,91 +52,59 @@ import static org.mockito.Mockito.when;
  */
 public class MetricManagerBasedMetricContributorTest {
   private MetricManagerContributor metricManagerContributor;
+  private String testPhysicalName;
+  private String testLogicalName;
+  private MutableProfileStatus mutableProfileStatus;
+  private MutableProfileField mutableProfileField;
+  private MutableProfileFieldValueType mutableProfileFieldValueType;
+  private MetricManagerBasedMetricContributor metricManagerBasedMetricContributor;
 
   @Before
   public void setup() {
     metricManagerContributor = mock( MetricManagerContributor.class );
+    when( metricManagerContributor.supportedTypes() )
+      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
+    metricManagerBasedMetricContributor =
+      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
+
+    testPhysicalName = "testP";
+    testLogicalName = "testL";
+
+    mutableProfileStatus = mock( MutableProfileStatus.class );
+    mutableProfileField = mock( MutableProfileField.class );
+    when( mutableProfileField.getPhysicalName() ).thenReturn( testPhysicalName );
+
+    mutableProfileFieldValueType = mock( MutableProfileFieldValueType.class );
+    HashMap<String, MutableProfileField> mutableProfileFieldHashMap = new HashMap<String, MutableProfileField>();
+    mutableProfileFieldHashMap.put( testPhysicalName, mutableProfileField );
+    when( mutableProfileStatus.getMutableFieldMap() ).thenReturn( mutableProfileFieldHashMap );
+
+    when( mutableProfileStatus.getOrCreateField( testPhysicalName, testLogicalName ) )
+      .thenReturn( mutableProfileField );
+    when( mutableProfileField.getValueTypeMetrics( String.class.getCanonicalName() ) ).thenReturn(
+      mutableProfileFieldValueType );
   }
 
   @Test
   public void testProcess() throws ProfileActionException {
-    when( metricManagerContributor.supportedTypes() )
-      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
-
-    MetricManagerBasedMetricContributor metricManagerBasedMetricContributor =
-      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
-    DataSourceFieldManager manager = new DataSourceFieldManager();
-    DataSourceField dataSourceField = new DataSourceField();
-    String testLogicalName = "testL";
-    dataSourceField.setLogicalName( testLogicalName );
-    String testPhysicalName = "testP";
-    dataSourceField.setPhysicalName( testPhysicalName );
-    DataSourceMetricManager metricManagerForType =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-    metricManagerForType
-      .setValue( 1L, MetricContributorUtils.COUNT );
-    manager.addDataSourceField( dataSourceField );
     List<DataSourceFieldValue> values = new ArrayList<DataSourceFieldValue>();
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
     dataSourceFieldValue.setFieldValue( "test-val" );
     dataSourceFieldValue.setPhysicalName( testPhysicalName );
     dataSourceFieldValue.setLogicalName( testLogicalName );
     values.add( dataSourceFieldValue );
-    metricManagerBasedMetricContributor.processFields( manager, values );
-    verify( metricManagerContributor ).process( metricManagerForType, dataSourceFieldValue );
+    metricManagerBasedMetricContributor.processFields( mutableProfileStatus, values );
+    verify( metricManagerContributor ).process( mutableProfileFieldValueType, dataSourceFieldValue );
   }
 
   @Test
   public void testSetDerived() throws ProfileActionException {
-    when( metricManagerContributor.supportedTypes() )
-      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
-
-    MetricManagerBasedMetricContributor metricManagerBasedMetricContributor =
-      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
-    DataSourceFieldManager manager = new DataSourceFieldManager();
-    DataSourceField dataSourceField = new DataSourceField();
-    String testLogicalName = "testL";
-    dataSourceField.setLogicalName( testLogicalName );
-    String testPhysicalName = "testP";
-    dataSourceField.setPhysicalName( testPhysicalName );
-    DataSourceMetricManager metricManagerForType =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-    metricManagerForType
-      .setValue( 1L, MetricContributorUtils.COUNT );
-    manager.addDataSourceField( dataSourceField );
-    metricManagerBasedMetricContributor.setDerived( manager );
-    verify( metricManagerContributor ).setDerived( metricManagerForType );
-  }
-
-  @Test
-  public void testClear() throws ProfileActionException {
-    when( metricManagerContributor.supportedTypes() )
-      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
-
-    MetricManagerBasedMetricContributor metricManagerBasedMetricContributor =
-      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
-    DataSourceFieldManager manager = new DataSourceFieldManager();
-    DataSourceField dataSourceField = new DataSourceField();
-    String testLogicalName = "testL";
-    dataSourceField.setLogicalName( testLogicalName );
-    String testPhysicalName = "testP";
-    dataSourceField.setPhysicalName( testPhysicalName );
-    DataSourceMetricManager metricManagerForType =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-    metricManagerForType
-      .setValue( 1L, MetricContributorUtils.COUNT );
-    manager.addDataSourceField( dataSourceField );
-    metricManagerBasedMetricContributor.clear( manager );
-    verify( metricManagerContributor ).clear( metricManagerForType );
+    metricManagerBasedMetricContributor.setDerived( mutableProfileStatus );
+    verify( metricManagerContributor ).setDerived( mutableProfileFieldValueType );
   }
 
   @Test
   public void testGetProfileFieldProperties() throws ProfileActionException {
-    when( metricManagerContributor.supportedTypes() )
-      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
-
-    MetricManagerBasedMetricContributor metricManagerBasedMetricContributor =
-      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
     ProfileFieldProperty profileFieldProperty = mock( ProfileFieldProperty.class );
     when( metricManagerContributor.profileFieldProperties() ).thenReturn( Arrays.asList( profileFieldProperty ) );
     List<ProfileFieldProperty> profileFieldProperties = metricManagerBasedMetricContributor.getProfileFieldProperties();
@@ -143,31 +114,14 @@ public class MetricManagerBasedMetricContributorTest {
 
   @Test
   public void testMerge() throws MetricMergeException {
-    when( metricManagerContributor.supportedTypes() )
-      .thenReturn( new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) ) );
-    MetricManagerBasedMetricContributor metricManagerBasedMetricContributor =
-      new MetricManagerBasedMetricContributor( Arrays.asList( metricManagerContributor ) );
-    DataSourceFieldManager manager = new DataSourceFieldManager();
-    DataSourceField dataSourceField = new DataSourceField();
-    String testLogicalName = "testL";
-    dataSourceField.setLogicalName( testLogicalName );
-    String testPhysicalName = "testP";
-    dataSourceField.setPhysicalName( testPhysicalName );
-    DataSourceMetricManager metricManagerForType =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-    metricManagerForType.setValue( 1L, MetricContributorUtils.COUNT );
-    manager.addDataSourceField( dataSourceField );
+    ProfileStatus profileStatus = mock( ProfileStatus.class );
+    ProfileField profileField = mock( ProfileField.class );
+    ProfileFieldValueType profileFieldValueType = mock( ProfileFieldValueType.class );
 
+    when( profileStatus.getField( testPhysicalName ) ).thenReturn( profileField );
+    when( profileField.getType( String.class.getCanonicalName() ) ).thenReturn( profileFieldValueType );
 
-    DataSourceFieldManager manager2 = new DataSourceFieldManager();
-    DataSourceField dataSourceField2 = new DataSourceField();
-    dataSourceField2.setLogicalName( testLogicalName );
-    dataSourceField2.setPhysicalName( testPhysicalName );
-    DataSourceMetricManager metricManagerForType2 =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-    metricManagerForType2.setValue( 1L, MetricContributorUtils.COUNT );
-    manager2.addDataSourceField( dataSourceField );
-    metricManagerBasedMetricContributor.merge( manager, manager2 );
-    verify( metricManagerContributor ).merge( metricManagerForType, metricManagerForType2 );
+    metricManagerBasedMetricContributor.merge( mutableProfileStatus, profileStatus );
+    verify( metricManagerContributor ).merge( mutableProfileFieldValueType, profileFieldValueType );
   }
 }

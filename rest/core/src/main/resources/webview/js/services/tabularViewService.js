@@ -73,19 +73,10 @@ define(['./services'], function (appServices) {
         },
         buildItemSchema: function (cols) {
 
-          var valuesItemSchema = {
-                name: 'values',
+          var rootItemSchema = {
+                // name: ''
                 props: [],
                 propsByName: {}
-              },
-              rootItemSchema = {
-                // name: ''
-                props: [
-                  valuesItemSchema
-                ],
-                propsByName: {
-                  'values': valuesItemSchema
-                }
               };
 
           if (cols) {
@@ -99,7 +90,7 @@ define(['./services'], function (appServices) {
               col.stringifiedPath = JSON.stringify(propPath);
 
               // Index the col by its colPropPath steps.
-              tabularViewService.buildItemSchemaRecursive(valuesItemSchema, propPath, col);
+              tabularViewService.buildItemSchemaRecursive(rootItemSchema, propPath, col);
             });
           }
 

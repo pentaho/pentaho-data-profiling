@@ -35,6 +35,7 @@ import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.doc.rest.ErrorCode;
 import com.pentaho.profiling.api.doc.rest.Example;
 import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import com.pentaho.profiling.api.dto.ProfileStatusDTO;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.sample.SampleProviderManager;
 

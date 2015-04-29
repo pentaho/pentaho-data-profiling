@@ -24,6 +24,7 @@ package com.pentaho.model.metrics.contributor.metricManager.impl.cardinality;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.HyperLogLogPlusHolder;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -63,7 +64,8 @@ public class HyperLogLogPlusHolderTest {
     byte[] bytes = hyperLogLogPlus.getBytes();
     HyperLogLogPlusHolder holder = new HyperLogLogPlusHolder();
     holder.setBytes( bytes );
-    assertEquals( card, holder.cardinality() );
+    holder.calculateCardinality();
+    assertEquals( card, holder.getCardinality() );
   }
 
   @Test public void testIOExceptionGetBytes() throws IOException {
@@ -75,7 +77,7 @@ public class HyperLogLogPlusHolderTest {
 
   @Test( expected = NullPointerException.class ) public void testIOExceptionSetBytes() {
     HyperLogLogPlusHolder holder = new HyperLogLogPlusHolder();
-    holder.setBytes( new byte[0] );
+    holder.setBytes( new byte[ 0 ] );
     holder.getBytes();
   }
 
@@ -85,12 +87,10 @@ public class HyperLogLogPlusHolderTest {
     HyperLogLogPlusHolder holder = new HyperLogLogPlusHolder( hyperLogLogPlus );
     holder.offer( "String1" );
     holder.offer( "String2" );
-    long card = holder.cardinality();
+    holder.calculateCardinality();
+    long card = holder.getCardinality();
 
     HyperLogLogPlusHolder cloned = (HyperLogLogPlusHolder) holder.clone();
-    assertEquals( card, cloned.cardinality() );
-
-    holder = new HyperLogLogPlusHolder(  );
-    cloned = (HyperLogLogPlusHolder) holder.clone();
+    assertEquals( card, cloned.getCardinality() );
   }
 }

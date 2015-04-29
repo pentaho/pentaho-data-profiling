@@ -8,15 +8,28 @@
         <value type="java.lang.Class">
           com.pentaho.profiling.model.metrics.contributor.percentile.PercentileMetricContributor
         </value>
-        <value type="java.lang.Class">
-          com.pentaho.profiling.model.metrics.contributor.percentile.TDigestHolder
-        </value>
-        <value type="java.lang.Class">
-          com.pentaho.profiling.model.metrics.contributor.percentile.PercentileDefinition
-        </value>
       </list>
     </property>
   </bean>
 
+
+  <bean id="tDigestHolder" class="com.pentaho.profiling.api.json.HasFilterImpl" scope="singleton">
+    <argument>
+      <value type="java.lang.Class">
+        com.pentaho.profiling.model.metrics.contributor.percentile.PercentileMetrics
+      </value>
+    </argument>
+    <argument>
+      <bean class="org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter"
+            factory-method="serializeAllExcept">
+        <argument>
+          <array value-type="java.lang.String">
+            <value>bytes</value>
+          </array>
+        </argument>
+      </bean>
+    </argument>
+  </bean>
+  <service interface="com.pentaho.profiling.api.json.HasFilter" ref="tDigestHolder"/>
   <service interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" ref="metricContributorBundle"/>
 </blueprint>

@@ -22,18 +22,20 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bryan on 9/29/14.
@@ -41,7 +43,7 @@ import java.util.List;
 public class ProfileStatusImpl implements ProfileStatus {
   protected ProfileState state;
   protected String name;
-  protected List<ProfilingField> fields;
+  protected Map<String, ProfileField> fields;
   protected Long totalEntities;
   protected List<ProfileStatusMessage> statusMessages;
   protected ProfileActionExceptionWrapper operationError;
@@ -65,16 +67,19 @@ public class ProfileStatusImpl implements ProfileStatus {
       profileStatus.getProfileConfiguration(), profileStatus.getSequenceNumber() + 1, profileStatus.getName() );
   }
 
-  public ProfileStatusImpl( ProfileState profileState, List<ProfilingField> fields, Long totalEntities,
+  public ProfileStatusImpl( ProfileState profileState, List<ProfileField> fields, Long totalEntities,
                             List<ProfileStatusMessage> statusMessages,
                             ProfileActionExceptionWrapper operationError,
                             List<ProfileFieldProperty> profileFieldProperties, String id,
                             ProfileConfiguration profileConfiguration, long sequenceNumber, String name ) {
     this.state = profileState;
     if ( fields == null ) {
-      fields = new ArrayList<ProfilingField>();
+      fields = new ArrayList<ProfileField>();
     }
-    this.fields = Collections.unmodifiableList( new ArrayList<ProfilingField>( fields ) );
+    this.fields = new HashMap<String, ProfileField>();
+    for ( ProfileField field : fields ) {
+      this.fields.put( field.getPhysicalName(), (ProfileField) field.clone() );
+    }
     this.totalEntities = totalEntities;
     this.statusMessages = statusMessages;
     this.operationError = operationError;
@@ -104,8 +109,12 @@ public class ProfileStatusImpl implements ProfileStatus {
   }
 
   @Override @XmlElement
-  public List<ProfilingField> getFields() {
-    return fields;
+  public List<ProfileField> getFields() {
+    return new ArrayList<ProfileField>( fields.values() );
+  }
+
+  @Override public ProfileField getField( String physicalName ) {
+    return fields.get( physicalName );
   }
 
   @Override @XmlElement

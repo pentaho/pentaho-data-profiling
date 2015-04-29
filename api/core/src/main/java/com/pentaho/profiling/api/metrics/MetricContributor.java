@@ -22,9 +22,10 @@
 
 package com.pentaho.profiling.api.metrics;
 
+import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
@@ -43,7 +44,8 @@ public interface MetricContributor {
    * @param values  the actual data value provided by a data source (along with any relevant metadata)
    * @throws ProfileActionException if a problem occurs
    */
-  void processFields( DataSourceFieldManager manager, List<DataSourceFieldValue> values ) throws ProfileActionException;
+  void processFields( MutableProfileStatus mutableProfileStatus, List<DataSourceFieldValue> values )
+    throws ProfileActionException;
 
   /**
    * Sets the derived statistics on a field (useful when they are expensive as in HyperLogLogPlus
@@ -51,7 +53,7 @@ public interface MetricContributor {
    * @param dataSourceFieldManager
    * @throws ProfileActionException
    */
-  void setDerived( DataSourceFieldManager dataSourceFieldManager ) throws ProfileActionException;
+  void setDerived( MutableProfileStatus mutableProfileStatus ) throws ProfileActionException;
 
   /**
    * Merge a new manager's values in
@@ -59,14 +61,7 @@ public interface MetricContributor {
    * @param into the existing manager
    * @param from an update to merge in
    */
-  void merge( DataSourceFieldManager into, DataSourceFieldManager from ) throws MetricMergeException;
-
-  /**
-   * Clear all metric values handled by this contributor from the DataSourceFieldManager
-   *
-   * @param dataSourceFieldManager
-   */
-  void clear( DataSourceFieldManager dataSourceFieldManager );
+  void merge( MutableProfileStatus into, ProfileStatus from ) throws MetricMergeException;
 
   /**
    * Get a list of profile field properties for the metrics computed by this contributor

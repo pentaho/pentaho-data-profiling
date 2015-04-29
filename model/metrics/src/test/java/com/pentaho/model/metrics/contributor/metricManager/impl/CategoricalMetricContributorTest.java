@@ -23,18 +23,13 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.ProfilingField;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.CategoricalHolder;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +38,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by mhall on 28/01/15.
@@ -56,48 +49,39 @@ public class CategoricalMetricContributorTest extends MetricContributorBeanTeste
   }
 
   @Test public void testProcessFieldCategorical() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager( new HashMap<String, Object>() );
-
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( "A" );
-    dataSourceFieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a.b" );
-
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
-    categoricalMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    categoricalMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( "B" );
-    categoricalMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    categoricalMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( "B" );
-    categoricalMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    Map<String, Object> categoricalMap = dataSourceMetricManager.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
-    assertNotNull( categoricalMap );
-    assertTrue( (Boolean) categoricalMap.get( MetricContributorUtils.CATEGORICAL ) );
-    Map<String, Integer> categories = (Map<String, Integer>) categoricalMap.get( MetricContributorUtils.CATEGORIES );
+    categoricalMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    CategoricalHolder categoricalHolder =
+      (CategoricalHolder) mutableProfileFieldValueType.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME );
+    assertNotNull( categoricalHolder );
+    assertTrue( categoricalHolder.getCategorical() );
+    Map<String, Long> categories = categoricalHolder.getCategories();
     assertNotNull( categories );
-    assertEquals( Integer.valueOf( 1 ), categories.get( "A" ) );
-    assertEquals( Integer.valueOf( 2 ), categories.get( "B" ) );
+    assertEquals( Long.valueOf( 1 ), categories.get( "A" ) );
+    assertEquals( Long.valueOf( 2 ), categories.get( "B" ) );
   }
 
   @Test public void testProcessFieldNotCategorical() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceField dataSourceField = new DataSourceField( new HashMap<String, Object>() );
-    dataSourceField.setPhysicalName( "a.b" );
-    dataSourceFieldManager.addDataSourceField( dataSourceField );
-    DataSourceMetricManager
-      dataSourceMetricManager =
-      dataSourceField.getMetricManagerForType( String.class.getCanonicalName(), true );
-
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
-    dataSourceFieldValue.setFieldMetatdata( DataSourceField.PHYSICAL_NAME, "a.b" );
-
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     for ( int i = 0; i < 102; i++ ) {
       dataSourceFieldValue.setFieldValue( "" + i );
-      categoricalMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+      categoricalMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     }
-    Map<String, Object> categoricalMap = dataSourceMetricManager.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
-    assertNotNull( categoricalMap );
-    assertFalse( (Boolean) categoricalMap.get( MetricContributorUtils.CATEGORICAL ) );
-    Map<String, Integer> categories = (Map<String, Integer>) categoricalMap.get( MetricContributorUtils.CATEGORIES );
-    assertNull( categories );
+    CategoricalHolder categoricalHolder =
+      (CategoricalHolder) mutableProfileFieldValueType.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME );
+    assertNotNull( categoricalHolder );
+    assertFalse( categoricalHolder.getCategorical() );
+    assertNull( categoricalHolder.getCategories() );
   }
 
   @Test public void testGetProfileFieldProperties() {
@@ -110,138 +94,148 @@ public class CategoricalMetricContributorTest extends MetricContributorBeanTeste
   }
 
   @Test
-  public void testClear() {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    new CategoricalMetricContributor().clear( dataSourceMetricManager );
-    verify( dataSourceMetricManager ).clear( CategoricalMetricContributor.CLEAR_PATHS );
-  }
-
-  @Test
   public void testMergeNoFirstOrSecond() throws MetricMergeException {
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     categoricalMetricContributor.merge( into, from );
-    assertNull( into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
+    assertNull( into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME ) );
   }
 
   @Test
-  public void testMergeNoFirst() throws MetricMergeException {
-    Map<String, Object> categoricalMap = mock( Map.class );
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    from.setValue( categoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+  public void testMergeNoFirst() throws MetricMergeException, ProfileActionException {
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
+    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
+    for ( int i = 0; i < 5; i++ ) {
+      dataSourceFieldValue.setFieldValue( "" + i );
+      categoricalMetricContributor.process( from, dataSourceFieldValue );
+    }
     categoricalMetricContributor.merge( into, from );
-    assertEquals( categoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
+    assertEquals( 5,
+      ( (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME ) ).getCategories()
+        .size() );
   }
 
   @Test
-  public void testMergeNoSecond() throws MetricMergeException {
-    Map<String, Object> categoricalMap = mock( Map.class );
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    into.setValue( categoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+  public void testMergeNoSecond() throws MetricMergeException, ProfileActionException {
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
+    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue();
+    for ( int i = 0; i < 5; i++ ) {
+      dataSourceFieldValue.setFieldValue( "" + i );
+      categoricalMetricContributor.process( into, dataSourceFieldValue );
+    }
     categoricalMetricContributor.merge( into, from );
-    assertEquals( categoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
+    assertEquals( 5,
+      ( (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME ) ).getCategories()
+        .size() );
   }
 
   @Test
   public void testMergeFirstNotCategorical() throws MetricMergeException {
-    Map<String, Object> firstCategoricalMap = new HashMap<String, Object>();
-    Map<String, Object> secondCategoricalMap = new HashMap<String, Object>();
-    HashMap<String, Integer> categories = new HashMap<String, Integer>();
+    CategoricalHolder firstHolder = new CategoricalHolder( 100, null );
+    CategoricalHolder secondHolder = new CategoricalHolder( 100, new HashMap<String, Long>() );
 
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORIES, categories );
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-    from.setValue( secondCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+
+    into.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, firstHolder );
+    from.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, secondHolder );
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     categoricalMetricContributor.merge( into, from );
-    assertEquals( firstCategoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
+    assertFalse(
+      ( (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME ) ).getCategorical() );
   }
 
   @Test
   public void testMergeSecondNotCategorical() throws MetricMergeException {
-    Map<String, Object> firstCategoricalMap = new HashMap<String, Object>();
-    Map<String, Object> secondCategoricalMap = new HashMap<String, Object>();
-    HashMap<String, Integer> categories = new HashMap<String, Integer>();
+    CategoricalHolder firstHolder = new CategoricalHolder( 100, new HashMap<String, Long>() );
+    CategoricalHolder secondHolder = new CategoricalHolder( 100, null );
 
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORIES, categories );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
 
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-    from.setValue( secondCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+    into.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, firstHolder );
+    from.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, secondHolder );
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     categoricalMetricContributor.merge( into, from );
-    assertEquals( secondCategoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
+    assertFalse(
+      ( (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME ) ).getCategorical() );
   }
 
   @Test
   public void testMergeBothCategoricalAndTotalBelow100() throws MetricMergeException {
-    Map<String, Object> firstCategoricalMap = new HashMap<String, Object>();
-    Map<String, Object> secondCategoricalMap = new HashMap<String, Object>();
-    HashMap<String, Integer> firstCategories = new HashMap<String, Integer>();
-    HashMap<String, Integer> secondCategories = new HashMap<String, Integer>();
+    HashMap<String, Long> firstCategories = new HashMap<String, Long>();
+    HashMap<String, Long> secondCategories = new HashMap<String, Long>();
 
     for ( int i = 0; i < 99; i++ ) {
-      firstCategories.put( "" + i, i );
-      secondCategories.put( "" + i, 2 * i );
+      firstCategories.put( "" + i, Long.valueOf( i ) );
+      secondCategories.put( "" + i, Long.valueOf( 2 * i ) );
     }
-    secondCategories.put( "99", 99 * 2 );
+    secondCategories.put( "99", Long.valueOf( 99 * 2 ) );
 
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORIES, firstCategories );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORIES, secondCategories );
+    CategoricalHolder firstHolder = new CategoricalHolder( 100, firstCategories );
+    CategoricalHolder secondHolder = new CategoricalHolder( 100, secondCategories );
 
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-    from.setValue( secondCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+
+    into.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, firstHolder );
+    from.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, secondHolder );
+
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     categoricalMetricContributor.merge( into, from );
-    assertEquals( firstCategoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
-
+    CategoricalHolder firstMetrics =
+      (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME );
+    Map<String, Long> categories = firstMetrics.getCategories();
     for ( int i = 0; i < 99; i++ ) {
-      assertEquals( Integer.valueOf( 3 * i ), firstCategories.get( "" + i ) );
+      assertEquals( Long.valueOf( 3 * i ), categories.get( "" + i ) );
     }
-    assertEquals( Integer.valueOf( 198 ), firstCategories.get( "99" ) );
+    assertEquals( Long.valueOf( 198 ), categories.get( "99" ) );
   }
 
 
   @Test
   public void testMergeBothCategoricalAndTotalAbove100() throws MetricMergeException {
-    Map<String, Object> firstCategoricalMap = new HashMap<String, Object>();
-    Map<String, Object> secondCategoricalMap = new HashMap<String, Object>();
-    HashMap<String, Integer> firstCategories = new HashMap<String, Integer>();
-    HashMap<String, Integer> secondCategories = new HashMap<String, Integer>();
+    HashMap<String, Long> firstCategories = new HashMap<String, Long>();
+    HashMap<String, Long> secondCategories = new HashMap<String, Long>();
 
     for ( int i = 0; i < 75; i++ ) {
-      firstCategories.put( "" + i, i );
-      secondCategories.put( "" + ( 2 * i ), i );
+      firstCategories.put( "" + i, Long.valueOf( i ) );
+      secondCategories.put( "" + ( 2 * i ), Long.valueOf( i ) );
     }
 
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    firstCategoricalMap.put( MetricContributorUtils.CATEGORIES, firstCategories );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    secondCategoricalMap.put( MetricContributorUtils.CATEGORIES, secondCategories );
 
-    DataSourceMetricManager into = new DataSourceMetricManager( new HashMap<String, Object>() );
-    DataSourceMetricManager from = new DataSourceMetricManager( new HashMap<String, Object>() );
-    into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-    from.setValue( secondCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
+    CategoricalHolder firstHolder = new CategoricalHolder( 100, firstCategories );
+    CategoricalHolder secondHolder = new CategoricalHolder( 100, secondCategories );
+
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils.createMockMutableProfileFieldValueType( CategoricalMetricContributor.SIMPLE_NAME );
+
+    into.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, firstHolder );
+    from.setValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME, secondHolder );
+
     CategoricalMetricContributor categoricalMetricContributor = new CategoricalMetricContributor();
     categoricalMetricContributor.merge( into, from );
-    assertEquals( firstCategoricalMap, into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION ) );
-    assertFalse( (Boolean) firstCategoricalMap.get( MetricContributorUtils.CATEGORICAL ) );
-    assertNull( firstCategoricalMap.get( MetricContributorUtils.CATEGORIES ) );
+    CategoricalHolder firstMetrics =
+      (CategoricalHolder) into.getValueTypeMetrics( CategoricalMetricContributor.SIMPLE_NAME );
+    assertFalse( firstMetrics.getCategorical() );
   }
 }

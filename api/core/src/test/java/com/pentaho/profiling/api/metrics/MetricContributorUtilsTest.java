@@ -22,9 +22,7 @@
 
 package com.pentaho.profiling.api.metrics;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -49,9 +47,9 @@ public class MetricContributorUtilsTest {
     assertNotNull( metricProperty );
     assertEquals( keyPath, metricProperty.getNamePath() );
     assertEquals( nameKey, metricProperty.getNameKey() );
-    assertEquals( 3, metricProperty.getPathToProperty().size() );
-    assertEquals( DataSourceField.TYPE, metricProperty.getPathToProperty().get( 0 ) );
-    assertEquals( path1, metricProperty.getPathToProperty().get( 1 ) );
-    assertEquals( path2, metricProperty.getPathToProperty().get( 2 ) );
+    assertEquals( 4, metricProperty.getPathToProperty().size() );
+    assertEquals( "types", metricProperty.getPathToProperty().get( 0 ) );
+    assertEquals( path1, metricProperty.getPathToProperty().get( 2 ) );
+    assertEquals( path2, metricProperty.getPathToProperty().get( 3 ) );
   }
 }

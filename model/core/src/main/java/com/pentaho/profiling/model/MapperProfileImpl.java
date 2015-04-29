@@ -32,9 +32,12 @@ import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.mapper.Mapper;
+import com.pentaho.profiling.api.performance.Collector;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
@@ -67,6 +70,8 @@ public class MapperProfileImpl implements Profile {
     streamingProfile.start( executorService );
     executorService.submit( new Runnable() {
       @Override public void run() {
+        Collector collector = new Collector( Thread.currentThread() );
+        collector.start();
         try {
           mapper.run();
           profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
@@ -92,6 +97,13 @@ public class MapperProfileImpl implements Profile {
             }
           } );
           LOGGER.error( e.getMessage(), e );
+        } finally {
+          try {
+            new ObjectMapper()
+              .writeValue( new File( "/tmp/" + profileStatusManager.getId() ), collector.getRootNode() );
+          } catch ( Throwable e ) {
+            LOGGER.warn( e.getMessage(), e );
+          }
         }
       }
     } );

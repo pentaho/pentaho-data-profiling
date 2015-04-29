@@ -22,12 +22,15 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.IllegalTransactionException;
+import com.pentaho.profiling.api.MutableProfileField;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import com.pentaho.profiling.api.StreamingCommitStrategy;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.mapper.HasStatusMessages;
@@ -35,11 +38,8 @@ import com.pentaho.profiling.api.metrics.MetricContributor;
 import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import com.pentaho.profiling.api.metrics.ProfileFieldProperties;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.streaming.LinearTimeCommitStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by bryan on 3/23/15.
@@ -56,20 +55,22 @@ import java.util.concurrent.atomic.AtomicLong;
 public class StreamingProfileImpl implements StreamingProfile {
   private static final Logger LOGGER = LoggerFactory.getLogger( StreamingProfileImpl.class );
   private final AtomicBoolean isRunning = new AtomicBoolean( false );
-  private final AtomicBoolean refreshQueued = new AtomicBoolean( false );
-  private final AtomicLong lastRefresh = new AtomicLong( 0L );
   private final ProfileStatusManager profileStatusManager;
   private final List<MetricContributor> metricContributorList;
-  private final DataSourceFieldManager dataSourceFieldManager;
+  private StreamingCommitStrategy streamingCommitStrategy;
+  private long currentRefresh;
+  private long nextRefresh;
+  private boolean isTimestamp;
   private ExecutorService executorService;
   private HasStatusMessages hasStatusMessages;
+  private MutableProfileStatus transaction;
 
   public StreamingProfileImpl( ProfileStatusManager profileStatusManager,
                                MetricContributorsFactory metricContributorsFactory,
                                MetricContributors metricContributors ) {
     this.profileStatusManager = profileStatusManager;
     this.metricContributorList = metricContributorsFactory.construct( metricContributors );
-    dataSourceFieldManager = new DataSourceFieldManager();
+    setCommitStrategy( new LinearTimeCommitStrategy( 1000 ) );
     profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
       @Override public Void write( MutableProfileStatus profileStatus ) {
         List<ProfileFieldProperty> intrinsicProperties = Arrays.asList( ProfileFieldProperties.LOGICAL_NAME,
@@ -82,74 +83,76 @@ public class StreamingProfileImpl implements StreamingProfile {
           }
         }
         profileStatus.setProfileFieldProperties( profileFieldProperties );
+        profileStatus.setTotalEntities( 0L );
         return null;
       }
     } );
   }
 
-  @Override public synchronized void processRecord( List<DataSourceFieldValue> dataSourceFieldValues )
+  @Override public void setCommitStrategy( StreamingCommitStrategy streamingCommitStrategy ) {
+    this.streamingCommitStrategy = streamingCommitStrategy;
+    currentRefresh = 0L;
+    nextRefresh = streamingCommitStrategy.getNextCommit( currentRefresh );
+    this.isTimestamp = streamingCommitStrategy.isTimestamp();
+  }
+
+  @Override public synchronized void processRecord( final List<DataSourceFieldValue> dataSourceFieldValues )
     throws ProfileActionException {
-    for ( DataSourceFieldValue dataSourceFieldValue : dataSourceFieldValues ) {
-      DataSourceField dataSourceField =
-        dataSourceFieldManager.getPathToDataSourceFieldMap().get( dataSourceFieldValue.getPhysicalName() );
-      if ( dataSourceField == null ) {
-        dataSourceField = new DataSourceField();
-        dataSourceField.setLogicalName( dataSourceFieldValue.getLogicalName() );
-        dataSourceField.setPhysicalName( dataSourceFieldValue.getPhysicalName() );
-        dataSourceFieldManager.addDataSourceField( dataSourceField );
+    if ( isRunning.get() ) {
+      Long totalEntities = transaction.getTotalEntities() + 1;
+      transaction.setTotalEntities( totalEntities );
+      for ( DataSourceFieldValue dataSourceFieldValue : dataSourceFieldValues ) {
+        MutableProfileField field = transaction
+          .getOrCreateField( dataSourceFieldValue.getPhysicalName(), dataSourceFieldValue.getLogicalName() );
+        field.getOrCreateValueTypeMetrics( dataSourceFieldValue.getFieldTypeName() ).incrementCount();
       }
-      DataSourceMetricManager fieldType =
-        dataSourceField.getMetricManagerForType( dataSourceFieldValue.getFieldTypeName(), true );
-      fieldType.setValue( fieldType.getValue( 0L, Statistic.COUNT ).longValue() + 1L, Statistic.COUNT );
+      for ( MetricContributor metricContributor : metricContributorList ) {
+        metricContributor.processFields( transaction, dataSourceFieldValues );
+      }
+      try {
+        if ( isTimestamp ) {
+          long currentTimeMillis = System.currentTimeMillis();
+          if ( currentTimeMillis >= nextRefresh ) {
+            currentRefresh = currentTimeMillis;
+            nextRefresh = streamingCommitStrategy.getNextCommit( currentRefresh );
+            doRefresh();
+          }
+        } else {
+          if ( totalEntities >= nextRefresh ) {
+            currentRefresh = totalEntities;
+            nextRefresh = streamingCommitStrategy.getNextCommit( currentRefresh );
+            doRefresh();
+          }
+        }
+      } catch ( IllegalTransactionException e ) {
+        throw new ProfileActionException( null, e );
+      }
+    } else {
+      throw new ProfileActionException( null, null );
     }
-    for ( MetricContributor metricContributor : metricContributorList ) {
-      metricContributor.processFields( dataSourceFieldManager, dataSourceFieldValues );
-    }
-    queueRefresh();
   }
 
   @Override public void setHasStatusMessages( HasStatusMessages hasStatusMessages ) {
     this.hasStatusMessages = hasStatusMessages;
   }
 
-  private synchronized void doRefresh() {
-    lastRefresh.set( System.currentTimeMillis() );
-    refreshQueued.set( false );
+  private void doRefresh() throws IllegalTransactionException {
+    HasStatusMessages hasStatusMessages = StreamingProfileImpl.this.hasStatusMessages;
+    if ( hasStatusMessages != null ) {
+      transaction.setStatusMessages( hasStatusMessages.getStatusMessages() );
+    }
     for ( MetricContributor metricContributor : metricContributorList ) {
       try {
-        metricContributor.setDerived( dataSourceFieldManager );
-      } catch ( ProfileActionException e ) {
+        metricContributor.setDerived( transaction );
+      } catch ( Exception e ) {
         LOGGER.error( e.getMessage(), e );
       }
     }
-    profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
-      @Override public Void write( MutableProfileStatus profileStatus ) {
-        HasStatusMessages hasStatusMessages = StreamingProfileImpl.this.hasStatusMessages;
-        if ( hasStatusMessages != null ) {
-          profileStatus.setStatusMessages( hasStatusMessages.getStatusMessages() );
-        }
-        profileStatus.setFields( dataSourceFieldManager.getProfilingFields() );
-        return null;
-      }
-    } );
-
-  }
-
-  private void queueRefresh() {
-    if ( isRunning.get() && executorService != null ) {
-      if ( !refreshQueued.getAndSet( true ) ) {
-        executorService.submit( new Runnable() {
-          @Override public void run() {
-            try {
-              Thread.sleep( Math.max( 0L, lastRefresh.get() + 1000L - System.currentTimeMillis() ) );
-            } catch ( InterruptedException e ) {
-              refreshQueued.set( false );
-              return;
-            }
-            doRefresh();
-          }
-        } );
-      }
+    profileStatusManager.commit( transaction );
+    if ( isRunning() ) {
+      transaction = profileStatusManager.startTransaction();
+    } else {
+      transaction = null;
     }
   }
 
@@ -163,11 +166,21 @@ public class StreamingProfileImpl implements StreamingProfile {
 
   @Override public void start( ExecutorService executorService ) {
     this.executorService = executorService;
+    try {
+      transaction = profileStatusManager.startTransaction();
+    } catch ( IllegalTransactionException e ) {
+      LOGGER.error( "Unable to create transaction", e );
+    }
     isRunning.set( true );
   }
 
   @Override public void stop() {
     isRunning.set( false );
+    try {
+      doRefresh();
+    } catch ( IllegalTransactionException e ) {
+      LOGGER.error( e.getMessage(), e );
+    }
     profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
       @Override public Void write( MutableProfileStatus profileStatus ) {
         profileStatus.setProfileState( ProfileState.STOPPED );
