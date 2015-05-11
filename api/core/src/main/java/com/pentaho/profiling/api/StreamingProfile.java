@@ -36,5 +36,7 @@ public interface StreamingProfile extends Profile {
 
   void processRecord( List<DataSourceFieldValue> dataSourceFieldValues ) throws ProfileActionException;
 
+  void setCommitStrategy( StreamingCommitStrategy strategy );
+
   void setHasStatusMessages( HasStatusMessages hasStatusMessages );
 }

@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileField;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
@@ -29,7 +30,6 @@ import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.util.ObjectHolder;
@@ -42,6 +42,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by bryan on 9/30/14.
@@ -92,18 +93,20 @@ public class ProfileStatusManagerImplTest {
     ProfileStatusManagerImpl profileStatusManager =
       new ProfileStatusManagerImpl( id, name, profileConfiguration, profilingService );
 
-    final List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
-    ProfilingField mockField = mock( ProfilingField.class );
+    final List<MutableProfileField> fieldList = new ArrayList<MutableProfileField>();
+    final MutableProfileField mockField = mock( MutableProfileField.class );
+    when( mockField.getPhysicalName() ).thenReturn( "testPname" );
+    when( mockField.clone() ).thenReturn( mockField );
     fieldList.add( mockField );
 
     assertEquals( id, profileStatusManager.write( new ProfileStatusWriteOperation<Object>() {
       @Override public Object write( MutableProfileStatus profileStatus ) {
-        profileStatus.setFields( fieldList );
+        profileStatus.getMutableFieldMap().put( "testPname", mockField );
         return profileStatus.getId();
       }
     } ) );
     assertEquals( 1, profileStatusManager.getFields().size() );
-    assertEquals( mockField, profileStatusManager.getFields().get( 0 ) );
+    assertEquals( mockField, profileStatusManager.getField( "testPname" ) );
   }
 
   @Test

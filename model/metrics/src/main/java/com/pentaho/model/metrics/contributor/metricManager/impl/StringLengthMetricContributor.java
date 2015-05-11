@@ -22,12 +22,13 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
+import com.pentaho.profiling.api.action.ProfileActionException;
+import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.action.ProfileActionException;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,23 +54,21 @@ public class StringLengthMetricContributor extends BaseMetricManagerContributor 
   }
 
   @Override
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
     numericMetricManagerContributor
-      .processValue( dataSourceMetricManager, ( (String) dataSourceFieldValue.getFieldValue() ).length() );
+      .processValue( mutableProfileFieldValueType, ( (String) dataSourceFieldValue.getFieldValue() ).length() );
   }
 
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
     throws MetricMergeException {
     numericMetricManagerContributor.merge( into, from );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-    numericMetricManagerContributor.setDerived( dataSourceMetricManager );
-  }
-
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    numericMetricManagerContributor.clear( dataSourceMetricManager );
+  @Override public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType )
+    throws ProfileActionException {
+    numericMetricManagerContributor.setDerived( mutableProfileFieldValueType );
   }
 
   @Override public List<ProfileFieldProperty> profileFieldProperties() {

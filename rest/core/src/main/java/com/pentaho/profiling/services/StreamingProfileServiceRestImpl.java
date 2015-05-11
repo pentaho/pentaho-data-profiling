@@ -165,8 +165,8 @@ public class StreamingProfileServiceRestImpl implements StreamingProfileService 
     }
     JsonFactory jsonFactory = objectMapper.getJsonFactory();
     JsonParser jsonParser = jsonFactory.createJsonParser( httpServletRequest.getInputStream() );
-    if ( jsonParser.nextToken() != JsonToken.START_ARRAY || jsonParser.nextToken() != JsonToken.VALUE_STRING || jsonParser.nextToken() != JsonToken.START_ARRAY ) {
-      throw new IOException( "Expected request to start with array open and then list class" );
+    if ( jsonParser.nextToken() != JsonToken.START_ARRAY ) {
+      throw new IOException( "Expected request to start with array open" );
     }
     while ( jsonParser.nextToken() != JsonToken.END_ARRAY ) {
       List<DataSourceFieldValue> record =

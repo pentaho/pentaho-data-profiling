@@ -23,16 +23,15 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.pentaho.model.metrics.contributor.metricManager.MetricContributorBeanTester;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.RegexHolder;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.action.ProfileActionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by mhall on 28/01/15.
@@ -44,25 +43,34 @@ public class RegexAddressMetricContributorTest extends MetricContributorBeanTest
   }
 
   @Test public void testProcessField() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = new DataSourceMetricManager();
+    RegexAddressMetricContributor regexAddressMetricContributor = new RegexAddressMetricContributor();
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( regexAddressMetricContributor.metricName() );
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( "A@B.net" );
 
-    RegexAddressMetricContributor regexAddressMetricContributor = new RegexAddressMetricContributor();
-    regexAddressMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
+    regexAddressMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( "fred" );
-    regexAddressMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    assertEquals( Long.valueOf( 1L ),
-      dataSourceMetricManager.getValueNoDefault( RegexAddressMetricContributor.EMAIL_ADDRESS_KEY ) );
+    regexAddressMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    RegexHolder regexHolder =
+      (RegexHolder) mutableProfileFieldValueType.getValueTypeMetrics( regexAddressMetricContributor.metricName() );
+    assertEquals( Long.valueOf( 1L ), regexHolder.getCount() );
   }
 
   @Test
   public void testMerge() throws MetricMergeException {
-    DataSourceMetricManager into = new DataSourceMetricManager();
-    DataSourceMetricManager from = new DataSourceMetricManager();
-    into.setValue( 5L, RegexAddressMetricContributor.EMAIL_ADDRESS_KEY );
-    from.setValue( 15L, RegexAddressMetricContributor.EMAIL_ADDRESS_KEY );
-    new RegexAddressMetricContributor().merge( into, from );
-    assertEquals( 20L, into.getValueNoDefault( RegexAddressMetricContributor.EMAIL_ADDRESS_KEY ) );
+    RegexAddressMetricContributor regexAddressMetricContributor = new RegexAddressMetricContributor();
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( regexAddressMetricContributor.metricName() );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( regexAddressMetricContributor.metricName() );
+    into.setValueTypeMetrics( regexAddressMetricContributor.metricName(), new RegexHolder( 5L ) );
+    from.setValueTypeMetrics( regexAddressMetricContributor.metricName(), new RegexHolder( 15L ) );
+    regexAddressMetricContributor.merge( into, from );
+    assertEquals( Long.valueOf( 20 ),
+      ( (RegexHolder) into.getValueTypeMetrics( regexAddressMetricContributor.metricName() ) ).getCount() );
   }
 
   @Test
@@ -74,11 +82,4 @@ public class RegexAddressMetricContributorTest extends MetricContributorBeanTest
   public void testGetTypes() {
     assertNotNull( new RegexAddressMetricContributor().supportedTypes() );
   }
-
-  /*@Test
-  public void testClear() {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    new RegexAddressMetricContributor().clear( dataSourceMetricManager );
-    verify( dataSourceMetricManager ).clear( RegexAddressMetricContributor.CLEAR_LIST );
-  }*/
 }

@@ -22,10 +22,11 @@
 
 package com.pentaho.profiling.api.metrics;
 
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
 import java.util.List;
 import java.util.Set;
@@ -59,19 +60,13 @@ public interface MetricManagerContributor {
   /**
    * Integrate the DataSourceFieldValue into the metric calculated in the DataSourceMetricManager
    *
-   * @param dataSourceMetricManager the DataSourceFieldValue
-   * @param dataSourceFieldValue    the DataSourceMetricManager
+   * @param valueTypeMetricManager the DataSourceFieldValue
+   * @param dataSourceFieldValue   the DataSourceMetricManager
    * @throws ProfileActionException
    */
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException;
-
-  /**
-   * Clears state created by this contributor
-   *
-   * @param dataSourceMetricManager the DataSourceMetricManager to clear
-   */
-  public void clear( DataSourceMetricManager dataSourceMetricManager );
 
   /**
    * Merges the DataSourceMetricManager from into the DataSourceMetricManager into (This operation modifies the into
@@ -81,15 +76,15 @@ public interface MetricManagerContributor {
    * @param from the DataSourceMetricManager to merge from
    * @throws MetricMergeException
    */
-  public void merge( DataSourceMetricManager into, DataSourceMetricManager from ) throws MetricMergeException;
+  public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from ) throws MetricMergeException;
 
   /**
    * Sets the derived statistics on a field (useful when they are expensive as in HyperLogLogPlus
    *
-   * @param dataSourceMetricManager
+   * @param valueTypeMetricManager
    * @throws ProfileActionException
    */
-  public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException;
+  public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType ) throws ProfileActionException;
 
   /**
    * Gets the ProfileFieldProperty objects that describe what the contributor is contributing

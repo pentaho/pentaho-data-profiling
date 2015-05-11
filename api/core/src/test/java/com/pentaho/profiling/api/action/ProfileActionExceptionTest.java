@@ -40,4 +40,9 @@ public class ProfileActionExceptionTest {
     assertEquals( cause, profileActionException.getCause() );
     assertEquals( profileStatusMessage, profileActionException.getProfileStatusMessage() );
   }
+
+  @Test
+  public void test() {
+    System.out.print( byte[].class.getCanonicalName() );
+  }
 }

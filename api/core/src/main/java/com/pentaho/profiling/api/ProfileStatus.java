@@ -39,7 +39,9 @@ public interface ProfileStatus {
 
   ProfileConfiguration getProfileConfiguration();
 
-  List<ProfilingField> getFields();
+  List<ProfileField> getFields();
+
+  ProfileField getField( String physicalName );
 
   Long getTotalEntities();
 

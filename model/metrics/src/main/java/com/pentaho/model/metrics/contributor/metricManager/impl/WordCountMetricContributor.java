@@ -23,16 +23,16 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.model.metrics.contributor.metricManager.NVLOperations;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.WordCountHolder;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.NVL;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,35 +54,33 @@ public class WordCountMetricContributor extends BaseMetricManagerContributor imp
   public static final String WORD_COUNT_KEY_SUM = "com.pentaho.str.sum_word_count";
   public static final String WORD_COUNT_KEY_MEAN = "com.pentaho.str.mean_word_count";
 
+  public static final String SIMPLE_NAME = WordCountMetricContributor.class.getSimpleName();
   public static final ProfileFieldProperty WORD_COUNT_MAX =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MAX_LABEL, WORD_COUNT_KEY_MAX );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MAX_LABEL, SIMPLE_NAME, "max" );
   public static final ProfileFieldProperty WORD_COUNT_MIN =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MIN_LABEL, WORD_COUNT_KEY_MIN );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MIN_LABEL, SIMPLE_NAME, "min" );
   public static final ProfileFieldProperty WORD_COUNT_SUM =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_SUM_LABEL, WORD_COUNT_KEY_SUM );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_SUM_LABEL, SIMPLE_NAME, "sum" );
+
   public static final ProfileFieldProperty WORD_COUNT_MEAN =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MEAN_LABEL, WORD_COUNT_KEY_MEAN );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, WORD_COUNT_MEAN_LABEL, SIMPLE_NAME, "mean" );
 
   public static final List<String[]> CLEAR_LIST =
     new ArrayList<String[]>( Arrays.asList( new String[] { WORD_COUNT_KEY_MIN }, new String[] { WORD_COUNT_KEY_MAX },
       new String[] { WORD_COUNT_KEY_SUM }, new String[] { WORD_COUNT_KEY_MEAN } ) );
-
   public static final String DELIMITERS = " \r\n\t.,;:'\"()?!";
 
-  private final NVL nvl;
-
-  public WordCountMetricContributor() {
-    this( new NVL() );
+  private WordCountHolder getOrCreateWordCountHolder( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    WordCountHolder result = (WordCountHolder) mutableProfileFieldValueType.getValueTypeMetrics( SIMPLE_NAME );
+    if ( result == null ) {
+      result = new WordCountHolder();
+      mutableProfileFieldValueType.setValueTypeMetrics( SIMPLE_NAME, result );
+    }
+    return result;
   }
 
-  public WordCountMetricContributor( NVL nvl ) {
-    this.nvl = nvl;
-  }
-
-  @Override public void setDerived( DataSourceMetricManager metricsForFieldType ) {
-    Number count = metricsForFieldType.getValueNoDefault( MetricContributorUtils.COUNT );
-    Number newSumStat = metricsForFieldType.getValueNoDefault( WORD_COUNT_KEY_SUM );
-    metricsForFieldType.setValue( ( newSumStat.doubleValue() / count.doubleValue() ), WORD_COUNT_KEY_MEAN );
+  @Override public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    getOrCreateWordCountHolder( mutableProfileFieldValueType ).calculateMean( mutableProfileFieldValueType.getCount() );
   }
 
   @Override public Set<String> supportedTypes() {
@@ -90,50 +88,24 @@ public class WordCountMetricContributor extends BaseMetricManagerContributor imp
   }
 
   @Override
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
     String value = (String) dataSourceFieldValue.getFieldValue();
     StringTokenizer tokenizer = new StringTokenizer( value, DELIMITERS );
     long numWords = tokenizer.countTokens();
-    nvl.performAndSet( NVLOperations.LONG_MIN, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MIN );
-    nvl.performAndSet( NVLOperations.LONG_MAX, dataSourceMetricManager, numWords, WORD_COUNT_KEY_MAX );
-    nvl.performAndSet( NVLOperations.LONG_SUM, dataSourceMetricManager, numWords, WORD_COUNT_KEY_SUM );
+    getOrCreateWordCountHolder( mutableProfileFieldValueType ).offer( numWords );
   }
 
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
     throws MetricMergeException {
-    nvl.performAndSet( NVLOperations.LONG_MIN, into, from, WORD_COUNT_KEY_MIN );
-    nvl.performAndSet( NVLOperations.LONG_MAX, into, from, WORD_COUNT_KEY_MAX );
-    nvl.performAndSet( NVLOperations.LONG_SUM, into, from, WORD_COUNT_KEY_SUM );
+    WordCountHolder fromHolder = (WordCountHolder) from.getValueTypeMetrics( SIMPLE_NAME );
+    if ( fromHolder != null ) {
+      getOrCreateWordCountHolder( into ).offer( fromHolder );
+    }
   }
 
   @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( WORD_COUNT_MIN, WORD_COUNT_MAX, WORD_COUNT_SUM, WORD_COUNT_MEAN );
-  }
-
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    dataSourceMetricManager.clear( CLEAR_LIST );
-  }
-
-  @Override public boolean equals( Object o ) {
-    if ( this == o ) {
-      return true;
-    }
-    if ( o == null || getClass() != o.getClass() ) {
-      return false;
-    }
-
-    WordCountMetricContributor that = (WordCountMetricContributor) o;
-
-    return !( nvl != null ? !nvl.equals( that.nvl ) : that.nvl != null );
-
-  }
-
-  @Override public int hashCode() {
-    return nvl != null ? nvl.hashCode() : 0;
-  }
-
-  @Override public String toString() {
-    return "WordCountMetricContributor{}";
   }
 }

@@ -32,6 +32,7 @@ import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import com.pentaho.profiling.api.dto.ProfileStatusDTO;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
 import com.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;

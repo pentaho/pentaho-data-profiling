@@ -20,16 +20,17 @@
  * explicitly covering such access.
  */
 
-package com.pentaho.profiling.services;
+package com.pentaho.profiling.api.dto;
 
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class ProfileStatusDTO implements ProfileStatus {
   private String name;
   private String id;
   private ProfileConfiguration profileConfiguration;
-  private List<ProfilingField> fields;
+  private List<ProfileField> fields;
   private Long totalEntities;
   private List<ProfileStatusMessage> statusMessages;
   private ProfileActionExceptionWrapper operationError;
@@ -60,7 +61,7 @@ public class ProfileStatusDTO implements ProfileStatus {
 
   public ProfileStatusDTO( ProfileState profileState, String name, String id,
                            ProfileConfiguration profileConfiguration,
-                           List<ProfilingField> fields, Long totalEntities,
+                           List<ProfileField> fields, Long totalEntities,
                            List<ProfileStatusMessage> statusMessages,
                            ProfileActionExceptionWrapper operationError,
                            List<ProfileFieldProperty> profileFieldProperties, long sequenceNumber ) {
@@ -68,7 +69,7 @@ public class ProfileStatusDTO implements ProfileStatus {
     this.name = name;
     this.id = id;
     this.profileConfiguration = profileConfiguration;
-    this.fields = fields;
+    setFields( fields );
     this.totalEntities = totalEntities;
     this.statusMessages = statusMessages;
     this.operationError = operationError;
@@ -109,12 +110,23 @@ public class ProfileStatusDTO implements ProfileStatus {
     this.profileConfiguration = profileConfiguration;
   }
 
-  @Override public List<ProfilingField> getFields() {
+  @Override public List<ProfileField> getFields() {
     return fields;
   }
 
-  public void setFields( List<ProfilingField> fields ) {
+  public void setFields( List<ProfileField> fields ) {
+    if ( fields != null ) {
+      List<ProfileField> newFields = new ArrayList<ProfileField>( fields.size() );
+      for ( ProfileField field : fields ) {
+        newFields.add( new ProfileFieldDTO( field ) );
+      }
+      fields = newFields;
+    }
     this.fields = fields;
+  }
+
+  @Override public ProfileField getField( String physicalName ) {
+    return null;
   }
 
   @Override public Long getTotalEntities() {
@@ -231,4 +243,9 @@ public class ProfileStatusDTO implements ProfileStatus {
       '}';
   }
   //CHECKSTYLE:OperatorWrap:ON
+
+
+  @Override public Object clone() throws CloneNotSupportedException {
+    return new ProfileStatusDTO( this );
+  }
 }

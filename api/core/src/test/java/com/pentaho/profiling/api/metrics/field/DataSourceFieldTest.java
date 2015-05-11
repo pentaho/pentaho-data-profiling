@@ -1,4 +1,5 @@
-/*!
+/*
+!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
  * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
@@ -18,11 +19,12 @@
  * prohibited to anyone except those individuals and entities who have executed
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
- */
+
+
 
 package com.pentaho.profiling.api.metrics.field;
 
-import com.pentaho.profiling.api.ProfilingField;
+import com.pentaho.profiling.api.ProfilingFieldImpl;
 import com.pentaho.profiling.api.metrics.field.DataSourceField;
 import org.junit.Test;
 
@@ -62,13 +64,14 @@ public class DataSourceFieldTest {
     dataSourceField1.setLogicalName( "name1" );
     dataSourceField1.getMetricManagerForType( "test", true ).setValue( 1L, "count" );
 
-    List<ProfilingField>
-        profilingFieldList =
+    List<ProfilingFieldImpl>
+      profilingFieldImplList =
         Arrays.asList( dataSourceField.getProfilingField(), dataSourceField1.getProfilingField() );
 
-    Map<String, List<DataSourceField>> typeToFieldMap = DataSourceField.typeToFieldMap( profilingFieldList );
+    Map<String, List<DataSourceField>> typeToFieldMap = DataSourceField.typeToFieldMap( profilingFieldImplList );
     assertEquals( 1, typeToFieldMap.size() );
     List<DataSourceField> dataSourceFields = typeToFieldMap.get( "test" );
     assertEquals( 2, dataSourceFields.size() );
   }
 }
+*/

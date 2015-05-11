@@ -31,6 +31,12 @@ import java.util.List;
  * Created by mhall on 25/01/15.
  */
 public class MetricContributorUtils {
+  public static final String TYPE = "types";
+  public static final String FIELD_NOT_FOUND = "Expected field was not found: ";
+  public static final String STATISTICS = "statistics";
+  public static final String COUNT = "count";
+  public static final String CATEGORIES = "categories";
+  public static final String CATEGORICAL = "categorical";
   /**
    * Unit test only
    */
@@ -38,20 +44,10 @@ public class MetricContributorUtils {
 
   }
 
-  public static final String TYPE = "type";
-  public static final String FIELD_NOT_FOUND = "Expected field was not found: ";
-  public static final String STATISTICS = "statistics";
-  public static final String COUNT = "count";
-  public static final String CATEGORIES = "categories";
-  public static final String CATEGORICAL = "categorical";
-
-  public static ProfileFieldProperty createMetricProperty( String keyPath, String nameKey, String... metricPath ) {
-    String[] fullPath = new String[metricPath.length + 1];
-    fullPath[0] = TYPE;
-    for ( int i = 0; i < metricPath.length; i++ ) {
-      fullPath[i + 1] = metricPath[i];
-    }
-    return new ProfileFieldProperty( keyPath, nameKey, Arrays.asList( fullPath ) );
+  public static ProfileFieldProperty createMetricProperty( String keyPath, String nameKey, String valueTypeMetricsName,
+                                                           String propertyName ) {
+    return new ProfileFieldProperty( keyPath, nameKey,
+      Arrays.asList( "types", "valueTypeMetricsMap", valueTypeMetricsName, propertyName ) );
   }
 
   public static String[] removeType( List<String> pathToProperty ) {

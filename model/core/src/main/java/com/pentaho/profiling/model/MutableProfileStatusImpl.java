@@ -22,15 +22,18 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.MutableProfileField;
 import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by bryan on 7/31/14.
@@ -38,14 +41,42 @@ import java.util.List;
 public class MutableProfileStatusImpl extends ProfileStatusImpl implements MutableProfileStatus {
   public MutableProfileStatusImpl( ProfileStatus profileStatus ) {
     super( profileStatus );
+    Map<String, ProfileField> profileFieldMap = new TreeMap<String, ProfileField>();
+    for ( Map.Entry<String, ProfileField> fieldEntry : fields.entrySet() ) {
+      profileFieldMap.put( fieldEntry.getKey(), new MutableProfileFieldImpl( fieldEntry.getValue() ) );
+    }
+    fields = profileFieldMap;
   }
 
   @Override public void setProfileState( ProfileState profileState ) {
     this.state = profileState;
   }
 
-  @Override public void setFields( List<ProfilingField> fields ) {
-    this.fields = fields;
+  @Override public MutableProfileField getOrCreateField( String physicalName, String logicalName ) {
+    ProfileField profileField = fields.get( physicalName );
+    MutableProfileField result;
+    if ( profileField == null ) {
+      result = new MutableProfileFieldImpl( physicalName, logicalName );
+      fields.put( physicalName, result );
+    } else {
+      result = (MutableProfileField) profileField;
+    }
+    return result;
+  }
+
+  @Override public Map<String, MutableProfileField> getMutableFieldMap() {
+    return (Map) fields;
+  }
+
+  @Override public void addField( ProfileField field ) {
+    if ( fields.containsKey( field.getPhysicalName() ) ) {
+      // TODO... Log?
+    }
+    fields.put( field.getPhysicalName(), new MutableProfileFieldImpl( field ) );
+  }
+
+  @Override public void setField( ProfileField field ) {
+    fields.put( field.getPhysicalName(), new MutableProfileFieldImpl( field ) );
   }
 
   @Override public void setName( String name ) {

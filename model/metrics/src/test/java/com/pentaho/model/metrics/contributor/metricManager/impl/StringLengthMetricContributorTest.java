@@ -22,24 +22,19 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.ProfilingField;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.stats.Statistic;
+import com.pentaho.profiling.api.metrics.MetricMergeException;
+import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -57,30 +52,23 @@ public class StringLengthMetricContributorTest {
   }
 
   @Test public void testUpdateTypeInitial() throws ProfileActionException {
-    DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager( new ArrayList<ProfilingField>() );
-    DataSourceField dataSourceField = new DataSourceField();
-    DataSourceMetricManager metricManager = new DataSourceMetricManager();
-    dataSourceField.setPhysicalName( "a" );
-    dataSourceFieldManager.addDataSourceField( dataSourceField );
-    metricManager.setValue( 1L, MetricContributorUtils.COUNT );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( NumericMetricContributor.SIMPLE_NAME );
     String test = "test-string";
-    double value = test.length();
+    int value = test.length();
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test );
-    StringLengthMetricContributor stringLengthMetricContributor1 = new StringLengthMetricContributor();
-    stringLengthMetricContributor1.process( metricManager, dataSourceFieldValue );
-    stringLengthMetricContributor1.setDerived( metricManager );
-    assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MIN ) );
-    assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MAX ) );
-    assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM ) );
-    assertEquals( value * value,
-      metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.SUM_OF_SQUARES ) );
-    assertEquals( value, metricManager.getValueNoDefault( MetricContributorUtils.STATISTICS, Statistic.MEAN ) );
+    stringLengthMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    verify( numericMetricContributor ).processValue( refEq( mutableProfileFieldValueType ), eq( value ) );
+    stringLengthMetricContributor.setDerived( mutableProfileFieldValueType );
+    verify( numericMetricContributor ).setDerived( mutableProfileFieldValueType );
   }
 
   @Test
   public void testGetTypes() {
     assertNotNull( stringLengthMetricContributor.supportedTypes() );
-    assertTrue( Collections.disjoint( stringLengthMetricContributor.supportedTypes(), numericMetricContributor.supportedTypes() ) );
+    assertTrue( Collections
+      .disjoint( stringLengthMetricContributor.supportedTypes(), numericMetricContributor.supportedTypes() ) );
   }
 
   @Test
@@ -89,26 +77,12 @@ public class StringLengthMetricContributorTest {
   }
 
   @Test
-  public void testProcess() throws ProfileActionException {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    String fieldValue = "test-value";
-    DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( fieldValue );
-    stringLengthMetricContributor.process( dataSourceMetricManager, dataSourceFieldValue );
-    verify( numericMetricContributor ).processValue( dataSourceMetricManager, fieldValue.length() );
-  }
-
-  @Test
   public void testMerge() throws MetricMergeException {
-    DataSourceMetricManager into = mock( DataSourceMetricManager.class );
-    DataSourceMetricManager from = mock( DataSourceMetricManager.class );
+    MutableProfileFieldValueType into = MetricContributorTestUtils.createMockMutableProfileFieldValueType(
+      NumericMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from = MetricContributorTestUtils.createMockMutableProfileFieldValueType(
+      NumericMetricContributor.SIMPLE_NAME );
     stringLengthMetricContributor.merge( into, from );
     verify( numericMetricContributor ).merge( into, from );
-  }
-
-  @Test
-  public void testClear() {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    stringLengthMetricContributor.clear( dataSourceMetricManager );
-    verify( numericMetricContributor ).clear( dataSourceMetricManager );
   }
 }

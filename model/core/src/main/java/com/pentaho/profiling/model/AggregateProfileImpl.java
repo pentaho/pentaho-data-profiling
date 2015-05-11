@@ -24,8 +24,11 @@ package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.AggregateProfile;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileField;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.Profile;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
@@ -40,10 +43,6 @@ import com.pentaho.profiling.api.metrics.MetricContributors;
 import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.ProfileFieldProperties;
-import com.pentaho.profiling.api.metrics.field.DataSourceField;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldManager;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.stats.Statistic;
 import org.pentaho.osgi.notification.api.NotificationListener;
 import org.pentaho.osgi.notification.api.NotificationObject;
 import org.slf4j.Logger;
@@ -173,42 +172,34 @@ public class AggregateProfileImpl implements AggregateProfile {
     return result;
   }
 
-  private void merge( DataSourceFieldManager dataSourceFieldManagerInto,
-                      DataSourceFieldManager dataSourceFieldManagerFrom ) {
-    for ( DataSourceField intoField : dataSourceFieldManagerInto.getDataSourceFields() ) {
+  private void merge( MutableProfileStatus into, ProfileStatus from ) {
+    for ( MutableProfileField intoField : into.getMutableFieldMap().values() ) {
       if ( LOGGER.isDebugEnabled() ) {
         LOGGER.debug( "Merging field " + intoField.getLogicalName() );
       }
-      DataSourceField fromField =
-        dataSourceFieldManagerFrom.getPathToDataSourceFieldMap().get( intoField.getPhysicalName() );
+      ProfileField fromField = from.getField( intoField.getPhysicalName() );
       if ( fromField != null ) {
         if ( LOGGER.isDebugEnabled() ) {
           LOGGER.debug( "Field exists in both into and from" );
         }
-        Set<String> overlappingTypes = intoField.getMetricManagerTypes();
-        overlappingTypes.retainAll( fromField.getMetricManagerTypes() );
+        Set<String> overlappingTypes = new HashSet<String>( intoField.typeKeys() );
+        overlappingTypes.retainAll( fromField.typeKeys() );
         for ( String type : overlappingTypes ) {
-          DataSourceMetricManager metricManagerForType = intoField.getMetricManagerForType( type );
-          Number existing = metricManagerForType.getValueNoDefault( Statistic.COUNT );
-          Number from = fromField.getMetricManagerForType( type ).getValueNoDefault( Statistic.COUNT );
-          long value = existing.longValue() + from.longValue();
-          if ( LOGGER.isDebugEnabled() ) {
-            LOGGER.debug( "Updating count from " + existing + " to " + value );
-          }
-          metricManagerForType.setValue( value, Statistic.COUNT );
+          MutableProfileFieldValueType intoType = intoField.getValueTypeMetrics( type );
+          intoType.setCount( intoType.getCount() + fromField.getType( type ).getCount() );
         }
       }
     }
     for ( MetricContributor metricContributor : metricContributorList ) {
       try {
-        metricContributor.merge( dataSourceFieldManagerInto, dataSourceFieldManagerFrom );
+        metricContributor.merge( into, from );
       } catch ( MetricMergeException e ) {
         LOGGER.error( e.getMessage(), e );
       }
     }
     for ( MetricContributor metricContributor : metricContributorList ) {
       try {
-        metricContributor.setDerived( dataSourceFieldManagerInto );
+        metricContributor.setDerived( into );
       } catch ( ProfileActionException e ) {
         LOGGER.error( e.getMessage(), e );
       }
@@ -232,7 +223,7 @@ public class AggregateProfileImpl implements AggregateProfile {
               synchronized ( lastRefresh ) {
                 lastRefresh.set( System.currentTimeMillis() );
                 refreshQueued.set( false );
-                final DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager();
+                final List<ProfileStatus> childStatuses = new ArrayList<ProfileStatus>();
                 final List<ProfileStatusMessage> newStatusMessages = new ArrayList<ProfileStatusMessage>();
                 int num = 1;
                 for ( String profileId : childProfileIdList ) {
@@ -240,14 +231,13 @@ public class AggregateProfileImpl implements AggregateProfile {
                   final int finalNum = num;
                   profileStatusReader.read( new ProfileStatusReadOperation<Void>() {
                     @Override public Void read( ProfileStatus profileStatus ) {
-                      DataSourceFieldManager newManager = new DataSourceFieldManager( profileStatus.getFields() );
                       List<ProfileStatusMessage> statusMessages = profileStatus.getStatusMessages();
                       if ( statusMessages != null && statusMessages.size() > 0 ) {
                         newStatusMessages
                           .add( new ProfileStatusMessage( KEY_PATH, "ChildProfile", Arrays.asList( "" + finalNum ) ) );
                         newStatusMessages.addAll( statusMessages );
                       }
-                      merge( dataSourceFieldManager, newManager );
+                      childStatuses.add( profileStatus );
                       return null;
                     }
                   } );
@@ -255,7 +245,10 @@ public class AggregateProfileImpl implements AggregateProfile {
                 }
                 profileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
                   @Override public Void write( MutableProfileStatus profileStatus ) {
-                    profileStatus.setFields( dataSourceFieldManager.getProfilingFields() );
+                    profileStatus.getMutableFieldMap().clear();
+                    for ( ProfileStatus childStatus : childStatuses ) {
+                      merge( profileStatus, childStatus );
+                    }
                     if ( profileStatus.getProfileState() == ProfileState.STOPPED ) {
                       profileStatus.setStatusMessages( new ArrayList<ProfileStatusMessage>() );
                     } else {
@@ -265,7 +258,10 @@ public class AggregateProfileImpl implements AggregateProfile {
                   }
                 } );
               }
-            } finally {
+            } catch ( RuntimeException e ) {
+              LOGGER.error( "Error refreshing aggregate profile " + getId(), e );
+              throw e;
+            }finally {
               readLock.unlock();
             }
           }

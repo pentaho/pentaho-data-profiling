@@ -22,17 +22,16 @@
 
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.WordCountHolder;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
+import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.action.ProfileActionException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by mhall on 27/01/15.
@@ -40,23 +39,28 @@ import static org.mockito.Mockito.verify;
 public class WordCountMetricContributorTest {
 
   @Test public void testUpdateTypeInitial() throws ProfileActionException {
-    DataSourceMetricManager metricManager = new DataSourceMetricManager();
-    metricManager.setValue( 1L, MetricContributorUtils.COUNT );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( WordCountMetricContributor.SIMPLE_NAME );
     String test = "a test string";
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test );
     WordCountMetricContributor wordCountMetricContributor = new WordCountMetricContributor();
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
-    wordCountMetricContributor.setDerived( metricManager );
+    wordCountMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 1L );
+    wordCountMetricContributor.setDerived( mutableProfileFieldValueType );
 
-    assertEquals( 3L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
-    assertEquals( 3L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
-    assertEquals( 3L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_SUM ) );
-    assertEquals( 3d, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MEAN ) );
+    WordCountHolder wordCountHolder =
+      (WordCountHolder) mutableProfileFieldValueType.getValueTypeMetrics( WordCountMetricContributor.SIMPLE_NAME );
+    assertEquals( Long.valueOf( 3 ), wordCountHolder.getMin() );
+    assertEquals( Long.valueOf( 3 ), wordCountHolder.getMax() );
+    assertEquals( Long.valueOf( 3 ), wordCountHolder.getSum() );
+    assertEquals( Double.valueOf( 3 ), wordCountHolder.getMean() );
   }
 
   @Test public void testUpdateTypeWithMultiple() throws ProfileActionException {
-    DataSourceMetricManager metricManager = new DataSourceMetricManager();
-    metricManager.setValue( 3L, MetricContributorUtils.COUNT );
+    MutableProfileFieldValueType mutableProfileFieldValueType =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( WordCountMetricContributor.SIMPLE_NAME );
     String test1 = "a test string";
     String test2 = "second";
     String test3 = "another test string with stuff";
@@ -64,24 +68,28 @@ public class WordCountMetricContributorTest {
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test1 );
 
     WordCountMetricContributor wordCountMetricContributor = new WordCountMetricContributor();
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test2 );
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test3 );
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
-    wordCountMetricContributor.setDerived( metricManager );
-
-    assertEquals( 1L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
-    assertEquals( 5L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
-    assertEquals( 9L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_SUM ) );
-    assertEquals( 3d, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MEAN ) );
+    wordCountMetricContributor.process( mutableProfileFieldValueType, dataSourceFieldValue );
+    when( mutableProfileFieldValueType.getCount() ).thenReturn( 3L );
+    wordCountMetricContributor.setDerived( mutableProfileFieldValueType );
+    WordCountHolder wordCountHolder =
+      (WordCountHolder) mutableProfileFieldValueType.getValueTypeMetrics( WordCountMetricContributor.SIMPLE_NAME );
+    assertEquals( Long.valueOf( 1 ), wordCountHolder.getMin() );
+    assertEquals( Long.valueOf( 5 ), wordCountHolder.getMax() );
+    assertEquals( Long.valueOf( 9 ), wordCountHolder.getSum() );
+    assertEquals( Double.valueOf( 3 ), wordCountHolder.getMean() );
   }
 
   @Test public void testMerge() throws ProfileActionException, MetricMergeException {
-    DataSourceMetricManager metricManager = new DataSourceMetricManager();
-    DataSourceMetricManager metricManager2 = new DataSourceMetricManager();
-    metricManager.setValue( 2L, MetricContributorUtils.COUNT );
-    metricManager2.setValue( 1L, MetricContributorUtils.COUNT );
+    MutableProfileFieldValueType into =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( WordCountMetricContributor.SIMPLE_NAME );
+    MutableProfileFieldValueType from =
+      MetricContributorTestUtils
+        .createMockMutableProfileFieldValueType( WordCountMetricContributor.SIMPLE_NAME );
     String test1 = "a test string";
     String test2 = "second";
     String test3 = "another test string with stuff";
@@ -89,19 +97,21 @@ public class WordCountMetricContributorTest {
     DataSourceFieldValue dataSourceFieldValue = new DataSourceFieldValue( test1 );
 
     WordCountMetricContributor wordCountMetricContributor = new WordCountMetricContributor();
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( into, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test2 );
-    wordCountMetricContributor.process( metricManager, dataSourceFieldValue );
+    wordCountMetricContributor.process( into, dataSourceFieldValue );
     dataSourceFieldValue.setFieldValue( test3 );
-    wordCountMetricContributor.process( metricManager2, dataSourceFieldValue );
-    metricManager.setValue( 3L, MetricContributorUtils.COUNT );
-    wordCountMetricContributor.merge( metricManager, metricManager2 );
-    wordCountMetricContributor.setDerived( metricManager );
+    wordCountMetricContributor.process( from, dataSourceFieldValue );
+    wordCountMetricContributor.merge( into, from );
+    when( into.getCount() ).thenReturn( 3L );
+    wordCountMetricContributor.setDerived( into );
 
-    assertEquals( 1L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MIN ) );
-    assertEquals( 5L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MAX ) );
-    assertEquals( 9L, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_SUM ) );
-    assertEquals( 3d, metricManager.getValueNoDefault( WordCountMetricContributor.WORD_COUNT_KEY_MEAN ) );
+    WordCountHolder wordCountHolder =
+      (WordCountHolder) into.getValueTypeMetrics( WordCountMetricContributor.SIMPLE_NAME );
+    assertEquals( Long.valueOf( 1 ), wordCountHolder.getMin() );
+    assertEquals( Long.valueOf( 5 ), wordCountHolder.getMax() );
+    assertEquals( Long.valueOf( 9 ), wordCountHolder.getSum() );
+    assertEquals( Double.valueOf( 3 ), wordCountHolder.getMean() );
   }
 
   @Test
@@ -112,12 +122,5 @@ public class WordCountMetricContributorTest {
   @Test
   public void testGetProfileFieldProperties() {
     assertNotNull( new WordCountMetricContributor().profileFieldProperties() );
-  }
-
-  @Test
-  public void testClear() {
-    DataSourceMetricManager dataSourceMetricManager = mock( DataSourceMetricManager.class );
-    new WordCountMetricContributor().clear( dataSourceMetricManager );
-    verify( dataSourceMetricManager ).clear( WordCountMetricContributor.CLEAR_LIST );
   }
 }

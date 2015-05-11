@@ -25,45 +25,37 @@ package com.pentaho.model.metrics.contributor.metricManager.impl;
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
 import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.model.metrics.contributor.metricManager.impl.cardinality.HyperLogLogPlusHolder;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.HyperLogLogPlusHolder;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 import com.pentaho.profiling.api.stats.Statistic;
-import org.codehaus.jackson.node.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by mhall on 27/01/15.
  */
 public class CardinalityMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
-  public static final String[] CARDINALITY_PATH =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.CARDINALITY };
-  public static final String[] CARDINALITY_PATH_ESTIMATOR =
-    new String[] { MetricContributorUtils.STATISTICS, Statistic.CARDINALITY + "_estimator" };
-  public static final List<String[]> CLEAR_PATHS =
-    new ArrayList<String[]>( Arrays.asList( CARDINALITY_PATH, CARDINALITY_PATH_ESTIMATOR ) );
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, CardinalityMetricContributor.class );
+  public static final String SIMPLE_NAME = CardinalityMetricContributor.class.getSimpleName();
   public static final ProfileFieldProperty CARDINALITY =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, "CardinalityMetricContributor", CARDINALITY_PATH );
+    MetricContributorUtils.createMetricProperty( KEY_PATH, SIMPLE_NAME, SIMPLE_NAME, Statistic.CARDINALITY );
   private static final Logger LOGGER = LoggerFactory.getLogger( CardinalityMetricContributor.class );
   private static final Set<Class<?>> supportedTypes =
     Collections.unmodifiableSet( new HashSet<Class<?>>( Arrays.asList( Integer.class, Long.class,
@@ -85,79 +77,46 @@ public class CardinalityMetricContributor extends BaseMetricManagerContributor i
     return result;
   }
 
-  public HyperLogLogPlusHolder createHyperLogLogPlus() {
-    return new HyperLogLogPlusHolder( new HyperLogLogPlus( normalPrecision, sparsePrecision ) );
+  private HyperLogLogPlusHolder getOrCreateHyperLogLogPlusHolder(
+    MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    HyperLogLogPlusHolder result =
+      (HyperLogLogPlusHolder) mutableProfileFieldValueType.getValueTypeMetrics( SIMPLE_NAME );
+    if ( result == null ) {
+      result = new HyperLogLogPlusHolder( new HyperLogLogPlus( normalPrecision, sparsePrecision ) );
+      mutableProfileFieldValueType.setValueTypeMetrics( SIMPLE_NAME, result );
+    }
+    return result;
   }
 
   @Override
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
-    Object value = dataSourceFieldValue.getFieldValue();
     try {
-      HyperLogLogPlusHolder hllp = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
-      if ( hllp == null ) {
-        hllp = createHyperLogLogPlus();
-        dataSourceMetricManager.setValue( hllp, CARDINALITY_PATH_ESTIMATOR );
-      }
-      hllp.offer( value );
+      getOrCreateHyperLogLogPlusHolder( mutableProfileFieldValueType ).offer( dataSourceFieldValue.getFieldValue() );
     } catch ( Exception e ) {
       throw new ProfileActionException( new ProfileStatusMessage( KEY_PATH, "Updating HyperLogLogPlus failed", null ),
         e );
     }
   }
 
-  private HyperLogLogPlusHolder getEstimator( DataSourceMetricManager dataSourceMetricManager ) {
-    Object estimatorObject = dataSourceMetricManager.getValueNoDefault( CARDINALITY_PATH_ESTIMATOR );
-    if ( estimatorObject instanceof HyperLogLogPlusHolder ) {
-      return (HyperLogLogPlusHolder) estimatorObject;
-    } else if ( estimatorObject instanceof Map ) {
-      Object byteObject = ( (Map) estimatorObject ).get( "bytes" );
-      if ( byteObject instanceof String ) {
-        try {
-          byteObject = new TextNode( (String) byteObject ).getBinaryValue();
-        } catch ( IOException e ) {
-          LOGGER.error( e.getMessage(), e );
-        }
-      }
-      try {
-        return new HyperLogLogPlusHolder( HyperLogLogPlus.Builder.build( (byte[]) byteObject ) );
-      } catch ( IOException e ) {
-        LOGGER.error( e.getMessage(), e );
-      }
-    } else {
-      String className = estimatorObject == null ? "null" : estimatorObject.getClass().getCanonicalName();
-      LOGGER.warn( CARDINALITY_PATH_ESTIMATOR + " was of type " + className );
-    }
-    return null;
-  }
-
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
     throws MetricMergeException {
-    HyperLogLogPlusHolder originalEstimator = getEstimator( into );
-    HyperLogLogPlusHolder secondEstimator = getEstimator( from );
-    if ( originalEstimator == null ) {
-      originalEstimator = secondEstimator;
-    } else if ( secondEstimator == null ) {
-      LOGGER.debug( "First field had estimator but second field didn't." );
+    HyperLogLogPlusHolder fromMetrics = (HyperLogLogPlusHolder) from.getValueTypeMetrics( SIMPLE_NAME );
+    if ( fromMetrics == null ) {
+      LOGGER.debug( "Second field didn't have estimator." );
     } else {
       try {
-        originalEstimator = originalEstimator.merge( secondEstimator );
+        into.setValueTypeMetrics( SIMPLE_NAME, getOrCreateHyperLogLogPlusHolder( into ).merge( fromMetrics ) );
       } catch ( CardinalityMergeException e ) {
         throw new MetricMergeException( e.getMessage(), e );
       }
     }
-    into.setValue( originalEstimator, CARDINALITY_PATH_ESTIMATOR );
   }
 
-  @Override public void setDerived( DataSourceMetricManager dataSourceMetricManager ) throws ProfileActionException {
-    HyperLogLogPlusHolder hllp = getEstimator( dataSourceMetricManager );
-    if ( hllp != null ) {
-      dataSourceMetricManager.setValue( hllp.cardinality(), CARDINALITY_PATH );
-    }
-  }
-
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    dataSourceMetricManager.clear( CLEAR_PATHS );
+  @Override public void setDerived( MutableProfileFieldValueType mutableProfileFieldValueType )
+    throws ProfileActionException {
+    getOrCreateHyperLogLogPlusHolder( mutableProfileFieldValueType ).calculateCardinality();
   }
 
   public List<ProfileFieldProperty> profileFieldProperties() {
@@ -182,8 +141,7 @@ public class CardinalityMetricContributor extends BaseMetricManagerContributor i
 
   //OperatorWrap isn't helpful for autogenerated methods
   //CHECKSTYLE:OperatorWrap:OFF
-  @Override
-  public boolean equals( Object o ) {
+  @Override public boolean equals( Object o ) {
     if ( this == o ) {
       return true;
     }
@@ -196,15 +154,11 @@ public class CardinalityMetricContributor extends BaseMetricManagerContributor i
     if ( normalPrecision != that.normalPrecision ) {
       return false;
     }
-    if ( sparsePrecision != that.sparsePrecision ) {
-      return false;
-    }
+    return sparsePrecision == that.sparsePrecision;
 
-    return true;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     int result = normalPrecision;
     result = 31 * result + sparsePrecision;
     return result;
@@ -214,7 +168,7 @@ public class CardinalityMetricContributor extends BaseMetricManagerContributor i
     return "CardinalityMetricContributor{" +
       "normalPrecision=" + normalPrecision +
       ", sparsePrecision=" + sparsePrecision +
-      '}';
+      "} " + super.toString();
   }
   //CHECKSTYLE:OperatorWrap:ON
 }

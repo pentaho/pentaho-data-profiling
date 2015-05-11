@@ -23,24 +23,21 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.pentaho.model.metrics.contributor.Constants;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.CategoricalHolder;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
-import com.pentaho.profiling.api.stats.Statistic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,12 +46,10 @@ import java.util.Set;
 public class CategoricalMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, CategoricalMetricContributor.class );
+  public static final String SIMPLE_NAME = CategoricalMetricContributor.class.getSimpleName();
   public static final ProfileFieldProperty CATEGORICAL_FIELD = MetricContributorUtils
-    .createMetricProperty( KEY_PATH, "CategoricalMetricContributor", Statistic.FREQUENCY_DISTRIBUTION,
+    .createMetricProperty( KEY_PATH, SIMPLE_NAME, SIMPLE_NAME,
       MetricContributorUtils.CATEGORICAL );
-  public static final List<String[]> CLEAR_PATHS =
-    new ArrayList<String[]>( Arrays.<String[]>asList( new String[] { Statistic.FREQUENCY_DISTRIBUTION } ) );
-  private static final Logger LOGGER = LoggerFactory.getLogger( CategoricalMetricContributor.class );
   private int distinctAllowed = 100;
 
   public int getDistinctAllowed() {
@@ -65,6 +60,15 @@ public class CategoricalMetricContributor extends BaseMetricManagerContributor i
     this.distinctAllowed = distinctAllowed;
   }
 
+  private CategoricalHolder getOrCreateCategoricalHolder( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    CategoricalHolder result = (CategoricalHolder) mutableProfileFieldValueType.getValueTypeMetrics( SIMPLE_NAME );
+    if ( result == null ) {
+      result = new CategoricalHolder( distinctAllowed, new HashMap<String, Long>() );
+      mutableProfileFieldValueType.setValueTypeMetrics( SIMPLE_NAME, result );
+    }
+    return result;
+  }
+
   @Override public Set<String> supportedTypes() {
     HashSet<String> types = new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
     types.addAll( NumericMetricContributor.getTypesStatic() );
@@ -72,77 +76,21 @@ public class CategoricalMetricContributor extends BaseMetricManagerContributor i
   }
 
   @Override
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
-    Map<String, Object> categoricalMap = dataSourceMetricManager.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
-    Map<String, Integer> frequencyMap;
-
-    if ( categoricalMap == null ) {
-      categoricalMap = new HashMap<String, Object>( 5 );
-      frequencyMap = new HashMap<String, Integer>( 100 );
-      dataSourceMetricManager.setValue( categoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-      categoricalMap.put( MetricContributorUtils.CATEGORIES, frequencyMap );
-      categoricalMap.put( MetricContributorUtils.CATEGORICAL, true );
-    } else {
-      frequencyMap = (Map<String, Integer>) categoricalMap.get( MetricContributorUtils.CATEGORIES );
-    }
-
-    if ( (Boolean) categoricalMap.get( MetricContributorUtils.CATEGORICAL ) ) {
-      String category = dataSourceFieldValue.getFieldValue().toString();
-
-      Integer frequency = frequencyMap.get( category );
-      if ( frequency == null ) {
-        frequency = 1;
-      } else {
-        frequency += 1;
-      }
-      frequencyMap.put( category, frequency );
-      if ( frequencyMap.size() > distinctAllowed ) {
-        categoricalMap.remove( MetricContributorUtils.CATEGORIES );
-        categoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
-      }
-    }
+    getOrCreateCategoricalHolder( mutableProfileFieldValueType )
+      .addEntry( String.valueOf( dataSourceFieldValue.getFieldValue() ) );
   }
 
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType mutableProfileFieldValueType,
+                               ProfileFieldValueType profileFieldValueType )
     throws MetricMergeException {
-    Map<String, Object> firstCategoricalMap =
-      into.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
-    Map<String, Object> secondCategoricalMap =
-      from.getValueNoDefault( Statistic.FREQUENCY_DISTRIBUTION );
-    if ( firstCategoricalMap == null ) {
-      firstCategoricalMap = secondCategoricalMap;
-    } else if ( secondCategoricalMap == null ) {
-      LOGGER.debug( "First field had categorical map but second field didn't." );
-    } else if ( (Boolean) firstCategoricalMap.get( MetricContributorUtils.CATEGORICAL ) ) {
-      // Both are considered categorical, merge and determine if they still are
-      if ( (Boolean) secondCategoricalMap.get( MetricContributorUtils.CATEGORICAL ) ) {
-        Map<String, Integer> firstCategoryCountMap =
-          (Map<String, Integer>) firstCategoricalMap.get( MetricContributorUtils.CATEGORIES );
-        for ( Map.Entry<String, Integer> secondEntry : ( (Map<String, Integer>) secondCategoricalMap
-          .get( MetricContributorUtils.CATEGORIES ) ).entrySet() ) {
-          String secondCategoryKey = secondEntry.getKey();
-          Integer firstValue = firstCategoryCountMap.get( secondCategoryKey );
-          if ( firstValue == null ) {
-            firstValue = 0;
-          }
-          firstCategoryCountMap.put( secondCategoryKey, firstValue + secondEntry.getValue() );
-        }
-
-        if ( firstCategoryCountMap.size() > distinctAllowed ) {
-          firstCategoricalMap.remove( MetricContributorUtils.CATEGORIES );
-          firstCategoricalMap.put( MetricContributorUtils.CATEGORICAL, false );
-        }
-      } else {
-        // Second wasn't categorical.  This means the merged result won't be
-        firstCategoricalMap = secondCategoricalMap;
-      }
+    CategoricalHolder from = (CategoricalHolder) profileFieldValueType.getValueTypeMetrics( SIMPLE_NAME );
+    if ( from != null ) {
+      CategoricalHolder into = getOrCreateCategoricalHolder( mutableProfileFieldValueType );
+      into.add( from );
     }
-    into.setValue( firstCategoricalMap, Statistic.FREQUENCY_DISTRIBUTION );
-  }
-
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    dataSourceMetricManager.clear( CLEAR_PATHS );
   }
 
   @Override public List<ProfileFieldProperty> profileFieldProperties() {
@@ -151,8 +99,7 @@ public class CategoricalMetricContributor extends BaseMetricManagerContributor i
 
   //OperatorWrap isn't helpful for autogenerated methods
   //CHECKSTYLE:OperatorWrap:OFF
-  @Override
-  public boolean equals( Object o ) {
+  @Override public boolean equals( Object o ) {
     if ( this == o ) {
       return true;
     }
@@ -162,22 +109,18 @@ public class CategoricalMetricContributor extends BaseMetricManagerContributor i
 
     CategoricalMetricContributor that = (CategoricalMetricContributor) o;
 
-    if ( distinctAllowed != that.distinctAllowed ) {
-      return false;
-    }
+    return distinctAllowed == that.distinctAllowed;
 
-    return true;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return distinctAllowed;
   }
 
   @Override public String toString() {
     return "CategoricalMetricContributor{" +
       "distinctAllowed=" + distinctAllowed +
-      '}';
+      "} " + super.toString();
   }
   //CHECKSTYLE:OperatorWrap:ON
 }

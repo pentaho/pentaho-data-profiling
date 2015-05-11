@@ -33,16 +33,16 @@ import static org.junit.Assert.assertTrue;
  * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  * @version $Revision: $
  */
-public class TDigestHolderTest {
+public class PercentileMetricsTest {
 
   @Test( expected = NullPointerException.class ) public void testEmpty() {
-    TDigestHolder holder = new TDigestHolder();
+    PercentileMetrics holder = new PercentileMetrics();
     holder.getBytes();
   }
 
   @Test public void testGetBytes() {
     TDigest digest = new TDigest( 50.0d );
-    TDigestHolder holder = new TDigestHolder( digest );
+    PercentileMetrics holder = new PercentileMetrics( digest );
     holder.add( 5.0d );
     assertTrue( holder.getBytes() != null );
   }
@@ -56,28 +56,29 @@ public class TDigestHolderTest {
     digest.add( 4.75d );
     double perc = digest.quantile( 0.5d );
 
-    TDigestHolder holder = new TDigestHolder( digest );
+    PercentileMetrics holder = new PercentileMetrics( digest );
     byte[] serialized = holder.getBytes();
 
-    TDigestHolder holder2 = new TDigestHolder();
+    PercentileMetrics holder2 = new PercentileMetrics();
     holder2.setBytes( serialized );
-    assertEquals( perc, holder2.quantile( 0.5d ), 0.0001 );
+    holder2.setPercentile( 0.5 );
+    assertEquals( perc, holder2.getPercentiles().get( "0.5" ), 0.0001 );
   }
 
   @Test public void testClone() throws CloneNotSupportedException {
-    TDigestHolder holder = new TDigestHolder();
+    PercentileMetrics holder = new PercentileMetrics();
     Object result = holder.clone();
     assertTrue( result != null );
 
     TDigest digest = new TDigest( 50.0d );
-    holder = new TDigestHolder( digest );
+    holder = new PercentileMetrics( digest );
     holder.add( 5.0d );
     result = holder.clone();
-    assertTrue( holder != null );
+    assertTrue( result != null );
   }
 
   @Test public void testEquals() {
-    TDigestHolder holder = new TDigestHolder();
+    PercentileMetrics holder = new PercentileMetrics();
     assertTrue( holder.equals( holder ) );
     assertFalse( holder.equals( null ) );
     assertFalse( holder.equals( "string" ) );
@@ -86,28 +87,28 @@ public class TDigestHolderTest {
     digest.add( 5.0d );
     TDigest digest2 = new TDigest( 100.0d );
     digest2.add( 55.0d );
-    TDigestHolder holder2 = new TDigestHolder( digest );
-    TDigestHolder holder3 = new TDigestHolder( digest2 );
+    PercentileMetrics holder2 = new PercentileMetrics( digest );
+    PercentileMetrics holder3 = new PercentileMetrics( digest2 );
     assertFalse( holder.equals( holder2 ) );
     assertFalse( holder2.equals( holder ) );
     assertFalse( holder2.equals( holder3 ) );
 
-    holder3 = new TDigestHolder( digest );
+    holder3 = new PercentileMetrics( digest );
     assertTrue( holder2.equals( holder3 ) );
   }
 
   @Test public void testHash() {
-    TDigestHolder holder = new TDigestHolder();
+    PercentileMetrics holder = new PercentileMetrics();
     assertEquals( 0, holder.hashCode() );
     TDigest digest = new TDigest( 50.0d );
     digest.add( 5.0d );
     int hash = digest.hashCode();
-    holder = new TDigestHolder( digest );
-    assertEquals( hash, holder.hashCode() );
+    holder = new PercentileMetrics( digest );
+    assertEquals( hash * 31, holder.hashCode() );
   }
 
   @Test public void testToString() {
-    TDigestHolder holder = new TDigestHolder( new TDigest( 50.0d ) );
+    PercentileMetrics holder = new PercentileMetrics( new TDigest( 50.0d ) );
     assertTrue( holder.toString() != null );
   }
 }

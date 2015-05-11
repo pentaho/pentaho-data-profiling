@@ -23,11 +23,11 @@
 package com.pentaho.profiling.model;
 
 import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import org.junit.Before;
@@ -54,8 +54,10 @@ public class MutableProfileStatusImplTest {
 
   @Test
   public void testCopyConstructor() {
-    List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
-    ProfilingField mockField = mock( ProfilingField.class );
+    List<ProfileField> fieldList = new ArrayList<ProfileField>();
+    ProfileField mockField = mock( ProfileField.class );
+    when( mockField.getPhysicalName() ).thenReturn( "testPname" );
+    when( mockField.clone() ).thenReturn( mockField );
     fieldList.add( mockField );
     Long totalEntities = 150L;
     ProfileStatusMessage profileStatusMessage = mock( ProfileStatusMessage.class );
@@ -79,7 +81,7 @@ public class MutableProfileStatusImplTest {
     MutableProfileStatusImpl profileStatus =
       new MutableProfileStatusImpl( constructorArg );
     assertEquals( 1, profileStatus.getFields().size() );
-    assertEquals( mockField, profileStatus.getFields().get( 0 ) );
+    assertEquals( mockField.getPhysicalName(), profileStatus.getFields().get( 0 ).getPhysicalName() );
     assertEquals( totalEntities, profileStatus.getTotalEntities() );
     assertEquals( profileStatusMessage, profileStatus.getStatusMessages().get( 0 ) );
     assertEquals( profileActionExceptionWrapper, profileStatus.getOperationError() );
@@ -88,17 +90,6 @@ public class MutableProfileStatusImplTest {
     assertEquals( name, profileStatus.getName() );
     assertEquals( profileConfiguration, profileStatus.getProfileConfiguration() );
     assertEquals( sequence + 1, profileStatus.getSequenceNumber() );
-  }
-
-  @Test
-  public void testSetFields() {
-    MutableProfileStatusImpl profileStatus = new MutableProfileStatusImpl( constructorArg );
-    List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
-    ProfilingField mockField = mock( ProfilingField.class );
-    fieldList.add( mockField );
-    profileStatus.setFields( fieldList );
-    assertEquals( 1, profileStatus.getFields().size() );
-    assertEquals( mockField, profileStatus.getFields().get( 0 ) );
   }
 
   @Test

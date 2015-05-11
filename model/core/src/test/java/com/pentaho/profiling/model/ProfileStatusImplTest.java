@@ -22,11 +22,11 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
 import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import org.junit.Test;
@@ -70,8 +70,10 @@ public class ProfileStatusImplTest {
 
   @Test
   public void testFullConstructor() {
-    List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
-    ProfilingField mockField = mock( ProfilingField.class );
+    List<ProfileField> fieldList = new ArrayList<ProfileField>();
+    ProfileField mockField = mock( ProfileField.class );
+    when( mockField.getPhysicalName() ).thenReturn( "testPname" );
+    when( mockField.clone() ).thenReturn( mockField );
     fieldList.add( mockField );
     Long totalEntities = 100L;
     List profileStatusMessage = mock( List.class );
@@ -102,8 +104,10 @@ public class ProfileStatusImplTest {
 
   @Test
   public void testCopyConstructor() {
-    List<ProfilingField> fieldList = new ArrayList<ProfilingField>();
-    ProfilingField mockField = mock( ProfilingField.class );
+    List<ProfileField> fieldList = new ArrayList<ProfileField>();
+    ProfileField mockField = mock( ProfileField.class );
+    when( mockField.getPhysicalName() ).thenReturn( "testPname" );
+    when( mockField.clone() ).thenReturn( mockField );
     fieldList.add( mockField );
     ProfileState profileState = ProfileState.DISCARDED;
     Long totalEntities = 150L;

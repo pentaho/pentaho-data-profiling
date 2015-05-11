@@ -23,15 +23,17 @@
 package com.pentaho.model.metrics.contributor.metricManager.impl;
 
 import com.pentaho.model.metrics.contributor.Constants;
+import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.RegexHolder;
 import com.pentaho.profiling.api.MessageUtils;
+import com.pentaho.profiling.api.MutableProfileFieldValueType;
 import com.pentaho.profiling.api.ProfileFieldProperty;
+import com.pentaho.profiling.api.ProfileFieldValueType;
 import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
 import com.pentaho.profiling.api.metrics.MetricManagerContributor;
 import com.pentaho.profiling.api.metrics.MetricMergeException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.field.DataSourceMetricManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -44,28 +46,18 @@ import java.util.regex.Pattern;
 public class RegexAddressMetricContributor extends BaseMetricManagerContributor implements MetricManagerContributor {
   public static final String KEY_PATH =
     MessageUtils.getId( Constants.KEY, RegexAddressMetricContributor.class );
-  public static final String EMAIL_ADDRESS_KEY = "com.pentaho.str.email_address";
-  public static final ProfileFieldProperty EMAIL_ADDRESS_COUNT =
-    MetricContributorUtils.createMetricProperty( KEY_PATH, "EmailAddressMetricContributor", EMAIL_ADDRESS_KEY );
+  public static final String EMAIL_ADDRESS_KEY = "EmailAddressMetricContributor";
   private static final String EMAIL_PATTERN =
     "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
   private Pattern pattern = Pattern.compile( EMAIL_PATTERN );
   private String regex = EMAIL_PATTERN;
-  private ProfileFieldProperty profileFieldProperty = EMAIL_ADDRESS_COUNT;
-  private String[] pathToValue = MetricContributorUtils.removeType( EMAIL_ADDRESS_COUNT.getPathToProperty() );
+  private String metricName;
+  private String namePath = KEY_PATH;
+  private String nameKey = EMAIL_ADDRESS_KEY;
   private Set<String> supportedTypes = new HashSet<String>( Arrays.asList( String.class.getCanonicalName() ) );
 
-  public ProfileFieldProperty getProfileFieldProperty() {
-    return profileFieldProperty;
-  }
-
-  public void setProfileFieldProperty( ProfileFieldProperty profileFieldProperty ) {
-    this.profileFieldProperty = profileFieldProperty;
-    if ( profileFieldProperty != null ) {
-      this.pathToValue = MetricContributorUtils.removeType( profileFieldProperty.getPathToProperty() );
-    } else {
-      this.pathToValue = null;
-    }
+  public RegexAddressMetricContributor() {
+    updateMetricName();
   }
 
   public String getRegex() {
@@ -81,6 +73,33 @@ public class RegexAddressMetricContributor extends BaseMetricManagerContributor 
     return new HashSet<String>( supportedTypes );
   }
 
+  public String getNamePath() {
+    return namePath;
+  }
+
+  public void setNamePath( String namePath ) {
+    this.namePath = namePath;
+    updateMetricName();
+
+  }
+
+  public String getNameKey() {
+    return nameKey;
+  }
+
+  public void setNameKey( String nameKey ) {
+    this.nameKey = nameKey;
+    updateMetricName();
+  }
+
+  public String metricName() {
+    return metricName;
+  }
+
+  private void updateMetricName() {
+    this.metricName = namePath + ":" + nameKey;
+  }
+
   public Set<String> getSupportedTypes() {
     return supportedTypes;
   }
@@ -89,40 +108,43 @@ public class RegexAddressMetricContributor extends BaseMetricManagerContributor 
     this.supportedTypes = supportedTypes;
   }
 
+  private RegexHolder getOrCreateRegexHolder( MutableProfileFieldValueType mutableProfileFieldValueType ) {
+    RegexHolder result = (RegexHolder) mutableProfileFieldValueType.getValueTypeMetrics( metricName );
+    if ( result == null ) {
+      result = new RegexHolder();
+      mutableProfileFieldValueType.setValueTypeMetrics( metricName, result );
+    }
+    return result;
+  }
+
   @Override
-  public void process( DataSourceMetricManager dataSourceMetricManager, DataSourceFieldValue dataSourceFieldValue )
+  public void process( MutableProfileFieldValueType mutableProfileFieldValueType,
+                       DataSourceFieldValue dataSourceFieldValue )
     throws ProfileActionException {
     boolean match = pattern.matcher( dataSourceFieldValue.getFieldValue().toString() ).matches();
     if ( match ) {
-      Long existingCount = dataSourceMetricManager.getValue( 0L, pathToValue );
-      existingCount++;
-      dataSourceMetricManager.setValue( existingCount, pathToValue );
+      getOrCreateRegexHolder( mutableProfileFieldValueType ).increment();
     }
   }
 
-  @Override public void merge( DataSourceMetricManager into, DataSourceMetricManager from )
+  @Override public void merge( MutableProfileFieldValueType into, ProfileFieldValueType from )
     throws MetricMergeException {
-    Long intoCount = into.getValue( (Number) 0L, pathToValue ).longValue();
-    Long fromCount = from.getValue( (Number) 0L, pathToValue ).longValue();
-    into.setValue( intoCount + fromCount, pathToValue );
+    RegexHolder fromHolder = (RegexHolder) from.getValueTypeMetrics( metricName );
+    if ( fromHolder != null && fromHolder.hasCount() ) {
+      getOrCreateRegexHolder( into ).add( fromHolder.getCount() );
+    }
   }
 
   @Override public List<ProfileFieldProperty> profileFieldProperties() {
-    if ( profileFieldProperty == null ) {
-      return null;
-    }
-    return Arrays.asList( profileFieldProperty );
-  }
-
-  @Override public void clear( DataSourceMetricManager dataSourceMetricManager ) {
-    dataSourceMetricManager.clear( Arrays.<String[]>asList( pathToValue ) );
+    return Arrays.asList(
+      new ProfileFieldProperty( namePath, nameKey,
+        new ArrayList<String>( Arrays.asList( "types", "valueTypeMetricsMap", metricName, "count" ) ) ) );
   }
 
   //OperatorWrap isn't helpful for autogenerated methods
   //CHECKSTYLE:OperatorWrap:OFF
 
-  @Override
-  public boolean equals( Object o ) {
+  @Override public boolean equals( Object o ) {
     if ( this == o ) {
       return true;
     }
@@ -132,36 +154,34 @@ public class RegexAddressMetricContributor extends BaseMetricManagerContributor 
 
     RegexAddressMetricContributor that = (RegexAddressMetricContributor) o;
 
-    if ( profileFieldProperty != null ? !profileFieldProperty.equals( that.profileFieldProperty ) :
-      that.profileFieldProperty != null ) {
-      return false;
-    }
     if ( regex != null ? !regex.equals( that.regex ) : that.regex != null ) {
       return false;
     }
-    if ( supportedTypes != null ? !supportedTypes.equals( that.supportedTypes ) : that.supportedTypes != null ) {
+    if ( namePath != null ? !namePath.equals( that.namePath ) : that.namePath != null ) {
       return false;
     }
+    if ( nameKey != null ? !nameKey.equals( that.nameKey ) : that.nameKey != null ) {
+      return false;
+    }
+    return !( supportedTypes != null ? !supportedTypes.equals( that.supportedTypes ) : that.supportedTypes != null );
 
-    return true;
   }
 
-  @Override
-  public int hashCode() {
-    int result = pattern != null ? pattern.hashCode() : 0;
-    result = 31 * result + ( profileFieldProperty != null ? profileFieldProperty.hashCode() : 0 );
+  @Override public int hashCode() {
+    int result = regex != null ? regex.hashCode() : 0;
+    result = 31 * result + ( namePath != null ? namePath.hashCode() : 0 );
+    result = 31 * result + ( nameKey != null ? nameKey.hashCode() : 0 );
     result = 31 * result + ( supportedTypes != null ? supportedTypes.hashCode() : 0 );
     return result;
   }
 
   @Override public String toString() {
     return "RegexAddressMetricContributor{" +
-      "pattern=" + pattern +
-      ", regex='" + regex + '\'' +
-      ", profileFieldProperty=" + profileFieldProperty +
-      ", pathToValue=" + Arrays.toString( pathToValue ) +
+      "regex='" + regex + '\'' +
+      ", namePath='" + namePath + '\'' +
+      ", nameKey='" + nameKey + '\'' +
       ", supportedTypes=" + supportedTypes +
-      '}';
+      "} " + super.toString();
   }
   //CHECKSTYLE:OperatorWrap:ON
 }

@@ -1,4 +1,5 @@
-/*!
+/*
+!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
  * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
@@ -18,11 +19,12 @@
  * prohibited to anyone except those individuals and entities who have executed
  * confidentiality and non-disclosure agreements or other agreements with Pentaho,
  * explicitly covering such access.
- */
+
+
 
 package com.pentaho.profiling.api.metrics.field;
 
-import com.pentaho.profiling.api.ProfilingField;
+import com.pentaho.profiling.api.ProfilingFieldImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -90,11 +92,12 @@ public class DataSourceFieldManagerTest {
   public void testGetProfilingFields() {
     DataSourceFieldManager dataSourceFieldManager = new DataSourceFieldManager();
     DataSourceField dataSourceField = mock( DataSourceField.class );
-    ProfilingField profilingField = mock( ProfilingField.class );
-    when( dataSourceField.getProfilingField() ).thenReturn( profilingField );
+    ProfilingFieldImpl profilingFieldImpl = mock( ProfilingFieldImpl.class );
+    when( dataSourceField.getProfilingField() ).thenReturn( profilingFieldImpl );
     dataSourceFieldManager.addDataSourceField( dataSourceField );
-    List<ProfilingField> profilingFields = dataSourceFieldManager.getProfilingFields();
-    assertEquals( 1, profilingFields.size() );
-    assertEquals( profilingField, profilingFields.get( 0 ) );
+    List<ProfilingFieldImpl> profilingFieldImpls = dataSourceFieldManager.getProfilingFields();
+    assertEquals( 1, profilingFieldImpls.size() );
+    assertEquals( profilingFieldImpl, profilingFieldImpls.get( 0 ) );
   }
 }
+*/

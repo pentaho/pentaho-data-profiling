@@ -243,8 +243,8 @@ define([
               {pathToProperty: ['bag', 'needle']}
             ],
             fields: [
-              {values: {name: 'A'}},
-              {values: {name: 'B'}}
+              {name: 'A'},
+              {name: 'B'}
             ]
           });
 
@@ -263,7 +263,7 @@ define([
               {pathToProperty: ['name'], nameKey: 'NAME'}
             ],
             fields: [
-              {values: {name: 'A'}}
+              {name: 'A'}
             ]
           });
 
@@ -285,7 +285,7 @@ define([
               {pathToProperty: ['bag', 'needle']}
             ],
             fields: [
-              {values: {bag: {needle: 'sharp'}}}
+              {bag: {needle: 'sharp'}}
             ]
           });
 
@@ -304,7 +304,7 @@ define([
               {pathToProperty: ['name']}
             ],
             fields: [
-              {values: {name: 'A', age: 12}}
+              {name: 'A', age: 12}
             ]
           });
 
@@ -325,8 +325,8 @@ define([
             ],
             fields: [
               // Name is before Age, on purpose.
-              {values: {name: 'A'}},
-              {values: {age: 12}}
+              {name: 'A'},
+              {age: 12}
             ]
           });
 
@@ -392,8 +392,8 @@ define([
               {pathToProperty: ['type', 'code']},
             ],
             fields: [
-              {values: {name: 'A', age: 12, type: {code: '1'}}},
-              {values: {name: 'B', age: 11, type: {code: '2'}}}
+              {name: 'A', age: 12, type: {code: '1'}},
+              {name: 'B', age: 11, type: {code: '2'}}
             ]
           });
 
@@ -451,9 +451,9 @@ define([
               {pathToProperty: ['age']}
             ],
             fields: [
-              {values: {name: 'A', age: 12}},
-              {values: {name: 'B', age: [11]}},
-              {values: {name: 'C', age: [13, 15]}}
+              {name: 'A', age: 12},
+              {name: 'B', age: [11]},
+              {name: 'C', age: [13, 15]}
             ]
           });
 
@@ -488,9 +488,9 @@ define([
               {pathToProperty: ['experience']}
             ],
             fields: [
-              {values: {name: 'A', age: 12, experience: 5}},
-              {values: {name: 'B', age: [11], experience: 2}},
-              {values: {name: 'C', age: [13, 15], experience: [3, 6, 10]}}
+              {name: 'A', age: 12, experience: 5},
+              {name: 'B', age: [11], experience: 2},
+              {name: 'C', age: [13, 15], experience: [3, 6, 10]}
             ]
           });
 

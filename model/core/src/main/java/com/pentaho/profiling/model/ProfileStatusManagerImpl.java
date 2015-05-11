@@ -22,17 +22,21 @@
 
 package com.pentaho.profiling.model;
 
+import com.pentaho.profiling.api.IllegalTransactionException;
+import com.pentaho.profiling.api.MutableProfileStatus;
+import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldProperty;
 import com.pentaho.profiling.api.ProfileState;
+import com.pentaho.profiling.api.ProfileStatus;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingField;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -42,6 +46,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ProfileStatusManagerImpl implements ProfileStatusManager {
   private final ProfilingServiceImpl profilingService;
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+  private final Semaphore transactionSemaphore = new Semaphore( 1 );
+  private MutableProfileStatus transaction;
   private ProfileStatusImpl profileStatus;
 
   public ProfileStatusManagerImpl( String id, String name, ProfileConfiguration profileConfiguration,
@@ -60,6 +66,7 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
   }
 
   @Override public <T> T write( ProfileStatusWriteOperation<T> profileStatusWriteOperation ) {
+    transactionSemaphore.acquireUninterruptibly();
     readWriteLock.writeLock().lock();
     try {
       MutableProfileStatusImpl newStatus = new MutableProfileStatusImpl( profileStatus );
@@ -69,6 +76,45 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
       return result;
     } finally {
       readWriteLock.writeLock().unlock();
+      transactionSemaphore.release();
+    }
+  }
+
+  @Override public MutableProfileStatus startTransaction() throws IllegalTransactionException {
+    transactionSemaphore.acquireUninterruptibly();
+    if ( transaction != null ) {
+      throw new IllegalTransactionException(
+        "Tried to create transaction when there was already an active one: " + transaction );
+    }
+    transaction = read( new ProfileStatusReadOperation<MutableProfileStatus>() {
+      @Override public MutableProfileStatus read( ProfileStatus profileStatus ) {
+        return new MutableProfileStatusImpl( profileStatus );
+      }
+    } );
+    return transaction;
+  }
+
+  @Override public void commit( MutableProfileStatus mutableProfileStatus ) throws IllegalTransactionException {
+    readWriteLock.writeLock().lock();
+    try {
+      if ( transaction == null || transaction != mutableProfileStatus ) {
+        throw new IllegalTransactionException( "Tried to commit non-active transaction: " + mutableProfileStatus );
+      }
+      profileStatus = new ProfileStatusImpl( transaction );
+      transaction = null;
+      profilingService.notify( profileStatus );
+      transactionSemaphore.release();
+    } finally {
+      readWriteLock.writeLock().unlock();
+    }
+  }
+
+  @Override public void abort( MutableProfileStatus mutableProfileStatus ) throws IllegalTransactionException {
+    if ( transaction == mutableProfileStatus ) {
+      transaction = null;
+      transactionSemaphore.release();
+    } else {
+      throw new IllegalTransactionException( "Tried to abort non-active transaction: " + mutableProfileStatus );
     }
   }
 
@@ -103,10 +149,19 @@ public class ProfileStatusManagerImpl implements ProfileStatusManager {
     }
   }
 
-  @Override public List<ProfilingField> getFields() {
+  @Override public List<ProfileField> getFields() {
     readWriteLock.readLock().lock();
     try {
       return profileStatus.getFields();
+    } finally {
+      readWriteLock.readLock().unlock();
+    }
+  }
+
+  @Override public ProfileField getField( String physicalName ) {
+    readWriteLock.readLock().lock();
+    try {
+      return profileStatus.getField( physicalName );
     } finally {
       readWriteLock.readLock().unlock();
     }
