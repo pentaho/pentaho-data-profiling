@@ -89,13 +89,13 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
         new ProfileConfiguration( new StreamingProfileMetadata(), null, null ) );
       String streamingProfileId = streamingProfileStatusManager.getId();
       aggregateProfileService.addChild( aggregateProfileId, streamingProfileId );
-      streamingProfileStatusManager.write( new ProfileStatusWriteOperation<Void>() {
+      this.streamingProfile = streamingProfileService.getStreamingProfile( streamingProfileId );
+      streamingProfile.perform( new ProfileStatusWriteOperation<Void>() {
         @Override public Void write( MutableProfileStatus profileStatus ) {
           profileStatus.setName( ( rowCount + 1 ) + " - " );
           return null;
         }
       } );
-      this.streamingProfile = streamingProfileService.getStreamingProfile( streamingProfileId );
     } catch ( ProfileCreationException e ) {
       LOGGER.error( UNABLE_TO_CREATE_STREAMING_PROFILE, e );
     }

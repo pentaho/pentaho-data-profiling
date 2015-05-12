@@ -46,56 +46,57 @@ define(['./services'], function (appServices) {
 
       ProfileManagementViewService.prototype = {
         constructor: ProfileManagementViewService,
-        buildProfileManagementViewServiceTreeViewSchemas: function () {
-          var inAggregate = {};
-          angular.forEach(profileManagementViewService.aggregateProfiles, function(aggregate) {
-            function addChildrenRecursive(aggregateChild) {
-              if(typeof aggregateChild.childProfiles !== "undefined") {
-                angular.forEach(aggregateChild.childProfiles[1], function(childProfile) {
-                  addChildrenRecursive(childProfile);
-                });
-                // ['java.util.ArrayList', [profiles]] -> [profiles]
-                aggregateChild.childProfiles = aggregateChild.childProfiles[1];
-              }
-              inAggregate[aggregateChild.id] = true;
+        buildProfileManagementViewServiceTreeViewSchemas: function (profileTree) {
+          function copyList(nodes) {
+            var result = []
+            if (nodes) {
+              result = nodes.map(function(node) {
+                return copyNode(node);
+              }).filter(function (node) {
+                return node != null;
+              })
             }
-            addChildrenRecursive(aggregate);
-          });
-          //Set the availableProfiles to the aggregateProfiles
-          profileManagementViewService.availableProfiles = angular.copy(profileManagementViewService.aggregateProfiles);
-          for (var i = 0, stopProfLoop = profileManagementViewService.activeProfiles.length; i < stopProfLoop; i++) {
-            if (!inAggregate[profileManagementViewService.activeProfiles[i].id]) {
-              profileManagementViewService.availableProfiles.push({
-                "name": profileManagementViewService.activeProfiles[i].name,
-                "id": profileManagementViewService.activeProfiles[i].id,
-                "childProfiles": []
-              });
+            return result
+          }
+
+          function copyNode(node) {
+            if (!node || !node.name) {
+              return null;
+            }
+            return {
+              name: node.name,
+              id: node.id,
+              childProfiles: copyList(node.childProfiles)
             }
           }
+          //Set the availableProfiles to the aggregateProfiles
+          profileManagementViewService.availableProfiles = copyList(profileTree);
         },
         searchAggregateProfilesRecursively: function (profiles, id) {
           function childrenContainsProfileId(child) {
+            var result = false;
             if (child.id == id) {
               child.selected = 'selected';
-              return true;
+              result = true;
             } else {
               delete child['selected'];
             }
             if (typeof child.childProfiles !== "undefined") {
               for (var j = 0, stopChildLoop = child.childProfiles.length; j < stopChildLoop; j++) {
                 if (childrenContainsProfileId(child.childProfiles[j])) {
-                  return true;
+                  result = true;
                 }
               }
             }
-            return false;
+            return result;
           }
+          var result = []
           for (var j = 0, stopLoop = profiles.length; j < stopLoop; j++) {
             if (childrenContainsProfileId(profiles[j])) {
-              return profiles[j];
+              result = profiles[j];
             }
           }
-          return [];
+          return result;
         },
         getAvailableProfileIdsRecursively: function (availableProfileIdsArray) {
           for (var j = 0, stopAvailLoop = profileManagementViewService.availableProfiles.length; j < stopAvailLoop; j++) {

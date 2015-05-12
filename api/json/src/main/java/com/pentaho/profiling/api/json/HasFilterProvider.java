@@ -14,12 +14,12 @@ public class HasFilterProvider extends FilterProvider {
   private final Map<Class<?>, BeanPropertyFilter> classesWithFilters =
     new ConcurrentHashMap<Class<?>, BeanPropertyFilter>();
 
-  public static HasFilterProvider getInstance() {
-    return instance;
+  private HasFilterProvider() {
+
   }
 
-  private HasFilterProvider() {
-    
+  public static HasFilterProvider getInstance() {
+    return instance;
   }
 
   public void hasFilterAdded( HasFilter hasFilter, Map properties ) {

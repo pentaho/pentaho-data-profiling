@@ -67,7 +67,7 @@ define([
   'services/defaultMetricConfigViewService'
 ], function (angular) {
 
-  var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.model.ProfilingServiceImpl";
+  var PROFILE_STATUS_NOTIF_STYPE = "com.pentaho.profiling.api.ProfileStatus";
   var PROFILE_GETAGGPROF_URL = "../cxf/aggregate";
   var PROFILE_GETPROF_URL = "../cxf/profile";
   var PROFILE_GETOPERS_URL = "../cxf/profile/operations/";
@@ -140,6 +140,7 @@ define([
             {values: {name: 'B'}}
           ]
         });
+        notificationService.notify("com.pentaho.profiling.services.ProfileTreeNotifier", 'profileTree', []);
 
         notificationService.flush();
 

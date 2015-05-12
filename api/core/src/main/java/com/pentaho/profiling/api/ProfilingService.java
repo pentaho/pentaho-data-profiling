@@ -31,6 +31,8 @@ import java.util.List;
  * Service for creation and manipulation of profiles
  */
 public interface ProfilingService {
+  String PROFILES = "profiles";
+
   /**
    * Get the profile factory for a given data source
    *

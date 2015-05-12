@@ -32,6 +32,7 @@ import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusReadOperation;
 import com.pentaho.profiling.api.ProfileStatusReader;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import com.pentaho.profiling.api.ProfilingService;
 import com.pentaho.profiling.api.configuration.DataSourceMetadata;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.MetricContributorService;
@@ -175,7 +176,8 @@ public class ProfilingServiceImplTest {
 
   @Test
   public void testGetEmittedTypes() {
-    assertEquals( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
+    assertEquals( new HashSet<String>(
+        Arrays.asList( ProfilingService.class.getCanonicalName(), ProfileStatus.class.getCanonicalName() ) ),
       profilingService.getEmittedTypes() );
   }
 
@@ -188,7 +190,7 @@ public class ProfilingServiceImplTest {
     verify( notificationListener ).notify( argumentCaptor.capture() );
     NotificationObject notificationObject = argumentCaptor.getValue();
     assertEquals( profileId, notificationObject.getId() );
-    assertEquals( ProfilingServiceImpl.class.getCanonicalName(), notificationObject.getType() );
+    assertEquals( ProfileStatus.class.getCanonicalName(), notificationObject.getType() );
     assertEquals( profileStatus, notificationObject.getObject() );
   }
 
@@ -215,7 +217,7 @@ public class ProfilingServiceImplTest {
     verify( notificationListener ).notify( argumentCaptor.capture() );
     NotificationObject notificationObject = argumentCaptor.getValue();
     assertEquals( profileId, notificationObject.getId() );
-    assertEquals( ProfilingServiceImpl.class.getCanonicalName(), notificationObject.getType() );
+    assertEquals( ProfileStatus.class.getCanonicalName(), notificationObject.getType() );
     assertEquals( profileStatus, notificationObject.getObject() );
   }
 

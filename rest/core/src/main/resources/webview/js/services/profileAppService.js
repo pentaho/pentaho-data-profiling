@@ -75,6 +75,11 @@ define(["require", './services'], function (require, appServices) {
           profileAppService.hdfsTextHostViewService = aHdfsTextHostViewService;
           profileAppService.createProfilerViewService = aCreateProfilerViewService;
           profileAppService.scope = scope;
+
+          // Register to receive profile tree updates.
+          profileAppService.notificationService.register("com.pentaho.profiling.services.ProfileTreeNotifier", ['profileTree'], function (profileTree) {
+            profileAppService.updateAvailableProfiles(profileTree);
+          });
         },
         /**
          * Updates the profile information with the given profile status object.
@@ -94,6 +99,7 @@ define(["require", './services'], function (require, appServices) {
         updateProfile: function (profileStatus) {
           if (profileStatus && profileStatus.profileState != 'DISCARDED') {
             profileAppService.profileId = profileStatus.id;
+            profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileAppService.profileId);
 
             // Update datasource.
             if (profileStatus.profileConfiguration) {
@@ -132,23 +138,9 @@ define(["require", './services'], function (require, appServices) {
         setLastViewedField: function (path) {
           profileAppService.lastViewedField = path;
         },
-        buildAvailableProfiles: function () {
-          //Get all active Profiles
-          profileAppService.profileService.profileResource.getActiveProfiles({}, function (activeProfiles) {
-            profileAppService.profileManagementViewService.activeProfiles = [];
-            angular.forEach(activeProfiles[1], function (value, key) {
-              profileAppService.profileManagementViewService.activeProfiles.push(value);
-            });
-            //Get all aggregate Profiles
-            profileAppService.profileService.aggregateProfileResource.getAggregates({}, function (aggregateProfiles) {
-              profileAppService.profileManagementViewService.aggregateProfiles = [];
-              angular.forEach(aggregateProfiles[1], function (value, key) {
-                profileAppService.profileManagementViewService.aggregateProfiles.push(value);
-              });
-              profileAppService.profileManagementViewService.buildProfileManagementViewServiceTreeViewSchemas();
-              profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileAppService.profileId);
-            });
-          });
+        updateAvailableProfiles: function (profileTree) {
+          profileAppService.profileManagementViewService.buildProfileManagementViewServiceTreeViewSchemas(profileTree);
+          profileAppService.profileManagementViewService.setCurrentProfileTreeViewSchema(profileAppService.profileId);
         },
         /**
          * Orders to stop the operation on the profile id.
