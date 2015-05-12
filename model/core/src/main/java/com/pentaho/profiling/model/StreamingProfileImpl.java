@@ -96,6 +96,25 @@ public class StreamingProfileImpl implements StreamingProfile {
     this.isTimestamp = streamingCommitStrategy.isTimestamp();
   }
 
+  @Override public synchronized <T> T perform( ProfileStatusWriteOperation<T> profileStatusWriteOperation ) {
+    boolean startTransaction = transaction != null;
+    if ( startTransaction ) {
+      try {
+        profileStatusManager.commit( transaction );
+        try {
+          return profileStatusManager.write( profileStatusWriteOperation );
+        } finally {
+          if ( startTransaction ) {
+            transaction = profileStatusManager.startTransaction();
+          }
+        }
+      } catch ( IllegalTransactionException e ) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
   @Override public synchronized void processRecord( final List<DataSourceFieldValue> dataSourceFieldValues )
     throws ProfileActionException {
     if ( isRunning.get() ) {
@@ -164,7 +183,7 @@ public class StreamingProfileImpl implements StreamingProfile {
     return profileStatusManager.getName();
   }
 
-  @Override public void start( ExecutorService executorService ) {
+  @Override public synchronized void start( ExecutorService executorService ) {
     this.executorService = executorService;
     try {
       transaction = profileStatusManager.startTransaction();
@@ -174,7 +193,7 @@ public class StreamingProfileImpl implements StreamingProfile {
     isRunning.set( true );
   }
 
-  @Override public void stop() {
+  @Override public synchronized void stop() {
     isRunning.set( false );
     try {
       doRefresh();

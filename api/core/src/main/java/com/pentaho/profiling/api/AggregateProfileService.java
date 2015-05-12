@@ -28,7 +28,7 @@ import java.util.List;
  * Service for interacting with aggregate profiles
  */
 public interface AggregateProfileService {
-
+  String AGGREGATE_PROFILES = "aggregateProfiles";
   /**
    * Returns a list of all aggregate profiles
    *

@@ -28,9 +28,9 @@ import java.util.List;
  * Created by bryan on 3/5/15.
  */
 public interface AggregateProfile extends Profile {
-  public static final String AGGREGATE_PROFILE = "AGGREGATE_PROFILE";
+  String AGGREGATE_PROFILE = "AGGREGATE_PROFILE";
 
-  public List<Profile> getChildProfiles();
+  List<Profile> getChildProfiles();
 
-  public void addChildProfile( String profileId );
+  void addChildProfile( String profileId );
 }

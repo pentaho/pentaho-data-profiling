@@ -69,9 +69,6 @@ public class MutableProfileStatusImpl extends ProfileStatusImpl implements Mutab
   }
 
   @Override public void addField( ProfileField field ) {
-    if ( fields.containsKey( field.getPhysicalName() ) ) {
-      // TODO... Log?
-    }
     fields.put( field.getPhysicalName(), new MutableProfileFieldImpl( field ) );
   }
 

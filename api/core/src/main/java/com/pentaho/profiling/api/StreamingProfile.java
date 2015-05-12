@@ -32,7 +32,9 @@ import java.util.List;
  * Created by bryan on 3/23/15.
  */
 public interface StreamingProfile extends Profile {
-  public static final String STREAMING_PROFILE = "STREAMING_PROFILE";
+  String STREAMING_PROFILE = "STREAMING_PROFILE";
+
+  <T> T perform( ProfileStatusWriteOperation<T> profileStatusWriteOperation );
 
   void processRecord( List<DataSourceFieldValue> dataSourceFieldValues ) throws ProfileActionException;
 

@@ -78,6 +78,7 @@
            interface="com.pentaho.profiling.api.ProfileFactory"/>
   <service id="aggregateProfileServiceImplService" ref="aggregateProfileServiceImpl"
            interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <service ref="aggregateProfileServiceImpl" interface="org.pentaho.osgi.notification.api.NotifierWithHistory"/>
   <service id="metricContributorServiceImplService" ref="metricContributorServiceImpl"
            interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
   <service interface="com.pentaho.profiling.api.metrics.MetricContributorsFactory" ref="metricContributorsFactoryImpl"/>

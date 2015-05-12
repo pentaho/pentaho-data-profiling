@@ -52,21 +52,25 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by bryan on 7/31/14.
  */
 public class ProfilingServiceImpl implements ProfilingService, NotifierWithHistory {
+  public static final String PROFILE_STATUS_CANONICAL_NAME = ProfileStatus.class.getCanonicalName();
+  public static final String PROFILING_SERVICE_CANONICAL_NAME = ProfilingService.class.getCanonicalName();
   private final Map<String, Profile> profileMap = new ConcurrentHashMap<String, Profile>();
   private final Map<String, ProfileStatusManager> profileStatusManagerMap = new ConcurrentHashMap<String,
     ProfileStatusManager>();
   private final Map<String, NotificationObject> previousNotifications = new ConcurrentHashMap<String,
     NotificationObject>();
   private final DelegatingNotifierImpl delegatingNotifier =
-    new DelegatingNotifierImpl( new HashSet<String>( Arrays.asList( ProfilingServiceImpl.class.getCanonicalName() ) ),
-      this );
+    new DelegatingNotifierImpl(
+      new HashSet<String>( Arrays.asList( PROFILING_SERVICE_CANONICAL_NAME, PROFILE_STATUS_CANONICAL_NAME ) ), this );
   private final ExecutorService executorService;
   private final MetricContributorService metricContributorService;
+  private final AtomicLong profilesSequence = new AtomicLong( 1L );
   private List<Pair<Integer, ProfileFactory>> factories = new ArrayList<Pair<Integer, ProfileFactory>>();
 
   public ProfilingServiceImpl( ExecutorService executorService, MetricContributorService metricContributorService ) {
@@ -120,10 +124,23 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
       profile.start( executorService );
       profileMap.put( profile.getId(), profile );
       profileStatusManagerMap.put( profile.getId(), profileStatusManager );
+      notifyProfiles();
       return profileStatusManager;
     }
 
     return null;
+  }
+
+  private void notifyProfiles() {
+    NotificationObject notificationObject =
+      new NotificationObject( PROFILING_SERVICE_CANONICAL_NAME, PROFILES, profilesSequence.getAndIncrement(),
+        new ArrayList<Profile>( profileMap.values() ) );
+    previousNotifications.put( PROFILES, notificationObject );
+    try {
+      delegatingNotifier.notify( notificationObject );
+    } catch ( Exception e ) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -152,6 +169,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
         return null;
       }
     } );
+    notifyProfiles();
   }
 
   @Override public List<NotificationObject> getPreviousNotificationObjects() {
@@ -172,7 +190,7 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
 
   public void notify( ProfileStatus profileStatus ) {
     NotificationObject notificationObject =
-      new NotificationObject( ProfilingServiceImpl.class.getCanonicalName(), profileStatus.getId(),
+      new NotificationObject( PROFILE_STATUS_CANONICAL_NAME, profileStatus.getId(),
         profileStatus.getSequenceNumber(), profileStatus );
     previousNotifications.put( profileStatus.getId(), notificationObject );
     try {

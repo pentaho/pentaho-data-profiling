@@ -145,12 +145,14 @@
   <service interface="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapper">
     <bean class="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapperImpl">
       <argument>
-        <value>com.pentaho.profiling.model.ProfilingServiceImpl</value>
+        <value>com.pentaho.profiling.api.ProfileStatus</value>
       </argument>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
+  <bean id="profileTreeNotifier" class="com.pentaho.profiling.services.ProfileTreeNotifier" scope="singleton"/>
+  <service ref="profileTreeNotifier" interface="org.pentaho.osgi.notification.api.NotifierWithHistory"/>
   <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
   <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
   <reference id="metricContributorServiceDelegate"
@@ -161,4 +163,8 @@
                   interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
   <reference-list id="mapperDefinitions" interface="com.pentaho.profiling.api.mapper.MapperDefinition"
                   availability="optional"/>
+  <reference-list id="notificationProviderList" interface="org.pentaho.osgi.notification.api.NotifierWithHistory"
+                  availability="optional">
+    <reference-listener ref="profileTreeNotifier" bind-method="addNotifier"/>
+  </reference-list>
 </blueprint>

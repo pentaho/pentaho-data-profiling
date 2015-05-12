@@ -33,9 +33,8 @@ define(['./controllers'], function (appControllers) {
       profileAppService.leftNavDisplay = true;
 
       // Register to receive profile status updates.
-      profileAppService.register("com.pentaho.profiling.model.ProfilingServiceImpl", [$routeParams.profileId], function (profileStatus) {
+      profileAppService.register("com.pentaho.profiling.api.ProfileStatus", [$routeParams.profileId], function (profileStatus) {
         profileAppService.updateProfile(profileStatus);
-        profileAppService.buildAvailableProfiles();
       });
     }
   ])

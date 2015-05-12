@@ -261,7 +261,7 @@ public class AggregateProfileImpl implements AggregateProfile {
             } catch ( RuntimeException e ) {
               LOGGER.error( "Error refreshing aggregate profile " + getId(), e );
               throw e;
-            }finally {
+            } finally {
               readLock.unlock();
             }
           }
