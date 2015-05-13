@@ -35,9 +35,7 @@ import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleStepException;
-import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.debug.BreakPointListener;
 import org.pentaho.di.trans.debug.StepDebugMeta;
 import org.pentaho.di.trans.debug.TransDebugMeta;
@@ -47,6 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pentaho.plugin.util.DataSourceFieldValueCreator.createDataSourceFields;
 
 /**
  * Created by bryan on 3/24/15.
@@ -113,19 +113,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
   @Override public synchronized void rowWrittenEvent( RowMetaInterface rowMetaInterface, Object[] objects )
     throws KettleStepException {
     List<DataSourceFieldValue> dataSourceFieldValues = new ArrayList<DataSourceFieldValue>( objects.length );
-    int index = 0;
-    for ( ValueMetaInterface valueMetaInterface : rowMetaInterface.getValueMetaList() ) {
-      try {
-        DataSourceFieldValue dataSourceFieldValue =
-          new DataSourceFieldValue( valueMetaInterface.getNativeDataType( objects[ index++ ] ) );
-        String name = valueMetaInterface.getName();
-        dataSourceFieldValue.setLogicalName( name );
-        dataSourceFieldValue.setPhysicalName( name );
-        dataSourceFieldValues.add( dataSourceFieldValue );
-      } catch ( KettleValueException e ) {
-        LOGGER.error( UNABLE_TO_ADD_FIELD + valueMetaInterface.getName(), e );
-      }
-    }
+    createDataSourceFields( dataSourceFieldValues, rowMetaInterface, objects );
     try {
       streamingProfile.processRecord( dataSourceFieldValues );
       rowCount++;

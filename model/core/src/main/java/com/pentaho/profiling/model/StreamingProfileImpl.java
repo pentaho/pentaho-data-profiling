@@ -194,7 +194,9 @@ public class StreamingProfileImpl implements StreamingProfile {
   }
 
   @Override public synchronized void stop() {
-    isRunning.set( false );
+    if ( !isRunning.getAndSet( false ) ) {
+      return;
+    }
     try {
       doRefresh();
     } catch ( IllegalTransactionException e ) {
