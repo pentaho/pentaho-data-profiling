@@ -97,12 +97,22 @@ public class PreviewProfileStreamerListenerTest {
     String profileStatusManager2Id = "profileStatusManager2";
     String testFieldName = "test-name";
     String testData = "test-data";
-    ProfileStatusManager profileStatusManager1 = mock( ProfileStatusManager.class );
-    ProfileStatusManager profileStatusManager2 = mock( ProfileStatusManager.class );
+    final ProfileStatusManager profileStatusManager1 = mock( ProfileStatusManager.class );
+    final ProfileStatusManager profileStatusManager2 = mock( ProfileStatusManager.class );
     final MutableProfileStatus mutableProfileStatus1 = mock( MutableProfileStatus.class );
     final MutableProfileStatus mutableProfileStatus2 = mock( MutableProfileStatus.class );
     StreamingProfile streamingProfile1 = mock( StreamingProfile.class );
+    when( streamingProfile1.perform( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return profileStatusManager1.write( (ProfileStatusWriteOperation<Object>) invocation.getArguments()[0] );
+      }
+    } );
     StreamingProfile streamingProfile2 = mock( StreamingProfile.class );
+    when( streamingProfile2.perform( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return profileStatusManager2.write( (ProfileStatusWriteOperation<Object>) invocation.getArguments()[0] );
+      }
+    } );
     RowMetaInterface rowMetaInterface = mock( RowMetaInterface.class );
     ValueMetaInterface valueMetaInterface = mock( ValueMetaInterface.class );
     when( valueMetaInterface.getName() ).thenReturn( testFieldName );
@@ -162,7 +172,10 @@ public class PreviewProfileStreamerListenerTest {
   public void testRowReadAndErrorEvents() throws KettleStepException, ProfileCreationException {
     //Testing fields we had to implement but have no code, thanks cobertura
     ProfileStatusManager profileStatusManager1 = mock( ProfileStatusManager.class );
+    String value = "test-id";
+    when( profileStatusManager1.getId() ).thenReturn( value );
     when( profilingService.create( any( ProfileConfiguration.class ) ) ).thenReturn( profileStatusManager1 );
+    when( streamingProfileService.getStreamingProfile( value ) ).thenReturn( mock( StreamingProfile.class ) );
     PreviewProfileStreamerListener previewProfileStreamerListener =
       new PreviewProfileStreamerListener( profilingService, streamingProfileService, aggregateProfileId,
         aggregateProfileService );
