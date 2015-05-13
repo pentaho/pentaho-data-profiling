@@ -5,7 +5,6 @@ import com.pentaho.profiling.api.ValueTypeMetrics;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import static com.pentaho.profiling.api.util.PublicCloneableUtil.copyMap;
 
@@ -24,7 +23,7 @@ public class ProfileFieldValueTypeImpl implements ProfileFieldValueType {
   public ProfileFieldValueTypeImpl( String typeName, long count, Map<String, ValueTypeMetrics> typeMetrics ) {
     this.typeName = typeName;
     this.count = count;
-    this.typeMetrics = new TreeMap<String, ValueTypeMetrics>();
+    this.typeMetrics = new HashMap<String, ValueTypeMetrics>();
     copyMap( typeMetrics, this.typeMetrics );
   }
 
