@@ -3,7 +3,6 @@ package com.pentaho.profiling.api.util;
 import com.pentaho.profiling.api.PublicCloneable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

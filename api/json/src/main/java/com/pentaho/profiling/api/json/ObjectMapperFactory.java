@@ -108,7 +108,7 @@ public class ObjectMapperFactory {
 
         @Override public TypeSerializer buildTypeSerializer( SerializationConfig config, JavaType baseType,
                                                              Collection<NamedType> subtypes, BeanProperty property ) {
-          return _idType == JsonTypeInfo.Id.NONE ? null :
+          AsPropertyTypeSerializer propertyTypeSerializer =
             new AsPropertyTypeSerializer( idResolver( config, baseType, subtypes, false, true ), property,
               _typeProperty ) {
               @Override public void writeTypePrefixForArray( Object value, JsonGenerator jgen )
@@ -141,12 +141,13 @@ public class ObjectMapperFactory {
                 // noop
               }
             };
+          return _idType == JsonTypeInfo.Id.NONE ? null : propertyTypeSerializer;
         }
 
         @Override public TypeDeserializer buildTypeDeserializer( DeserializationConfig config, JavaType baseType,
                                                                  Collection<NamedType> subtypes,
                                                                  BeanProperty property ) {
-          return _idType == JsonTypeInfo.Id.NONE ? null :
+          AsPropertyTypeDeserializer asPropertyTypeDeserializer =
             new AsPropertyTypeDeserializer( baseType, idResolver( config, baseType, subtypes, false, true ), property,
               _defaultImpl, _typeProperty ) {
               private final JsonDeserializer<Object> byteArrayDeser =
@@ -190,6 +191,7 @@ public class ObjectMapperFactory {
                 return super.deserializeTypedFromScalar( jp, ctxt );
               }
             };
+          return _idType == JsonTypeInfo.Id.NONE ? null : asPropertyTypeDeserializer;
         }
       };
     typer = typer.init( JsonTypeInfo.Id.CLASS, null );

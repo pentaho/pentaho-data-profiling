@@ -29,6 +29,7 @@ import com.pentaho.profiling.api.ProfileCreationException;
 import com.pentaho.profiling.api.ProfileStatusManager;
 import com.pentaho.profiling.api.ProfileStatusWriteOperation;
 import com.pentaho.profiling.api.ProfilingService;
+import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.StreamingProfileService;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 import com.pentaho.profiling.api.metrics.LoggingEventUtil;
@@ -128,6 +129,7 @@ public class PreviewProfileStreamerTest {
     when( transDebugMeta.getStepDebugMetaMap() ).thenReturn( stepDebugMetaMap );
     when( profilingService.create( any( ProfileConfiguration.class ) ) ).thenReturn( profileStatusManager );
     when( profileStatusManager.getId() ).thenReturn( profileId );
+    when( streamingProfileService.getStreamingProfile( profileId ) ).thenReturn( mock( StreamingProfile.class ) );
     when( aggregateProfileService.getAggregateProfile( profileId ) ).thenReturn( aggregateProfile );
     when( aggregateProfile.getId() ).thenReturn( aggregateId );
     when( trans.findBaseSteps( stepName ) ).thenReturn( Arrays.asList( stepInterface ) );
