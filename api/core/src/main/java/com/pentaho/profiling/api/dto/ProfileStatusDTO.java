@@ -30,7 +30,6 @@ import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -115,13 +114,6 @@ public class ProfileStatusDTO implements ProfileStatus {
   }
 
   public void setFields( List<ProfileField> fields ) {
-    if ( fields != null ) {
-      List<ProfileField> newFields = new ArrayList<ProfileField>( fields.size() );
-      for ( ProfileField field : fields ) {
-        newFields.add( new ProfileFieldDTO( field ) );
-      }
-      fields = newFields;
-    }
     this.fields = fields;
   }
 
