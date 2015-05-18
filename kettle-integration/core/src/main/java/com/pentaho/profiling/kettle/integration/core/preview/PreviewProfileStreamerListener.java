@@ -22,6 +22,7 @@
 
 package com.pentaho.profiling.kettle.integration.core.preview;
 
+import com.pentaho.plugin.util.DataSourceFieldValueCreator;
 import com.pentaho.profiling.api.AggregateProfileService;
 import com.pentaho.profiling.api.MutableProfileStatus;
 import com.pentaho.profiling.api.ProfileCreationException;
@@ -46,8 +47,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pentaho.plugin.util.DataSourceFieldValueCreator.createDataSourceFields;
-
 /**
  * Created by bryan on 3/24/15.
  */
@@ -60,6 +59,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
   private final StreamingProfileService streamingProfileService;
   private final String aggregateProfileId;
   private final AggregateProfileService aggregateProfileService;
+  private final DataSourceFieldValueCreator dataSourceFieldValueCreator;
   private ProfileStatusManager streamingProfileStatusManager;
   private StreamingProfile streamingProfile;
   private int rowCount = 0;
@@ -71,6 +71,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
     this.streamingProfileService = streamingProfileService;
     this.aggregateProfileId = aggregateProfileId;
     this.aggregateProfileService = aggregateProfileService;
+    this.dataSourceFieldValueCreator = new DataSourceFieldValueCreator();
     createStreamingProfile();
   }
 
@@ -113,7 +114,7 @@ public class PreviewProfileStreamerListener implements RowListener, BreakPointLi
   @Override public synchronized void rowWrittenEvent( RowMetaInterface rowMetaInterface, Object[] objects )
     throws KettleStepException {
     List<DataSourceFieldValue> dataSourceFieldValues = new ArrayList<DataSourceFieldValue>( objects.length );
-    createDataSourceFields( dataSourceFieldValues, rowMetaInterface, objects );
+    dataSourceFieldValueCreator.createDataSourceFields( dataSourceFieldValues, rowMetaInterface, objects );
     try {
       streamingProfile.processRecord( dataSourceFieldValues );
       rowCount++;

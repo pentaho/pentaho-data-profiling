@@ -87,4 +87,8 @@ public class BeanTester {
     Assume.assumeTrue( "Skipping hasValidBeanToString", testHasValidBeanToString );
     assertThat( clazz, hasValidBeanToString() );
   }
+
+  protected Class<?> getClazz() {
+    return clazz;
+  }
 }

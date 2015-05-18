@@ -38,7 +38,7 @@ public class DataSourceFieldValueCreator {
   public static final String UNABLE_TO_ADD_FIELD = "Unable to add field ";
   private static final Logger LOGGER = LoggerFactory.getLogger( DataSourceFieldValueCreator.class );
 
-  public static void createDataSourceFields( List<DataSourceFieldValue> outputList, RowMetaInterface rowMetaInterface,
+  public void createDataSourceFields( List<DataSourceFieldValue> outputList, RowMetaInterface rowMetaInterface,
                                             Object[] objects ) {
     int index = 0;
     for ( ValueMetaInterface valueMetaInterface : rowMetaInterface.getValueMetaList() ) {
