@@ -22,30 +22,42 @@
 
 package com.pentaho.plugin.integration.extension;
 
+import com.pentaho.plugin.util.DataSourceFieldValueCreator;
 import com.pentaho.profiling.api.StreamingProfile;
 import com.pentaho.profiling.api.action.ProfileActionException;
 import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleStepException;
+import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.step.RowListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.pentaho.plugin.util.DataSourceFieldValueCreator.createDataSourceFields;
 
 /**
  * Created by bryan on 5/13/15.
  */
 public class ProfileTransformationRowListener implements RowListener {
-  private static final Logger LOGGER = LoggerFactory.getLogger( ProfileTransformationRowListener.class );
+  public static final String UNABLE_TO_PROCESS_RECORD = "Unable to process record ";
+  private final LogChannelInterface logChannelInterface;
   private final StreamingProfile streamingProfile;
-  private final List<DataSourceFieldValue> list = new ArrayList<DataSourceFieldValue>();
+  private final List<DataSourceFieldValue> list;
+  private final DataSourceFieldValueCreator dataSourceFieldValueCreator;
 
-  public ProfileTransformationRowListener( StreamingProfile streamingProfile ) {
+  public ProfileTransformationRowListener( LogChannelInterface logChannelInterface,
+                                           StreamingProfile streamingProfile ) {
+    this( logChannelInterface, streamingProfile, new DataSourceFieldValueCreator(),
+      new ArrayList<DataSourceFieldValue>() );
+  }
+
+  public ProfileTransformationRowListener( LogChannelInterface logChannelInterface,
+                                           StreamingProfile streamingProfile,
+                                           DataSourceFieldValueCreator dataSourceFieldValueCreator,
+                                           List<DataSourceFieldValue> list ) {
+    this.logChannelInterface = logChannelInterface;
     this.streamingProfile = streamingProfile;
+    this.dataSourceFieldValueCreator = dataSourceFieldValueCreator;
+    this.list = list;
   }
 
   @Override public void rowReadEvent( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException {
@@ -55,11 +67,11 @@ public class ProfileTransformationRowListener implements RowListener {
   @Override public synchronized void rowWrittenEvent( RowMetaInterface rowMeta, Object[] row )
     throws KettleStepException {
     list.clear();
-    createDataSourceFields( list, rowMeta, row );
+    dataSourceFieldValueCreator.createDataSourceFields( list, rowMeta, row );
     try {
       streamingProfile.processRecord( list );
     } catch ( ProfileActionException e ) {
-      LOGGER.error( "Unable to process record " + list, e );
+      logChannelInterface.logError( UNABLE_TO_PROCESS_RECORD + list, e );
     }
   }
 

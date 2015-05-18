@@ -37,8 +37,6 @@ import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransListener;
 import org.pentaho.di.trans.step.StepMetaDataCombi;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +58,6 @@ import java.util.concurrent.atomic.AtomicLong;
   description = "This will register row listeners for streaming profiles on the specified steps" )
 public class ProfileTransformationPrepareExecution implements ExtensionPointInterface {
   public static final String PROFILE_STEPS = "ProfileSteps";
-  private static final Logger LOGGER = LoggerFactory.getLogger( ProfileTransformationPrepareExecution.class );
   private final ProfilingService profilingService;
   private final StreamingProfileService streamingProfileService;
   private final AggregateProfileService aggregateProfileService;
@@ -75,14 +72,16 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
     runNumbers = new ConcurrentHashMap<String, AtomicLong>();
   }
 
-  private String handleStepMetaDataCombi( String transName, StepMetaDataCombi stepMetaDataCombi )
+  private String handleStepMetaDataCombi( LogChannelInterface logChannelInterface, String transName,
+                                          StepMetaDataCombi stepMetaDataCombi )
     throws ProfileCreationException {
     ProfileStatusManager profileStatusManager = profilingService.create( new ProfileConfiguration(
       new StreamingProfileMetadata( transName + "." + stepMetaDataCombi.stepname + "[" + stepMetaDataCombi.copy + "]" ),
       null, null ) );
     String profileId = profileStatusManager.getId();
     stepMetaDataCombi.step.addRowListener(
-      new ProfileTransformationRowListener( streamingProfileService.getStreamingProfile( profileId ) ) );
+      new ProfileTransformationRowListener( logChannelInterface,
+        streamingProfileService.getStreamingProfile( profileId ) ) );
     return profileId;
   }
 
@@ -132,9 +131,9 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
       List<String> streamingIds = new ArrayList<String>();
       for ( StepMetaDataCombi stepMetaDataCombi : stepMetaDataCombis ) {
         try {
-          streamingIds.add( handleStepMetaDataCombi( transNameWithRun, stepMetaDataCombi ) );
+          streamingIds.add( handleStepMetaDataCombi( logChannelInterface, transNameWithRun, stepMetaDataCombi ) );
         } catch ( ProfileCreationException e ) {
-          LOGGER.error( "Unable to create streaming profile for " + stepMetaDataCombi, e );
+          logChannelInterface.logError( "Unable to create streaming profile for " + stepMetaDataCombi, e );
         }
       }
       allIds.addAll( streamingIds );
@@ -151,7 +150,8 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
             aggregateProfileService.addChild( stepProfileId, streamingId );
           }
         } catch ( ProfileCreationException e ) {
-          LOGGER.error( "Unable to create aggregate profile for " + stepMetaDataCombisEntry.getKey(), e );
+          logChannelInterface.logError( "Unable to create aggregate profile for " + stepMetaDataCombisEntry.getKey(),
+            e );
         }
       }
       // TODO: Set these ids somewhere so we can retrieve them
