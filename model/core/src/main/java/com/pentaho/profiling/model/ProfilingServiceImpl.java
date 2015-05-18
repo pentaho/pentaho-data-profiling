@@ -154,7 +154,14 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override public void stop( String profileId ) {
-    profileMap.get( profileId ).stop();
+    Profile profile = profileMap.get( profileId );
+    if ( profile != null ) {
+      profile.stop();
+    }
+  }
+
+  @Override public void stopAll() {
+    for ( Profile profile : profileMap.values() ) { profile.stop(); }
   }
 
   @Override public boolean isRunning( String profileId ) {
@@ -162,14 +169,25 @@ public class ProfilingServiceImpl implements ProfilingService, NotifierWithHisto
   }
 
   @Override public void discardProfile( String profileId ) {
-    profileMap.remove( profileId ).stop();
-    profileStatusManagerMap.get( profileId ).write( new ProfileStatusWriteOperation<Void>() {
-      @Override public Void write( MutableProfileStatus profileStatus ) {
-        profileStatus.setProfileState( ProfileState.DISCARDED );
-        return null;
-      }
-    } );
+    stop( profileId );
+    profileMap.remove( profileId );
+    ProfileStatusManager remove = profileStatusManagerMap.remove( profileId );
+    if ( remove != null ) {
+      remove.write( new ProfileStatusWriteOperation<Void>() {
+        @Override public Void write( MutableProfileStatus profileStatus ) {
+          profileStatus.setProfileState( ProfileState.DISCARDED );
+          return null;
+        }
+      } );
+    }
+    previousNotifications.remove( profileId );
     notifyProfiles();
+  }
+
+  @Override public void discardProfiles() {
+    for ( Map.Entry<String, Profile> entry : profileMap.entrySet() ) {
+      discardProfile( entry.getKey() );
+    }
   }
 
   @Override public List<NotificationObject> getPreviousNotificationObjects() {

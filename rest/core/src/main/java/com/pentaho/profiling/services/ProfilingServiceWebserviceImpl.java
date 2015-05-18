@@ -239,6 +239,20 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   }
 
   /**
+   * Stops all running profiles.
+   */
+  @PUT
+  @Path( "/stopAll" )
+  @Override public void stopAll() {
+    delegate.stopAll();
+  }
+
+  public Example stopAllExample() {
+    Example example = new Example();
+    return example;
+  }
+
+  /**
    * Checks to see if the given profile is currently running.
    *
    * @param profileId The profile id to check.
@@ -279,6 +293,21 @@ public class ProfilingServiceWebserviceImpl implements ProfilingService {
   public Example discardProfileExample() {
     Example example = new Example();
     example.getPathParameters().put( "profileId", UUID.randomUUID().toString() );
+    return example;
+  }
+
+  /**
+   * Discards all profiles, removing them from memory.
+   */
+  @PUT
+  @Path( "/discardAll" )
+  @SuccessResponseCode( 204 )
+  @Override public void discardProfiles() {
+    delegate.discardProfiles();
+  }
+
+  public Example discardProfilesExample() {
+    Example example = new Example();
     return example;
   }
 }
