@@ -35,8 +35,8 @@ define(['./controllers'], function (appControllers) {
 
       profileAppService.profileService.metricContributorResource.getAllAvailableMetricContributorConfig({}, function (metricContributorConfig) {
         profileAppService.metricConfigViewService.metricContributorConfig = metricContributorConfig;
-        profileAppService.metricConfigViewService.metricManagerContributors = metricContributorConfig.metricManagerContributors[1];
-        profileAppService.metricConfigViewService.metricContributors = metricContributorConfig.metricContributors[1];
+        profileAppService.metricConfigViewService.metricManagerContributors = metricContributorConfig.metricManagerContributors;
+        profileAppService.metricConfigViewService.metricContributors = metricContributorConfig.metricContributors;
       });
     }
   ])
