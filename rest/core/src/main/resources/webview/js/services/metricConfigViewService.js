@@ -112,7 +112,7 @@ define(['./services'], function (appServices) {
               metricConfigViewService.sampleRegexMetricContributor.profileFieldProperty.nameKey !== "" &&
               metricConfigViewService.sampleRegexMetricContributor.profileFieldProperty.pathToProperty[1].length > 0 &&
               metricConfigViewService.sampleRegexMetricContributor.supportedTypes[1].length > 0) {
-            metricConfigViewService.metricContributorConfig.metricManagerContributors[1].push(metricConfigViewService.sampleRegexMetricContributor);
+            metricConfigViewService.metricContributorConfig.metricManagerContributors.push(metricConfigViewService.sampleRegexMetricContributor);
             metricConfigViewService.resetSampleRegexMetricContributor();
             metricConfigViewService.createRegex = false;
           } else {
