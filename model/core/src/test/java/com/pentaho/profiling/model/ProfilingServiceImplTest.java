@@ -158,6 +158,14 @@ public class ProfilingServiceImplTest {
   }
 
   @Test
+  public void testStopAll() {
+    String profileId = "PROFILE_ID";
+    profilingService.getProfileMap().put( profileId, profile );
+    profilingService.stopAll();
+    verify( profile ).stop();
+  }
+
+  @Test
   public void testDiscard() {
     when( profileStatusManager.getId() ).thenReturn( profileId );
     profilingService.getProfileMap().put( profileId, profile );
@@ -170,6 +178,23 @@ public class ProfilingServiceImplTest {
       }
     } );
     profilingService.discardProfile( profileId );
+    verify( profile ).stop();
+    verify( mutableProfileStatus ).setProfileState( ProfileState.DISCARDED );
+  }
+
+  @Test
+  public void testDiscardAll() {
+    when( profileStatusManager.getId() ).thenReturn( profileId );
+    profilingService.getProfileMap().put( profileId, profile );
+    profilingService.getProfileStatusManagerMap().put( profileId, profileStatusManager );
+    assertEquals( profileStatusManager, profilingService.getProfileUpdate( profileId ) );
+    final MutableProfileStatus mutableProfileStatus = mock( MutableProfileStatus.class );
+    when( profileStatusManager.write( any( ProfileStatusWriteOperation.class ) ) ).thenAnswer( new Answer<Object>() {
+      @Override public Object answer( InvocationOnMock invocation ) throws Throwable {
+        return ( (ProfileStatusWriteOperation) invocation.getArguments()[ 0 ] ).write( mutableProfileStatus );
+      }
+    } );
+    profilingService.discardProfiles();
     verify( profile ).stop();
     verify( mutableProfileStatus ).setProfileState( ProfileState.DISCARDED );
   }

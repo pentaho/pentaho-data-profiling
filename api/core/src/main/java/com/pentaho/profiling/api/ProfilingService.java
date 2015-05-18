@@ -89,6 +89,11 @@ public interface ProfilingService {
   void stop( String profileId );
 
   /**
+   * Stops all the running profiles
+   */
+  void stopAll();
+
+  /**
    * Returns a boolean indicating whether a profile is running
    *
    * @param profileId the profileId to check
@@ -102,4 +107,9 @@ public interface ProfilingService {
    * @param profileId the profileId to discard
    */
   void discardProfile( String profileId );
+
+  /**
+   * Discards all profiles
+   */
+  void discardProfiles();
 }
