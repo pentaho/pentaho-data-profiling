@@ -30,6 +30,7 @@ import com.pentaho.profiling.api.ProfileStatusMessage;
 import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import com.pentaho.profiling.api.configuration.ProfileConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +54,8 @@ public class ProfileStatusDTO implements ProfileStatus {
 
   public ProfileStatusDTO( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getName(), profileStatus.getId(),
-      profileStatus.getProfileConfiguration(), profileStatus.getFields(), profileStatus.getTotalEntities(),
+      profileStatus.getProfileConfiguration(), createFieldDtos( profileStatus.getFields() ),
+      profileStatus.getTotalEntities(),
       profileStatus.getStatusMessages(), profileStatus.getOperationError(), profileStatus.getProfileFieldProperties(),
       profileStatus.getSequenceNumber() );
   }
@@ -68,12 +70,23 @@ public class ProfileStatusDTO implements ProfileStatus {
     this.name = name;
     this.id = id;
     this.profileConfiguration = profileConfiguration;
-    setFields( fields );
+    this.fields = fields;
     this.totalEntities = totalEntities;
     this.statusMessages = statusMessages;
     this.operationError = operationError;
     this.profileFieldProperties = profileFieldProperties;
     this.sequenceNumber = sequenceNumber;
+  }
+
+  private static List<ProfileField> createFieldDtos( List<ProfileField> profileFields ) {
+    if ( profileFields == null ) {
+      return null;
+    }
+    List<ProfileField> result = new ArrayList<ProfileField>( profileFields.size() );
+    for ( ProfileField profileField : profileFields ) {
+      result.add( new ProfileFieldDTO( profileField ) );
+    }
+    return result;
   }
 
   @Override public String getName() {

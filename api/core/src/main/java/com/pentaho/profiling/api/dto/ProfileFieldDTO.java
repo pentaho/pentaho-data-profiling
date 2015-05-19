@@ -25,6 +25,7 @@ package com.pentaho.profiling.api.dto;
 import com.pentaho.profiling.api.ProfileField;
 import com.pentaho.profiling.api.ProfileFieldValueType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,20 @@ public class ProfileFieldDTO implements ProfileField {
   public ProfileFieldDTO( ProfileField profileField ) {
     this.physicalName = profileField.getPhysicalName();
     this.logicalName = profileField.getLogicalName();
-    this.properties = profileField.getProperties();
-    this.types = profileField.getTypes();
+    Map<String, String> properties = profileField.getProperties();
+    this.properties = properties == null ? null : new HashMap<String, String>( properties );
+    this.types = createFieldDtos( profileField.getTypes() );
+  }
+
+  private static List<ProfileFieldValueType> createFieldDtos( List<ProfileFieldValueType> profileFieldValueTypes ) {
+    if ( profileFieldValueTypes == null ) {
+      return null;
+    }
+    List<ProfileFieldValueType> result = new ArrayList<ProfileFieldValueType>( profileFieldValueTypes.size() );
+    for ( ProfileFieldValueType profileFieldValueType : profileFieldValueTypes ) {
+      result.add( new ProfileFieldValueTypeDTO( profileFieldValueType ) );
+    }
+    return result;
   }
 
   @Override public String getPhysicalName() {
