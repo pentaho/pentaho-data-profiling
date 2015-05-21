@@ -108,4 +108,8 @@ public class WordCountMetricContributor extends BaseMetricManagerContributor imp
   @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( WORD_COUNT_MIN, WORD_COUNT_MAX, WORD_COUNT_SUM, WORD_COUNT_MEAN );
   }
+
+  @Override public boolean equals( Object obj ) {
+    return obj != null && obj.getClass().equals( WordCountMetricContributor.class );
+  }
 }

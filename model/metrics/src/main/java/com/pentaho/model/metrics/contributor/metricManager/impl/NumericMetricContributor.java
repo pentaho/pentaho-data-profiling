@@ -140,4 +140,8 @@ public class NumericMetricContributor extends BaseMetricManagerContributor imple
   public List<ProfileFieldProperty> profileFieldProperties() {
     return getProfileFieldPropertiesStatic();
   }
+
+  @Override public boolean equals( Object obj ) {
+    return obj != null && obj.getClass().equals( NumericMetricContributor.class );
+  }
 }
