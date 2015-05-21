@@ -99,6 +99,7 @@ public class MapperProfileImpl implements Profile {
           LOGGER.error( e.getMessage(), e );
         } finally {
           try {
+            collector.stop();
             new ObjectMapper()
               .writeValue( new File( "/tmp/" + profileStatusManager.getId() ), collector.getRootNode() );
           } catch ( Throwable e ) {
