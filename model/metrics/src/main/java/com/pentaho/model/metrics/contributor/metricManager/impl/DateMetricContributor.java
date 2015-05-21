@@ -76,4 +76,12 @@ public class DateMetricContributor extends BaseMetricManagerContributor implemen
   @Override public List<ProfileFieldProperty> profileFieldProperties() {
     return Arrays.asList( NumericMetricContributor.MIN, NumericMetricContributor.MAX );
   }
+
+  @Override public boolean equals( Object obj ) {
+    return obj != null && obj.getClass().equals( DateMetricContributor.class );
+  }
+
+  @Override public int hashCode() {
+    return DateMetricContributor.class.hashCode();
+  }
 }

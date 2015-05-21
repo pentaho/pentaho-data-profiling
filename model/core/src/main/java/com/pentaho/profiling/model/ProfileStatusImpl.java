@@ -59,7 +59,6 @@ public class ProfileStatusImpl implements ProfileStatus {
   public ProfileStatusImpl( String id, String name, ProfileConfiguration profileConfiguration, long sequenceNumber ) {
     this( ProfileState.ACTIVE, null, null, null, null, null, id, profileConfiguration, sequenceNumber, name );
   }
-
   public ProfileStatusImpl( ProfileStatus profileStatus ) {
     this( profileStatus.getProfileState(), profileStatus.getFields(), profileStatus.getTotalEntities(),
       profileStatus.getStatusMessages(),
