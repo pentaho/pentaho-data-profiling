@@ -1,2 +1,2 @@
-data-profiling-ee
+pentaho-data-profiling
 =================

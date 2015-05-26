@@ -1,24 +1,19 @@
-/*!
- * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
- *
- * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
- *
- * NOTICE: All information including source code contained herein is, and
- * remains the sole property of Pentaho and its licensors. The intellectual
- * and technical concepts contained herein are proprietary and confidential
- * to, and are trade secrets of Pentaho and may be covered by U.S. and foreign
- * patents, or patents in process, and are protected by trade secret and
- * copyright laws. The receipt or possession of this source code and/or related
- * information does not convey or imply any rights to reproduce, disclose or
- * distribute its contents, or to manufacture, use, or sell anything that it
- * may describe, in whole or in part. Any reproduction, modification, distribution,
- * or public display of this information without the express written authorization
- * from Pentaho is strictly prohibited and in violation of applicable laws and
- * international treaties. Access to the source code contained herein is strictly
- * prohibited to anyone except those individuals and entities who have executed
- * confidentiality and non-disclosure agreements or other agreements with Pentaho,
- * explicitly covering such access.
- */
+/*******************************************************************************
+ * Pentaho Data Profiling
+ * <p/>
+ * Copyright (C) 2002-2015 by Pentaho : http://www.pentaho.com
+ * <p/>
+ * ******************************************************************************
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 
 package com.pentaho.plugin.integration.extension;
 
@@ -35,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bryan on 5/13/15.
+ * RowListener that is responsible for converting Kettle rows to lists of DataSourceFieldValues
  */
 public class ProfileTransformationRowListener implements RowListener {
   public static final String UNABLE_TO_PROCESS_RECORD = "Unable to process record ";
@@ -44,12 +39,27 @@ public class ProfileTransformationRowListener implements RowListener {
   private final List<DataSourceFieldValue> list;
   private final DataSourceFieldValueCreator dataSourceFieldValueCreator;
 
+  /**
+   * Creates the row listener for the given logChannelInterface and streamingProfile
+   *
+   * @param logChannelInterface
+   * @param streamingProfile
+   */
   public ProfileTransformationRowListener( LogChannelInterface logChannelInterface,
                                            StreamingProfile streamingProfile ) {
     this( logChannelInterface, streamingProfile, new DataSourceFieldValueCreator(),
       new ArrayList<DataSourceFieldValue>() );
   }
 
+  /**
+   * Creates the row listener for the given logChannelInterface and streamingProfile allowing the user to specify logic
+   * used to create the dataSourceFieldValues as well as the list to hold them
+   *
+   * @param logChannelInterface
+   * @param streamingProfile
+   * @param dataSourceFieldValueCreator
+   * @param list
+   */
   public ProfileTransformationRowListener( LogChannelInterface logChannelInterface,
                                            StreamingProfile streamingProfile,
                                            DataSourceFieldValueCreator dataSourceFieldValueCreator,
@@ -64,6 +74,13 @@ public class ProfileTransformationRowListener implements RowListener {
 
   }
 
+  /**
+   * Transforms the row into a list of dataSourceFieldValues and sends them through the streaming profile
+   *
+   * @param rowMeta the row meta
+   * @param row     the row
+   * @throws KettleStepException
+   */
   @Override public synchronized void rowWrittenEvent( RowMetaInterface rowMeta, Object[] row )
     throws KettleStepException {
     list.clear();

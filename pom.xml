@@ -1,0 +1,144 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pentaho</groupId>
+    <artifactId>pentaho-ce-jar-parent-pom</artifactId>
+    <version>1.0.9</version>
+  </parent>
+
+  <groupId>pentaho</groupId>
+  <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
+  <packaging>pom</packaging>
+  <version>6.0-SNAPSHOT</version>
+
+  <modules>
+    <module>documentation</module>
+    <module>api</module>
+    <module>model</module>
+    <module>rest</module>
+    <module>webapp</module>
+    <module>kettle-integration</module>
+    <module>assemblies</module>
+  </modules>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Bryan Rosander</name>
+      <email>brosander@pentaho.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <properties>
+    <cxf.version>2.7.11</cxf.version>
+    <felix.version>4.0.3</felix.version>
+    <guava.version>16.0.1</guava.version>
+    <jackson.version>1.9.13</jackson.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <junit.version>4.11</junit.version>
+    <mockito.version>1.9.5</mockito.version>
+    <requirejs.version>2.1.14</requirejs.version>
+    <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
+    <slf4j.version>1.7.3</slf4j.version>
+
+    <!-- Other pentaho dependency versions -->
+    <kettle.version>6.0-SNAPSHOT</kettle.version>
+    <notification.version>6.0-SNAPSHOT</notification.version>
+    <bean-matchers.version>0.9</bean-matchers.version>
+  </properties>
+
+  <scm>
+    <connection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</connection>
+    <url>scm:git:git@github.com:${github.user}/${project.artifactId}.git</url>
+    <developerConnection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <formats>
+            <format>html</format>
+            <format>xml</format>
+          </formats>
+          <check>
+            <branchRate>80</branchRate>
+            <lineRate>90</lineRate>
+            <haltOnFailure>false</haltOnFailure>
+            <totalBranchRate>80</totalBranchRate>
+            <totalLineRate>90</totalLineRate>
+            <packageLineRate>90</packageLineRate>
+            <packageBranchRate>80</packageBranchRate>
+          </check>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-cobertura</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>cobertura</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version}</version>
+        <configuration>
+          <configLocation>${checkstyle-config-url}</configLocation>
+          <propertiesLocation>${checkstyle-properties-url}</propertiesLocation>
+          <linkXRef>true</linkXRef>
+          <cacheFile/>
+        </configuration>
+        <executions>
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <goals>
+              <goal>checkstyle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

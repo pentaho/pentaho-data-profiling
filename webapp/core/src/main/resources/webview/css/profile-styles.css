@@ -1,0 +1,444 @@
+/*******************************************************************************
+ *
+ * Pentaho Data Profiling
+ *
+ * Copyright (C) 2002-2015 by Pentaho : http://www.pentaho.com
+ *
+ *******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************/
+
+.pentaho-fieldgroup-major {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+body {
+  text-align: center; /* center child div, which is inline-block */
+}
+
+.profile-section + .profile-section {
+  margin-top: 30px;
+}
+
+.profile-dsi-container {
+  margin-bottom: 0.5em;
+}
+
+/*
+.profile-fields-container {
+}
+*/
+
+/* message */
+.profile-message {
+  display: table;
+  border: 1px solid rgb(192, 192, 192);
+  background-color: rgb(253, 253, 226);
+  margin-bottom: 30px;
+}
+
+.profile-message-img-cell {
+  display: table-cell;
+  padding: 16px 0 16px 16px; /* right: 0 */
+  vertical-align: middle;
+}
+
+.profile-state-processing .profile-message-img {
+  width: 32px;
+  height: 32px;
+  background: url("../images/loading.gif") no-repeat 0px 0px;
+}
+
+.profile-error-message .profile-message-img {
+  width: 32px;
+  height: 32px;
+  background: url("../images/error.png") no-repeat 0px 0px;
+}
+
+.profile-message-text {
+  display: table-cell;
+  padding: 16px;
+  vertical-align: middle;
+  white-space: pre;
+}
+
+.profile-message-action {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 16px 16px 16px 0; /* left: 0 */
+}
+
+.profile-button-list {
+  list-style-type: none;
+}
+
+.profile-button-list-element {
+  margin: 10px;
+}
+
+.profile-button {
+  width: 100%;
+}
+
+/* operations */
+.profile-operations-container {
+  margin-top: 1em;
+}
+
+.profile-operations-container button + button {
+  margin-left: 5px;
+}
+
+/* table */
+.profile-fields-tabular-wrapper {
+}
+
+#profileFieldOverview {
+  text-align: left;
+  margin: 35px 0px 0px 380px;
+}
+
+#profileFieldOverview.stateFormHidden {
+  text-align: left;
+  margin: 35px 0px 0px 71px;
+}
+
+/* Pentaho Table style
+    - extends globalCrystal.css
+    - adapted from mantleCrystal.css
+
+    Table structure:
+
+    table.pentaho-table
+        thead > tr >
+            th.cellTableHeader[.cellTableSortableHeader[.cellTableSortedHeaderAscending|.cellTableSortedHeaderDescending]
+                div.cellTableHeaderContent
+                    div.cellTableHeaderText
+                    div.cellTableHeaderOrderIndicator
+        tbody >
+            tr.cellTableRow.(cellTableOddRow|cellTableEvenRow)
+                td.(cellTableOddRowCell|cellTableEvenRowCell)
+
+*/
+
+/* header */
+.pentaho-table .cellTableHeader {
+  padding: 8px 10px 10px 10px;
+  border-spacing: 2px;
+  overflow: hidden;
+  text-align: left;
+  color: white;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.pentaho-table .cellTableSortableHeader {
+  cursor: pointer;
+  cursor: hand;
+  background-color: #3e6575;
+  color: white;
+}
+
+.pentaho-table .cellTableSortableHeader:hover {
+  color: #dfdfdf;
+}
+
+.pentaho-table .cellTableHeaderContent {
+  position: relative;
+  padding-right: 18px;
+  zoom: 1;
+}
+
+.pentaho-table .cellTableHeaderOrderIndicator {
+  position: absolute;
+  top: 50.0%;
+  right: 0.0px;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  line-height: 0.0px;
+}
+
+.pentaho-table .cellTableSortedHeaderAscending .cellTableHeaderOrderIndicator {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGOng////M/9jglX4NChh0aBEyJZyJMUdxDhLEIjfQbEgsX5JA9k0MCEJALp4URYdEOy6AAAAAElFTkSuQmCC) no-repeat 0px 0px;
+}
+
+.pentaho-table .cellTableSortedHeaderDescending .cellTableHeaderOrderIndicator {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAM0lEQVR42mNgGBrg////aUBcTqxiQSB+B8WCxGgo/48AHYQUK/3HBEr4NMzEomEVwzADAByiURYlCo8mAAAAAElFTkSuQmCC) no-repeat 0px 0px;
+}
+
+/* body row */
+.pentaho-table .cellTableEvenRow {
+  background: #ffffff;
+}
+
+.pentaho-table .cellTableOddRow {
+  background: #f0f0f0;
+}
+
+.pentaho-table .cellTableRow:hover {
+  background: #dce7ed;
+  -moz-transition: all 600ms;
+  -webkit-transition: all 600ms;
+}
+
+/* cell */
+.pentaho-table .cellTableCell {
+  padding: 10px;
+  overflow: hidden;
+  text-align: left;
+}
+
+#pucHeader {
+  top: 0px;
+  position: fixed;
+  width: 100%;
+  padding: 0px;
+  z-index: 9999;
+}
+
+#pucHeader .hud {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  color: white;
+}
+
+#pucHeader .hud span {
+  color: #eee;
+}
+
+#pucHeader .hud a {
+  display: inline-block;
+  text-decoration: none;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid #CCCCCC;
+  padding: 0 10px;
+  color: white;
+  text-decoration: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  -moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3);
+  background-color: #0085B0;
+}
+
+#pucHeader .hud a span {
+  margin-left: 10px;
+}
+
+#pucHeader .hud a.active, #header .hud a:hover {
+  background: #3e6575;
+  background: -moz-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #3e6575), color-stop(50%, #3e6575), color-stop(50%, #1a2e35), color-stop(100%, #1a2e36));
+  background: -webkit-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -o-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: -ms-linear-gradient(top, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  background: linear-gradient(to bottom, #3e6575 0%, #3e6575 50%, #1a2e35 50%, #1a2e36 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3e6575', endColorstr='#1a2e36', GradientType=0);
+}
+
+#pucHeader .hud a.profile {
+  width: 24px;
+  padding: 0;
+  margin-left: 20px;
+  z-index: 9999;
+}
+
+#newRegexCreator {
+  display: none;
+}
+
+#newRegexCreator.on {
+  display: block;
+  padding-top: 10px;
+}
+
+.nav {
+  width: 55px;
+  height: 100%;
+  border-right: 1px solid rgba(0, 0, 0, 0.6);
+  z-index: 2;
+  line-height: 55px;
+  position: fixed;
+  background: #3b3b3b;
+  display: none;
+}
+
+.nav.on {
+  display: block;
+}
+
+.nav ul {
+  margin-top: 0px;
+  list-style: none;
+  padding: 0px;
+}
+
+.nav ul a {
+  display: block;
+  height: 50px;
+  line-height: 55px;
+  text-align: center;
+  color: white;
+}
+
+.nav ul a:hover {
+  background: #8ab3c6;
+}
+
+.nav ul a.active {
+  background: #3e6575;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+#state-form {
+  width: 300px;
+  float: left;
+  height: 100%;
+  left: 55px;
+  position: fixed;
+  top: -4px;
+  text-align: left;
+  margin: 5px 5px 0px 0px;
+}
+
+.state-form-wrap {
+  width: 100%;
+  float: left;
+  padding: 10px 10px 0px 0px;
+  border: 1px solid;
+  height: 100%;
+  left: 5px;
+  background: #eee;
+}
+
+#profileTabularView {
+  padding: 10px;
+  text-align: initial;
+  overflow: auto;
+  margin-left: 365px;
+  padding: 10px;
+}
+
+#profileManagementView {
+  padding: 10px;
+  text-align: initial;
+  margin-top: 40px;
+  overflow: auto;
+  margin-left: 56px;
+  padding: 10px;
+}
+
+.clear {
+  clear: both;
+}
+
+#profileView {
+  padding: 15px;
+}
+
+.tabs ul:first-child li {
+  float: left;
+  width: 32%;
+}
+
+.tabs ul li {
+  list-style-type: none;
+}
+
+.tabs ul:first-child li:first-child a {
+  border-right: none;
+}
+
+.tabs ul:first-child li a {
+  display: block;
+  height: 32px;
+  line-height: 32px;
+  margin-top: 3px;
+  text-align: center;
+  text-transform: none;
+  font-weight: normal;
+  border: 1px solid black;
+  border-bottom: none;
+  color: white;
+  background: #3b3b3b;
+  font-size: 10px;
+}
+
+.tabs ul:first-child li a.on {
+  color: white;
+  background: #3e6575;
+}
+
+.tabs ul:first-child li a:hover {
+  background: #8ab3c6;
+}
+
+#toggleStateForm {
+  position: fixed;
+  height: 20px;
+  width: 13px;
+  top: 51px;
+  left: 366px;
+  background: #3b3b3b;
+  border: 1px black solid;
+  color: white;
+  font-weight: bolder;
+}
+
+#state-form.stateFormHidden {
+  left: -256px;
+}
+
+#toggleStateForm.stateFormHidden {
+  left: 56px;
+}
+
+#profileTabularView.stateFormHidden {
+  margin-left: 56px;
+}
+
+#metricConfigView {
+  float: left;
+  margin-left: 56px;
+  text-align: left;
+}
+
+#metricConfigView ul li {
+  display: block;
+  float: left;
+  padding: 5px;
+  list-style-type: none;
+}
+
+.off {
+  display: none;
+}
+
+ul li {
+  list-style-type: none;
+}

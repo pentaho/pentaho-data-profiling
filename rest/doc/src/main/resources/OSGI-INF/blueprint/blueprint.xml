@@ -41,13 +41,6 @@
 
   <bean id="jsonProvider" factory-ref="objectMapperFactory" factory-method="createProvider"/>
 
-  <bean id="resourceMapping"
-        class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
-    <property name="alias" value="/restdoc"/>
-    <property name="path" value="/webview"/>
-  </bean>
-  <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
-
   <reference id="destinationRegistry" interface="org.apache.cxf.transport.http.DestinationRegistry"/>
   <reference-list id="docEndpoints" interface="com.pentaho.profiling.api.doc.rest.DocEndpoint"/>
 </blueprint>

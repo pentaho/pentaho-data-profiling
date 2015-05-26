@@ -30,9 +30,7 @@
       <directory>target/dependencies/apache-karaf-2.3.5</directory>
       <outputDirectory>/apache-karaf-2.3.5</outputDirectory>
       <excludes>
-        <exclude>etc/custom.properties</exclude>
         <exclude>etc/org.apache.karaf.features.cfg</exclude>
-        <exclude>etc/org.ops4j.pax.logging.cfg</exclude>
         <exclude>etc/startup.properties</exclude>
       </excludes>
     </fileSet>

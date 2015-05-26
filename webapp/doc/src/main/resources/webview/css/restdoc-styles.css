@@ -1,0 +1,124 @@
+/*******************************************************************************
+ *
+ * Pentaho Data Profiling
+ *
+ * Copyright (C) 2002-2015 by Pentaho : http://www.pentaho.com
+ *
+ *******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************/
+
+/* create.html view */
+#appBody {
+    text-align: left; /* center child div, which is inline-block */
+}
+
+.doc-endpoint-path {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.doc-endpoint-desc {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.doc-table {
+    width: 100%;
+}
+
+.doc-table-wrapper {
+    padding: 1em;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.doc-table-caption {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.doc-example-title {
+     font-weight: bold;
+     font-size: 18px;
+ }
+
+.doc-endpoint-wrapper {
+    padding: 1em;
+}
+
+.doc-endpoint-border-wrapper {
+    border: 1px solid black;
+    border-radius: 25px;
+}
+
+.doc-endpoint-border-inner-wrapper {
+    padding: 1em;
+}
+
+pre {
+    border: 1px solid black;
+    border-radius: 25px;
+    background: lightgray;
+}
+
+.doc-code-wrapper {
+    padding: 1em;
+    padding-top: 2em;
+    padding-bottom: 2em;
+}
+
+.doc-expand-collapse {
+    padding-top: 2em;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 1em;
+}
+
+.doc-page-background {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+}
+
+.doc-endpoints-wrapper {
+    padding: 2em;
+    display: inline-block;
+}
+
+.doc-endpoints-links {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 2em;
+}
+
+.doc-scroll-top {
+    position: fixed;
+    width: 100%;
+}
+
+.doc-scroll-top-link {
+    float: right;
+}
+
+.doc-navigation {
+    cursor: pointer;
+    cursor: hand;
+}

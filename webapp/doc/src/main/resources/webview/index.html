@@ -1,0 +1,106 @@
+<!-- /*******************************************************************************
+ *
+ * Pentaho Data Profiling
+ *
+ * Copyright (C) 2002-2015 by Pentaho : http://www.pentaho.com
+ *
+ *******************************************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ ******************************************************************************/
+ -->
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../content/common-ui/resources/themes/crystal/globalCrystal.css">
+  <link rel="stylesheet" type="text/css" href="css/restdoc-styles.css">
+  <style>
+    .translate-cloak {
+      display: none !important;
+    }
+  </style>
+  <script src="../requirejs-manager/js/require-init.js"></script>
+  <script type="text/javascript">
+    require(["com.pentaho.profiling.rest.doc/app"], function (webviewApp) {
+      webviewApp.init();
+    });
+  </script>
+</head>
+<body id="appBody" ng-controller="AppController">
+<div class="pentaho-page-background doc-page-background"></div>
+<div class="doc-scroll-top">
+  <a class="doc-scroll-top-link doc-navigation" ng-click="scroll('#top')">Top</a>
+</div>
+<div class="doc-endpoints-links">
+  <a name="#top"></a>
+  <ul>
+    <li class="doc-navigation" ng-repeat="endpoint in data">
+      <a ng-click="scroll('#' + endpoint.method + ':' + endpoint.path )">{{endpoint.method}}:{{endpoint.path}}</a></li>
+  </ul>
+</div>
+<div class="doc-endpoints-wrapper">
+  <div class="doc-endpoint-wrapper" ng-repeat="endpoint in data">
+    <div class="doc-endpoint-border-wrapper">
+      <div class="doc-endpoint-border-inner-wrapper">
+        <a name="#{{endpoint.method}}:{{endpoint.path}}"></a>
+
+        <div class="doc-endpoint-path">{{endpoint.method}} to {{endpoint.path}}</div>
+        <div class="doc-endpoint-desc">{{endpoint.description}}</div>
+        <div>
+          <doctable data="endpoint.endpointPathParametersTable"></doctable>
+          <doctable data="endpoint.endpointQueryParametersTable"></doctable>
+          <doctable data="endpoint.endpointBodyParameterTable"></doctable>
+          <doctable data="endpoint.endpointResponseTable"></doctable>
+          <doctable data="endpoint.errorCodesTable"></doctable>
+        </div>
+        <div ng-if="endpoint.endpointExamples.length > 0">
+          <div ng-repeat="example in endpoint.endpointExamples">
+            <div ng-if="example.show">
+              <div class="doc-example-title">Example {{$index + 1}}
+                <button ng-click="example.show = false">Hide</button>
+              </div>
+              <div> HTTP {{endpoint.method}}: {{example.url}}</div>
+              <div ng-if="example.body !== undefined && example.body !== null">
+                <div>
+                  <div>Body:</div>
+                  <div>
+                    <pre><div class="doc-code-wrapper"><code>{{example.body}}</code></div></pre>
+                  </div>
+                </div>
+              </div>
+              <div ng-if="example.exampleReturn !== undefined && example.exampleReturn !== null">
+                <div>
+                  <div>Response:</div>
+                  <div>
+                    <pre><div class="doc-code-wrapper"><code>{{example.exampleReturn}}</code></div></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-if="!example.show">
+              <div class="doc-example-title">Example {{$index + 1}}
+                <button ng-click="example.show = true">Show</button>
+              </div>
+            </div>
+          </div>
+          <div class="doc-expand-collapse">
+            <button ng-click="endpoint.expandAll()">Show {{endpoint.endpointExamples.length}} Example(s)</button>
+            <button ng-click="endpoint.hideAll()">Hide {{endpoint.endpointExamples.length}} Example(s)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

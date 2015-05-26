@@ -111,14 +111,6 @@
     </bean>
   </service>
 
-  <bean id="resourceMapping"
-        class="org.ops4j.pax.web.extender.whiteboard.runtime.DefaultResourceMapping">
-    <property name="alias" value="/profileWebView"/>
-    <property name="path" value="/webview"/>
-  </bean>
-  <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
-
-
   <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
     <argument ref="blueprintBundleContext"/>
     <argument>

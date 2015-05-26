@@ -1,24 +1,19 @@
-/*!
- * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
- *
- * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
- *
- * NOTICE: All information including source code contained herein is, and
- * remains the sole property of Pentaho and its licensors. The intellectual
- * and technical concepts contained herein are proprietary and confidential
- * to, and are trade secrets of Pentaho and may be covered by U.S. and foreign
- * patents, or patents in process, and are protected by trade secret and
- * copyright laws. The receipt or possession of this source code and/or related
- * information does not convey or imply any rights to reproduce, disclose or
- * distribute its contents, or to manufacture, use, or sell anything that it
- * may describe, in whole or in part. Any reproduction, modification, distribution,
- * or public display of this information without the express written authorization
- * from Pentaho is strictly prohibited and in violation of applicable laws and
- * international treaties. Access to the source code contained herein is strictly
- * prohibited to anyone except those individuals and entities who have executed
- * confidentiality and non-disclosure agreements or other agreements with Pentaho,
- * explicitly covering such access.
- */
+/*******************************************************************************
+ * Pentaho Data Profiling
+ * <p/>
+ * Copyright (C) 2002-2015 by Pentaho : http://www.pentaho.com
+ * <p/>
+ * ******************************************************************************
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ ******************************************************************************/
 
 package com.pentaho.plugin.integration.extension;
 
@@ -52,7 +47,11 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by bryan on 5/13/15.
+ * This is an example extension point that illustrates how to attach to a transformation and profile the rows that come
+ * off of a given step
+ * <p/>
+ * The extension point annotation gives Kettle the information it needs to register us as a plugin (with the
+ * pdi-osgi-bridge's help)
  */
 @ExtensionPoint( id = "profileTransformationPrepareExecution", extensionPointId = "TransformationStartThreads",
   description = "This will register row listeners for streaming profiles on the specified steps" )
@@ -63,6 +62,13 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
   private final AggregateProfileService aggregateProfileService;
   private final ConcurrentMap<String, AtomicLong> runNumbers;
 
+  /**
+   * This constructor is called via the blueprint.xml and injects the extension point's dependencies
+   *
+   * @param profilingService        the profiling service
+   * @param streamingProfileService the streaming profile service
+   * @param aggregateProfileService the aggregate profile service
+   */
   public ProfileTransformationPrepareExecution( ProfilingService profilingService,
                                                 StreamingProfileService streamingProfileService,
                                                 AggregateProfileService aggregateProfileService ) {
@@ -72,6 +78,16 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
     runNumbers = new ConcurrentHashMap<String, AtomicLong>();
   }
 
+  /**
+   * Create the streaming profile for the step copy (because multiple copies of the step could be running, we need a
+   * profile for each, we will create an aggregate of those)
+   *
+   * @param logChannelInterface the log channel
+   * @param transName           the transformation name
+   * @param stepMetaDataCombi   the stepMetaDataCombi
+   * @return the profileId
+   * @throws ProfileCreationException
+   */
   private String handleStepMetaDataCombi( LogChannelInterface logChannelInterface, String transName,
                                           StepMetaDataCombi stepMetaDataCombi )
     throws ProfileCreationException {
@@ -85,6 +101,14 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
     return profileId;
   }
 
+  /**
+   * Extension point interface method.  This will be called with the logChannelInterface we're supposed to log to as
+   * well as a reference to the trans
+   *
+   * @param logChannelInterface the logChannelInterface we're supposed to log to
+   * @param o                   the trans
+   * @throws KettleException
+   */
   @Override public void callExtensionPoint( LogChannelInterface logChannelInterface, Object o ) throws KettleException {
     Trans trans = (Trans) o;
     String[] parameters = trans.listParameters();
@@ -92,6 +116,8 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
       return;
     }
     boolean hasParam = false;
+    // Here we're allowing the user to specify which steps to profile via a parameter called "ProfileSteps", this
+    // could use any other logic to figure out what's worth profiling
     for ( String parameter : parameters ) {
       if ( PROFILE_STEPS.equals( parameter ) ) {
         hasParam = true;
@@ -129,6 +155,7 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
         }
       } );
       List<String> streamingIds = new ArrayList<String>();
+      // Create streamingProfiles for all copies of all steps we want to profile
       for ( StepMetaDataCombi stepMetaDataCombi : stepMetaDataCombis ) {
         try {
           streamingIds.add( handleStepMetaDataCombi( logChannelInterface, transNameWithRun, stepMetaDataCombi ) );
@@ -141,6 +168,7 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
       if ( streamingIds.size() == 1 ) {
         stepProfileId = streamingIds.get( 0 );
       } else {
+        // Create an aggregate if there was more than one copy and add all the copies to it as children
         try {
           stepProfileId = profilingService.create(
             new ProfileConfiguration( new AggregateProfileMetadata( stepMetaDataCombisEntry.getKey() ), null, null ) )
@@ -154,8 +182,10 @@ public class ProfileTransformationPrepareExecution implements ExtensionPointInte
             e );
         }
       }
-      // TODO: Set these ids somewhere so we can retrieve them
+      // You have all the profile ids here, you could put them somewhere and open up the profiling application for
+      // the given profiles elsewhere.
     }
+    // Stop all the profiles when the trans is done
     trans.addTransListener( new TransListener() {
       @Override public void transStarted( Trans trans ) throws KettleException {
 
