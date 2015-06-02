@@ -257,7 +257,9 @@ public class AggregateProfileImpl implements AggregateProfile {
       try {
         if ( childProfileIdSet.add( profileId ) ) {
           childProfileIdList.add( profileId );
-          commitStrategy.eventProcessed();
+          if ( running.get() ) {
+            commitStrategy.eventProcessed();
+          }
         } else {
           LOGGER.warn( "Tried to add same child profile id more than once: " + profileId );
         }

@@ -162,10 +162,10 @@
                 <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</descriptor>
                 <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/2.7.11/xml/features</descriptor>
                 <descriptor>mvn:org.apache.camel.karaf/apache-camel/2.13.2/xml/features</descriptor>
-                <descriptor>mvn:pentaho/pentaho-data-profiling-assemblies-karaf-features/${project.version}/xml/features</descriptor>
+                <descriptor>mvn:pentaho-karaf-features/pentaho-data-profiling-ce/${project.version}/xml/features</descriptor>
               </descriptors>
               <features>
-                <feature>standalone</feature>
+                <feature>pentaho-data-profiling-ce-standalone</feature>
               </features>
               <repository>target/standalone-features-repo</repository>
             </configuration>
