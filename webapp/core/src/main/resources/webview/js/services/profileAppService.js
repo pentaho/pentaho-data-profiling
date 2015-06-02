@@ -72,7 +72,7 @@ define(["require", './services'], function (require, appServices) {
           profileAppService.scope = scope;
 
           // Register to receive profile tree updates.
-          profileAppService.notificationService.register("com.pentaho.profiling.services.ProfileTreeNotifier", ['profileTree'], function (profileTree) {
+          profileAppService.notificationService.register("org.pentaho.profiling.services.ProfileTreeNotifier", ['profileTree'], function (profileTree) {
             profileAppService.updateAvailableProfiles(profileTree);
           });
         },

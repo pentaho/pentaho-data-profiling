@@ -64,7 +64,7 @@
                 <artifactId>pentaho-data-profiling-documentation</artifactId>
                 <version>${project.version}</version>
               </docletArtifact>
-              <doclet>com.pentaho.profiling.documentation.Doclet</doclet>
+              <doclet>org.pentaho.profiling.documentation.Doclet</doclet>
               <name>RestDoclet</name>
               <description>RestDoclet</description>
             </configuration>

@@ -28,7 +28,7 @@ require.config({
 
     "com.pentaho.profiling.notification.service": "/src/test/resources/webview/js/notificationServiceMock",
 
-    "com.pentaho.profiling.services.webview/lib/angular.treeview": "/src/main/resources/webview/js/lib/angular.treeview",
+    "org.pentaho.profiling.services.webview/lib/angular.treeview": "/src/main/resources/webview/js/lib/angular.treeview",
 
     "common-ui/angular-translate": "/src/test/resources/webview/js/angularTranslateMock",
     "common-ui/angular-translate-loader-partial": "/src/test/resources/webview/js/angularTranslatePartialLoaderMock",

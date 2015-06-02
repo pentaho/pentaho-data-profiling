@@ -2,9 +2,9 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pen="http://www.pentaho.com/xml/schemas/pentaho-blueprint"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
            http://www.pentaho.com/xml/schemas/pentaho-blueprint http://www.pentaho.com/xml/schemas/pentaho-blueprint.xsd">
-<bean id="executionResultsProfileTabIcon" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabIcon"
+<bean id="executionResultsProfileTabIcon" class="org.pentaho.plugin.integration.ExecutionResultsProfileTabIcon"
       scope="singleton"/>
-<bean id="executionResultsProfileTabImpl" class="com.pentaho.plugin.integration.ExecutionResultsProfileTabImpl"
+<bean id="executionResultsProfileTabImpl" class="org.pentaho.plugin.integration.ExecutionResultsProfileTabImpl"
       scope="prototype">
 <argument ref="localizationService"/>
 <argument ref="executionResultsProfileTabIcon"/>
@@ -25,7 +25,7 @@
 </property>
 </bean>
 
-<bean id="previewProfileStreamer" class="com.pentaho.profiling.kettle.integration.core.preview.PreviewProfileStreamer"
+<bean id="previewProfileStreamer" class="org.pentaho.profiling.kettle.integration.core.preview.PreviewProfileStreamer"
       scope="singleton">
 <argument ref="localizationService"/>
 <argument ref="profilingService"/>
@@ -49,7 +49,7 @@
 </bean>
 
 <bean id="profileTransformationPrepareExecution"
-      class="com.pentaho.plugin.integration.extension.ProfileTransformationPrepareExecution">
+      class="org.pentaho.plugin.integration.extension.ProfileTransformationPrepareExecution">
 <argument ref="profilingService"/>
 <argument ref="streamingProfileService"/>
 <argument ref="aggregateProfileService"/>
@@ -64,9 +64,9 @@
 <service id="resources" ref="resourceMapping" interface="org.ops4j.pax.web.extender.whiteboard.ResourceMapping"/>
 
 <reference id="localizationService" interface="org.pentaho.osgi.i18n.LocalizationService"/>
-<reference id="profilingService" interface="com.pentaho.profiling.api.ProfilingService"/>
-<reference id="aggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
-<reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
+<reference id="profilingService" interface="org.pentaho.profiling.api.ProfilingService"/>
+<reference id="aggregateProfileService" interface="org.pentaho.profiling.api.AggregateProfileService"/>
+<reference id="streamingProfileService" interface="org.pentaho.profiling.api.StreamingProfileService"/>
 
     <!-- Register the plugin as a service so Kettle can find it -->
 <service id="executionResultsProfileTabService" interface="org.pentaho.di.core.plugins.PluginInterface"
