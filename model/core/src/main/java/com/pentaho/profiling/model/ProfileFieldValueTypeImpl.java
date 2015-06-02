@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.pentaho.profiling.api.util.PublicCloneableUtil.copyMap;
+import static org.pentaho.profiling.api.util.PublicCloneableUtil.copyMap;
 
 /**
  * Created by bryan on 4/30/15.

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api;
+package org.pentaho.profiling.api;
 
 import java.util.List;
 import java.util.Map;

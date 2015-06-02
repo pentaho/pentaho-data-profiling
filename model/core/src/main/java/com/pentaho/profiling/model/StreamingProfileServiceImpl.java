@@ -20,12 +20,12 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
 import java.util.Map;

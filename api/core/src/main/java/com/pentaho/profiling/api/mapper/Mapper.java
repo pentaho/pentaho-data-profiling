@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.mapper;
+package org.pentaho.profiling.api.mapper;
 
-import com.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.action.ProfileActionException;
 
 /**
  * Interface for easily supporting a new datasource in profiling

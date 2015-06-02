@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics.bundle;
+package org.pentaho.profiling.api.metrics.bundle;
 
-import com.pentaho.profiling.api.classes.HasClasses;
+import org.pentaho.profiling.api.classes.HasClasses;
 
 /**
  * Created by bryan on 3/9/15.

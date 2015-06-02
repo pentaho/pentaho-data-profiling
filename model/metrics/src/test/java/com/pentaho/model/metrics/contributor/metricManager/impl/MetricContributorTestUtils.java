@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package org.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.ValueTypeMetrics;
-import com.pentaho.profiling.api.util.ObjectHolder;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.util.ObjectHolder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 

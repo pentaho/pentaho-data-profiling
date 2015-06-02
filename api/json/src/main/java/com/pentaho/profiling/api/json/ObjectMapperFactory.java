@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.json;
+package org.pentaho.profiling.api.json;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;

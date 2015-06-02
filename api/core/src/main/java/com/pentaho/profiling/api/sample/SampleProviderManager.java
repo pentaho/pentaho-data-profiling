@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.sample;
+package org.pentaho.profiling.api.sample;
 
 /**
  * Created by bryan on 4/8/15.

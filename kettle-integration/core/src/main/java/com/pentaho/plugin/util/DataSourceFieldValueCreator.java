@@ -15,9 +15,9 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package com.pentaho.plugin.util;
+package org.pentaho.plugin.util;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;

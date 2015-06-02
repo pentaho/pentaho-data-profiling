@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.mapper;
+package org.pentaho.profiling.api.mapper;
 
-import com.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.ProfileStatusMessage;
 
 import java.util.List;
 

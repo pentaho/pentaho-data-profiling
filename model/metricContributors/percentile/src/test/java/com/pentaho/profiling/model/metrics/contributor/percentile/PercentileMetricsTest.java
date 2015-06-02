@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model.metrics.contributor.percentile;
+package org.pentaho.profiling.model.metrics.contributor.percentile;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
 import org.junit.Test;

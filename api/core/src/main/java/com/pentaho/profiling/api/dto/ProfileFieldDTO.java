@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.dto;
+package org.pentaho.profiling.api.dto;
 
-import com.pentaho.profiling.api.ProfileField;
-import com.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileField;
+import org.pentaho.profiling.api.ProfileFieldValueType;
 
 import java.util.ArrayList;
 import java.util.HashMap;

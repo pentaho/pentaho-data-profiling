@@ -20,18 +20,18 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.kettle.integration.core.preview;
+package org.pentaho.profiling.kettle.integration.core.preview;
 
-import com.pentaho.profiling.api.AggregateProfile;
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import org.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;

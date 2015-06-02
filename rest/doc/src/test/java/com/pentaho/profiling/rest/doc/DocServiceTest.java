@@ -20,13 +20,13 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.rest.doc;
+package org.pentaho.profiling.rest.doc;
 
-import com.pentaho.profiling.api.doc.rest.DocEndpoint;
-import com.pentaho.profiling.api.doc.rest.DocEndpointImpl;
-import com.pentaho.profiling.api.doc.rest.ErrorCode;
-import com.pentaho.profiling.api.doc.rest.Example;
-import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import org.pentaho.profiling.api.doc.rest.DocEndpoint;
+import org.pentaho.profiling.api.doc.rest.DocEndpointImpl;
+import org.pentaho.profiling.api.doc.rest.ErrorCode;
+import org.pentaho.profiling.api.doc.rest.Example;
+import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 

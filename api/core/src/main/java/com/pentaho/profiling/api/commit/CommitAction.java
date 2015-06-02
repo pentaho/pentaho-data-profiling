@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.commit;
+package org.pentaho.profiling.api.commit;
 
 /**
  * Created by bryan on 5/29/15.

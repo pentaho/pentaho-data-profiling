@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.action;
+package org.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.ProfileStatusMessage;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

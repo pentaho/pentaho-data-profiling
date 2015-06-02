@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.core.test;
+package org.pentaho.profiling.api.core.test;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 

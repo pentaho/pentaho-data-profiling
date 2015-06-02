@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.mapper;
+package org.pentaho.profiling.api.mapper;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.metrics.MetricContributors;
 
 /**
  * Defines a mapper.  A class implementing this interface must be exported as a service in your blueprint. (You should
- * be able to use com.pentaho.profiling.api.mapper.MapperDefinitionImpl)
+ * be able to use org.pentaho.profiling.api.mapper.MapperDefinitionImpl)
  */
 public interface MapperDefinition {
   /**

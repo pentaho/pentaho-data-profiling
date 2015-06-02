@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics.field;
+package org.pentaho.profiling.api.metrics.field;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import org.pentaho.profiling.api.core.test.BeanTester;
 import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;

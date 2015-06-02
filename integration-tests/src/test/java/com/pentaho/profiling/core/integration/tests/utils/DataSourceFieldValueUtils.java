@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests.utils;
+package org.pentaho.profiling.core.integration.tests.utils;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -20,13 +20,13 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package org.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.DateHolder;
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.model.metrics.contributor.metricManager.impl.metrics.DateHolder;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.MetricMergeException;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Before;
 import org.junit.Test;
 

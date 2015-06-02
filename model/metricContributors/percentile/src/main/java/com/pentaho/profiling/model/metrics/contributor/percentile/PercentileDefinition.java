@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model.metrics.contributor.percentile;
+package org.pentaho.profiling.model.metrics.contributor.percentile;
 
 /**
  * Created by bryan on 3/11/15.

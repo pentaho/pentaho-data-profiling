@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager;
+package org.pentaho.model.metrics.contributor.metricManager;
 
 import org.junit.Assume;
 import org.junit.Test;

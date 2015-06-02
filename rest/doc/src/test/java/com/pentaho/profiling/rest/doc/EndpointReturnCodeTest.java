@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.rest.doc;
+package org.pentaho.profiling.rest.doc;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import org.pentaho.profiling.api.core.test.BeanTester;
 
 /**
  * Created by bryan on 4/9/15.

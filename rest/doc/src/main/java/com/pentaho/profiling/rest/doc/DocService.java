@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.rest.doc;
+package org.pentaho.profiling.rest.doc;
 
-import com.pentaho.profiling.api.doc.rest.Body;
-import com.pentaho.profiling.api.doc.rest.DocEndpoint;
-import com.pentaho.profiling.api.doc.rest.DocEntry;
-import com.pentaho.profiling.api.doc.rest.DocParameter;
-import com.pentaho.profiling.api.doc.rest.ErrorCode;
-import com.pentaho.profiling.api.doc.rest.Example;
-import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import org.pentaho.profiling.api.doc.rest.Body;
+import org.pentaho.profiling.api.doc.rest.DocEndpoint;
+import org.pentaho.profiling.api.doc.rest.DocEntry;
+import org.pentaho.profiling.api.doc.rest.DocParameter;
+import org.pentaho.profiling.api.doc.rest.ErrorCode;
+import org.pentaho.profiling.api.doc.rest.Example;
+import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.rest.doc;
+package org.pentaho.profiling.rest.doc;
 
 /**
  * Created by bryan on 4/6/15.

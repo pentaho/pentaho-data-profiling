@@ -20,18 +20,18 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.doc.rest.Body;
-import com.pentaho.profiling.api.doc.rest.ErrorCode;
-import com.pentaho.profiling.api.doc.rest.Example;
-import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.sample.SampleProviderManager;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.doc.rest.Body;
+import org.pentaho.profiling.api.doc.rest.ErrorCode;
+import org.pentaho.profiling.api.doc.rest.Example;
+import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.sample.SampleProviderManager;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;

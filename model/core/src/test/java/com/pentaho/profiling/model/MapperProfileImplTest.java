@@ -20,17 +20,17 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileState;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.mapper.Mapper;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileState;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import org.pentaho.profiling.api.mapper.Mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

@@ -20,12 +20,12 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.AggregateProfile;
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.sample.SampleProviderManager;
+import org.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 

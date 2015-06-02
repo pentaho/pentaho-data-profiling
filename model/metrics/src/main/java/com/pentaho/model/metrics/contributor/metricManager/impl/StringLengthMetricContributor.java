@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package org.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.pentaho.profiling.api.metrics.MetricMergeException;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.Arrays;
 import java.util.HashSet;

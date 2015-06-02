@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests.utils;
+package org.pentaho.profiling.core.integration.tests.utils;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
 import org.apache.commons.lang3.SystemUtils;

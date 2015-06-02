@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

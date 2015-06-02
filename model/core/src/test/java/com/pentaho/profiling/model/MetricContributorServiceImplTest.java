@@ -20,20 +20,20 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
-import com.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.MetricContributor;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.pentaho.profiling.api.metrics.MetricMergeException;
+import org.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
+import org.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -20,30 +20,30 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests;
+package org.pentaho.profiling.core.integration.tests;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapperDeserializationContext;
 import com.jayway.restassured.mapper.ObjectMapperSerializationContext;
-import com.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.dto.ProfileStatusDTO;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.metrics.univariate.MetricManagerBasedMetricContributor;
-import com.pentaho.profiling.model.ProfileStatusImpl;
-import com.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
-import com.pentaho.profiling.core.integration.tests.utils.ProfileStatusValidationUtil;
-import com.pentaho.profiling.services.AggregateAddChildWrapper;
-import com.pentaho.profiling.services.AggregateProfileDTO;
+import org.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.dto.ProfileStatusDTO;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.MetricContributor;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.metrics.univariate.MetricManagerBasedMetricContributor;
+import org.pentaho.profiling.model.ProfileStatusImpl;
+import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
+import org.pentaho.profiling.core.integration.tests.utils.ProfileStatusValidationUtil;
+import org.pentaho.profiling.services.AggregateAddChildWrapper;
+import org.pentaho.profiling.services.AggregateProfileDTO;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createDataSourceFieldValues;
-import static com.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createRecordList;
+import static org.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createDataSourceFieldValues;
+import static org.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createRecordList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

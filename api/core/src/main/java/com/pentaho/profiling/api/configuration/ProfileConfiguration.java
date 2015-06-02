@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.configuration;
+package org.pentaho.profiling.api.configuration;
 
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricContributors;
 
 /**
  * Created by bryan on 4/10/15.

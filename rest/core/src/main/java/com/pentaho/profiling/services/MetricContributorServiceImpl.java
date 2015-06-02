@@ -20,12 +20,12 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.doc.rest.Example;
-import com.pentaho.profiling.api.doc.rest.SuccessResponseCode;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.doc.rest.Example;
+import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
+import org.pentaho.profiling.api.metrics.MetricContributorService;
+import org.pentaho.profiling.api.metrics.MetricContributors;
 
 import javax.jws.WebService;
 import javax.ws.rs.Consumes;

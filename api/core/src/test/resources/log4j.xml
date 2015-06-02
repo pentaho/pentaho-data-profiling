@@ -2,7 +2,7 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
-  <appender name="TEST" class="com.pentaho.profiling.api.metrics.TestAppender"/>
+  <appender name="TEST" class="org.pentaho.profiling.api.metrics.TestAppender"/>
 
   <root>
     <level value="DEBUG" />

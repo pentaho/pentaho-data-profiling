@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api;
+package org.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import java.util.List;
 

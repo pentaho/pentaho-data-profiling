@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
 

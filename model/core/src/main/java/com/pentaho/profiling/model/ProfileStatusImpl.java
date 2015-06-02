@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.ProfileField;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.ProfileState;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.ProfileField;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileState;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;

@@ -20,25 +20,25 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests;
+package org.pentaho.profiling.core.integration.tests;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapperDeserializationContext;
 import com.jayway.restassured.mapper.ObjectMapperSerializationContext;
-import com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor;
-import com.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.model.metrics.contributor.percentile.PercentileMetricContributor;
-import com.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
+import org.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor;
+import org.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.MetricContributor;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.pentaho.profiling.model.metrics.contributor.percentile.PercentileMetricContributor;
+import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

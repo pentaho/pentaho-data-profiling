@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl.metrics;
+package org.pentaho.model.metrics.contributor.metricManager.impl.metrics;
 
 import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import com.clearspring.analytics.stream.cardinality.HyperLogLogPlus;
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

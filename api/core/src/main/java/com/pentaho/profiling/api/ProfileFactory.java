@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api;
+package org.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
 
 /**
  * Created by bryan on 2/9/15.

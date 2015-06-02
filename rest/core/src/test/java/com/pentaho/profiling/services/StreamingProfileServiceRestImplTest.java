@@ -20,15 +20,15 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.doc.rest.Example;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.sample.SampleProviderManager;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.doc.rest.Example;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 

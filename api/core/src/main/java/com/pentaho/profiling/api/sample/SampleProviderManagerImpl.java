@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.sample;
+package org.pentaho.profiling.api.sample;
 
 import java.util.ArrayList;
 import java.util.List;

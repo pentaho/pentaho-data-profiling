@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.action;
+package org.pentaho.profiling.api.action;
 
-import com.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.ProfileStatusMessage;
 
 /**
  * Created by bryan on 9/16/14.

@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl.metrics;
+package org.pentaho.model.metrics.contributor.metricManager.impl.metrics;
 
-import com.pentaho.profiling.api.ValueTypeMetrics;
-import com.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.action.ProfileActionException;
 
 /**
  * Created by bryan on 4/30/15.

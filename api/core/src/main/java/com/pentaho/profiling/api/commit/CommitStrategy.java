@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.commit;
+package org.pentaho.profiling.api.commit;
 
 import java.util.concurrent.ExecutorService;
 

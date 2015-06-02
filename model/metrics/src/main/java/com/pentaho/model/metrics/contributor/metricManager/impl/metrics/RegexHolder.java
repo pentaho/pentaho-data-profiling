@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl.metrics;
+package org.pentaho.model.metrics.contributor.metricManager.impl.metrics;
 
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 
 /**
  * Created by bryan on 5/1/15.

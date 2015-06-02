@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics.field;
+package org.pentaho.profiling.api.metrics.field;
 
 import java.util.HashMap;
 import java.util.Map;

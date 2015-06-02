@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.configuration;
+package org.pentaho.profiling.api.configuration;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import org.pentaho.profiling.api.core.test.BeanTester;
 
 /**
  * Created by bryan on 4/14/15.

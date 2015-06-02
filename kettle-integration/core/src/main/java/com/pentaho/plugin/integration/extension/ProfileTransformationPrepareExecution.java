@@ -15,16 +15,16 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package com.pentaho.plugin.integration.extension;
+package org.pentaho.plugin.integration.extension;
 
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.extension.ExtensionPoint;
 import org.pentaho.di.core.extension.ExtensionPointInterface;

@@ -20,12 +20,12 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.junit.Test;
 
 import java.util.List;

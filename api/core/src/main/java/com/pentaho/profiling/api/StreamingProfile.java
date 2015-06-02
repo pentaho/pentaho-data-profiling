@@ -20,12 +20,12 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api;
+package org.pentaho.profiling.api;
 
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.commit.CommitStrategy;
-import com.pentaho.profiling.api.mapper.HasStatusMessages;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.commit.CommitStrategy;
+import org.pentaho.profiling.api.mapper.HasStatusMessages;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 
 import java.util.List;
 

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.osgi;
+package org.pentaho.profiling.api.osgi;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

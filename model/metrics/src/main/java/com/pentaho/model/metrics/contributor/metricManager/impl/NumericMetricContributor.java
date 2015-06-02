@@ -20,20 +20,20 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor.metricManager.impl;
+package org.pentaho.model.metrics.contributor.metricManager.impl;
 
-import com.pentaho.model.metrics.contributor.Constants;
-import com.pentaho.model.metrics.contributor.metricManager.impl.metrics.NumericHolder;
-import com.pentaho.profiling.api.MessageUtils;
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.MetricContributorUtils;
-import com.pentaho.profiling.api.metrics.MetricManagerContributor;
-import com.pentaho.profiling.api.metrics.MetricMergeException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.api.stats.Statistic;
+import org.pentaho.model.metrics.contributor.Constants;
+import org.pentaho.model.metrics.contributor.metricManager.impl.metrics.NumericHolder;
+import org.pentaho.profiling.api.MessageUtils;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.MetricContributorUtils;
+import org.pentaho.profiling.api.metrics.MetricManagerContributor;
+import org.pentaho.profiling.api.metrics.MetricMergeException;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.stats.Statistic;
 
 import java.util.ArrayList;
 import java.util.Arrays;

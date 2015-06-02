@@ -15,12 +15,12 @@
  * specific language governing permissions and limitations under the License.
  ******************************************************************************/
 
-package com.pentaho.plugin.integration.extension;
+package org.pentaho.plugin.integration.extension;
 
-import com.pentaho.plugin.util.DataSourceFieldValueCreator;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.plugin.util.DataSourceFieldValueCreator;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.row.RowMetaInterface;

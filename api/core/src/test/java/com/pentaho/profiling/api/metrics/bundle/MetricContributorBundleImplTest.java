@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics.bundle;
+package org.pentaho.profiling.api.metrics.bundle;
 
-import com.pentaho.profiling.api.core.test.BeanTester;
+import org.pentaho.profiling.api.core.test.BeanTester;
 
 /**
  * Created by bryan on 3/19/15.

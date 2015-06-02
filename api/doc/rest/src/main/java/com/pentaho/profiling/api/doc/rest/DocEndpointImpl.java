@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.doc.rest;
+package org.pentaho.profiling.api.doc.rest;
 
 import org.codehaus.jackson.map.ObjectMapper;
 

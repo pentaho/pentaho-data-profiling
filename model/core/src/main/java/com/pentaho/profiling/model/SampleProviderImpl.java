@@ -20,21 +20,21 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.AggregateProfile;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusReadOperation;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
-import com.pentaho.profiling.api.sample.SampleProvider;
+import org.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusReadOperation;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.metrics.MetricContributorService;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import org.pentaho.profiling.api.sample.SampleProvider;
 
 import java.util.Arrays;
 import java.util.HashMap;

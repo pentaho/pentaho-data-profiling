@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.documentation;
+package org.pentaho.profiling.documentation;
 
-import com.pentaho.profiling.api.doc.rest.DocEntry;
-import com.pentaho.profiling.api.doc.rest.DocParameter;
+import org.pentaho.profiling.api.doc.rest.DocEntry;
+import org.pentaho.profiling.api.doc.rest.DocParameter;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationTypeDoc;
 import com.sun.javadoc.ClassDoc;

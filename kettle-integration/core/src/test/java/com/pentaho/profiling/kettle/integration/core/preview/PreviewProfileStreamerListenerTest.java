@@ -20,21 +20,21 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.kettle.integration.core.preview;
+package org.pentaho.profiling.kettle.integration.core.preview;
 
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.metrics.LoggingEventUtil;
-import com.pentaho.profiling.api.metrics.TestAppender;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.metrics.LoggingEventUtil;
+import org.pentaho.profiling.api.metrics.TestAppender;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.After;
 import org.junit.Before;

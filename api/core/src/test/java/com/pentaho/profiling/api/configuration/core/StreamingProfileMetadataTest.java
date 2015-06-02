@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.configuration.core;
+package org.pentaho.profiling.api.configuration.core;
 
-import com.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfile;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

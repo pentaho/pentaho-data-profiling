@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.ProfileField;
-import com.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileField;
+import org.pentaho.profiling.api.ProfileFieldValueType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static com.pentaho.profiling.api.util.PublicCloneableUtil.copyMap;
+import static org.pentaho.profiling.api.util.PublicCloneableUtil.copyMap;
 
 /**
  * Created by bryan on 4/30/15.

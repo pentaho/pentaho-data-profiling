@@ -20,27 +20,27 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.IllegalTransactionException;
-import com.pentaho.profiling.api.MutableProfileField;
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.ProfileState;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusMessage;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.commit.CommitAction;
-import com.pentaho.profiling.api.commit.CommitStrategy;
-import com.pentaho.profiling.api.commit.strategies.LinearTimeCommitStrategy;
-import com.pentaho.profiling.api.mapper.HasStatusMessages;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
-import com.pentaho.profiling.api.metrics.ProfileFieldProperties;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.api.IllegalTransactionException;
+import org.pentaho.profiling.api.MutableProfileField;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileState;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusMessage;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.commit.CommitAction;
+import org.pentaho.profiling.api.commit.CommitStrategy;
+import org.pentaho.profiling.api.commit.strategies.LinearTimeCommitStrategy;
+import org.pentaho.profiling.api.mapper.HasStatusMessages;
+import org.pentaho.profiling.api.metrics.MetricContributor;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import org.pentaho.profiling.api.metrics.ProfileFieldProperties;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

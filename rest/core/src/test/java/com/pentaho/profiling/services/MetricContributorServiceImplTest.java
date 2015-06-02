@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.metrics.MetricContributorService;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricContributorService;
+import org.pentaho.profiling.api.metrics.MetricContributors;
 import org.junit.Before;
 import org.junit.Test;
 

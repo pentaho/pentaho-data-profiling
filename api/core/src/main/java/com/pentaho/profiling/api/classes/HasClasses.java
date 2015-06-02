@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.classes;
+package org.pentaho.profiling.api.classes;
 
 import java.util.List;
 

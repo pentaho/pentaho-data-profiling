@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.configuration;
+package org.pentaho.profiling.api.configuration;
 
 import org.junit.Test;
 

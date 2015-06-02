@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.dto;
+package org.pentaho.profiling.api.dto;
 
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 
 import java.util.Map;
 

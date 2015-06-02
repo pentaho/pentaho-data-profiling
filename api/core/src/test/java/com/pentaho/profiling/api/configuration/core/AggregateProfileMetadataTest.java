@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.configuration.core;
+package org.pentaho.profiling.api.configuration.core;
 
-import com.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.AggregateProfile;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.doc.rest;
+package org.pentaho.profiling.api.doc.rest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics;
+package org.pentaho.profiling.api.metrics;
 
 import org.apache.log4j.spi.LoggingEvent;
 import org.mockito.invocation.InvocationOnMock;

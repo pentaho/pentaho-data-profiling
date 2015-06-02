@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.AggregateProfile;
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.Profile;
 import org.pentaho.osgi.notification.api.DelegatingNotifierImpl;
 import org.pentaho.osgi.notification.api.NotificationListener;
 import org.pentaho.osgi.notification.api.NotificationObject;

@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.util;
+package org.pentaho.profiling.api.util;
 
-import com.pentaho.profiling.api.PublicCloneable;
+import org.pentaho.profiling.api.PublicCloneable;
 
 import java.util.ArrayList;
 import java.util.List;

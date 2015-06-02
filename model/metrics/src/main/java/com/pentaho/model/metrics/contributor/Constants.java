@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.model.metrics.contributor;
+package org.pentaho.model.metrics.contributor;
 
 /**
  * Created by bryan on 2/4/15.

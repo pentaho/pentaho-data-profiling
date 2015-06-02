@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics;
+package org.pentaho.profiling.api.metrics;
 
-import com.pentaho.profiling.api.MessageUtils;
-import com.pentaho.profiling.api.ProfileFieldProperty;
-import com.pentaho.profiling.api.stats.Statistic;
+import org.pentaho.profiling.api.MessageUtils;
+import org.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.stats.Statistic;
 
 import java.util.Arrays;
 

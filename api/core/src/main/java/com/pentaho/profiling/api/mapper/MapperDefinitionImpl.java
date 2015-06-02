@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.mapper;
+package org.pentaho.profiling.api.mapper;
 
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.metrics.MetricContributors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

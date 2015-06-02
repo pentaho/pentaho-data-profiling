@@ -20,11 +20,11 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileFieldValueType;
-import com.pentaho.profiling.api.ProfileFieldValueType;
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.MutableProfileFieldValueType;
+import org.pentaho.profiling.api.ProfileFieldValueType;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -20,18 +20,18 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests.utils;
+package org.pentaho.profiling.core.integration.tests.utils;
 
-import com.pentaho.profiling.api.MutableProfileField;
-import com.pentaho.profiling.api.ProfileField;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.dto.ProfileFieldDTO;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.api.metrics.MetricContributor;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
-import com.pentaho.profiling.model.MutableProfileStatusImpl;
-import com.pentaho.profiling.model.ProfileStatusImpl;
+import org.pentaho.profiling.api.MutableProfileField;
+import org.pentaho.profiling.api.ProfileField;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.dto.ProfileFieldDTO;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.api.metrics.MetricContributor;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.profiling.model.MutableProfileStatusImpl;
+import org.pentaho.profiling.model.ProfileStatusImpl;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;

@@ -20,22 +20,22 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileFactory;
-import com.pentaho.profiling.api.ProfileState;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusReadOperation;
-import com.pentaho.profiling.api.ProfileStatusReader;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileFactory;
+import org.pentaho.profiling.api.ProfileState;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusReadOperation;
+import org.pentaho.profiling.api.ProfileStatusReader;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.metrics.MetricContributorService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

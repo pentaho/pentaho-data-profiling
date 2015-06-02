@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.json;
+package org.pentaho.profiling.api.json;
 
 import org.codehaus.jackson.map.ser.BeanPropertyFilter;
 import org.codehaus.jackson.map.ser.FilterProvider;

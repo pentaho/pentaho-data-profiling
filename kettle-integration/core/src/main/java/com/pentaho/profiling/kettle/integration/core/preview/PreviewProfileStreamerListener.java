@@ -20,21 +20,21 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.kettle.integration.core.preview;
+package org.pentaho.profiling.kettle.integration.core.preview;
 
-import com.pentaho.plugin.util.DataSourceFieldValueCreator;
-import com.pentaho.profiling.api.AggregateProfileService;
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.StreamingProfileService;
-import com.pentaho.profiling.api.action.ProfileActionException;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
+import org.pentaho.plugin.util.DataSourceFieldValueCreator;
+import org.pentaho.profiling.api.AggregateProfileService;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.StreamingProfileService;
+import org.pentaho.profiling.api.action.ProfileActionException;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.debug.BreakPointListener;

@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.stats;
+package org.pentaho.profiling.api.stats;
 
 /**
  * Base class for statistics

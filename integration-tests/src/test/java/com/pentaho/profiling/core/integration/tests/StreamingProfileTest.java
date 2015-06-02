@@ -20,16 +20,16 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.core.integration.tests;
+package org.pentaho.profiling.core.integration.tests;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.mapper.ObjectMapperDeserializationContext;
 import com.jayway.restassured.mapper.ObjectMapperSerializationContext;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.json.ObjectMapperFactory;
-import com.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.json.ObjectMapperFactory;
+import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,8 +38,8 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createDataSourceFieldValues;
-import static com.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createRecordList;
+import static org.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createDataSourceFieldValues;
+import static org.pentaho.profiling.core.integration.tests.utils.DataSourceFieldValueUtils.createRecordList;
 import static org.hamcrest.CoreMatchers.equalTo;
 
 /**

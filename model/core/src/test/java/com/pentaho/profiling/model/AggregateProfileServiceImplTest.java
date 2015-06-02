@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.AggregateProfile;
-import com.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.AggregateProfile;
+import org.pentaho.profiling.api.Profile;
 import org.junit.Before;
 import org.junit.Test;
 

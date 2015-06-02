@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.plugin.integration;
+package org.pentaho.plugin.integration;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;

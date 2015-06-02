@@ -59,75 +59,75 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <bean id="metricContributorServiceImpl" class="com.pentaho.profiling.services.MetricContributorServiceImpl"
+  <bean id="metricContributorServiceImpl" class="org.pentaho.profiling.services.MetricContributorServiceImpl"
         scope="singleton">
     <argument ref="metricContributorServiceDelegate"/>
   </bean>
-  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
-    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+  <service interface="org.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="org.pentaho.profiling.api.doc.rest.DocEndpointImpl">
       <argument value="${metricsAddress}"/>
       <argument ref="metricContributorServiceImpl"/>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
-  <bean id="profilingServiceWebserviceImpl" class="com.pentaho.profiling.services.ProfilingServiceWebserviceImpl"
+  <bean id="profilingServiceWebserviceImpl" class="org.pentaho.profiling.services.ProfilingServiceWebserviceImpl"
         scope="singleton">
     <argument ref="sampleProviderManager"/>
     <argument ref="delegateRef"/>
     <argument ref="metricContributorServiceDelegate"/>
   </bean>
-  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
-    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+  <service interface="org.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="org.pentaho.profiling.api.doc.rest.DocEndpointImpl">
       <argument value="${profileAddress}"/>
       <argument ref="profilingServiceWebserviceImpl"/>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
-  <bean id="aggregateProfileServiceRestImpl" class="com.pentaho.profiling.services.AggregateProfileServiceRestImpl">
+  <bean id="aggregateProfileServiceRestImpl" class="org.pentaho.profiling.services.AggregateProfileServiceRestImpl">
     <argument ref="delegateAggregateProfileService"/>
     <argument ref="sampleProviderManager"/>
   </bean>
-  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
-    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+  <service interface="org.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="org.pentaho.profiling.api.doc.rest.DocEndpointImpl">
       <argument value="${aggregateAddress}"/>
       <argument ref="aggregateProfileServiceRestImpl"/>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
-  <bean id="streamingProfileServiceRestImpl" class="com.pentaho.profiling.services.StreamingProfileServiceRestImpl"
+  <bean id="streamingProfileServiceRestImpl" class="org.pentaho.profiling.services.StreamingProfileServiceRestImpl"
         scope="singleton">
     <argument ref="streamingProfileService"/>
     <argument ref="metricObjectMapperFactory"/>
     <argument ref="sampleProviderManager"/>
   </bean>
-  <service interface="com.pentaho.profiling.api.doc.rest.DocEndpoint">
-    <bean class="com.pentaho.profiling.api.doc.rest.DocEndpointImpl">
+  <service interface="org.pentaho.profiling.api.doc.rest.DocEndpoint">
+    <bean class="org.pentaho.profiling.api.doc.rest.DocEndpointImpl">
       <argument value="${streamingAddress}"/>
       <argument ref="streamingProfileServiceRestImpl"/>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
-  <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
+  <bean id="metricBundleListClassloader" class="org.pentaho.profiling.api.osgi.BundleListClassloader">
     <argument ref="blueprintBundleContext"/>
     <argument>
       <list>
         <value type="java.lang.Class">
-          com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle
+          org.pentaho.profiling.api.metrics.bundle.MetricContributorBundle
         </value>
         <value type="java.lang.Class">
-          com.pentaho.profiling.api.ProfileFactory
+          org.pentaho.profiling.api.ProfileFactory
         </value>
         <value type="java.lang.Class">
-          com.pentaho.profiling.api.mapper.MapperDefinition
+          org.pentaho.profiling.api.mapper.MapperDefinition
         </value>
       </list>
     </argument>
   </bean>
-  <bean id="metricObjectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
+  <bean id="metricObjectMapperFactory" class="org.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
     <argument ref="metricBundleListClassloader"/>
   </bean>
 
@@ -137,23 +137,23 @@
   <service interface="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapper">
     <bean class="org.pentaho.osgi.notification.webservice.NotificationTypeObjectMapperImpl">
       <argument>
-        <value>com.pentaho.profiling.api.ProfileStatus</value>
+        <value>org.pentaho.profiling.api.ProfileStatus</value>
       </argument>
       <argument ref="objectMapper"/>
     </bean>
   </service>
 
-  <bean id="profileTreeNotifier" class="com.pentaho.profiling.services.ProfileTreeNotifier" scope="singleton"/>
+  <bean id="profileTreeNotifier" class="org.pentaho.profiling.services.ProfileTreeNotifier" scope="singleton"/>
   <service ref="profileTreeNotifier" interface="org.pentaho.osgi.notification.api.NotifierWithHistory"/>
-  <reference id="delegateRef" interface="com.pentaho.profiling.api.ProfilingService"/>
-  <reference id="delegateAggregateProfileService" interface="com.pentaho.profiling.api.AggregateProfileService"/>
+  <reference id="delegateRef" interface="org.pentaho.profiling.api.ProfilingService"/>
+  <reference id="delegateAggregateProfileService" interface="org.pentaho.profiling.api.AggregateProfileService"/>
   <reference id="metricContributorServiceDelegate"
-             interface="com.pentaho.profiling.api.metrics.MetricContributorService"/>
-  <reference id="streamingProfileService" interface="com.pentaho.profiling.api.StreamingProfileService"/>
-  <reference id="sampleProviderManager" interface="com.pentaho.profiling.api.sample.SampleProviderManager"/>
+             interface="org.pentaho.profiling.api.metrics.MetricContributorService"/>
+  <reference id="streamingProfileService" interface="org.pentaho.profiling.api.StreamingProfileService"/>
+  <reference id="sampleProviderManager" interface="org.pentaho.profiling.api.sample.SampleProviderManager"/>
   <reference-list id="metricContributorBundles"
-                  interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
-  <reference-list id="mapperDefinitions" interface="com.pentaho.profiling.api.mapper.MapperDefinition"
+                  interface="org.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" availability="optional"/>
+  <reference-list id="mapperDefinitions" interface="org.pentaho.profiling.api.mapper.MapperDefinition"
                   availability="optional"/>
   <reference-list id="notificationProviderList" interface="org.pentaho.osgi.notification.api.NotifierWithHistory"
                   availability="optional">

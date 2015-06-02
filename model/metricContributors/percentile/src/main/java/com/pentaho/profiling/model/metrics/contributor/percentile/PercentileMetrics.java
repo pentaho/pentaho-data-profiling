@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model.metrics.contributor.percentile;
+package org.pentaho.profiling.model.metrics.contributor.percentile;
 
 import com.clearspring.analytics.stream.quantile.TDigest;
-import com.pentaho.profiling.api.ValueTypeMetrics;
+import org.pentaho.profiling.api.ValueTypeMetrics;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;

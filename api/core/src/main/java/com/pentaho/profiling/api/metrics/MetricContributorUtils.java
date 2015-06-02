@@ -20,9 +20,9 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.metrics;
+package org.pentaho.profiling.api.metrics;
 
-import com.pentaho.profiling.api.ProfileFieldProperty;
+import org.pentaho.profiling.api.ProfileFieldProperty;
 
 import java.util.Arrays;
 import java.util.List;

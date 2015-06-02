@@ -20,10 +20,10 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.api.commit.strategies;
+package org.pentaho.profiling.api.commit.strategies;
 
-import com.pentaho.profiling.api.commit.CommitAction;
-import com.pentaho.profiling.api.commit.CommitStrategy;
+import org.pentaho.profiling.api.commit.CommitAction;
+import org.pentaho.profiling.api.commit.CommitStrategy;
 
 import java.util.concurrent.ExecutorService;
 

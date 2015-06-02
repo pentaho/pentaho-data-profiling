@@ -20,21 +20,21 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.services;
+package org.pentaho.profiling.services;
 
-import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileCreationException;
-import com.pentaho.profiling.api.ProfileFactory;
-import com.pentaho.profiling.api.ProfileStatus;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusReadOperation;
-import com.pentaho.profiling.api.ProfileStatusReader;
-import com.pentaho.profiling.api.ProfilingService;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.dto.ProfileStatusDTO;
-import com.pentaho.profiling.api.metrics.MetricContributorService;
-import com.pentaho.profiling.api.sample.SampleProviderManager;
+import org.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.ProfileCreationException;
+import org.pentaho.profiling.api.ProfileFactory;
+import org.pentaho.profiling.api.ProfileStatus;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusReadOperation;
+import org.pentaho.profiling.api.ProfileStatusReader;
+import org.pentaho.profiling.api.ProfilingService;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.dto.ProfileStatusDTO;
+import org.pentaho.profiling.api.metrics.MetricContributorService;
+import org.pentaho.profiling.api.sample.SampleProviderManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;

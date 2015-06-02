@@ -20,17 +20,17 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.MutableProfileStatus;
-import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileFactory;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.ProfileStatusWriteOperation;
-import com.pentaho.profiling.api.configuration.DataSourceMetadata;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import org.pentaho.profiling.api.MutableProfileStatus;
+import org.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.ProfileFactory;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.ProfileStatusWriteOperation;
+import org.pentaho.profiling.api.configuration.DataSourceMetadata;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.metrics.MetricContributorsFactory;
 
 /**
  * Created by bryan on 3/23/15.

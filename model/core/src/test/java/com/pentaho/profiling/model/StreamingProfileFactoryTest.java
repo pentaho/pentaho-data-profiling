@@ -20,16 +20,16 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.model;
+package org.pentaho.profiling.model;
 
-import com.pentaho.profiling.api.Profile;
-import com.pentaho.profiling.api.ProfileStatusManager;
-import com.pentaho.profiling.api.StreamingProfile;
-import com.pentaho.profiling.api.configuration.ProfileConfiguration;
-import com.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
-import com.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
-import com.pentaho.profiling.api.metrics.MetricContributors;
-import com.pentaho.profiling.api.metrics.MetricContributorsFactory;
+import org.pentaho.profiling.api.Profile;
+import org.pentaho.profiling.api.ProfileStatusManager;
+import org.pentaho.profiling.api.StreamingProfile;
+import org.pentaho.profiling.api.configuration.ProfileConfiguration;
+import org.pentaho.profiling.api.configuration.core.AggregateProfileMetadata;
+import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
+import org.pentaho.profiling.api.metrics.MetricContributors;
+import org.pentaho.profiling.api.metrics.MetricContributorsFactory;
 import org.junit.Before;
 import org.junit.Test;
 

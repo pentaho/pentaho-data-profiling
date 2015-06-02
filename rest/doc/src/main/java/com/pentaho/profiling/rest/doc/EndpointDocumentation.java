@@ -20,7 +20,7 @@
  *
  ******************************************************************************/
 
-package com.pentaho.profiling.rest.doc;
+package org.pentaho.profiling.rest.doc;
 
 import java.util.ArrayList;
 import java.util.List;
