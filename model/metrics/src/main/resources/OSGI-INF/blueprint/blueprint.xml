@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-  <bean id="metricContributorBundle" class="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl">
+  <bean id="metricContributorBundle" class="org.pentaho.profiling.api.metrics.bundle.MetricContributorBundleImpl">
     <property name="name" value="PentahoDataProfilingMCBundle"/>
     <property name="classes">
       <list>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor
+          org.pentaho.model.metrics.contributor.metricManager.impl.CategoricalMetricContributor
         </value>
-        <value type="java.lang.Class">com.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor
-        </value>
-        <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor
+        <value type="java.lang.Class">org.pentaho.model.metrics.contributor.metricManager.impl.DateMetricContributor
         </value>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor
+          org.pentaho.model.metrics.contributor.metricManager.impl.NumericMetricContributor
         </value>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor
+          org.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor
         </value>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor
+          org.pentaho.model.metrics.contributor.metricManager.impl.StringLengthMetricContributor
         </value>
         <value type="java.lang.Class">
-          com.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor
+          org.pentaho.model.metrics.contributor.metricManager.impl.WordCountMetricContributor
+        </value>
+        <value type="java.lang.Class">
+          org.pentaho.model.metrics.contributor.metricManager.impl.CardinalityMetricContributor
         </value>
       </list>
     </property>
   </bean>
 
-  <bean id="hyperLogLogPlusHolder" class="com.pentaho.profiling.api.json.HasFilterImpl" scope="singleton">
+  <bean id="hyperLogLogPlusHolder" class="org.pentaho.profiling.api.json.HasFilterImpl" scope="singleton">
     <argument>
       <value type="java.lang.Class">
-        com.pentaho.model.metrics.contributor.metricManager.impl.metrics.HyperLogLogPlusHolder
+        org.pentaho.model.metrics.contributor.metricManager.impl.metrics.HyperLogLogPlusHolder
       </value>
     </argument>
     <argument>
@@ -46,6 +46,6 @@
       </bean>
     </argument>
   </bean>
-  <service interface="com.pentaho.profiling.api.json.HasFilter" ref="hyperLogLogPlusHolder"/>
-  <service interface="com.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" ref="metricContributorBundle"/>
+  <service interface="org.pentaho.profiling.api.json.HasFilter" ref="hyperLogLogPlusHolder"/>
+  <service interface="org.pentaho.profiling.api.metrics.bundle.MetricContributorBundle" ref="metricContributorBundle"/>
 </blueprint>

@@ -10,10 +10,6 @@
   http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
 
   http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
-  <cm:property-placeholder persistent-id="com.pentaho.profiling.services"
-                           update-strategy="reload">
-  </cm:property-placeholder>
-
   <cxf:bus id="docServiceBus">
   </cxf:bus>
 
@@ -26,21 +22,21 @@
     </jaxrs:providers>
   </jaxrs:server>
 
-  <bean id="docService" class="com.pentaho.profiling.rest.doc.DocService" scope="singleton">
+  <bean id="docService" class="org.pentaho.profiling.rest.doc.DocService" scope="singleton">
     <argument ref="docEndpoints"/>
   </bean>
-  <bean id="metricBundleListClassloader" class="com.pentaho.profiling.api.osgi.BundleListClassloader">
+  <bean id="metricBundleListClassloader" class="org.pentaho.profiling.api.osgi.BundleListClassloader">
     <argument ref="blueprintBundleContext"/>
     <argument>
       <list/>
     </argument>
   </bean>
-  <bean id="objectMapperFactory" class="com.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
+  <bean id="objectMapperFactory" class="org.pentaho.profiling.api.json.ObjectMapperFactory" scope="singleton">
     <argument ref="metricBundleListClassloader"/>
   </bean>
 
   <bean id="jsonProvider" factory-ref="objectMapperFactory" factory-method="createProvider"/>
 
   <reference id="destinationRegistry" interface="org.apache.cxf.transport.http.DestinationRegistry"/>
-  <reference-list id="docEndpoints" interface="com.pentaho.profiling.api.doc.rest.DocEndpoint"/>
+  <reference-list id="docEndpoints" interface="org.pentaho.profiling.api.doc.rest.DocEndpoint"/>
 </blueprint>
