@@ -2,6 +2,7 @@
   <feature name="pentaho-data-profiling-ce-base" version="1.0">
     <feature>http</feature>
     <feature>cxf</feature>
+    <feature>cxf-http-async</feature>
     <feature>war</feature>
     <bundle>wrap:mvn:com.clearspring.analytics/stream/2.7.0</bundle>
     <bundle>mvn:org.apache.felix/org.apache.felix.http.api/2.2.2</bundle>
