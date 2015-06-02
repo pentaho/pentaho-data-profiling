@@ -1,7 +1,6 @@
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
-  <feature name="standalone" version="1.0">
+  <feature name="pentaho-data-profiling-ce-base" version="1.0">
     <feature>http</feature>
-    <feature>http-whiteboard</feature>
     <feature>cxf</feature>
     <feature>war</feature>
     <bundle>wrap:mvn:com.clearspring.analytics/stream/2.7.0</bundle>
@@ -22,14 +21,24 @@
     <bundle>mvn:pentaho/pentaho-data-profiling-model-metric-contributors-percentile/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-core/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-doc/6.0-SNAPSHOT</bundle>
+    <bundle>mvn:pentaho/pentaho-i18n-bundle/6.0-SNAPSHOT</bundle>
+    <bundle>mvn:pentaho/pentaho-notification-bundle/6.0-SNAPSHOT</bundle>
+  </feature>
+
+  <feature name="pentaho-data-profiling-ce-standalone" version="1.0">
+    <feature>pentaho-data-profiling-ce-base</feature>
+    <feature>http-whiteboard</feature>
     <bundle>mvn:pentaho/pentaho-data-profiling-webapp-core/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-webapp-doc/6.0-SNAPSHOT</bundle>
-    <bundle>mvn:pentaho/pentaho-i18n-bundle/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-i18n-webservice-bundle/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-platform-plugin-deployer/6.0-SNAPSHOT</bundle>
-    <bundle>mvn:pentaho/pentaho-notification-bundle/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/6.0-SNAPSHOT</bundle>
     <bundle>mvn:pentaho/pentaho-requirejs-osgi-manager/6.0-SNAPSHOT</bundle>
     <bundle>pentaho-platform-plugin-mvn:pentaho/common-ui/6.0-SNAPSHOT/zip</bundle>
+  </feature>
+
+  <feature name="pentaho-data-profiling-ce-kettle" version="1.0">
+    <feature>pentaho-data-profiling-ce-standalone</feature>
+    <bundle>mvn:pentaho/pentaho-data-profiling-kettle-integration-core/6.0-SNAPSHOT</bundle>
   </feature>
 </features>
