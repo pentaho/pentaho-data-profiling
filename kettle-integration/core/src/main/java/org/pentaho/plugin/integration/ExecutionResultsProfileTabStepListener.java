@@ -33,7 +33,7 @@ import org.pentaho.di.ui.spoon.trans.TransGraph;
  * Created by saslan on 1/6/2015.
  */
 public class ExecutionResultsProfileTabStepListener implements SelectedStepListener {
-  protected static final String ATTR_GROUP_NAME = "com.pentaho.dataprofiling";
+  protected static final String ATTR_GROUP_NAME = "org.pentaho.dataprofiling";
   protected static final String ATTR_KEY = "profileId";
   protected final String BASE_URL;
   protected final String NO_PROFILE_VIEW_URL;

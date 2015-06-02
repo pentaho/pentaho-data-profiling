@@ -1,5 +1,5 @@
 {
   "data-profiling": [
-    "com/pentaho/profiling/services/messages"
+    "org/pentaho/profiling/services/messages"
   ]
 }

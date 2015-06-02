@@ -28,7 +28,7 @@ package org.pentaho.profiling.api.stats;
  * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
  */
 public interface Statistic {
-  public static final String KEY_PATH = "data-profiling-api/com.pentaho.profiling.api.stats";
+  public static final String KEY_PATH = "data-profiling-api/org.pentaho.profiling.api.stats";
 
   public static final String COUNT = "count";
 

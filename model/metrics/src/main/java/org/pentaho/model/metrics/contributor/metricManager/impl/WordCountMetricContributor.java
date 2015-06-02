@@ -49,10 +49,10 @@ public class WordCountMetricContributor extends BaseMetricManagerContributor imp
   public static final String WORD_COUNT_MIN_LABEL = "WordCountMetricContributor.WordCountMin";
   public static final String WORD_COUNT_SUM_LABEL = "WordCountMetricContributor.WordCountSum";
   public static final String WORD_COUNT_MEAN_LABEL = "WordCountMetricContributor.WordCountMean";
-  public static final String WORD_COUNT_KEY_MAX = "com.pentaho.str.max_word_count";
-  public static final String WORD_COUNT_KEY_MIN = "com.pentaho.str.min_word_count";
-  public static final String WORD_COUNT_KEY_SUM = "com.pentaho.str.sum_word_count";
-  public static final String WORD_COUNT_KEY_MEAN = "com.pentaho.str.mean_word_count";
+  public static final String WORD_COUNT_KEY_MAX = "org.pentaho.str.max_word_count";
+  public static final String WORD_COUNT_KEY_MIN = "org.pentaho.str.min_word_count";
+  public static final String WORD_COUNT_KEY_SUM = "org.pentaho.str.sum_word_count";
+  public static final String WORD_COUNT_KEY_MEAN = "org.pentaho.str.mean_word_count";
 
   public static final String SIMPLE_NAME = WordCountMetricContributor.class.getSimpleName();
   public static final ProfileFieldProperty WORD_COUNT_MAX =

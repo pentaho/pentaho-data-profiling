@@ -30,18 +30,18 @@ define(['./services'], function (appServices) {
         this.metricManagerContributors;
         this.metricContributors;
         this.sampleRegexMetricContributor = {
-          "javaClass": "com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor",
+          "javaClass": "org.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor",
           "name": "RegexAddressMetricContributor",
           "regex": "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
           "profileFieldProperty": {
-            "javaClass": "com.pentaho.profiling.api.ProfileFieldProperty",
-            "namePath": "profiling-metrics/com.pentaho.model.metrics.contributor.metricManager.impl.messages",
+            "javaClass": "org.pentaho.profiling.api.ProfileFieldProperty",
+            "namePath": "profiling-metrics/org.pentaho.model.metrics.contributor.metricManager.impl.messages",
             "nameKey": "EmailAddressMetricContributor",
             "pathToProperty": [
               "java.util.ArrayList",
               [
                 "type",
-                "com.pentaho.str.email_address"
+                "org.pentaho.str.email_address"
               ]
             ]
           },
@@ -84,18 +84,18 @@ define(['./services'], function (appServices) {
         },
         resetSampleRegexMetricContributor: function() {
           metricConfigViewService.sampleRegexMetricContributor = {
-            "javaClass": "com.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor",
+            "javaClass": "org.pentaho.model.metrics.contributor.metricManager.impl.RegexAddressMetricContributor",
             "name": "RegexAddressMetricContributor",
             "regex": "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
             "profileFieldProperty": {
-              "javaClass": "com.pentaho.profiling.api.ProfileFieldProperty",
-              "namePath": "profiling-metrics/com.pentaho.model.metrics.contributor.metricManager.impl.messages",
+              "javaClass": "org.pentaho.profiling.api.ProfileFieldProperty",
+              "namePath": "profiling-metrics/org.pentaho.model.metrics.contributor.metricManager.impl.messages",
               "nameKey": "EmailAddressMetricContributor",
               "pathToProperty": [
                 "java.util.ArrayList",
                 [
                   "type",
-                  "com.pentaho.str.email_address"
+                  "org.pentaho.str.email_address"
                 ]
               ]
             },

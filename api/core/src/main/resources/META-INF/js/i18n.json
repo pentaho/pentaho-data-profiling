@@ -1,5 +1,5 @@
 {
   "profiling-metrics-api": [
-    "com/pentaho/profiling/api/metrics/messages"
+    "org/pentaho/profiling/api/metrics/messages"
   ]
 }
