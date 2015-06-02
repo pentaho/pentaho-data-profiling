@@ -69,7 +69,7 @@ import java.util.Set;
 public class PreviewProfileStreamer implements SpoonUiExtenderPluginInterface {
   public static final String UNABLE_TO_CREATE_PROFILE = "Unable to create profile";
   protected static final String PROJECT_NAME = "kettle-integration-core";
-  protected static final String PACKAGE_NAME = "com/pentaho/profiling/kettle/integration/core/preview/messages";
+  protected static final String PACKAGE_NAME = "org/pentaho/profiling/kettle/integration/core/preview/messages";
   protected static final String KEY_NAME = "PreviewProfileStreamer.Profile";
   private static final Logger LOGGER = LoggerFactory.getLogger( PreviewProfileStreamer.class );
   private final LocalizationService localizationService;

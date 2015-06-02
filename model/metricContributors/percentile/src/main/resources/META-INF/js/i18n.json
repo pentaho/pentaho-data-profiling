@@ -1,5 +1,5 @@
 {
   "profiling-metrics-contributors-percentile": [
-    "com/pentaho/profiling/model/metrics/contributor/percentile/messages"
+    "org/pentaho/profiling/model/metrics/contributor/percentile/messages"
   ]
 }

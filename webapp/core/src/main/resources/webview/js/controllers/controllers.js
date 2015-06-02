@@ -27,8 +27,8 @@ define([
   "common-ui/angular-route",
   "common-ui/angular-translate",
   "../services/services",
-  "com.pentaho.profiling.notification.service",
-  "com.pentaho.profiling.services.webview/lib/angular.treeview"
+  "org.pentaho.profiling.notification.service",
+  "org.pentaho.profiling.services.webview/lib/angular.treeview"
 ], function(angular) {
 
   return angular.module('AppControllers', [

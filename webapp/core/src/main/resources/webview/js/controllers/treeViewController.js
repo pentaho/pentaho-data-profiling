@@ -29,7 +29,7 @@ define(['./controllers'], function (appControllers) {
       $scope.$watch('currentProfileTreeViewId.currentNode', function (newObj, oldObj) {
         // Register to receive profile status updates of the new id.
         if (typeof $scope.currentProfileTreeViewId.currentNode !== 'undefined') {
-          profileAppService.register("com.pentaho.profiling.api.ProfileStatus", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
+          profileAppService.register("org.pentaho.profiling.api.ProfileStatus", [$scope.currentProfileTreeViewId.currentNode.id], function (profileStatus) {
             profileAppService.updateProfile(profileStatus);
           });
         }

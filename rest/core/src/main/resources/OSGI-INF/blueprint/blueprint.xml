@@ -10,7 +10,7 @@
   http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
 
   http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
-  <cm:property-placeholder persistent-id="com.pentaho.profiling.services"
+  <cm:property-placeholder persistent-id="org.pentaho.profiling.services"
                            update-strategy="reload">
     <cm:default-properties>
       <cm:property name="profileAddress" value="/profile"/>

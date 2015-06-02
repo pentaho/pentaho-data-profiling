@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInterface {
   protected static final String PROJECT_NAME = "kettle-integration-core";
-  protected static final String PACKAGE_NAME = "com/pentaho/plugin/integration/messages";
+  protected static final String PACKAGE_NAME = "org/pentaho/plugin/integration/messages";
   protected static final String KEY_NAME = "Spoon.TransGraph.ProfileTab.Name";
   private final LocalizationService localizationService;
   private final ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
