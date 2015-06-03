@@ -151,7 +151,7 @@
           </execution>
           <execution>
             <id>add-features-to-standalone-repo</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>add-features-to-repo</goal>
             </goals>
