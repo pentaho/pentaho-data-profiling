@@ -20,6 +20,7 @@
     <bundle>mvn:pentaho/pentaho-data-profiling-model-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-model-metrics/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-model-metric-contributors-percentile/${project.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-doc/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-i18n-bundle/${project.version}</bundle>
