@@ -25,29 +25,6 @@
 </property>
 </bean>
 
-<bean id="previewProfileStreamer" class="org.pentaho.profiling.kettle.integration.core.preview.PreviewProfileStreamer"
-      scope="singleton">
-<argument ref="localizationService"/>
-<argument ref="profilingService"/>
-<argument ref="aggregateProfileService"/>
-<argument ref="streamingProfileService"/>
-</bean>
-
-<bean id="previewProfileStreamerPlugin" class="org.pentaho.di.osgi.OSGIPlugin" scope="prototype">
-<property name="mainType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface"/>
-<property name="name" value="PreviewProfileStreamer"/>
-<property name="ID" value="PreviewProfileStreamer"/>
-<property name="imageFile" value=""/>
-<property name="description" value="Creates a streaming profile from the preview"/>
-<property name="pluginTypeInterface" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
-<property name="category" value=""/>
-<property name="classToBeanMap">
-  <map>
-    <entry key="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginInterface" value="previewProfileStreamer"/>
-  </map>
-</property>
-</bean>
-
 <bean id="profileTransformationPrepareExecution"
       class="org.pentaho.plugin.integration.extension.ProfileTransformationPrepareExecution">
 <argument ref="profilingService"/>
@@ -75,10 +52,4 @@
   <entry key="PluginType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
 </service-properties>
 </service>
-<service id="previewProfileStreamerPluginService" interface="org.pentaho.di.core.plugins.PluginInterface"
-         ref="previewProfileStreamerPlugin">
-<service-properties>
-  <entry key="PluginType" value="org.pentaho.di.ui.spoon.SpoonUiExtenderPluginType"/>
-</service-properties>
-</service>
-    </blueprint>
+</blueprint>
