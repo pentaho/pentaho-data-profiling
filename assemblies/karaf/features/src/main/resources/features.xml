@@ -41,6 +41,6 @@
 
   <feature name="pentaho-data-profiling-ce-kettle" version="1.0">
     <feature>pentaho-data-profiling-ce-standalone</feature>
-    <bundle>mvn:pentaho/pentaho-data-profiling-kettle-integration-core/${project.version}</bundle>
+    <!--<bundle>mvn:pentaho/pentaho-data-profiling-kettle-integration-core/${project.version}</bundle>-->
   </feature>
 </features>
