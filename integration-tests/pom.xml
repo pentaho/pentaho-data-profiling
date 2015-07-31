@@ -19,99 +19,74 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-assemblies-karaf</artifactId>
-      <version>${project.version}</version>
       <classifier>standalone</classifier>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-api-core</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-model-core</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-model-metrics</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-model-metric-contributors-percentile</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-rest-core</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
-      <version>1.9.13</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-xc</artifactId>
-      <version>1.9.13</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
-      <version>1.9.13</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.13</version>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-client</artifactId>
-      <version>1.9</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-json</artifactId>
-      <version>1.9</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.jayway.restassured</groupId>
       <artifactId>rest-assured</artifactId>
-      <version>2.4.0</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.3.2</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-notification-webservice-bundle</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
     </dependency>
   </dependencies>
 
