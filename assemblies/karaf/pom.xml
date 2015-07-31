@@ -18,6 +18,12 @@
   <packaging>pom</packaging>
   <properties>
     <package.features>true</package.features>
+    <ce.version>${project.version}</ce.version>
+    <karaf.version>2.3.5</karaf.version>
+    <cxf.version>2.7.11</cxf.version>
+    <logback.version>1.1.2</logback.version>
+    <servlet.version>2.5</servlet.version>
+    <jersey.version>1.18.1</jersey.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -111,27 +117,6 @@
                   <outputDirectory>target/dependencies</outputDirectory>
                 </artifactItem>
               </artifactItems>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.karaf</groupId>
-                  <artifactId>org.apache.karaf.util</artifactId>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/standalone-karaf-lib</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/wars</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
         </executions>
