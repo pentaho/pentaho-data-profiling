@@ -11,9 +11,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-assemblies-karaf</artifactId>
-  <version>6.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <properties>
@@ -30,31 +28,20 @@
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>apache-karaf</artifactId>
-      <version>${karaf.version}</version>
       <type>tar.gz</type>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse</groupId>
-          <artifactId>osgi</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.karaf</groupId>
       <artifactId>apache-karaf</artifactId>
-      <version>${karaf.version}</version>
       <type>zip</type>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse</groupId>
-          <artifactId>osgi</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.karaf.assemblies.features</groupId>
+	  <groupId>org.apache.karaf</groupId>
+	  <artifactId>org.apache.karaf.util</artifactId>
+	</dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
       <artifactId>standard</artifactId>
-      <version>${karaf.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
@@ -63,7 +50,7 @@
   <build>
     <resources>
       <resource>
-        <directory>${project.basedir}/src/main/filtered-resources</directory>
+        <directory>${project.basedir}/src/main/resources</directory>
         <filtering>true</filtering>
         <includes>
           <include>**/*</include>
@@ -74,7 +61,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
         <executions>
           <execution>
             <id>filter</id>
@@ -126,7 +112,7 @@
                   <artifactId>org.apache.karaf.util</artifactId>
                   <type>jar</type>
                   <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/standalone-karaf-lib</outputDirectory>
+                  <outputDirectory>${project.build.directory}/standalone-lib-repo</outputDirectory>
                 </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/wars</outputDirectory>
@@ -158,8 +144,7 @@
         </plugin>
       <plugin>
         <groupId>org.apache.karaf.tooling</groupId>
-        <artifactId>features-maven-plugin</artifactId>
-        <version>${karaf.version}</version>
+        <artifactId>karaf-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>compile</id>
@@ -168,16 +153,17 @@
             <id>add-features-to-standalone-repo</id>
             <phase>prepare-package</phase>
             <goals>
-              <goal>add-features-to-repo</goal>
+              <goal>features-add-to-repository</goal>
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>mvn:io.hawt/hawtio-karaf/1.4.11/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf.version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/2.7.11/xml/features</descriptor>
-                <descriptor>mvn:org.apache.camel.karaf/apache-camel/2.13.2/xml/features</descriptor>
+                <descriptor>mvn:io.hawt/hawtio-karaf/${hawtio.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/standard/${karaf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</descriptor>
                 <descriptor>mvn:pentaho-karaf-features/pentaho-data-profiling-ce/${project.version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/spring/${karaf.version}/xml/features</descriptor>
               </descriptors>
               <features>
                 <feature>pentaho-data-profiling-ce-standalone</feature>

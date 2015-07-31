@@ -4,7 +4,7 @@
     <feature>cxf</feature>
     <feature>cxf-http-async</feature>
     <feature>war</feature>
-    <bundle>wrap:mvn:com.clearspring.analytics/stream/${clearspring.analytics-stream.version}</bundle>
+    <bundle>wrap:mvn:com.clearspring.analytics/stream/${clearspring.analytics.stream.version}</bundle>
     <bundle>mvn:org.apache.felix/org.apache.felix.http.api/${felix.http.api.version}</bundle>
     <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
     <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple.version}</bundle>
@@ -20,11 +20,11 @@
     <bundle>mvn:pentaho/pentaho-data-profiling-model-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-model-metrics/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-model-metric-contributors-percentile/${project.version}</bundle>
-    <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/${project.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/${notification.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-rest-doc/${project.version}</bundle>
-    <bundle>mvn:pentaho/pentaho-i18n-bundle/${project.version}</bundle>
-    <bundle>mvn:pentaho/pentaho-notification-bundle/${project.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-i18n-bundle/${pentaho-i18n-bundle.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-notification-bundle/${notification.version}</bundle>
   </feature>
 
   <feature name="pentaho-data-profiling-ce-standalone" version="1.0">
@@ -32,9 +32,9 @@
     <feature>http-whiteboard</feature>
     <bundle>mvn:pentaho/pentaho-data-profiling-webapp-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-webapp-doc/${project.version}</bundle>
-    <bundle>mvn:pentaho/pentaho-i18n-webservice-bundle/${project.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-i18n-webservice-bundle/${pentaho-i18n-bundle.version}</bundle>
     <bundle>mvn:pentaho/pentaho-platform-plugin-deployer/${project.version}</bundle>
-    <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/${project.version}</bundle>
+    <bundle>mvn:pentaho/pentaho-notification-webservice-bundle/${notification.version}</bundle>
     <bundle>mvn:pentaho/pentaho-requirejs-osgi-manager/${project.version}</bundle>
     <bundle>pentaho-platform-plugin-mvn:pentaho/common-ui/${project.version}/zip</bundle>
   </feature>
