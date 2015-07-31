@@ -4,15 +4,15 @@
     <feature>cxf</feature>
     <feature>cxf-http-async</feature>
     <feature>war</feature>
-    <bundle>wrap:mvn:com.clearspring.analytics/stream/${clearspring.analytics-stream.version}</bundle>
-    <bundle>mvn:org.apache.felix/org.apache.felix.http.api/${felix.http.api.version}</bundle>
-    <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
-    <bundle>mvn:com.googlecode.json-simple/json-simple/${json-simple.version}</bundle>
-    <bundle>mvn:commons-io/commons-io/${commons-io.version}</bundle>
-    <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/${jackson.version}</bundle>
-    <bundle>mvn:org.codehaus.jackson/jackson-xc/${jackson.version}</bundle>
-    <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson.version}</bundle>
-    <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.version}</bundle>
+    <bundle>wrap:mvn:com.clearspring.analytics/stream/2.7.0</bundle>
+    <bundle>mvn:org.apache.felix/org.apache.felix.http.api/2.2.2</bundle>
+    <bundle>mvn:com.google.guava/guava/16.0.1</bundle>
+    <bundle>mvn:com.googlecode.json-simple/json-simple/1.1.1</bundle>
+    <bundle>mvn:commons-io/commons-io/2.4</bundle>
+    <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.13</bundle>
+    <bundle>mvn:org.codehaus.jackson/jackson-xc/1.9.13</bundle>
+    <bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
+    <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-api-core/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-api-doc-rest/${project.version}</bundle>
     <bundle>mvn:pentaho/pentaho-data-profiling-api-json/${project.version}</bundle>

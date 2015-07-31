@@ -27,43 +27,29 @@
 
     <!-- Expanded Karaf Standard Distribution -->
     <fileSet>
-      <directory>target/dependencies/apache-karaf-${karaf.version}</directory>
-      <outputDirectory>/apache-karaf-${karaf.version}</outputDirectory>
+      <directory>target/dependencies/apache-karaf-2.3.5</directory>
+      <outputDirectory>/apache-karaf-2.3.5</outputDirectory>
       <excludes>
         <exclude>etc/org.apache.karaf.features.cfg</exclude>
         <exclude>etc/startup.properties</exclude>
-        <exclude>etc/custom.properties</exclude>
       </excludes>
     </fileSet>
 
     <fileSet>
-      <directory>target/classes/standalone/karaf/</directory>
+      <directory>src/main/resources/standalone/karaf/</directory>
       <lineEnding>unix</lineEnding>
-      <outputDirectory>/apache-karaf-${karaf.version}</outputDirectory>
-      <excludes>
-        <exclude>**/*.formatted</exclude>
-      </excludes>
-      <fileMode>0644</fileMode>
+      <outputDirectory>/apache-karaf-2.3.5</outputDirectory>
     </fileSet>
 
     <fileSet>
-      <directory>target/classes/shared/karaf/</directory>
+      <directory>src/main/resources/shared/karaf/</directory>
       <lineEnding>unix</lineEnding>
-      <outputDirectory>/apache-karaf-${karaf.version}</outputDirectory>
-      <excludes>
-        <exclude>**/*.formatted</exclude>
-      </excludes>
-      <fileMode>0644</fileMode>
+      <outputDirectory>/apache-karaf-2.3.5</outputDirectory>
     </fileSet>
 
     <fileSet>
       <directory>target/standalone-features-repo</directory>
-      <outputDirectory>/apache-karaf-${karaf.version}/system</outputDirectory>
-    </fileSet>
-    
-    <fileSet>
-      <directory>target/standalone-karaf-lib</directory>
-      <outputDirectory>/apache-karaf-${karaf.version}/lib</outputDirectory>
+      <outputDirectory>/apache-karaf-2.3.5/system</outputDirectory>
     </fileSet>
   </fileSets>
 
