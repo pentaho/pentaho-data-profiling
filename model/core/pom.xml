@@ -21,7 +21,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-notification-bundle</artifactId>
-      <version>${notification.version}</version>
+      <version>${dependency.pentaho-osgi-bundles.revision}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>

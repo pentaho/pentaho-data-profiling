@@ -14,10 +14,6 @@
   <artifactId>pentaho-data-profiling-kettle-integration-core</artifactId>
   <packaging>bundle</packaging>
 
-  <properties>
-    <kettle.version>${project.version}</kettle.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
@@ -32,19 +28,19 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
-      <version>${kettle.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${kettle.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${kettle.version}</version>
+      <version>${dependency.pentaho-kettle.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
