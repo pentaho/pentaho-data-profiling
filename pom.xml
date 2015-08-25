@@ -55,9 +55,9 @@
     <slf4j.version>1.7.3</slf4j.version>
 
     <!-- Other pentaho dependency versions -->
-    <kettle.version>6.0-SNAPSHOT</kettle.version>
-    <notification.version>6.0-SNAPSHOT</notification.version>
+    <dependency.pentaho-kettle.version>6.0-SNAPSHOT</dependency.pentaho-kettle.version>
     <bean-matchers.version>0.9</bean-matchers.version>
+    <dependency.pentaho-osgi-bundles.revision>6.0-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
   </properties>
 
   <scm>
