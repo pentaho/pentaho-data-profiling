@@ -12,6 +12,10 @@
   <artifactId>pentaho-data-profiling-kettle-integration</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+    <dependency.pentaho-osgi-bundles.revision>6.0-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
+  </properties>
+
   <modules>
     <module>core</module>
   </modules>
@@ -20,7 +24,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-i18n-bundle</artifactId>
-      <version>6.0-SNAPSHOT</version>
+      <version>${dependency.pentaho-osgi-bundles.revision}</version>
     </dependency>
   </dependencies>
 
