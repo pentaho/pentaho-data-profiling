@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>1.0.12</version>
+    <version>1.1.3</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
@@ -37,11 +37,7 @@
     <module>kettle-integration</module>
     <module>assemblies</module>
   </modules>
-  <scm>
-    <connection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</developerConnection>
-    <url>scm:git:git@github.com:${github.user}/${project.artifactId}.git</url>
-  </scm>
+
   <properties>
     <dependency.pentaho-kettle.version>6.1-SNAPSHOT</dependency.pentaho-kettle.version>
     <slf4j.version>1.7.3</slf4j.version>
@@ -57,29 +53,18 @@
     <mockito.version>1.9.5</mockito.version>
     <requirejs.version>2.1.14</requirejs.version>
   </properties>
+  
+  <scm>
+    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
+    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
+    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
   <build>
-    <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>package</id>
-            <phase>package</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <configLocation>${checkstyle-config-url}</configLocation>
-          <propertiesLocation>${checkstyle-properties-url}</propertiesLocation>
-          <linkXRef>true</linkXRef>
-          <cacheFile />
-        </configuration>
-      </plugin>
-      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.0</version>
         <configuration>
