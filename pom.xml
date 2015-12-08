@@ -61,9 +61,9 @@
   </properties>
 
   <scm>
-    <connection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</connection>
-    <url>scm:git:git@github.com:${github.user}/${project.artifactId}.git</url>
-    <developerConnection>scm:git:git@github.com:${github.user}/${project.artifactId}.git</developerConnection>
+    <connection>scm:git:git@github.com:penatho/${project.artifactId}.git</connection>
+    <url>scm:git:git@github.com:penatho/${project.artifactId}.git</url>
+    <developerConnection>scm:git:git@github.com:penatho/${project.artifactId}.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -72,28 +72,7 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${plugin.org.apache.maven.plugins.maven-checkstyle-plugin.version}</version>
-        <configuration>
-          <configLocation>${checkstyle-config-url}</configLocation>
-          <propertiesLocation>${checkstyle-properties-url}</propertiesLocation>
-          <linkXRef>true</linkXRef>
-          <cacheFile/>
-        </configuration>
-        <executions>
-          <execution>
-            <id>package</id>
-            <phase>package</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.0</version>
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
