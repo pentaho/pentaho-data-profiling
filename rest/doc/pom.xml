@@ -85,6 +85,12 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.google.code.bean-matchers</groupId>
+      <artifactId>bean-matchers</artifactId>
+      <version>${bean-matchers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>${mockito.version}</version>
@@ -101,12 +107,6 @@
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-model-metrics</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.bean-matchers</groupId>
-      <artifactId>bean-matchers</artifactId>
-      <version>${bean-matchers.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
