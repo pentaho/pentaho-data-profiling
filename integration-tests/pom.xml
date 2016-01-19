@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-    <version>6.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>6.0.1.1-398</version>
   </parent>
-
   <artifactId>pentaho-data-profiling-integration-tests</artifactId>
-
-  <packaging>jar</packaging>
-
+  <version>6.0.1.1-398</version>
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-data-profiling-assemblies-karaf</artifactId>
       <version>${project.version}</version>
-      <classifier>standalone</classifier>
       <type>zip</type>
+      <classifier>standalone</classifier>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
@@ -97,7 +91,6 @@
       <version>3.3.2</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -114,15 +107,12 @@
       <version>${junit.version}</version>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <!-- Uncompress the standard Karaf distribution -->
             <id>unpack</id>
             <phase>generate-resources</phase>
             <goals>

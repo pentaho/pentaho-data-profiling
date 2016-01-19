@@ -1,28 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
     <version>1.1.6</version>
   </parent>
-
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
+  <version>6.0.1.1-398</version>
   <packaging>pom</packaging>
-  <version>6.0-SNAPSHOT</version>
-
-  <modules>
-    <module>documentation</module>
-    <module>api</module>
-    <module>model</module>
-    <module>rest</module>
-    <module>webapp</module>
-    <module>kettle-integration</module>
-    <module>assemblies</module>
-  </modules>
-
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -31,7 +19,6 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <name>Bryan Rosander</name>
@@ -41,37 +28,39 @@
       </roles>
     </developer>
   </developers>
-
-  <properties>
-    <cxf.version>2.7.11</cxf.version>
-    <felix.version>4.0.3</felix.version>
-    <guava.version>16.0.1</guava.version>
-    <jackson.version>1.9.13</jackson.version>
-    <json-simple.version>1.1.1</json-simple.version>
-    <junit.version>4.11</junit.version>
-    <mockito.version>1.9.5</mockito.version>
-    <requirejs.version>2.1.14</requirejs.version>
-    <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
-    <slf4j.version>1.7.3</slf4j.version>
-
-    <!-- Other pentaho dependency versions -->
-    <dependency.pentaho-kettle.version>6.0-SNAPSHOT</dependency.pentaho-kettle.version>
-    <bean-matchers.version>0.9</bean-matchers.version>
-    <dependency.pentaho-osgi-bundles.revision>6.0-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
-  </properties>
-
+  <modules>
+    <module>documentation</module>
+    <module>api</module>
+    <module>model</module>
+    <module>rest</module>
+    <module>webapp</module>
+    <module>kettle-integration</module>
+    <module>assemblies</module>
+  </modules>
   <scm>
     <connection>scm:git:git@github.com:penatho/${project.artifactId}.git</connection>
-    <url>scm:git:git@github.com:penatho/${project.artifactId}.git</url>
     <developerConnection>scm:git:git@github.com:penatho/${project.artifactId}.git</developerConnection>
-    <tag>HEAD</tag>
+    <url>scm:git:git@github.com:penatho/${project.artifactId}.git</url>
   </scm>
-
+  <properties>
+    <dependency.pentaho-kettle.version>6.0.1.1-398</dependency.pentaho-kettle.version>
+    <slf4j.version>1.7.3</slf4j.version>
+    <junit.version>4.11</junit.version>
+    <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
+    <guava.version>16.0.1</guava.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <dependency.pentaho-osgi-bundles.revision>6.0.1.1-398</dependency.pentaho-osgi-bundles.revision>
+    <felix.version>4.0.3</felix.version>
+    <cxf.version>2.7.11</cxf.version>
+    <bean-matchers.version>0.9</bean-matchers.version>
+    <jackson.version>1.9.13</jackson.version>
+    <mockito.version>1.9.5</mockito.version>
+    <requirejs.version>2.1.14</requirejs.version>
+  </properties>
   <build>
     <finalName>${project.artifactId}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>1.6</source>
