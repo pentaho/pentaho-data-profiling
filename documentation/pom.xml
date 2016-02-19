@@ -1,44 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-    <version>6.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>6.0.1.2-413</version>
   </parent>
-
   <artifactId>pentaho-data-profiling-documentation</artifactId>
-  <packaging>jar</packaging>
-
-  <profiles>
-    <profile>
-      <id>default-profile</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <file>
-          <exists>${java.home}/../lib/tools.jar</exists>
-        </file>
-      </activation>
-      <properties>
-        <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-      </properties>
-    </profile>
-    <profile>
-      <id>mac-profile</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <file>
-          <exists>${java.home}/../Classes/classes.jar</exists>
-        </file>
-      </activation>
-      <properties>
-        <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
-      </properties>
-    </profile>
-  </profiles>
-
+  <version>6.0.1.2-413</version>
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
@@ -76,4 +46,29 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>default-profile</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <file>
+          <exists>${java.home}/../lib/tools.jar</exists>
+        </file>
+      </activation>
+      <properties>
+        <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac-profile</id>
+      <activation>
+        <file>
+          <exists>${java.home}/../Classes/classes.jar</exists>
+        </file>
+      </activation>
+      <properties>
+        <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
+      </properties>
+    </profile>
+  </profiles>
 </project>
