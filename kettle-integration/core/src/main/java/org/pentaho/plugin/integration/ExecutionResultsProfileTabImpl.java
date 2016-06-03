@@ -45,6 +45,7 @@ import java.util.Set;
 public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInterface {
   protected static final String PROJECT_NAME = "kettle-integration-core";
   protected static final String PACKAGE_NAME = "org/pentaho/plugin/integration/messages";
+  protected static final String PROPERTIES_KEY = "kettle-integration-core.org.pentaho.plugin.integration.messages";
   protected static final String KEY_NAME = "Spoon.TransGraph.ProfileTab.Name";
   private final LocalizationService localizationService;
   private final ExecutionResultsProfileTabIcon executionResultsProfileTabIcon;
@@ -73,7 +74,7 @@ public class ExecutionResultsProfileTabImpl implements SpoonUiExtenderPluginInte
       transGraph.addExtraView();
     }
     ResourceBundle resourceBundle =
-      localizationService.getResourceBundle( PROJECT_NAME, PACKAGE_NAME, Locale.getDefault() );
+      localizationService.getResourceBundle( PROPERTIES_KEY, Locale.getDefault() );
     String tabText = resourceBundle.getString( KEY_NAME );
 
     CTabItem transProfileTab = createCTabItem( transGraph.extraViewTabFolder, SWT.NONE );

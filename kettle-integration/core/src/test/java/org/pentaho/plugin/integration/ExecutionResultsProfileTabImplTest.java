@@ -101,7 +101,7 @@ public class ExecutionResultsProfileTabImplTest {
       }
     };
     doReturn( resourceBundle ).when( localizationServiceMock )
-      .getResourceBundle( executionResultsProfileTabImpl.PROJECT_NAME, executionResultsProfileTabImpl.PACKAGE_NAME,
+      .getResourceBundle( executionResultsProfileTabImpl.PROPERTIES_KEY,
         Locale.getDefault() );
 
     executionResultsProfileTabImpl.uiEvent( mockTransGraph, "" );
