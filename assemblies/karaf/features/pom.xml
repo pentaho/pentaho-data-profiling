@@ -5,12 +5,12 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-assemblies</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.1.0.3-223</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>pentaho-karaf-features</groupId>
   <artifactId>pentaho-data-profiling-ce</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.1.0.3-223</version>
   <build>
     <resources>
       <resource>
