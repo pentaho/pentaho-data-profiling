@@ -9,7 +9,7 @@
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.1.0.4-227</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
@@ -37,34 +37,29 @@
     <module>kettle-integration</module>
     <module>assemblies</module>
   </modules>
-
+  <scm>
+    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
+    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
+  </scm>
   <properties>
-    <dependency.pentaho-kettle.version>6.1-SNAPSHOT</dependency.pentaho-kettle.version>
     <slf4j.version>1.7.3</slf4j.version>
+    <dependency.pentaho-kettle.version>6.1.0.4-227</dependency.pentaho-kettle.version>
     <junit.version>4.11</junit.version>
     <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
     <guava.version>16.0.1</guava.version>
     <json-simple.version>1.1.1</json-simple.version>
-    <dependency.pentaho-osgi-bundles.revision>6.1-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
     <felix.version>4.0.3</felix.version>
+    <dependency.pentaho-osgi-bundles.revision>6.1.0.4-227</dependency.pentaho-osgi-bundles.revision>
     <cxf.version>2.7.11</cxf.version>
     <bean-matchers.version>0.9</bean-matchers.version>
     <jackson.version>1.9.13</jackson.version>
     <mockito.version>1.9.5</mockito.version>
     <requirejs.version>2.1.14</requirejs.version>
   </properties>
-  
-  <scm>
-    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
-    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
-    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.0</version>
         <configuration>

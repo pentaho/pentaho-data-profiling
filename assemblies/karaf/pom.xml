@@ -5,11 +5,11 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-assemblies</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.1.0.4-227</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-assemblies-karaf</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.1.0.4-227</version>
   <packaging>pom</packaging>
   <modules>
     <module>features</module>
@@ -17,13 +17,13 @@
   <properties>
     <jersey.version>1.18.1</jersey.version>
     <servlet.version>2.5</servlet.version>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <karaf.version>2.3.5</karaf.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <ce.version>${project.version}</ce.version>
     <cxf.version>2.7.11</cxf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <package.features>true</package.features>
     <logback.version>1.1.2</logback.version>
+    <package.features>true</package.features>
   </properties>
   <dependencies>
     <dependency>
