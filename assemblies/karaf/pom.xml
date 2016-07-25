@@ -15,7 +15,7 @@
     <module>features</module>
   </modules>
   <properties>
-    <jersey.version>1.18.1</jersey.version>
+    <jersey.version>1.19.1</jersey.version>
     <servlet.version>2.5</servlet.version>
     <karaf.version>2.3.5</karaf.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
