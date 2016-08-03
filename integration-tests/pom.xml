@@ -70,13 +70,13 @@
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-client</artifactId>
-      <version>1.9</version>
+      <version>1.19.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-json</artifactId>
-      <version>1.9</version>
+      <version>1.19.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
