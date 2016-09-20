@@ -5,11 +5,11 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-api</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.1.0.6-242</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>pentaho-data-profiling-api-doc-rest</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.1.0.6-242</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
