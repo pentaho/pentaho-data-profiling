@@ -9,7 +9,7 @@
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <version>7.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <licenses>
     <license>
@@ -44,13 +44,13 @@
   </scm>
   <properties>
     <slf4j.version>1.7.3</slf4j.version>
-    <dependency.pentaho-kettle.version>7.0-SNAPSHOT</dependency.pentaho-kettle.version>
+    <dependency.pentaho-kettle.version>7.1-SNAPSHOT</dependency.pentaho-kettle.version>
     <junit.version>4.11</junit.version>
     <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
     <guava.version>16.0.1</guava.version>
     <json-simple.version>1.1.1</json-simple.version>
     <felix.version>4.0.3</felix.version>
-    <dependency.pentaho-osgi-bundles.revision>7.0-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
+    <dependency.pentaho-osgi-bundles.revision>7.1-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
     <cxf.version>2.7.11</cxf.version>
     <bean-matchers.version>0.9</bean-matchers.version>
     <jackson.version>1.9.13</jackson.version>
