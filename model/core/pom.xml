@@ -5,10 +5,10 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-model</artifactId>
-    <version>7.0-SNAPSHOT</version>
+    <version>7.0.0.0-25</version>
   </parent>
   <artifactId>pentaho-data-profiling-model-core</artifactId>
-  <version>7.0-SNAPSHOT</version>
+  <version>7.0.0.0-25</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
