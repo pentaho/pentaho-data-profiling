@@ -62,7 +62,7 @@ public class DataSourceFieldValueTest extends BeanTester {
     int metadataVal = 50;
     val.setFieldMetatdata( metadataKey, metadataVal );
     assertNotNull( val.getFieldMetadata( metadataKey ) );
-    assertEquals( metadataVal, val.getFieldMetadata( metadataKey ) );
+    assertEquals( metadataVal, (int) val.getFieldMetadata( metadataKey ) );
     val.clearFieldMetadata();
     assertNull( val.getFieldMetadata( metadataKey ) );
   }
