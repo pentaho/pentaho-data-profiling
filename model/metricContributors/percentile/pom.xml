@@ -5,12 +5,12 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-model</artifactId>
-    <version>6.1-SNAPSHOT</version>
+    <version>6.1.0.19-384</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-model-metric-contributors-percentile</artifactId>
-  <version>6.1-SNAPSHOT</version>
+  <version>6.1.0.19-384</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
