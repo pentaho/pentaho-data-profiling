@@ -22,8 +22,9 @@
 
 package org.pentaho.profiling.api.json;
 
-import org.codehaus.jackson.map.ser.BeanPropertyFilter;
-import org.codehaus.jackson.map.ser.FilterProvider;
+
+import com.fasterxml.jackson.databind.ser.BeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +57,7 @@ public class HasFilterProvider extends FilterProvider {
     }
   }
 
-  @Override public BeanPropertyFilter findFilter( Object filterId ) {
+  @Override public BeanPropertyFilter findFilter(Object filterId ) {
     return classesWithFilters.get( filterId );
   }
 }

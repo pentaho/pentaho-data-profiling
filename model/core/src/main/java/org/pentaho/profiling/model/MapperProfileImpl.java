@@ -22,6 +22,7 @@
 
 package org.pentaho.profiling.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pentaho.profiling.api.MutableProfileStatus;
 import org.pentaho.profiling.api.Profile;
 import org.pentaho.profiling.api.ProfileState;
@@ -33,7 +34,6 @@ import org.pentaho.profiling.api.action.ProfileActionException;
 import org.pentaho.profiling.api.action.ProfileActionExceptionWrapper;
 import org.pentaho.profiling.api.mapper.Mapper;
 import org.pentaho.profiling.api.performance.Collector;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

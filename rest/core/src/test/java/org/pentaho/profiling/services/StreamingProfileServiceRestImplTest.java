@@ -22,6 +22,7 @@
 
 package org.pentaho.profiling.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pentaho.profiling.api.StreamingProfile;
 import org.pentaho.profiling.api.StreamingProfileService;
 import org.pentaho.profiling.api.action.ProfileActionException;
@@ -62,7 +63,7 @@ public class StreamingProfileServiceRestImplTest {
   @Before
   public void setup() {
     streamingProfileService = mock( StreamingProfileService.class );
-    objectMapperFactory = new ObjectMapperFactory( getClass().getClassLoader() );
+    objectMapperFactory = new ObjectMapperFactory();
     sampleProviderManager = mock( SampleProviderManager.class );
     streamingProfileServiceRest =
       new StreamingProfileServiceRestImpl( streamingProfileService, objectMapperFactory, sampleProviderManager );
@@ -140,7 +141,8 @@ public class StreamingProfileServiceRestImplTest {
       Object body = example.getBody();
       assertTrue( body instanceof List );
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      objectMapperFactory.createMapper().writeValue( byteArrayOutputStream, body );
+      ObjectMapper mapper = objectMapperFactory.createMapper();
+      mapper.writeValue( byteArrayOutputStream, body );
       HttpServletRequest httpServletRequest = mock( HttpServletRequest.class );
       ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream( byteArrayOutputStream.toByteArray() );
       when( httpServletRequest.getInputStream() ).thenReturn( new ByteArrayServletInputStream( byteArrayInputStream ) );

@@ -22,8 +22,7 @@
 
 package org.pentaho.profiling.documentation;
 
-import org.pentaho.profiling.api.doc.rest.DocEntry;
-import org.pentaho.profiling.api.doc.rest.DocParameter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationTypeDoc;
 import com.sun.javadoc.ClassDoc;
@@ -33,7 +32,8 @@ import com.sun.javadoc.Parameter;
 import com.sun.javadoc.RootDoc;
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.standard.Standard;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.pentaho.profiling.api.doc.rest.DocEntry;
+import org.pentaho.profiling.api.doc.rest.DocParameter;
 
 import java.io.File;
 import java.io.IOException;

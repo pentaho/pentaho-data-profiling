@@ -44,7 +44,7 @@ import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
 import org.pentaho.profiling.core.integration.tests.utils.ProfileStatusValidationUtil;
 import org.pentaho.profiling.services.AggregateAddChildWrapper;
 import org.pentaho.profiling.services.AggregateProfileDTO;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -78,7 +78,7 @@ public class AggregateProfileTest {
     RestAssured.port = 8181;
     // Configure object mapper
     final ObjectMapper typeObjectMapper =
-      new ObjectMapperFactory( AggregateProfileTest.class.getClassLoader() ).createMapper();
+      new ObjectMapperFactory().createMapper();
     RestAssured.objectMapper( new com.jayway.restassured.mapper.ObjectMapper() {
       @Override public Object deserialize( ObjectMapperDeserializationContext context ) {
         try {

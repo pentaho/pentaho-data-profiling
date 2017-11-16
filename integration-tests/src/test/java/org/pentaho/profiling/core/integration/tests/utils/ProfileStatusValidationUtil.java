@@ -32,7 +32,7 @@ import org.pentaho.profiling.api.metrics.MetricContributor;
 import org.pentaho.profiling.api.metrics.field.DataSourceFieldValue;
 import org.pentaho.profiling.model.MutableProfileStatusImpl;
 import org.pentaho.profiling.model.ProfileStatusImpl;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +67,7 @@ public class ProfileStatusValidationUtil {
     for ( ProfileField profileField : mutableProfileStatus.getFields() ) {
       dtos.add( new ProfileFieldDTO( profileField ) );
     }
-    ObjectMapper outputMapper =
-      new ObjectMapperFactory( ProfileStatusValidationUtil.class.getClassLoader() ).createMapper();
+    ObjectMapper outputMapper = new ObjectMapperFactory().createMapper();
     ObjectMapper inputMapper = new ObjectMapper();
     assertEquals( inputMapper.readTree( outputMapper.writeValueAsString( profileStatus.getFields() ) ),
       inputMapper.readTree( outputMapper.writeValueAsString( dtos ) ) );
