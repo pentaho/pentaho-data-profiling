@@ -39,7 +39,7 @@ import org.pentaho.profiling.api.metrics.MetricContributors;
 import org.pentaho.profiling.api.metrics.MetricManagerContributor;
 import org.pentaho.profiling.model.metrics.contributor.percentile.PercentileMetricContributor;
 import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class MetricContributorsTest {
     RestAssured.port = 8181;
     // Configure object mapper
     final ObjectMapper typeObjectMapper =
-      new ObjectMapperFactory( AggregateProfileTest.class.getClassLoader() ).createMapper();
+      new ObjectMapperFactory().createMapper();
     RestAssured.objectMapper( new com.jayway.restassured.mapper.ObjectMapper() {
       @Override public Object deserialize( ObjectMapperDeserializationContext context ) {
         try {

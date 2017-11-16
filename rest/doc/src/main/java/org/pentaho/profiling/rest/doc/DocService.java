@@ -22,6 +22,8 @@
 
 package org.pentaho.profiling.rest.doc;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pentaho.profiling.api.doc.rest.Body;
 import org.pentaho.profiling.api.doc.rest.DocEndpoint;
 import org.pentaho.profiling.api.doc.rest.DocEntry;
@@ -29,8 +31,6 @@ import org.pentaho.profiling.api.doc.rest.DocParameter;
 import org.pentaho.profiling.api.doc.rest.ErrorCode;
 import org.pentaho.profiling.api.doc.rest.Example;
 import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

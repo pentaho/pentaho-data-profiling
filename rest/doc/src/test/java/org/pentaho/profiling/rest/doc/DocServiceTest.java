@@ -22,13 +22,13 @@
 
 package org.pentaho.profiling.rest.doc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
 import org.pentaho.profiling.api.doc.rest.DocEndpoint;
 import org.pentaho.profiling.api.doc.rest.DocEndpointImpl;
 import org.pentaho.profiling.api.doc.rest.ErrorCode;
 import org.pentaho.profiling.api.doc.rest.Example;
 import org.pentaho.profiling.api.doc.rest.SuccessResponseCode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;

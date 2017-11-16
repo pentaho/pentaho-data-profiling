@@ -22,7 +22,7 @@
 
 package org.pentaho.profiling.api.json;
 
-import org.codehaus.jackson.map.ser.BeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.BeanPropertyFilter;
 
 /**
  * Created by bryan on 4/29/15.

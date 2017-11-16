@@ -22,13 +22,13 @@
 
 package org.pentaho.profiling.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pentaho.profiling.api.json.ObjectMapperFactory;
 import org.pentaho.profiling.api.metrics.MetricContributor;
 import org.pentaho.profiling.api.metrics.MetricContributorService;
 import org.pentaho.profiling.api.metrics.MetricContributors;
 import org.pentaho.profiling.api.metrics.MetricManagerContributor;
 import org.pentaho.profiling.api.metrics.bundle.MetricContributorBundle;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

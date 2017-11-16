@@ -30,7 +30,7 @@ import org.pentaho.profiling.api.configuration.ProfileConfiguration;
 import org.pentaho.profiling.api.configuration.core.StreamingProfileMetadata;
 import org.pentaho.profiling.api.json.ObjectMapperFactory;
 import org.pentaho.profiling.core.integration.tests.utils.DataProfilingService;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class StreamingProfileTest {
     RestAssured.port = 8181;
     // Configure object mapper
     final ObjectMapper typeObjectMapper =
-      new ObjectMapperFactory( StreamingProfileTest.class.getClassLoader() ).createMapper();
+      new ObjectMapperFactory().createMapper();
     RestAssured.objectMapper( new com.jayway.restassured.mapper.ObjectMapper() {
       @Override public Object deserialize( ObjectMapperDeserializationContext context ) {
         try {

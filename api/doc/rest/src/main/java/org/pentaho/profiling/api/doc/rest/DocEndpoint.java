@@ -22,7 +22,7 @@
 
 package org.pentaho.profiling.api.doc.rest;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Created by bryan on 4/7/15.
