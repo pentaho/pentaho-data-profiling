@@ -14,13 +14,13 @@
     <module>core</module>
   </modules>
   <properties>
-    <dependency.pentaho-osgi-bundles.revision>8.1-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
+    <pentaho-osgi-bundles.version>8.1-SNAPSHOT</pentaho-osgi-bundles.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-i18n-bundle</artifactId>
-      <version>${dependency.pentaho-osgi-bundles.revision}</version>
+      <version>${pentaho-osgi-bundles.version}</version>
     </dependency>
   </dependencies>
   <build>
