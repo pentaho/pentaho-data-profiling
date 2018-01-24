@@ -1,6 +1,0 @@
-{
-  "kettle-integration-core": [
-    "org/pentaho/plugin/integration/messages",
-    "org/pentaho/profiling/kettle/integration/core/preview/messages"
-  ]
-}
