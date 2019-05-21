@@ -2,18 +2,15 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.24-200</version>
   </parent>
-  
   <groupId>pentaho</groupId>
   <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.1.0.24-200</version>
   <packaging>pom</packaging>
-  
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -22,7 +19,6 @@
       <comments>A business-friendly OSS license</comments>
     </license>
   </licenses>
-  
   <developers>
     <developer>
       <name>Bryan Rosander</name>
@@ -32,29 +28,6 @@
       </roles>
     </developer>
   </developers>
-    
-  <scm>
-    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
-    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
-  </scm>
-  
-  <properties>
-    <slf4j.version>1.7.3</slf4j.version>
-    <dependency.pentaho-kettle.version>7.1-SNAPSHOT</dependency.pentaho-kettle.version>
-    <junit.version>4.11</junit.version>
-    <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
-    <guava.version>16.0.1</guava.version>
-    <json-simple.version>1.1.1</json-simple.version>
-    <felix.version>4.0.3</felix.version>
-    <dependency.pentaho-osgi-bundles.revision>7.1-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
-    <cxf.version>2.7.11</cxf.version>
-    <bean-matchers.version>0.9</bean-matchers.version>
-    <jackson.version>1.9.13</jackson.version>
-    <mockito.version>1.9.5</mockito.version>
-    <requirejs.version>2.1.14</requirejs.version>
-  </properties>
-  
   <modules>
     <module>documentation</module>
     <module>api</module>
@@ -64,5 +37,24 @@
     <module>kettle-integration</module>
     <module>assemblies</module>
   </modules>
-    
+  <scm>
+    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
+    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
+  </scm>
+  <properties>
+    <slf4j.version>1.7.3</slf4j.version>
+    <dependency.pentaho-kettle.version>7.1.0.24-200</dependency.pentaho-kettle.version>
+    <junit.version>4.11</junit.version>
+    <requirejs.version.full>${requirejs.version}-1</requirejs.version.full>
+    <guava.version>16.0.1</guava.version>
+    <json-simple.version>1.1.1</json-simple.version>
+    <felix.version>4.0.3</felix.version>
+    <dependency.pentaho-osgi-bundles.revision>7.1.0.24-200</dependency.pentaho-osgi-bundles.revision>
+    <cxf.version>2.7.11</cxf.version>
+    <bean-matchers.version>0.9</bean-matchers.version>
+    <jackson.version>1.9.13</jackson.version>
+    <mockito.version>1.9.5</mockito.version>
+    <requirejs.version>2.1.14</requirejs.version>
+  </properties>
 </project>
