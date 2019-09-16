@@ -5,16 +5,16 @@
   <parent>
     <groupId>pentaho</groupId>
     <artifactId>pentaho-data-profiling-ce-bundles</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.28-223</version>
   </parent>
   <artifactId>pentaho-data-profiling-kettle-integration</artifactId>
-  <version>7.1-SNAPSHOT</version>
+  <version>7.1.0.28-223</version>
   <packaging>pom</packaging>
   <modules>
     <module>core</module>
   </modules>
   <properties>
-    <dependency.pentaho-osgi-bundles.revision>7.1-SNAPSHOT</dependency.pentaho-osgi-bundles.revision>
+    <dependency.pentaho-osgi-bundles.revision>7.1.0.28-223</dependency.pentaho-osgi-bundles.revision>
   </properties>
   <dependencies>
     <dependency>
